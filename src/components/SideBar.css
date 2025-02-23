@@ -1,0 +1,66 @@
+.sidebar {
+  position: fixed;
+  width: 20%;
+  height: 100vh;
+  background-color: var(--color-surface);
+  padding: 0;
+  left: 0;
+  border-right: 0.5px solid var(--color-on-surface-variant);
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .logo {
+  padding-top: 6px;
+  padding-bottom: 20px;
+  height: 60px;
+}
+
+.logo img {
+  height: inherit;
+}
+
+.menu {
+  padding-inline: 5%;
+  justify-content: space-between;
+}
+
+.menu-selection {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  border-radius: 12px;
+  height: 50px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-block: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menu-selection.selected {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.menu-selection.selected .icon {
+  filter: invert(93%) sepia(81%) saturate(4725%) hue-rotate(180deg)
+    brightness(108%) contrast(107%);
+}
+
+.menu-selection:hover {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.menu-selection:hover .icon {
+  filter: invert(93%) sepia(81%) saturate(4725%) hue-rotate(180deg)
+    brightness(108%) contrast(107%);
+}
+
+.menu-selection .icon {
+  width: 30px;
+  height: 30px;
+  padding-inline: 20px;
+}
