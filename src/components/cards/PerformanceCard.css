@@ -1,0 +1,39 @@
+.performance-card {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  border: 0.5px solid var(--color-on-surface-variant);
+  height: 100%;
+  width: 25%;
+  display: block;
+  text-align: center;
+  margin-inline: 20px;
+  padding-top: 12px;
+  color: var(--color-on-surface-variant);
+}
+
+.performance-card h1 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: var(--color-on-surface);
+}
+
+.comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-inline: 10px;
+}
+
+.percentage {
+  color: var(--color-surface);
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.percentage.positive {
+  background-color: var(--color-successful);
+}
+
+.percentage.negative {
+  background-color: var(--color-error);
+}
