@@ -15,7 +15,7 @@ export default function OverviewPage() {
     {
       title: "Lorem Ipsum",
       amount: "XXXX",
-      percentage: +10.86,
+      percentage: 10.86,
       percentageSubtitle: "Compared to yesterday",
     },
     {
@@ -33,7 +33,7 @@ export default function OverviewPage() {
     {
       title: "Lorem Ipsum",
       amount: "XXXX",
-      percentage: +10.86,
+      percentage: 10.86,
       percentageSubtitle: "Compared to yesterday",
     },
   ];

@@ -3,11 +3,12 @@ import {
   BarChart,
   Bar,
   XAxis,
-  YAxis,
   Tooltip,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 import { readFile } from "../../service/data/readExcel";
+import "./BarChartComponent.css";
 
 export default function BarChartComponent({ filePath }) {
   const [data, setData] = useState([]);
@@ -21,7 +22,11 @@ export default function BarChartComponent({ filePath }) {
         if (existing) {
           existing.value += 1;
         } else {
-          acc.push({ name: subSegmen, value: 1 });
+          acc.push({
+            name: subSegmen,
+            shortName: getInitials(subSegmen),
+            value: 1,
+          });
         }
         return acc;
       }, []);
@@ -32,17 +37,28 @@ export default function BarChartComponent({ filePath }) {
     fetchData();
   }, [filePath]);
 
+  function getInitials(name) {
+    return name
+      .split(" ")
+      .map((word) => word[0].toUpperCase())
+      .join("");
+  }
+
   return (
     <div className="bar-chart">
-      <ResponsiveContainer width="100%" height={250}>
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-        >
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="value" fill="#4CAF50" radius={[4, 4, 0, 0]} />
+      <ResponsiveContainer>
+        <BarChart data={data}>
+          <XAxis
+            className="bar-label"
+            dataKey="shortName"
+            tickFormatter={(value, index) => data[index]?.shortName}
+          />
+          <Tooltip
+            formatter={(value, name, props) => [value, props.payload.name]}
+          />
+          <Bar dataKey="value" className="bar" fill="var(--color-primary)">
+            <LabelList dataKey="value" position="on" className="bar-label" />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
