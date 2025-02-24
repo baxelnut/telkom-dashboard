@@ -5,6 +5,7 @@ import PerformanceCard from "../../components/cards/PerformanceCard";
 import PerformanceOverTime from "../../components/cards/PerformanceOverTime";
 import PerformanceBySession from "../../components/cards/PerformanceBySession";
 import GraphCard from "../../components/cards/GraphCard";
+import OverviewTable from "../../components/cards/OverviewTable";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -62,6 +63,7 @@ export default function OverviewPage() {
               <GraphCard key={index} title={title} />
             ))}
           </div>
+          <OverviewTable />
         </div>
       </div>
     </>

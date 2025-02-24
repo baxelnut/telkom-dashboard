@@ -1,0 +1,16 @@
+.table-container {
+  background-color: var(--color-surface);
+  border: 0.5px solid var(--color-on-surface-variant);
+  border-radius: 12px;
+  margin-inline: 20px;
+  padding: 24px;
+  display: block;
+}
+
+.table {
+  margin-top: 20px;
+  height: 500px;
+  background-color: white;
+  border-radius: 12px;
+  border: 0.5px solid var(--color-on-surface-variant);
+}
