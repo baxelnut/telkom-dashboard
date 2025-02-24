@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import "./OverViewPage.css";
 import PerformanceCard from "../../components/cards/PerformanceCard";
 import PerformanceOverTime from "../../components/cards/PerformanceOverTime";
+import PerformanceBySession from "../../components/cards/PerformanceBySession";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -51,6 +52,7 @@ export default function OverviewPage() {
           </div>
           <div className="p-over-time-container">
             <PerformanceOverTime data={overTimeData} />
+            <PerformanceBySession />
           </div>
         </div>
       </div>

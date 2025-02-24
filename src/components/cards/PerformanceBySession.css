@@ -1,0 +1,12 @@
+.p-by-session {
+  background-color: var(--color-surface);
+  margin-right: 20px;
+  border-radius: 12px;
+  padding: 24px;
+  height: inherit;
+  border: 0.5px solid var(--color-on-surface-variant);
+}
+
+.p-by-session p {
+  color: var(--color-on-surface-variant);
+}

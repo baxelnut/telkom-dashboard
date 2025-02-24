@@ -6,7 +6,7 @@
   width: 25%;
   display: block;
   text-align: center;
-  margin-inline: 20px;
+  margin-left: 20px;
   padding-top: 12px;
   color: var(--color-on-surface-variant);
   cursor: pointer;
