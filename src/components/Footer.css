@@ -5,9 +5,9 @@
   border-top: 0.5px solid var(--color-on-surface-variant);
   background-color: var(--color-surface);
   width: 80%;
-  right: 0;
   height: 50px;
   position: absolute;
+  right: 0;
   bottom: 0;
   margin: 0;
 }
