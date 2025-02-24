@@ -9,6 +9,7 @@
   margin-inline: 20px;
   padding-top: 12px;
   color: var(--color-on-surface-variant);
+  cursor: pointer;
 }
 
 .performance-card h1 {

@@ -80,6 +80,7 @@ button:hover .filter-icon {
   display: flex;
   height: 50px;
   align-items: center;
+  cursor: pointer;
 }
 
 .profile h5 {
@@ -124,6 +125,7 @@ button:hover .filter-icon {
   align-items: center;
   border-radius: 12px;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .select-filter h6 {

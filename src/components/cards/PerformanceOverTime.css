@@ -1,0 +1,65 @@
+.p-over-time {
+  width: 60%;
+  background-color: var(--color-surface);
+  border: 0.5px solid var(--color-on-surface-variant);
+  border-radius: 12px;
+  margin-inline: 20px;
+  padding: 24px;
+}
+
+.p-over-time .head,
+.p-over-time .info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.p-over-time .info {
+  color: var(--color-on-surface-variant);
+  justify-content: start;
+  margin-block: 36px;
+}
+
+.p-over-time .info .amount {
+  color: var(--color-on-surface);
+  margin-block: 10px;
+}
+
+.p-over-time .head .actions img {
+  margin-left: 24px;
+  width: 24px;
+  padding: 0;
+  cursor: pointer;
+  filter: invert(58%) sepia(0%) saturate(0%) hue-rotate(204deg) brightness(98%)
+    contrast(86%);
+}
+
+.total-p1,
+.total-p2 {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-right: 48px;
+}
+
+.total-p1 .leading,
+.total-p2 .leading {
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-secondary);
+  border-radius: 50%;
+}
+
+.total-p2 .leading {
+  background-color: var(--color-primary);
+}
+
+.p-over-time .main {
+  margin-inline: 18px;
+}
+
+.p-over-time .graph {
+  width: 100%;
+  height: 2500px;
+  background-color: white;
+}

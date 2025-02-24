@@ -31,20 +31,18 @@ function AppContent() {
   const currentConfig = pageConfig[location.pathname];
 
   return (
-    <div>
-      {!isNotFound && (
-        <div className="nav">
-          <Header {...currentConfig} />
-          <Footer />
-          <SideBar />
-        </div>
-      )}
-      <Routes>
-        <Route path="/overview" element={<OverviewPage />} />
-        <Route path="/performance" element={<PerformancePage />} />
-        <Route path="/" element={<OverviewPage />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+    <div className="app-container">
+      {!isNotFound && <SideBar />}
+      <div className="content">
+        <Routes>
+          <Route path="/overview" element={<OverviewPage />} />
+          <Route path="/performance" element={<PerformancePage />} />
+          <Route path="/" element={<OverviewPage />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </div>
+      {!isNotFound && <Header {...currentConfig} />}
+      {!isNotFound && <Footer />}
     </div>
   );
 }
