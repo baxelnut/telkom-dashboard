@@ -1,7 +1,7 @@
 import React from "react";
-import "./PerformanceCard.css";
+import "./OverViewCard.css";
 
-export default function PerformanceCard({
+export default function OverViewCard({
   title,
   amount,
   percentage,
@@ -12,9 +12,9 @@ export default function PerformanceCard({
   const symbol = percentage === 0 ? "+" : isPositive ? "+" : "";
 
   return (
-    <div className="performance-card">
-      <h5>{title}</h5>
-      <h1>Rp{amount}</h1>
+    <div className="overview-card">
+      <h6>{title}</h6>
+      <h2>Rp{amount}</h2>
       <div className="comparison">
         <div className={`percentage ${percentageClass}`}>
           <h6>{`${symbol}${percentage}%`}</h6>

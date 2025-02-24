@@ -14,8 +14,8 @@ export default function Footer() {
 
   return (
     <div className="footer">
-      <h6>PT Telkom Indonesia, © 2025</h6>
-      <h6>{time.toLocaleTimeString()}</h6>
+      <p>PT Telkom Indonesia, © 2025</p>
+      <p>{time.toLocaleTimeString()}</p>
     </div>
   );
 }

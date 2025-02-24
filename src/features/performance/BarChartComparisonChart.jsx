@@ -5,7 +5,7 @@ export default function BarChartComparisonChart({ data }) {
   return (
     <div className="bar-chart-c">
       <div className="head">
-        <h2>{data.title}</h2>
+        <h3>{data.title}</h3>
         <img src="src/assets/icons/three-dots.svg" alt="more" />
       </div>
       {data.bars.map((bar, index) => (

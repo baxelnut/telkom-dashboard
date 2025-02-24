@@ -21,19 +21,19 @@ export default function SideBar() {
     },
     {
       id: "selection1",
-      label: "SelectionMenu 1",
+      label: "selectionMenu1",
       icon: "src/assets/icons/grid-fill.svg",
       path: "*",
     },
     {
       id: "selection2",
-      label: "SelectionMenu 2",
+      label: "selectionMenu2",
       icon: "src/assets/icons/grid-fill.svg",
       path: "*",
     },
     {
       id: "selection3",
-      label: "SelectionMenu 3",
+      label: "selectionMenu3",
       icon: "src/assets/icons/grid-fill.svg",
       path: "*",
     },
@@ -57,7 +57,7 @@ export default function SideBar() {
             }}
           >
             <img className="icon" src={item.icon} alt={item.label} />
-            <h5>{item.label}</h5>
+            <h6>{item.label}</h6>
           </div>
         ))}
       </div>

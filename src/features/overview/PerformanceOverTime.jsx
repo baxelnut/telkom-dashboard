@@ -5,7 +5,7 @@ export default function PerformanceOverTime({ data }) {
   return (
     <div className="p-over-time">
       <div className="head">
-        <h3>Revenue Over Time</h3>
+        <h4>Revenue Over Time</h4>
         <div className="actions">
           <img src="src\assets\icons\download.svg" alt="download" />
           <img src="src\assets\icons\three-dots.svg" alt="more" />

@@ -12,6 +12,6 @@
     inset 1px 0 0 var(--color-on-surface-variant);
 }
 
-.footer h6 {
+.footer p {
   margin-inline: 10px;
 }

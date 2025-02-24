@@ -26,7 +26,7 @@
   align-items: center;
 }
 
-.header h1 {
+.header h2 {
   margin-left: 20px;
 }
 
@@ -83,14 +83,15 @@ button:hover .filter-icon {
   cursor: pointer;
 }
 
-.profile h5 {
+.profile h6 {
   margin-inline: 20px;
 }
 
 .profile .picture {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 100%;
+  border: 1px solid var(--color-on-surface-variant);
 }
 
 .profile .chevron-down {

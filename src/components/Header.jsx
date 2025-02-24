@@ -41,7 +41,7 @@ export default function Header({
   return (
     <div className={`header ${isExpanded ? "expanded" : ""}`}>
       <div className="header-content">
-        <h1>{title}</h1>
+        <h2>{title}</h2>
         <div className="actions">
           {showFilter && (
             <button className="filter" type="button" onClick={toggleFilter}>
@@ -58,7 +58,7 @@ export default function Header({
           )}
           <div className="profile">
             <img className="picture" src={imageUrl} alt="Profile" />
-            <h5>{userName}</h5>
+            <h6>{userName}</h6>
             <img
               className="chevron-down"
               src="src/assets/icons/chevron-down.svg"

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "./OverViewPage.css";
 import Header from "../../components/Header";
-import PerformanceCard from "../../components/cards/PerformanceCard";
-import PerformanceOverTime from "../../components/cards/PerformanceOverTime";
-import PerformanceBySession from "../../components/cards/PerformanceBySession";
-import GraphCard from "../../components/cards/GraphCard";
-import OverviewTable from "../../components/cards/OverviewTable";
+import OverViewCard from "./OverViewCard";
+import PerformanceOverTime from "./PerformanceOverTime";
+import PerformanceBySession from "./PerformanceBySession";
+import GraphCard from "./GraphCard";
+import OverviewTable from "./OverviewTable";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -51,7 +51,7 @@ export default function OverviewPage() {
         <div className="content">
           <div className="p-overview-container">
             {performanceData.map((item, index) => (
-              <PerformanceCard key={index} {...item} />
+              <OverViewCard key={index} {...item} />
             ))}
           </div>
           <div className="p-over-time-container">
