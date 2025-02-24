@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-bottom: 0.5px solid var(--color-on-surface-variant);
-  border-left: 0.5px solid var(--color-on-surface-variant);
+  box-shadow: inset 0 -1px 0 var(--color-on-surface-variant),
+    inset 1px 0 0 var(--color-on-surface-variant);
   background-color: var(--color-surface);
   width: 80%;
   height: 80px;
