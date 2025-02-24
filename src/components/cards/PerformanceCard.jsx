@@ -7,7 +7,9 @@ export default function PerformanceCard({
   percentage,
   percentageSubtitle,
 }) {
-  const percentageClass = percentage > 0 ? "positive" : "negative";
+  const isPositive = percentage > 0;
+  const percentageClass = isPositive ? "positive" : "negative";
+  const symbol = percentage === 0 ? "+" : isPositive ? "+" : "";
 
   return (
     <div className="performance-card">
@@ -15,7 +17,7 @@ export default function PerformanceCard({
       <h1>Rp{amount}</h1>
       <div className="comparison">
         <div className={`percentage ${percentageClass}`}>
-          <h6>{percentage}%</h6>
+          <h6>{`${symbol}${percentage}%`}</h6>
         </div>
         <p>{percentageSubtitle}</p>
       </div>

@@ -4,6 +4,7 @@ import "./OverViewPage.css";
 import PerformanceCard from "../../components/cards/PerformanceCard";
 import PerformanceOverTime from "../../components/cards/PerformanceOverTime";
 import PerformanceBySession from "../../components/cards/PerformanceBySession";
+import GraphCard from "../../components/cards/GraphCard";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -12,7 +13,7 @@ export default function OverviewPage() {
     {
       title: "Lorem Ipsum",
       amount: "XXXX",
-      percentage: 10.86,
+      percentage: +10.86,
       percentageSubtitle: "Compared to yesterday",
     },
     {
@@ -40,6 +41,8 @@ export default function OverviewPage() {
     { title: "Total Target", amount: "XXX", percentage: 45 },
   ];
 
+  const graphData = ["SEGMEN I1", "BILL_WITEL AC1", "SUB_SEGMEN J1"];
+
   return (
     <>
       <Header title="Overview" onExpandChange={setIsHeaderExpanded} />
@@ -53,6 +56,11 @@ export default function OverviewPage() {
           <div className="p-over-time-container">
             <PerformanceOverTime data={overTimeData} />
             <PerformanceBySession />
+          </div>
+          <div className="p-graphs-container">
+            {graphData.map((title, index) => (
+              <GraphCard key={index} title={title} />
+            ))}
           </div>
         </div>
       </div>

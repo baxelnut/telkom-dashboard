@@ -16,16 +16,17 @@
   padding-top: 240px;
 }
 
-.p-overview-container {
+.p-overview-container,
+.p-over-time-container,
+.p-graphs-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-right: 20px;
 }
 
-.p-over-time-container {
-  display: flex;
+.p-over-time-container,
+.p-graphs-container {
   align-items: stretch;
-  justify-content: space-between;
   margin-top: 20px;
 }
