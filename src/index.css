@@ -132,12 +132,12 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c7d0;
-  border-radius: 10px;
+  background: var(--color-on-surface-variant);
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c7c7c7;
+  background: var(--color-surface);
 }
 
 @media (prefers-color-scheme: light) {

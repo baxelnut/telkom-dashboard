@@ -97,10 +97,10 @@ export default function Header({
                   </div>
                 </div>
               ))}
-            <button className="clear" type="button">
+            <button className="clear" type="button" onClick={toggleFilter}>
               <h6>Clear Filter</h6>
             </button>
-            <button className="confirm" type="button">
+            <button className="confirm" type="button" onClick={toggleFilter}>
               <h6>Confirm</h6>
             </button>
           </div>

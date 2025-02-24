@@ -4,12 +4,11 @@
   min-height: 100vh;
   width: 80%;
   margin-left: 20%;
+  padding-bottom: 20px;
 }
 
 .performance .content {
-  position: absolute;
-  top: 100px;
-  left: 20%;
-  height: 1000px;
-  background-color: red;
+  position: inherit;
+  padding-top: 100px;
+  transition: top 0.3s ease-in-out;
 }
