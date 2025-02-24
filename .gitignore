@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+public/data/data.csv
+public/data/dummy.xlsx
+public/data/*.csv
+public/data/*.xlsx

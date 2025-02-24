@@ -6,6 +6,7 @@ import PerformanceOverTime from "./PerformanceOverTime";
 import PerformanceBySession from "./PerformanceBySession";
 import GraphCard from "./GraphCard";
 import OverviewTable from "./OverviewTable";
+import BarChartComponent from "../../components/graphs/BarChartComponent";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -42,8 +43,24 @@ export default function OverviewPage() {
     { title: "Total Target", amount: "XXX", percentage: 45 },
   ];
 
-  const graphData = ["SEGMEN I1", "BILL_WITEL AC1", "SUB_SEGMEN J1"];
+  const sampleData = [
+    { name: "Jan", value: 40 },
+    { name: "Feb", value: 55 },
+    { name: "Mar", value: 70 },
+    { name: "Apr", value: 30 },
+  ];
 
+  const graphData = [
+    { title: "SEGMEN I1", component: <p>Custom graph placeholder</p> },
+    {
+      title: "BILL_WITEL AC1",
+      component: <p>Custom graph placeholder</p>,
+    },
+    {
+      title: "SUB_SEGMEN J1",
+      component: <BarChartComponent filePath="\data\dummy.xlsx" />,
+    },
+  ];
   return (
     <>
       <Header title="Overview" onExpandChange={setIsHeaderExpanded} />
@@ -59,8 +76,12 @@ export default function OverviewPage() {
             <PerformanceBySession />
           </div>
           <div className="p-graphs-container">
-            {graphData.map((title, index) => (
-              <GraphCard key={index} title={title} />
+            {graphData.map((graph, index) => (
+              <GraphCard
+                key={index}
+                title={graph.title}
+                graphComponent={graph.component}
+              />
             ))}
           </div>
           <OverviewTable />
