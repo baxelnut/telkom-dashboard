@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import "./PieChartComponent.css";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 import { readFile } from "../../service/data/readExcel";
-import "./PieChartComponent.css";
+import Loading from "../Loading";
 
 const COLORS = [
   "#CF0000",
@@ -101,9 +102,11 @@ const renderActiveShape = (props) => {
 export default function PieChartComponent({ filePath, columnName }) {
   const [data, setData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const fileData = await readFile(filePath);
       const processedData = fileData.reduce((acc, row, index) => {
         const category = row[columnName] || "Unknown";
@@ -121,26 +124,33 @@ export default function PieChartComponent({ filePath, columnName }) {
       }, []);
 
       setData(processedData);
+      setLoading(false);
     }
 
     fetchData();
   }, [filePath, columnName]);
 
   return (
-    <ResponsiveContainer width="100%" height={400} className="pie">
-      <PieChart>
-        <Pie
-          activeIndex={activeIndex}
-          activeShape={renderActiveShape}
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={70}
-          outerRadius={120}
-          dataKey="value"
-          onMouseEnter={(_, index) => setActiveIndex(index)}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="pie-chart-container">
+      {loading ? (
+        <Loading />
+      ) : (
+        <ResponsiveContainer width="100%" height={400} className="pie">
+          <PieChart>
+            <Pie
+              activeIndex={activeIndex}
+              activeShape={renderActiveShape}
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={130}
+              dataKey="value"
+              onMouseEnter={(_, index) => setActiveIndex(index)}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      )}
+    </div>
   );
 }

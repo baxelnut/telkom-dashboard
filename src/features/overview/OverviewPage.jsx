@@ -9,7 +9,6 @@ import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
 import RadarChartComponent from "../../components/graphs/RadarChartComponent";
-import CSVReader from "../../service/data/CSVReader";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -103,7 +102,6 @@ export default function OverviewPage() {
             ))}
           </div>
           <OverviewTable />
-          <CSVReader filePath="/data/dummy.xlsx" />
         </div>
       </div>
     </>

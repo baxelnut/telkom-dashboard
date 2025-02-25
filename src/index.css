@@ -137,7 +137,7 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-surface);
+  background: grey;
 }
 
 @media (prefers-color-scheme: light) {

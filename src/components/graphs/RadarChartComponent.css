@@ -6,3 +6,9 @@
   position: absolute;
   /* background-color: red; */
 }
+
+.radar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

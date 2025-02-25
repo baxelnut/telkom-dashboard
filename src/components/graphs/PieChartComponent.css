@@ -1,5 +1,5 @@
 .pie {
-  max-width: 30%;
+  max-width: 50%;
   height: inherit;
   font-family: var(--font-heading);
   color: var(--color-on-surface);
@@ -13,4 +13,10 @@
   font-weight: 600;
   fill: var(--color-on-surface);
   position: absolute;
+}
+
+.pie-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

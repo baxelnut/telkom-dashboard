@@ -9,12 +9,15 @@ import {
 } from "recharts";
 import { readFile } from "../../service/data/readExcel";
 import "./BarChartComponent.css";
+import Loading from "../Loading";
 
 export default function BarChartComponent({ filePath, columnName }) {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const fileData = await readFile(filePath);
       const processedData = fileData.reduce((acc, row) => {
         const category = row[columnName] || "Unknown";
@@ -31,7 +34,12 @@ export default function BarChartComponent({ filePath, columnName }) {
         return acc;
       }, []);
 
-      setData(processedData);
+      const sortedData = processedData
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5);
+
+      setData(sortedData);
+      setLoading(false);
     }
 
     fetchData();
@@ -46,21 +54,25 @@ export default function BarChartComponent({ filePath, columnName }) {
 
   return (
     <div className="bar-chart">
-      <ResponsiveContainer>
-        <BarChart data={data}>
-          <XAxis
-            className="bar-label"
-            dataKey="shortName"
-            tickFormatter={(value, index) => data[index]?.shortName}
-          />
-          <Tooltip
-            formatter={(value, name, props) => [value, props.payload.name]}
-          />
-          <Bar dataKey="value" className="bar" fill="var(--color-primary)">
-            <LabelList dataKey="value" position="on" className="bar-label" />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      {loading ? (
+        <Loading />
+      ) : (
+        <ResponsiveContainer>
+          <BarChart data={data}>
+            <XAxis
+              className="bar-label"
+              dataKey="shortName"
+              tickFormatter={(value, index) => data[index]?.shortName}
+            />
+            <Tooltip
+              formatter={(value, name, props) => [value, props.payload.name]}
+            />
+            <Bar dataKey="value" className="bar" fill="var(--color-primary)">
+              <LabelList dataKey="value" position="on" className="bar-label" />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

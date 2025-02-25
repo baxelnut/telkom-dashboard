@@ -1,11 +1,12 @@
 import React from "react";
 import "./OverviewTable.css";
+import CSVReader from "../../service/data/CSVReader";
 
 export default function OverviewTable() {
   return (
     <div className="table-container">
-      <h5>Lorem ipsum dolor</h5>
-      <div className="table"></div>
+      <h5>Data Overview</h5>
+      <CSVReader filePath="/data/dummy.xlsx" />
     </div>
   );
 }
