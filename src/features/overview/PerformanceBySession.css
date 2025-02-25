@@ -5,6 +5,7 @@
   padding: 24px;
   height: inherit;
   border: 0.5px solid var(--color-on-surface-variant);
+  min-width: 27%;
 }
 
 .p-by-session p {
