@@ -10,21 +10,21 @@ import {
 import { readFile } from "../../service/data/readExcel";
 import "./BarChartComponent.css";
 
-export default function BarChartComponent({ filePath }) {
+export default function BarChartComponent({ filePath, columnName }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       const fileData = await readFile(filePath);
       const processedData = fileData.reduce((acc, row) => {
-        const subSegmen = row.SUB_SEGMEN || "Unknown";
-        const existing = acc.find((item) => item.name === subSegmen);
+        const category = row[columnName] || "Unknown";
+        const existing = acc.find((item) => item.name === category);
         if (existing) {
           existing.value += 1;
         } else {
           acc.push({
-            name: subSegmen,
-            shortName: getInitials(subSegmen),
+            name: category,
+            shortName: getInitials(category),
             value: 1,
           });
         }
@@ -35,7 +35,7 @@ export default function BarChartComponent({ filePath }) {
     }
 
     fetchData();
-  }, [filePath]);
+  }, [filePath, columnName]);
 
   function getInitials(name) {
     return name

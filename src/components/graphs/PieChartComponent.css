@@ -1,0 +1,15 @@
+.pie {
+  width: 100%;
+  height: inherit;
+  font-family: var(--font-heading);
+  color: var(--color-on-surface);
+  position: absolute;
+  /* background-color: red; */
+}
+
+.chart-category {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  fill: var(--color-on-surface);
+}

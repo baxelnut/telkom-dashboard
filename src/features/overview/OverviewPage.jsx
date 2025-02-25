@@ -7,6 +7,7 @@ import PerformanceBySession from "./PerformanceBySession";
 import GraphCard from "./GraphCard";
 import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
+import PieChartComponent from "../../components/graphs/PieChartComponent";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -53,12 +54,22 @@ export default function OverviewPage() {
   const graphData = [
     { title: "SEGMEN I1", component: <p>Custom graph placeholder</p> },
     {
-      title: "BILL_WITEL AC1",
-      component: <p>Custom graph placeholder</p>,
+      title: "Bill Witel",
+      component: (
+        <PieChartComponent
+          filePath="\data\dummy.xlsx"
+          columnName="BILL_WITEL"
+        />
+      ),
     },
     {
-      title: "SUB_SEGMEN J1",
-      component: <BarChartComponent filePath="\data\dummy.xlsx" />,
+      title: "Sub-segmen",
+      component: (
+        <BarChartComponent
+          filePath="\data\dummy.xlsx"
+          columnName="SUB_SEGMEN"
+        />
+      ),
     },
   ];
   return (
