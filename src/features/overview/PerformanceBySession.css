@@ -1,4 +1,6 @@
 .p-by-session {
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-surface);
   margin-right: 20px;
   border-radius: 12px;
@@ -8,6 +10,38 @@
   min-width: 27%;
 }
 
-.p-by-session p {
-  color: var(--color-on-surface-variant);
+.p-by-session .main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-top: 16px;
+}
+
+.head h6 {
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bar,
+.bar .active {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-surface-variant);
+  border-radius: 12px;
+}
+
+.bar .active {
+  width: auto;
+  background-color: var(--color-primary-variant);
 }

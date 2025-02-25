@@ -90,7 +90,10 @@ export default function OverviewPage() {
           </div>
           <div className="p-over-time-container">
             <PerformanceOverTime data={overTimeData} />
-            <PerformanceBySession />
+            <PerformanceBySession
+              filePath="/data/dummy.xlsx"
+              columnName="CUSTACCNTNAME"
+            />
           </div>
           <div className="p-graphs-container">
             {graphData.map((graph, index) => (
