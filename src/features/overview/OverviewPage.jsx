@@ -8,6 +8,8 @@ import GraphCard from "./GraphCard";
 import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
+import RadarChartComponent from "../../components/graphs/RadarChartComponent";
+import CSVReader from "../../service/data/CSVReader";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -52,21 +54,26 @@ export default function OverviewPage() {
   ];
 
   const graphData = [
-    { title: "SEGMEN I1", component: <p>Custom graph placeholder</p> },
     {
-      title: "BillWitel",
+      title: "Radar Chart",
+      component: (
+        <RadarChartComponent filePath="/data/dummy.xlsx" columnName="SEGMEN" />
+      ),
+    },
+    {
+      title: "Pie Chart",
       component: (
         <PieChartComponent
-          filePath="\data\dummy.xlsx"
+          filePath="/data/dummy.xlsx"
           columnName="BILL_WITEL"
         />
       ),
     },
     {
-      title: "Sub-segmen",
+      title: "Bar Chart",
       component: (
         <BarChartComponent
-          filePath="\data\dummy.xlsx"
+          filePath="/data/dummy.xlsx"
           columnName="SUB_SEGMEN"
         />
       ),
@@ -96,6 +103,7 @@ export default function OverviewPage() {
             ))}
           </div>
           <OverviewTable />
+          <CSVReader filePath="/data/dummy.xlsx" />
         </div>
       </div>
     </>

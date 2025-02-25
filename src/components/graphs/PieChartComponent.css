@@ -1,5 +1,5 @@
 .pie {
-  width: 100%;
+  max-width: 30%;
   height: inherit;
   font-family: var(--font-heading);
   color: var(--color-on-surface);
