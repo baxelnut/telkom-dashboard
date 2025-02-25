@@ -54,7 +54,7 @@ export default function OverviewPage() {
   const graphData = [
     { title: "SEGMEN I1", component: <p>Custom graph placeholder</p> },
     {
-      title: "Bill Witel",
+      title: "BillWitel",
       component: (
         <PieChartComponent
           filePath="\data\dummy.xlsx"

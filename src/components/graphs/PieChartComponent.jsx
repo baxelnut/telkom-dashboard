@@ -43,16 +43,6 @@ const renderActiveShape = (props) => {
 
   return (
     <g>
-      <text
-        x={cx}
-        y={cy}
-        dy={8}
-        textAnchor="middle"
-        fill={fill}
-        className="chart-category"
-      >
-        {payload.name}
-      </text>
       <Sector
         cx={cx}
         cy={cy}
@@ -93,6 +83,16 @@ const renderActiveShape = (props) => {
         fill="var(--color-on-surface-variant)"
       >
         {`(${(percent * 100).toFixed(2)}%)`}
+      </text>
+      <text
+        x={cx}
+        y={cy}
+        dy={8}
+        textAnchor="middle"
+        fill={fill}
+        className="chart-category"
+      >
+        {payload.name}
       </text>
     </g>
   );

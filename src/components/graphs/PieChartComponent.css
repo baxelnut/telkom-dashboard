@@ -12,4 +12,5 @@
   font-size: 16px;
   font-weight: 600;
   fill: var(--color-on-surface);
+  position: absolute;
 }
