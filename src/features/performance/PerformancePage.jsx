@@ -1,7 +1,7 @@
 import React from "react";
 import "./PerformancePage.css";
 import PerformanceWidget from "./PerformanceWidget";
-import BarChartComparisonChart from "./BarChartComparisonChart";
+import BarChartComparisonChart from "../../components/graphs/BarChartComparisonChart";
 
 const widgetData = [
   {
@@ -51,7 +51,12 @@ export default function PerformancePage() {
           ))}
         </div>
         <div className="p2-container">
-          <BarChartComparisonChart data={barChartData} />
+          <div className="p2-left">
+            <BarChartComparisonChart data={barChartData} />
+          </div>
+          <div className="p2-right">
+            <BarChartComparisonChart data={barChartData} />
+          </div>
         </div>
       </div>
     </div>

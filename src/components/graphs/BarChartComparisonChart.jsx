@@ -1,5 +1,5 @@
 import React from "react";
-import "./PerformancePage.css";
+import "./BarChartComparisonChart.css";
 
 export default function BarChartComparisonChart({ data }) {
   return (
