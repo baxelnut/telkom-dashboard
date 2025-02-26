@@ -3,7 +3,12 @@ import { readFile } from "../../service/data/readExcel";
 import "./PerformanceBySession.css";
 import Loading from "../../components/Loading";
 
-export default function PerformanceBySession({ filePath, columnName }) {
+export default function PerformanceBySession({
+  filePath,
+  columnName,
+  title,
+  subtitle,
+}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,8 +53,8 @@ export default function PerformanceBySession({ filePath, columnName }) {
   return (
     <div className="p-by-session">
       <div className="title">
-        <h4>Session by Customer</h4>
-        <p>Showing data for top customers</p>
+        <h4>{title}</h4>
+        <p>{subtitle}</p>
       </div>
       <div className="main">
         {loading ? (

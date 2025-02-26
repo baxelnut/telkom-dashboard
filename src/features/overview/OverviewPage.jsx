@@ -93,6 +93,8 @@ export default function OverviewPage() {
             <PerformanceBySession
               filePath="/data/dummy.xlsx"
               columnName="ORDER_SUBTYPE"
+              title="Session by Sub-type"
+              subtitle="Showing data for top order sub-type"
             />
           </div>
           <div className="p-graphs-container">
