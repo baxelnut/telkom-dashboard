@@ -1,0 +1,15 @@
+.report {
+  background-color: var(--color-surface-variant);
+  height: 100%;
+  min-height: 100vh;
+  width: 80%;
+  margin-left: 20%;
+  padding-bottom: 20px;
+}
+
+.report .content {
+  position: inherit;
+  padding-top: 100px;
+  transition: top 0.3s ease-in-out;
+  margin-inline: 20px;
+}

@@ -54,13 +54,13 @@ export default function OverviewPage() {
 
   const graphData = [
     {
-      title: "Radar Chart",
+      title: "Segmen",
       component: (
         <RadarChartComponent filePath="/data/dummy.xlsx" columnName="SEGMEN" />
       ),
     },
     {
-      title: "Pie Chart",
+      title: "Bill Witel",
       component: (
         <PieChartComponent
           filePath="/data/dummy.xlsx"
@@ -69,7 +69,7 @@ export default function OverviewPage() {
       ),
     },
     {
-      title: "Bar Chart",
+      title: "Sub-segmen",
       component: (
         <BarChartComponent
           filePath="/data/dummy.xlsx"
@@ -92,7 +92,7 @@ export default function OverviewPage() {
             <PerformanceOverTime data={overTimeData} />
             <PerformanceBySession
               filePath="/data/dummy.xlsx"
-              columnName="CUSTACCNTNAME"
+              columnName="ORDER_SUBTYPE"
             />
           </div>
           <div className="p-graphs-container">

@@ -20,10 +20,10 @@ export default function SideBar() {
       path: "/performance",
     },
     {
-      id: "selection1",
-      label: "selectionMenu1",
-      icon: "src/assets/icons/grid-fill.svg",
-      path: "*",
+      id: "report",
+      label: "Report",
+      icon: "src/assets/icons/clipboard-data-fill.svg",
+      path: "/report",
     },
     {
       id: "selection2",
