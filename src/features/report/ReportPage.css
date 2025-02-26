@@ -13,3 +13,37 @@
   transition: top 0.3s ease-in-out;
   margin-inline: 20px;
 }
+
+.report .periode-filter,
+.report .table-container {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 20px;
+  border: 0.5px solid var(--color-on-surface-variant);
+  margin-inline: 0;
+}
+
+.report .filter-box {
+  color: var(--color-on-surface-variant);
+  background-color: var(--color-surface-variant);
+  padding-left: 12px;
+  width: 50%;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  border-radius: 12px;
+}
+
+.filter-box .filter-field {
+  margin-right: 12px;
+  background-color: var(--color-surface);
+  padding: 8px;
+  color: var(--color-on-surface-variant);
+}
+
+.report .table {
+  background-color: var(--color-surface-variant);
+  border-radius: 0;
+  border: 0;
+}
