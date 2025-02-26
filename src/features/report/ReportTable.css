@@ -1,22 +1,17 @@
-.report-table-wrapper table th,
-.report-table-wrapper table td {
-  text-align: center;
-}
-
 .report-table-wrapper {
   width: 100%;
-  overflow-x: auto;
   margin-bottom: 6px;
 }
 
 .report-table-wrapper .table-scroll {
   width: 100%;
-  overflow: hidden;
+  max-height: none;
+  overflow: visible;
 }
 
 .report-table-wrapper table {
   width: 100%;
-  table-layout: fixed;
+  border-collapse: collapse;
 }
 
 .report-table-wrapper th,
@@ -25,10 +20,17 @@
   white-space: normal;
   text-align: center;
   border: 0.5px solid var(--color-on-surface-variant);
+  padding: 8px;
 }
 
-.report-table-wrapper th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.report-table-wrapper td h6 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.report-table-wrapper td p {
+  font-style: italic !important;
+  font-family: inherit;
+  margin: 0;
 }
