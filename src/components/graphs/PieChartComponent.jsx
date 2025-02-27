@@ -4,18 +4,10 @@ import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 import { readFile } from "../../service/data/readExcel";
 import Loading from "../Loading";
 
-const COLORS = [
-  "#CF0000",
-  "#890596",
-  "#21209C",
-  "#FDB827",
-  "#FA26A0",
-  "#009688",
-  "#FF5722",
-  "#37474F",
-  "#4CAF50",
-  "#1976D2",
-];
+const getRandomColor = () =>
+  `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, "0")}`;
 
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
@@ -108,7 +100,7 @@ export default function PieChartComponent({ filePath, columnName }) {
     async function fetchData() {
       setLoading(true);
       const fileData = await readFile(filePath);
-      const processedData = fileData.reduce((acc, row, index) => {
+      const processedData = fileData.reduce((acc, row) => {
         const category = row[columnName] || "Unknown";
         const existing = acc.find((item) => item.name === category);
         if (existing) {
@@ -117,7 +109,7 @@ export default function PieChartComponent({ filePath, columnName }) {
           acc.push({
             name: category,
             value: 1,
-            fill: COLORS[index % COLORS.length],
+            fill: getRandomColor(),
           });
         }
         return acc;

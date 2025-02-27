@@ -52,3 +52,7 @@
 .report .table-container {
   height: auto;
 }
+
+.report .table-container h6 {
+  cursor: pointer;
+}
