@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./OverViewPage.css";
 import Header from "../../components/Header";
-import OverViewCard from "./OverViewCard";
+import OverViewCard from "../../components/graphs/OverViewCard";
 import PerformanceOverTime from "./PerformanceOverTime";
 import PerformanceBySession from "./PerformanceBySession";
 import GraphCard from "./GraphCard";
@@ -9,47 +9,53 @@ import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
 import RadarChartComponent from "../../components/graphs/RadarChartComponent";
+import { readFile } from "../../service/data/readExcel";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
+  const [top4Witel, setTop4Witel] = useState([]);
 
-  const performanceData = [
-    {
-      title: "Lorem Ipsum",
-      amount: "XXXX",
-      percentage: 10.86,
-      percentageSubtitle: "Compared to yesterday",
-    },
-    {
-      title: "Lorem Ipsum",
-      amount: "XXXX",
-      percentage: -10.86,
-      percentageSubtitle: "Compared to yesterday",
-    },
-    {
-      title: "Lorem Ipsum",
-      amount: "XXXX",
-      percentage: 0.0,
-      percentageSubtitle: "Compared to yesterday",
-    },
-    {
-      title: "Lorem Ipsum",
-      amount: "XXXX",
-      percentage: 10.86,
-      percentageSubtitle: "Compared to yesterday",
-    },
-  ];
+  useEffect(() => {
+    async function fetchWitel() {
+      const fileData = await readFile("/data/dummy.xlsx");
+      if (!fileData) return;
+
+      const allowedWitels = [
+        "BALI",
+        "MALANG",
+        "NUSA TENGGARA",
+        "SIDOARJO",
+        "SURAMADU",
+      ];
+      const witelCounts = fileData.reduce((acc, row) => {
+        const witel = row["BILL_WITEL"] || "Unknown";
+        if (allowedWitels.includes(witel)) {
+          acc[witel] = (acc[witel] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      const sortedWitel = Object.entries(witelCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name]) => name);
+
+      console.log("Filtered Witel:", sortedWitel);
+      setTop4Witel(sortedWitel);
+    }
+
+    fetchWitel();
+  }, []);
+
+  const performanceData = top4Witel.map((witel) => ({
+    witelName: witel,
+    percentage: (Math.random() * (Math.random() < 0.5 ? -1 : 1)).toFixed(2),
+    percentageSubtitle: "Compared to yesterday",
+    filePath: "/data/dummy.xlsx",
+  }));
 
   const overTimeData = [
     { title: "Total Revenue", amount: "XXX", percentage: 55 },
     { title: "Total Target", amount: "XXX", percentage: 45 },
-  ];
-
-  const sampleData = [
-    { name: "Jan", value: 40 },
-    { name: "Feb", value: 55 },
-    { name: "Mar", value: 70 },
-    { name: "Apr", value: 30 },
   ];
 
   const graphData = [

@@ -12,9 +12,8 @@
   cursor: pointer;
 }
 
-.overview-card h2 {
-  margin-top: 24px;
-  margin-bottom: 12px;
+.overview-card h4 {
+  margin-top: 12px;
   color: var(--color-on-surface);
 }
 
