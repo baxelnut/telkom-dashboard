@@ -9,7 +9,7 @@ export default function SideBar() {
   const menuItems = [
     {
       id: "overview",
-      label: "Overviewaaaaaaaa",
+      label: "Overview",
       icon: "src/assets/icons/grid-fill.svg",
       path: "/overview",
     },
@@ -26,10 +26,10 @@ export default function SideBar() {
       path: "/report",
     },
     {
-      id: "selection2",
-      label: "selectionMenu2",
-      icon: "src/assets/icons/grid-fill.svg",
-      path: "*",
+      id: "example",
+      label: "Example...💀",
+      icon: "src/assets/icons/tornado.svg",
+      path: "/example",
     },
     {
       id: "selection3",

@@ -12,6 +12,7 @@ import PageNotFound from "./features/PageNotFound";
 import OverviewPage from "./features/overview/OverviewPage";
 import PerformancePage from "./features/performance/PerformancePage";
 import ReportPage from "./features/report/ReportPage";
+import ExamplePage from "./example/ExamplePage";
 
 function AppContent() {
   const location = useLocation();
@@ -19,7 +20,8 @@ function AppContent() {
     location.pathname !== "/" &&
     location.pathname !== "/overview" &&
     location.pathname !== "/performance" &&
-    location.pathname !== "/report";
+    location.pathname !== "/report" &&
+    location.pathname !== "/example";
 
   const pageConfig = {
     "/overview": { title: "Overview", showFilter: true, customActions: null },
@@ -30,6 +32,11 @@ function AppContent() {
     },
     "/report": {
       title: "Report",
+      showFilter: false,
+      customActions: null,
+    },
+    "/example": {
+      title: "Example",
       showFilter: false,
       customActions: null,
     },
@@ -45,6 +52,7 @@ function AppContent() {
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/performance" element={<PerformancePage />} />
           <Route path="/report" element={<ReportPage />} />
+          <Route path="/example" element={<ExamplePage />} />
           <Route path="/" element={<OverviewPage />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
