@@ -44,7 +44,8 @@
 @media screen and (max-width: 1100px) {
   .overview {
     width: 88%;
-    margin-left: 12%;
+    margin-left: 10%;
+    margin-right: 0;
   }
 
   .p-overview-container {
@@ -58,6 +59,17 @@
     margin-inline: 20px;
     padding: 0;
   }
+
+  .p-over-time-container {
+    display: flex;
+    flex-direction: column;
+    padding-block: 20px;
+    margin: 0;
+  }
+
+  .p-graphs-container {
+    flex-direction: column;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -70,5 +82,10 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+  }
+
+  .overview-container {
+    width: 82%;
+    margin-left: 8%;
   }
 }

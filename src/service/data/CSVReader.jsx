@@ -75,8 +75,8 @@ export default function CSVReader({ filePath }) {
         nextLabel={"Next →"}
         breakLabel={"..."}
         pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
+        marginPagesDisplayed={1}
+        pageRangeDisplayed={2}
         onPageChange={(event) => setCurrentPage(event.selected)}
         containerClassName={"pagination"}
         activeClassName={"active"}

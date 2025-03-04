@@ -101,3 +101,14 @@
     padding: 0;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+    max-width: 10%;
+  }
+
+  .menu-selection .icon {
+    padding: 5px;
+    max-width: 20px;
+  }
+}

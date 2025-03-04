@@ -267,4 +267,8 @@ button:hover .filter-icon {
   .header.expanded {
     max-height: 70%;
   }
+
+  .header {
+    width: 90%;
+  }
 }

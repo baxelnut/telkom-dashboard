@@ -68,3 +68,33 @@
 .p-over-time .trailing {
   margin-left: 10px;
 }
+
+@media screen and (max-width: 1100px) {
+  .p-over-time {
+    margin-bottom: 20px;
+    width: inherit;
+  }
+
+  .p-over-time .head {
+    align-items: start;
+  }
+
+  .total-p1 .leading,
+  .total-p2 .leading {
+    min-width: 14px;
+    min-height: 14px;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .total-p1 .leading,
+  .total-p2 .leading {
+    min-width: 12px;
+    min-height: 12px;
+  }
+
+  .p-over-time .info {
+    flex-direction: column;
+    align-items: start;
+  }
+}

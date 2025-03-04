@@ -37,7 +37,6 @@
     font-family: var(--font-heading);
   }
 
-  /* Pagination Styles */
   .pagination {
     display: flex;
     justify-content: center;
