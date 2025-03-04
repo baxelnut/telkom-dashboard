@@ -3,7 +3,7 @@
   border-radius: 12px;
   border: 0.5px solid var(--color-on-surface-variant);
   height: 100%;
-  width: 25%;
+  max-width: 25%;
   display: block;
   text-align: center;
   margin-left: 20px;
@@ -28,6 +28,7 @@
   color: var(--color-surface);
   border-radius: 12px;
   padding: 6px;
+  margin-right: 10px;
 }
 
 .percentage.positive {
@@ -36,4 +37,12 @@
 
 .percentage.negative {
   background-color: var(--color-error);
+}
+
+@media screen and (max-width: 1100px) {
+  .overview-card {
+    min-width: fit-content;
+    margin: 0;
+    padding: 0;
+  }
 }
