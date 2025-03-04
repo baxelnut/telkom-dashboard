@@ -5,21 +5,21 @@ import BarChartComparisonChart from "../../components/graphs/BarChartComparisonC
 
 const widgetData = [
   {
-    icon: "src/assets/icons/grid-fill.svg",
+    icon: "/assets/icons/grid-fill.svg",
     title: "Lorem Ipsum 1",
     value: "249",
     percentage: 10.86,
     description: "Lorem ipsum",
   },
   {
-    icon: "src/assets/icons/grid-fill.svg",
+    icon: "/assets/icons/grid-fill.svg",
     title: "Lorem Ipsum 2",
     value: "349",
     percentage: -5.12,
     description: "Dolor sit amet",
   },
   {
-    icon: "src/assets/icons/grid-fill.svg",
+    icon: "/assets/icons/grid-fill.svg",
     title: "Lorem Ipsum 3",
     value: "189",
     percentage: 2.45,

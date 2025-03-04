@@ -6,7 +6,7 @@ export default function BarChartComparisonChart({ data }) {
     <div className="bar-chart-c">
       <div className="head">
         <h3>{data.title}</h3>
-        <img src="src/assets/icons/three-dots.svg" alt="more" />
+        <img src="/assets/icons/three-dots.svg" alt="more" />
       </div>
       {data.bars.map((bar, index) => (
         <div key={index} className="graph">

@@ -47,7 +47,7 @@ export default function Header({
             <button className="filter" type="button" onClick={toggleFilter}>
               <img
                 className="filter-icon"
-                src="src/assets/icons/filter.svg"
+                src="/assets/icons/filter.svg"
                 alt="Filter"
               />
               <h6>Filter</h6>
@@ -61,7 +61,7 @@ export default function Header({
             <h6>{userName}</h6>
             <img
               className="chevron-down"
-              src="src/assets/icons/chevron-down.svg"
+              src="/assets/icons/chevron-down.svg"
             />
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function Header({
                       <h6>{filter.select}</h6>
                       <img
                         className="chevron-down"
-                        src="src/assets/icons/chevron-down.svg"
+                        src="/assets/icons/chevron-down.svg"
                       />
                     </div>
                   </div>

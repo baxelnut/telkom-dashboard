@@ -10,31 +10,31 @@ export default function SideBar() {
     {
       id: "overview",
       label: "Overview",
-      icon: "src/assets/icons/grid-fill.svg",
+      icon: "/assets/icons/grid-fill.svg",
       path: "/overview",
     },
     {
       id: "performance",
       label: "Performance",
-      icon: "src/assets/icons/bar-chart-fill.svg",
+      icon: "/assets/icons/bar-chart-fill.svg",
       path: "/performance",
     },
     {
       id: "report",
       label: "Report",
-      icon: "src/assets/icons/clipboard-data-fill.svg",
+      icon: "/assets/icons/clipboard-data-fill.svg",
       path: "/report",
     },
     {
       id: "example",
       label: "Example",
-      icon: "src/assets/icons/tornado.svg",
+      icon: "/assets/icons/tornado.svg",
       path: "/example",
     },
     {
       id: "selection3",
       label: "selectionMenu3",
-      icon: "src/assets/icons/grid-fill.svg",
+      icon: "/assets/icons/grid-fill.svg",
       path: "*",
     },
   ];
