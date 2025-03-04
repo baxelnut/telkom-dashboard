@@ -104,7 +104,7 @@ export default function OverViewCard({
                 data={data}
                 cx="50%"
                 cy="50%"
-                outerRadius={80}
+                outerRadius={70}
                 label={renderCustomizedLabel}
                 labelLine={false}
               >

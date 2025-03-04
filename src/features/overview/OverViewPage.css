@@ -74,14 +74,12 @@
 
 @media screen and (max-width: 768px) {
   .p-overview-container {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 0.5fr);
-    grid-template-rows: repeat(3, auto);
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin: 0;
   }
 
   .overview-container {

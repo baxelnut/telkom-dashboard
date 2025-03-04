@@ -166,6 +166,7 @@ button:hover .filter-icon {
 @media screen and (max-width: 1100px) {
   .header {
     width: 88%;
+    margin-left: 12%;
     max-height: 60px;
   }
 
@@ -270,5 +271,6 @@ button:hover .filter-icon {
 
   .header {
     width: 90%;
+    margin-left: 10%;
   }
 }
