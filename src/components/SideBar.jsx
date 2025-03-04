@@ -27,7 +27,7 @@ export default function SideBar() {
     },
     {
       id: "example",
-      label: "Example...💀",
+      label: "Example",
       icon: "src/assets/icons/tornado.svg",
       path: "/example",
     },
@@ -41,9 +41,7 @@ export default function SideBar() {
 
   return (
     <div className="sidebar">
-      <div className="logo">
-        <img src="/TLK_BIG.svg" alt="logo" />
-      </div>
+      <img className="logo" src="/TLK_BIG.svg" alt="logo" />
       <div className="menu">
         {menuItems.map((item) => (
           <div
