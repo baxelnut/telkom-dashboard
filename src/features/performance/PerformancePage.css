@@ -87,7 +87,6 @@
   width: 30%;
 }
 
-
 @media screen and (max-width: 1100px) {
   .performance {
     width: 88%;
@@ -95,4 +94,24 @@
     margin-right: 0;
   }
 
+  .performance .p1-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 0px;
+    padding: 0;
+    margin-inline: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .performance .p1-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+  }
 }

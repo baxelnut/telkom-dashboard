@@ -46,7 +46,7 @@ export default function PerformancePage() {
           {widgetData.map((item, index) => (
             <React.Fragment key={index}>
               <PerformanceWidget {...item} />
-              {index < widgetData.length - 1 && <div className="divider"></div>}
+              {/* {index < widgetData.length - 1 && <div className="divider"></div>} */}
             </React.Fragment>
           ))}
         </div>
