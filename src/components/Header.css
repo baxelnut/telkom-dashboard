@@ -133,8 +133,10 @@ button:hover .filter-icon {
   margin-right: 12px;
 }
 
-.section2 .select-filter {
-  width: 250px;
+.section2 .select-filter,
+.section2 button {
+  min-width: 180px;
+  max-width: 250px;
 }
 
 .section2 .clear,
@@ -153,6 +155,14 @@ button:hover .filter-icon {
   background-color: var(--color-primary);
 }
 
+.sections {
+  display: flex;
+  flex-direction: column;
+  width: 96%;
+  height: 100%;
+  justify-content: space-evenly;
+}
+
 @media screen and (max-width: 1100px) {
   .header {
     width: 88%;
@@ -164,27 +174,89 @@ button:hover .filter-icon {
 
   .header-content {
     height: 100%;
-    flex-direction: column;
     justify-content: space-between;
   }
 
-  .actions {
+  .actions .filter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-inline: 10px;
+    padding-block: 4px;
+  }
+
+  .filter .filter-icon {
+    margin: 0;
+  }
+
+  .filter h6 {
     display: none;
   }
 
-  .filter {
+  .profile h6,
+  .profile .chevron-down {
     display: none;
   }
 
-  .profile {
-    display: none;
+  .header.expanded {
+    max-height: 50%;
   }
 
   .section1 {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 10px;
   }
 
   .section2 {
-    display: none;
+    flex-direction: column;
+    align-items: center;
   }
+
+  .sections {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .section2 .clear,
+  .section2 .confirm,
+  .section2 .select-filter {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sections {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section1,
+  .section2 {
+    display: grid;
+    grid-template-columns: repeat(2, 0.5fr);
+    gap: 4px;
+  }
+
+  .section2 {
+    grid-template-rows: repeat(2, auto);
+  }
+
+  .section2 .select-filter {
+    max-width: fit-content;
+  }
+
+  .section1 {
+    grid-template-rows: repeat(3, auto);
+  }
+
+  .header.expanded {
+    max-height: 70%;
+  }
+
+  
 }

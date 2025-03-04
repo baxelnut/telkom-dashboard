@@ -69,40 +69,42 @@ export default function Header({
 
       {isExpanded && (
         <>
-          <div className="section1">
-            {filters
-              .filter((filter) => filter.id >= 1 && filter.id <= 6)
-              .map((filter) => (
-                <div key={filter.id} className="build-filter">
-                  <p>{filter.name}</p>
-                  <div className="select-filter">
-                    <h6>{filter.select}</h6>
-                    <img
-                      className="chevron-down"
-                      src="src/assets/icons/chevron-down.svg"
-                    />
+          <div className="sections">
+            <div className="section1">
+              {filters
+                .filter((filter) => filter.id >= 1 && filter.id <= 6)
+                .map((filter) => (
+                  <div key={filter.id} className="build-filter">
+                    <p>{filter.name}</p>
+                    <div className="select-filter">
+                      <h6>{filter.select}</h6>
+                      <img
+                        className="chevron-down"
+                        src="src/assets/icons/chevron-down.svg"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
 
-          <div className="section2">
-            {filters
-              .filter((filter) => filter.id >= 7 && filter.id <= 8)
-              .map((filter) => (
-                <div key={filter.id} className="build-filter">
-                  <p>{filter.name}</p>
-                  <div className="select-filter">
-                    <h6>{filter.select}</h6>
+            <div className="section2">
+              {filters
+                .filter((filter) => filter.id >= 7 && filter.id <= 8)
+                .map((filter) => (
+                  <div key={filter.id} className="build-filter">
+                    <p>{filter.name}</p>
+                    <div className="select-filter">
+                      <h6>{filter.select}</h6>
+                    </div>
                   </div>
-                </div>
-              ))}
-            <button className="clear" type="button" onClick={toggleFilter}>
-              <h6>Clear Filter</h6>
-            </button>
-            <button className="confirm" type="button" onClick={toggleFilter}>
-              <h6>Confirm</h6>
-            </button>
+                ))}
+              <button className="clear" type="button" onClick={toggleFilter}>
+                <h6>Clear Filter</h6>
+              </button>
+              <button className="confirm" type="button" onClick={toggleFilter}>
+                <h6>Confirm</h6>
+              </button>
+            </div>
           </div>
         </>
       )}
