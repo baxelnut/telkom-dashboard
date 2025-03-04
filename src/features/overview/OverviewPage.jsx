@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./OverViewPage.css";
-import Header from "../../components/Header";
 import OverViewCard from "../../components/graphs/OverViewCard";
 import PerformanceOverTime from "./PerformanceOverTime";
 import PerformanceBySession from "./PerformanceBySession";
@@ -86,7 +85,6 @@ export default function OverviewPage() {
   ];
   return (
     <>
-      <Header title="Overview" onExpandChange={setIsHeaderExpanded} />
       <div className={`overview ${isHeaderExpanded ? "expanded" : ""}`}>
         <div className="content">
           <div className="p-overview-container">

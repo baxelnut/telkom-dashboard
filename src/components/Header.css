@@ -6,10 +6,10 @@
     inset 1px 0 0 var(--color-on-surface-variant);
   background-color: var(--color-surface);
   width: 82%;
+  margin-left: 18%;
   height: 80px;
   position: fixed;
   top: 0;
-  right: 0;
   transition: height 0.3s ease-in-out;
 }
 
