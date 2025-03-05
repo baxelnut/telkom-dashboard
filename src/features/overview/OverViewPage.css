@@ -7,6 +7,16 @@
   padding-bottom: 20px;
 }
 
+.overview-loading {
+  background-color: var(--color-surface-variant);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 18%;
+  padding-bottom: 20px;
+}
+
 .overview .content {
   position: inherit;
   padding-top: 100px;

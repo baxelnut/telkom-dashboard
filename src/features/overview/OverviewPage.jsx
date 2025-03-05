@@ -8,44 +8,63 @@ import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
 import RadarChartComponent from "../../components/graphs/RadarChartComponent";
-import { readFile } from "../../services/data/readExcel";
+import Loading from "../../components/Loading";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
-  const [top4Witel, setTop4Witel] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [fileData, setFileData] = useState([]);
+  const [top5Witel, settop5Witel] = useState([]);
 
   useEffect(() => {
-    async function fetchWitel() {
-      const fileData = await readFile("/data/dummy.xlsx");
-      if (!fileData) return;
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/data");
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-      const allowedWitels = [
-        "BALI",
-        "MALANG",
-        "NUSA TENGGARA",
-        "SIDOARJO",
-        "SURAMADU",
-      ];
-      const witelCounts = fileData.reduce((acc, row) => {
-        const witel = row["BILL_WITEL"] || "Unknown";
-        if (allowedWitels.includes(witel)) {
-          acc[witel] = (acc[witel] || 0) + 1;
-        }
-        return acc;
-      }, {});
+        const data = await response.json();
+        console.log("Fetched Data:", data);
+        setFileData(data);
 
-      const sortedWitel = Object.entries(witelCounts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([name]) => name);
+        const witelCounts = data.reduce((acc, item) => {
+          if (item.BILL_WITEL) {
+            acc[item.BILL_WITEL] = (acc[item.BILL_WITEL] || 0) + 1;
+          }
+          return acc;
+        }, {});
 
-      console.log("Filtered Witel:", sortedWitel);
-      setTop4Witel(sortedWitel);
-    }
+        const sortedWitel = Object.entries(witelCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([witel]) => witel);
 
-    fetchWitel();
+        settop5Witel(sortedWitel);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const performanceData = top4Witel.map((witel) => ({
+  if (loading)
+    return (
+      <div className="overview-loading">
+        <Loading />
+      </div>
+    );
+  if (error)
+    return (
+      <div className="overview-loading">
+        <p>Error: {error}</p>
+      </div>
+    );
+
+  const performanceData = top5Witel.map((witel) => ({
     witelName: witel,
     percentage: (Math.random() * (Math.random() < 0.5 ? -1 : 1)).toFixed(2),
     percentageSubtitle: "Compared to yesterday",
@@ -61,25 +80,19 @@ export default function OverviewPage() {
     {
       title: "Segmen",
       component: (
-        <RadarChartComponent filePath="/data/dummy.xlsx" columnName="SEGMEN" />
+        <RadarChartComponent fileData={fileData} columnName="SEGMEN" />
       ),
     },
     {
       title: "Bill Witel",
       component: (
-        <PieChartComponent
-          filePath="/data/dummy.xlsx"
-          columnName="BILL_WITEL"
-        />
+        <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
       ),
     },
     {
       title: "Sub-segmen",
       component: (
-        <BarChartComponent
-          filePath="/data/dummy.xlsx"
-          columnName="SUB_SEGMEN"
-        />
+        <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
       ),
     },
   ];

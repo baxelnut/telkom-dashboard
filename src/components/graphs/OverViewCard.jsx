@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { readFile } from "../../services/data/readExcel";
 import Loading from "../Loading";
 import "./OverViewCard.css";
 
@@ -43,7 +42,6 @@ const renderCustomizedLabel = ({
 export default function OverViewCard({
   percentage,
   percentageSubtitle,
-  filePath,
   witelName,
 }) {
   const isPositive = percentage > 0;
@@ -52,43 +50,50 @@ export default function OverViewCard({
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
-      const fileData = await readFile(filePath);
-      if (!fileData || fileData.length === 0) {
-        console.warn("No Data Found");
-        setLoading(false);
-        return;
-      }
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:5000/api/data");
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-      const statusCounts = fileData
-        .filter((row) => row["BILL_WITEL"] === witelName)
-        .reduce((acc, row) => {
-          const status = row["KATEGORI"] || "Unknown";
-          if (status === "BILLING COMPLETED") {
+        const fileData = await response.json();
+        if (!Array.isArray(fileData)) throw new Error("Invalid data format");
+
+        const statusCounts = fileData
+          .filter((row) => row["BILL_WITEL"] === witelName)
+          .reduce((acc, row) => {
+            const status = row["KATEGORI"] || "Unknown";
+            if (status === "BILLING COMPLETED") {
+              return acc;
+            }
+            acc[status] = (acc[status] || 0) + 1;
             return acc;
-          }
-          acc[status] = (acc[status] || 0) + 1;
-          return acc;
-        }, {});
+          }, {});
 
-      const processedData = Object.entries(statusCounts).map(
-        ([name, value]) => ({
-          name,
-          value,
-          fill: categoryColors[name] || categoryColors.Unknown,
-        })
-      );
+        const processedData = Object.entries(statusCounts).map(
+          ([name, value]) => ({
+            name,
+            value,
+            fill: categoryColors[name] || categoryColors.Unknown,
+          })
+        );
 
-      // console.log(`Status Data for ${witelName}:`, processedData);
-      setData(processedData);
-      setLoading(false);
+        setData(processedData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchData();
-  }, [filePath, witelName]);
+  }, [witelName]);
+
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="overview-card">

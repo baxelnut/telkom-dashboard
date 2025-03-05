@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./PieChartComponent.css";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
-import { readFile } from "../../services/data/readExcel";
 import Loading from "../Loading";
 
 const getRandomColor = () =>
@@ -91,58 +90,76 @@ const renderActiveShape = (props) => {
   );
 };
 
-export default function PieChartComponent({ filePath, columnName }) {
+export default function PieChartComponent({ columnName }) {
   const [data, setData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const fileData = await readFile(filePath);
-      const processedData = fileData.reduce((acc, row) => {
-        const category = row[columnName] || "Unknown";
-        const existing = acc.find((item) => item.name === category);
-        if (existing) {
-          existing.value += 1;
-        } else {
-          acc.push({
-            name: category,
-            value: 1,
-            fill: getRandomColor(),
-          });
-        }
-        return acc;
-      }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/data");
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-      setData(processedData);
-      setLoading(false);
-    }
+        const fileData = await response.json();
+        if (!Array.isArray(fileData)) throw new Error("Invalid data format");
+
+        // Process data into categories
+        const processedData = fileData.reduce((acc, row) => {
+          const category = row[columnName] || "Unknown";
+          const existing = acc.find((item) => item.name === category);
+          if (existing) {
+            existing.value += 1;
+          } else {
+            acc.push({ name: category, value: 1, fill: getRandomColor() });
+          }
+          return acc;
+        }, []);
+
+        setData(processedData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchData();
-  }, [filePath, columnName]);
+  }, [columnName]);
+
+  if (loading)
+    return (
+      <div className="pie-chart-container">
+        <Loading />
+      </div>
+    );
+  if (error)
+    return (
+      <div className="pie-chart-container">
+        <p>Error: {error}</p>
+      </div>
+    );
+  if (data.length === 0) return <p>No data available.</p>;
 
   return (
     <div className="pie-chart-container">
-      {loading ? (
-        <Loading />
-      ) : (
-        <ResponsiveContainer width="100%" height={400} className="pie">
-          <PieChart>
-            <Pie
-              activeIndex={activeIndex}
-              activeShape={renderActiveShape}
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={70}
-              outerRadius={130}
-              dataKey="value"
-              onMouseEnter={(_, index) => setActiveIndex(index)}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      )}
+      <ResponsiveContainer width="100%" height={400} className="pie">
+        <PieChart>
+          <Pie
+            activeIndex={activeIndex}
+            activeShape={renderActiveShape}
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={70}
+            outerRadius={130}
+            dataKey="value"
+            onMouseEnter={(_, index) => setActiveIndex(index)}
+          />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 }
