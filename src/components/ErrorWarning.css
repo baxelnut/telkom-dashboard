@@ -1,0 +1,10 @@
+.error-fancy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-fancy h6 {
+  margin-block: 20px;
+}

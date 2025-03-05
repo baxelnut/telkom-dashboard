@@ -83,6 +83,12 @@
 }
 
 @media screen and (max-width: 768px) {
+  .overview {
+    width: 90%;
+    margin-left: 10%;
+    margin-right: 0;
+  }
+
   .p-overview-container {
     display: flex;
     flex-direction: column;

@@ -9,6 +9,7 @@ import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
 import RadarChartComponent from "../../components/graphs/RadarChartComponent";
 import Loading from "../../components/Loading";
+import ErrorWarning from "../../components/ErrorWarning";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -62,7 +63,7 @@ export default function OverviewPage() {
   if (error)
     return (
       <div className="overview-loading">
-        <p>Error: {error}</p>
+        <ErrorWarning e={error} />
       </div>
     );
 
