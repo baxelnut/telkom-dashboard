@@ -1,32 +1,28 @@
 import React, { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
 import "./ReportTable.css";
 import Loading from "../../components/Loading";
 
-export default function ReportTable({ filePath }) {
+export default function ReportTable() {
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(filePath);
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const response = await fetch("http://localhost:5000/api/data");
+        const jsonData = await response.json();
 
         const groupedCounts = processData(jsonData);
         setCounts(groupedCounts);
       } catch (error) {
-        console.error("Error loading file:", error);
+        console.error("Error fetching data from backend:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [filePath]);
+  }, []);
 
   const processData = (data) => {
     return data.reduce((acc, row) => {
@@ -58,7 +54,7 @@ export default function ReportTable({ filePath }) {
   };
 
   const formatCurrency = (value) =>
-    value == 0 ? null : `Rp.${value.toLocaleString("id-ID")}`;
+    value === 0 ? null : `Rp.${value.toLocaleString("id-ID")}`;
 
   const grandTotals = {
     provideOrder: { count: 0, revenue: 0 },
@@ -93,16 +89,10 @@ export default function ReportTable({ filePath }) {
               <tr>
                 <th rowSpan="2">WITEL</th>
                 <th colSpan="3">&lt;3 BLN</th>
-                <th rowSpan="2">
-                  &lt;3 BLN <br /> Total
-                </th>
+                <th rowSpan="2">&lt;3 BLN Total</th>
                 <th colSpan="3">&gt;3 BLN</th>
-                <th rowSpan="2">
-                  &gt;3 BLN <br /> Total
-                </th>
-                <th rowSpan="2">
-                  Grand <br /> Total
-                </th>
+                <th rowSpan="2">&gt;3 BLN Total</th>
+                <th rowSpan="2">Grand Total</th>
               </tr>
               <tr>
                 {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
@@ -128,33 +118,25 @@ export default function ReportTable({ filePath }) {
                     <td>
                       <h6>{witel}</h6>
                     </td>
-                    <td>
-                      <h6>{data["PROVIDE ORDER"].count}</h6>
-                      <p>{formatCurrency(data["PROVIDE ORDER"].revenue)}</p>
-                    </td>
-                    <td>
-                      <h6>{data["IN PROCESS"].count}</h6>
-                      <p>{formatCurrency(data["IN PROCESS"].revenue)}</p>
-                    </td>
-                    <td>
-                      <h6>{data["READY TO BILL"].count}</h6>
-                      <p>{formatCurrency(data["READY TO BILL"].revenue)}</p>
-                    </td>
+                    {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
+                      (label, idx) => (
+                        <td key={idx}>
+                          <h6>{data[label].count}</h6>
+                          <p>{formatCurrency(data[label].revenue)}</p>
+                        </td>
+                      )
+                    )}
                     <td>
                       <h6>{total3Bln}</h6>
                     </td>
-                    <td>
-                      <h6>{data["PROVIDE ORDER"].count}</h6>
-                      <p>{formatCurrency(data["PROVIDE ORDER"].revenue)}</p>
-                    </td>
-                    <td>
-                      <h6>{data["IN PROCESS"].count}</h6>
-                      <p>{formatCurrency(data["IN PROCESS"].revenue)}</p>
-                    </td>
-                    <td>
-                      <h6>{data["READY TO BILL"].count}</h6>
-                      <p>{formatCurrency(data["READY TO BILL"].revenue)}</p>
-                    </td>
+                    {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
+                      (label, idx) => (
+                        <td key={idx}>
+                          <h6>{data[label].count}</h6>
+                          <p>{formatCurrency(data[label].revenue)}</p>
+                        </td>
+                      )
+                    )}
                     <td>
                       <h6>{totalMore3Bln}</h6>
                     </td>
@@ -169,33 +151,25 @@ export default function ReportTable({ filePath }) {
                 <td>
                   <h6>GRAND TOTAL</h6>
                 </td>
-                <td>
-                  <h6>{grandTotals.provideOrder.count}</h6>
-                  <p>{formatCurrency(grandTotals.provideOrder.revenue)}</p>
-                </td>
-                <td>
-                  <h6>{grandTotals.inProcess.count}</h6>
-                  <p>{formatCurrency(grandTotals.inProcess.revenue)}</p>
-                </td>
-                <td>
-                  <h6>{grandTotals.readyToBill.count}</h6>
-                  <p>{formatCurrency(grandTotals.readyToBill.revenue)}</p>
-                </td>
+                {["provideOrder", "inProcess", "readyToBill"].map(
+                  (key, idx) => (
+                    <td key={idx}>
+                      <h6>{grandTotals[key].count}</h6>
+                      <p>{formatCurrency(grandTotals[key].revenue)}</p>
+                    </td>
+                  )
+                )}
                 <td>
                   <h6>{grandTotals.total3Bln}</h6>
                 </td>
-                <td>
-                  <h6>{grandTotals.provideOrder.count}</h6>
-                  <p>{formatCurrency(grandTotals.provideOrder.revenue)}</p>
-                </td>
-                <td>
-                  <h6>{grandTotals.inProcess.count}</h6>
-                  <p>{formatCurrency(grandTotals.inProcess.revenue)}</p>
-                </td>
-                <td>
-                  <h6>{grandTotals.readyToBill.count}</h6>
-                  <p>{formatCurrency(grandTotals.readyToBill.revenue)}</p>
-                </td>
+                {["provideOrder", "inProcess", "readyToBill"].map(
+                  (key, idx) => (
+                    <td key={idx}>
+                      <h6>{grandTotals[key].count}</h6>
+                      <p>{formatCurrency(grandTotals[key].revenue)}</p>
+                    </td>
+                  )
+                )}
                 <td>
                   <h6>{grandTotals.totalMore3Bln}</h6>
                 </td>

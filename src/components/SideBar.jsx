@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./SideBar.css";
 
 const icons = {
@@ -27,8 +27,15 @@ const icons = {
 };
 
 export default function SideBar() {
-  const [selected, setSelected] = useState("overview");
   const navigate = useNavigate();
+  const location = useLocation();
+  const [selected, setSelected] = useState(
+    localStorage.getItem("selectedMenu") || "overview"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("selectedMenu", selected);
+  }, [selected]);
 
   const menuItems = [
     { id: "overview", label: "Overview", icon: icons.grid, path: "/overview" },
