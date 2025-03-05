@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   LabelList,
 } from "recharts";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 import "./BarChartComponent.css";
 import Loading from "../Loading";
 

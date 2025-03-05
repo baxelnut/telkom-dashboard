@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 import Loading from "../Loading";
 import "./OverViewCard.css";
 

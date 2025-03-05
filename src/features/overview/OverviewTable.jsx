@@ -1,6 +1,6 @@
 import React from "react";
 import "./OverviewTable.css";
-import CSVReader from "../../service/data/CSVReader";
+import CSVReader from "../../services/data/CSVReader";
 
 export default function OverviewTable() {
   return (

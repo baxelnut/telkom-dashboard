@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./PieChartComponent.css";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 import Loading from "../Loading";
 
 const getRandomColor = () =>

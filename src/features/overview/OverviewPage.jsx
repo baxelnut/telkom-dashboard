@@ -8,7 +8,7 @@ import OverviewTable from "./OverviewTable";
 import BarChartComponent from "../../components/graphs/BarChartComponent";
 import PieChartComponent from "../../components/graphs/PieChartComponent";
 import RadarChartComponent from "../../components/graphs/RadarChartComponent";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);

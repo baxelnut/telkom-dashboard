@@ -7,7 +7,7 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 import "./RadarChartComponent.css";
 import Loading from "../Loading";
 

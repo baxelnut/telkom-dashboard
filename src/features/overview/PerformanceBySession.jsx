@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { readFile } from "../../service/data/readExcel";
+import { readFile } from "../../services/data/readExcel";
 import "./PerformanceBySession.css";
 import Loading from "../../components/Loading";
 
