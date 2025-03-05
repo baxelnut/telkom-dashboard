@@ -2,21 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const XLSX = require("xlsx");
 const fs = require("fs");
-const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
+const path = require("path");
+
 const filePath = path.join(__dirname, "..", "public", "data", "dummy.xlsx");
 console.log("Looking for file at:", filePath);
-
-if (!fs.existsSync(filePath)) {
-  console.error("❌ Excel file not found at:", filePath);
-} else {
-  console.log("📂 File found, ready to read.");
-}
 
 app.get("/api/data", (req, res) => {
   try {
@@ -39,4 +34,4 @@ app.get("/api/data", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

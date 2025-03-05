@@ -12,13 +12,15 @@ import Loading from "../../components/Loading";
 
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fileData, setFileData] = useState([]);
-  const [top5Witel, settop5Witel] = useState([]);
+  const [top5Witel, setTop5Witel] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await fetch("http://localhost:5000/api/data");
         if (!response.ok) throw new Error("Failed to fetch data");
@@ -39,7 +41,7 @@ export default function OverviewPage() {
           .slice(0, 5)
           .map(([witel]) => witel);
 
-        settop5Witel(sortedWitel);
+        setTop5Witel(sortedWitel);
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.message);
@@ -68,7 +70,6 @@ export default function OverviewPage() {
     witelName: witel,
     percentage: (Math.random() * (Math.random() < 0.5 ? -1 : 1)).toFixed(2),
     percentageSubtitle: "Compared to yesterday",
-    filePath: "/data/dummy.xlsx",
   }));
 
   const overTimeData = [
@@ -108,7 +109,6 @@ export default function OverviewPage() {
           <div className="p-over-time-container">
             <PerformanceOverTime data={overTimeData} />
             <PerformanceBySession
-              filePath="/data/dummy.xlsx"
               columnName="ORDER_SUBTYPE"
               title="Session by Sub-type"
               subtitle="Showing data for top order sub-type"
