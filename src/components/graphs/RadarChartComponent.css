@@ -1,5 +1,5 @@
 .radar {
-  max-width: inherit;
+  max-width: 50%;
   font-family: var(--font-heading);
   color: var(--color-on-surface);
   position: absolute;

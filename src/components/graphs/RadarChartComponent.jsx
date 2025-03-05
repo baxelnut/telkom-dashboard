@@ -48,8 +48,8 @@ export default function RadarChartComponent({ filePath, columnName }) {
       {loading ? (
         <Loading />
       ) : (
-        <ResponsiveContainer width="100%" height={400} className="radar">
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+        <ResponsiveContainer width="90%" height={250} className="radar">
+          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
             <PolarGrid />
             <PolarAngleAxis dataKey="subject" />
             <PolarRadiusAxis />

@@ -19,6 +19,7 @@ export default function BarChartComponent({ filePath, columnName }) {
     async function fetchData() {
       setLoading(true);
       const fileData = await readFile(filePath);
+
       const processedData = fileData.reduce((acc, row) => {
         const category = row[columnName] || "Unknown";
         const existing = acc.find((item) => item.name === category);
@@ -57,7 +58,7 @@ export default function BarChartComponent({ filePath, columnName }) {
       {loading ? (
         <Loading />
       ) : (
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <XAxis
               className="bar-label"

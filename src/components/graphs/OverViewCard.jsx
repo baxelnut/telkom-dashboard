@@ -82,7 +82,7 @@ export default function OverViewCard({
         })
       );
 
-      console.log(`Status Data for ${witelName}:`, processedData);
+      // console.log(`Status Data for ${witelName}:`, processedData);
       setData(processedData);
       setLoading(false);
     }

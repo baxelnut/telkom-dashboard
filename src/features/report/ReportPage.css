@@ -27,7 +27,8 @@
   color: var(--color-on-surface-variant);
   background-color: var(--color-surface-variant);
   padding-left: 12px;
-  width: 50%;
+  max-width: 100%;
+  min-width: fit-content;
   margin-top: 20px;
   display: flex;
   align-items: center;
