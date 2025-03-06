@@ -4,7 +4,7 @@ function processExcelData(filePath) {
   try {
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
-    let jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
     const validWitels = [
       "BALI",
@@ -13,12 +13,13 @@ function processExcelData(filePath) {
       "SIDOARJO",
       "SURAMADU",
     ];
-
-    jsonData = jsonData.filter((row) => validWitels.includes(row.BILL_WITEL));
+    const filteredData = rawData.filter((row) =>
+      validWitels.includes(row.BILL_WITEL)
+    );
 
     const result = {};
 
-    jsonData.forEach(({ BILL_WITEL, KATEGORI }) => {
+    filteredData.forEach(({ BILL_WITEL, KATEGORI }) => {
       if (!result[BILL_WITEL]) {
         result[BILL_WITEL] = {
           witelName: BILL_WITEL,
@@ -51,7 +52,10 @@ function processExcelData(filePath) {
       }
     });
 
-    return Object.values(result);
+    return {
+      rawData, // The full raw dataset
+      processedData: Object.values(result), // The summarized processed data
+    };
   } catch (error) {
     console.error("❌ Error processing Excel file:", error);
     throw error;

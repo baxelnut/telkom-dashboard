@@ -14,6 +14,7 @@ import ErrorWarning from "../../components/ErrorWarning";
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
 
+  const [rawData, setRawData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,11 +30,11 @@ export default function OverviewPage() {
       setLoading(true);
       try {
         // fetch processed data for OverViewCard
-        const mainResponse = await fetch(
+        const processResponse = await fetch(
           "http://localhost:5000/api/processed_data"
         );
-        const mainData = await mainResponse.json();
-        const renamedData = mainData.map((witel) => ({
+        const processData = await processResponse.json();
+        const renamedData = processData.map((witel) => ({
           ...witel,
           witelName: witelMapping[witel.witelName] || witel.witelName,
         }));
@@ -46,6 +47,12 @@ export default function OverviewPage() {
         const sessionData = await sessionResponse.json();
         setSessionData(sessionData);
 
+        // fetch all data
+        const rawResponse = await fetch("http://localhost:5000/api/all-data");
+        const rawData = await rawResponse.json();
+        setRawData(rawData);
+
+        // make loading spinner go bye bte
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -248,7 +255,7 @@ export default function OverviewPage() {
               />
             ))} */}
           </div>
-          {/* <OverviewTable /> */}
+          <OverviewTable data={rawData} loading={loading} error={error} />
         </div>
       </div>
     </>
