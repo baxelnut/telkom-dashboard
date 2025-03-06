@@ -39,13 +39,13 @@ export default function SideBar() {
 
   const menuItems = [
     { id: "overview", label: "Overview", icon: icons.grid, path: "/overview" },
+    { id: "report", label: "Report", icon: icons.clipboard, path: "/report" },
     {
       id: "performance",
       label: "Performance",
       icon: icons.barChart,
       path: "/performance",
     },
-    { id: "report", label: "Report", icon: icons.clipboard, path: "/report" },
     { id: "example", label: "Example", icon: icons.tornado, path: "/example" },
   ];
 

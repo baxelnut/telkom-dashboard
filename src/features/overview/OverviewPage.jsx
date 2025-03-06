@@ -20,6 +20,13 @@ export default function OverviewPage() {
   const [top5Witel, setTop5Witel] = useState([]);
 
   useEffect(() => {
+    // const cachedData = sessionStorage.getItem("fileData");
+    // if (cachedData) {
+    //   setFileData(JSON.parse(cachedData));
+    //   setLoading(false);
+    //   return;
+    // }
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -28,6 +35,7 @@ export default function OverviewPage() {
 
         const data = await response.json();
         console.log("Fetched Data:", data);
+        // sessionStorage.setItem("fileData", JSON.stringify(data));
         setFileData(data);
 
         const witelCounts = data.reduce((acc, item) => {
