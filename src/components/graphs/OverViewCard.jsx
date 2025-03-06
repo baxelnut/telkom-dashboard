@@ -3,10 +3,10 @@ import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import "./OverViewCard.css";
 
 const categoryColors = {
-  "Provide Order": "#d72323",
-  "In Process": "#e76705",
-  "Prov. Complete": "#5cb338",
-  "Ready to Bill": "#312a68",
+  "Provide Order": "#e76705",
+  "In Process": "#d72323",
+  "Prov. Complete": "#312a68",
+  "Ready to Bill": "#5cb338",
   Unknown: "#999999",
 };
 

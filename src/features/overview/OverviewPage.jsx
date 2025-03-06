@@ -14,60 +14,72 @@ import ErrorWarning from "../../components/ErrorWarning";
 export default function OverviewPage() {
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
 
+  const [processedData, setProcessedData] = useState([]);
+  const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [fileData, setFileData] = useState([]);
-  const [top5Witel, setTop5Witel] = useState([]);
+
+  const witelMapping = {
+    MALANG: "JATIM TIMUR",
+    SIDOARJO: "JATIM BARAT",
+  };
 
   useEffect(() => {
-    // const cachedData = sessionStorage.getItem("fileData");
-    // if (cachedData) {
-    //   setFileData(JSON.parse(cachedData));
-    //   setLoading(false);
-    //   return;
-    // }
-
-    const fetchData = async () => {
+    async function fetchAllData() {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/data");
-        if (!response.ok) throw new Error("Failed to fetch data");
+        // fetch processed data for OverViewCard
+        const mainResponse = await fetch(
+          "http://localhost:5000/api/processed_data"
+        );
+        const mainData = await mainResponse.json();
+        const renamedData = mainData.map((witel) => ({
+          ...witel,
+          witelName: witelMapping[witel.witelName] || witel.witelName,
+        }));
+        setProcessedData(renamedData);
 
-        const data = await response.json();
-        console.log("Fetched Data:", data);
-        // sessionStorage.setItem("fileData", JSON.stringify(data));
-        setFileData(data);
+        // fetch sessions data for PerformaceBySession
+        const sessionResponse = await fetch(
+          `http://localhost:5000/api/performance?columnName=ORDER_SUBTYPE`
+        );
+        const sessionData = await sessionResponse.json();
+        setSessionData(sessionData);
 
-        const witelCounts = data.reduce((acc, item) => {
-          if (item.BILL_WITEL) {
-            acc[item.BILL_WITEL] = (acc[item.BILL_WITEL] || 0) + 1;
-          }
-          return acc;
-        }, {});
-
-        const sortedWitel = Object.entries(witelCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5)
-          .map(([witel]) => witel);
-
-        setTop5Witel(sortedWitel);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err.message);
-      } finally {
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(true);
         setLoading(false);
       }
-    };
+    }
 
-    fetchData();
+    fetchAllData();
   }, []);
 
-  if (loading)
-    return (
-      <div className="overview-loading">
-        <Loading />
-      </div>
-    );
+  // const formatChartData = (item) => {
+  //   const categories = [
+  //     "PROVIDE ORDER",
+  //     "IN PROCESS",
+  //     "PROV. COMPLETE",
+  //     "READY TO BILL",
+  //   ];
+
+  //   const categoryColors = {
+  //     "PROVIDE ORDER": "#d72323",
+  //     "IN PROCESS": "#e76705",
+  //     "PROV. COMPLETE": "#5cb338",
+  //     "READY TO BILL": "#312a68",
+  //     Unknown: "#999999",
+  //   };
+
+  //   return categories.map((category) => ({
+  //     name: category,
+  //     value: item[category] || 0,
+  //     fill: categoryColors[category] || "#999999",
+  //   }));
+  // };
+
   if (error)
     return (
       <div className="overview-loading">
@@ -75,64 +87,168 @@ export default function OverviewPage() {
       </div>
     );
 
-  const performanceData = top5Witel.map((witel) => ({
-    witelName: witel,
-    percentage: (Math.random() * (Math.random() < 0.5 ? -1 : 1)).toFixed(2),
-    percentageSubtitle: "Compared to yesterday",
-  }));
+  // const performanceData = top5Witel.map((witel) => ({
+  //   witelName: witel,
+  //   percentage: (Math.random() * (Math.random() < 0.5 ? -1 : 1)).toFixed(2),
+  //   percentageSubtitle: "Compared to yesterday",
+  // }));
 
+  // temporary
   const overTimeData = [
     { title: "Total Revenue", amount: "XXX", percentage: 55 },
     { title: "Total Target", amount: "XXX", percentage: 45 },
   ];
 
-  const graphData = [
-    {
-      title: "Segmen",
-      component: (
-        <RadarChartComponent fileData={fileData} columnName="SEGMEN" />
-      ),
-    },
-    {
-      title: "Bill Witel",
-      component: (
-        <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
-      ),
-    },
-    {
-      title: "Sub-segmen",
-      component: (
-        <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
-      ),
-    },
-  ];
+  // const graphData = [
+  //   {
+  //     title: "Segmen",
+  //     component: (
+  //       <RadarChartComponent fileData={fileData} columnName="SEGMEN" />
+  //     ),
+  //     data: top5Witel.map((witel) => ({
+  //       witelName: witel,
+  //     })),
+  //   },
+  //   {
+  //     title: "Bill Witel",
+  //     component: (
+  //       <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
+  //     ),
+  //   },
+  //   {
+  //     title: "Sub-segmen",
+  //     component: (
+  //       <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
+  //     ),
+  //   },
+  // ];
+
+  // const processData = (data) => {
+  //   const result = {};
+
+  //   data.forEach(({ BILL_WITEL, KATEGORI }) => {
+  //     if (!result[BILL_WITEL]) {
+  //       result[BILL_WITEL] = {
+  //         witelName: BILL_WITEL,
+  //         provideOrder: 0,
+  //         inProcess: 0,
+  //         provComplete: 0,
+  //         readyToBill: 0,
+  //         billComplete: 0,
+  //       };
+  //     }
+
+  //     switch (KATEGORI) {
+  //       case "PROVIDE ORDER":
+  //         result[BILL_WITEL].provideOrder += 1;
+  //         break;
+  //       case "IN PROCESS":
+  //         result[BILL_WITEL].inProcess += 1;
+  //         break;
+  //       case "PROV. COMPLETE":
+  //         result[BILL_WITEL].provComplete += 1;
+  //         break;
+  //       case "READY TO BILL":
+  //         result[BILL_WITEL].readyToBill += 1;
+  //         break;
+  //       case "BILLING COMPLETED":
+  //         result[BILL_WITEL].billComplete += 1;
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   });
+
+  //   return Object.values(result);
+  // };
+  // const chartData = processData(data);
+
   return (
     <>
       <div className={`overview ${isHeaderExpanded ? "expanded" : ""}`}>
         <div className="content">
+          {/* <pre>{JSON.stringify(processedData, null, 2)}</pre> */}
           <div className="p-overview-container">
-            {performanceData.map((item, index) => (
-              <OverViewCard key={index} {...item} />
-            ))}
+            {loading ? (
+              <Loading />
+            ) : (
+              <>
+                {processedData.map((witel) => {
+                  const total =
+                    witel.provideOrder +
+                    witel.inProcess +
+                    witel.provComplete +
+                    witel.readyToBill +
+                    witel.billComplete;
+
+                  const pieData = [
+                    {
+                      name: "Provide Order",
+                      value: witel.provideOrder,
+                      percentage: ((witel.provideOrder / total) * 100).toFixed(
+                        2
+                      ),
+                    },
+                    {
+                      name: "In Process",
+                      value: witel.inProcess,
+                      percentage: ((witel.inProcess / total) * 100).toFixed(2),
+                    },
+                    {
+                      name: "Prov. Complete",
+                      value: witel.provComplete,
+                      percentage: ((witel.provComplete / total) * 100).toFixed(
+                        2
+                      ),
+                    },
+                    {
+                      name: "Ready to Bill",
+                      value: witel.readyToBill,
+                      percentage: ((witel.readyToBill / total) * 100).toFixed(
+                        2
+                      ),
+                    },
+                    {
+                      name: "Billing Completed",
+                      value: witel.billComplete,
+                      percentage: ((witel.billComplete / total) * 100).toFixed(
+                        2
+                      ),
+                    },
+                  ];
+
+                  return (
+                    <OverViewCard
+                      key={witel.witelName}
+                      data={pieData}
+                      title={witel.witelName}
+                    />
+                  );
+                })}
+              </>
+            )}
           </div>
+          {/* <pre>{JSON.stringify(sessionData, null, 2)}</pre> */}
           <div className="p-over-time-container">
             <PerformanceOverTime data={overTimeData} />
             <PerformanceBySession
-              columnName="ORDER_SUBTYPE"
+              data={sessionData}
               title="Session by Sub-type"
               subtitle="Showing data for top order sub-type"
+              loading={loading}
+              error={error}
             />
           </div>
           <div className="p-graphs-container">
-            {graphData.map((graph, index) => (
+            {/* {graphData.map((graph, index) => (
               <GraphCard
                 key={index}
                 title={graph.title}
                 graphComponent={graph.component}
               />
-            ))}
+            ))} */}
           </div>
-          <OverviewTable />
+          {/* <OverviewTable /> */}
         </div>
       </div>
     </>
