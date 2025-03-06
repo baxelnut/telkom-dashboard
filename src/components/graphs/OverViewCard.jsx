@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import "./OverViewCard.css";
 
@@ -18,7 +18,7 @@ const renderCustomizedLabel = ({
   midAngle,
   innerRadius,
   outerRadius,
-  percent,
+  value,
 }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -33,16 +33,29 @@ const renderCustomizedLabel = ({
       dominantBaseline="central"
       fontSize={12}
     >
-      {`${(percent * 100).toFixed(0)}%`}
+      {value}
     </text>
   );
+};
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { name, value, payload: item } = payload[0];
+    return (
+      <div className="custom-tooltip">
+        <p>{name}</p>
+        <h6>{`: ${item.percentage}%`}</h6>
+      </div>
+    );
+  }
+  return null;
 };
 
 export default function OverViewCard({ data, title }) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   const pieDataWithPercentage = data
-    .filter((item) => item.name !== "Billing Completed") // exclude: Billing Completed
+    .filter((item) => item.value > 0 && item.name !== "Billing Completed") // exclude: Billing Completed
     .map((item) => ({
       ...item,
       percentage: total > 0 ? ((item.value / total) * 100).toFixed(2) : "0.00",
@@ -83,7 +96,7 @@ export default function OverViewCard({ data, title }) {
                 />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
       </div>
