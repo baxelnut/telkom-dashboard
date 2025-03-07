@@ -2,56 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./ReportTable.css";
 import Loading from "../../components/Loading";
 
-export default function ReportTable() {
-  const [counts, setCounts] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/data");
-        const jsonData = await response.json();
-
-        const groupedCounts = processData(jsonData);
-        setCounts(groupedCounts);
-      } catch (error) {
-        console.error("Error fetching data from backend:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const processData = (data) => {
-    return data.reduce((acc, row) => {
-      const witel = row["SERVICE_WITEL"];
-      const kategoriUmur = row["KATEGORI_UMUR"];
-      const kategori = row["KATEGORI"];
-      const revenue = parseFloat(row["REVENUE"]) || 0;
-
-      if (!acc[witel]) {
-        acc[witel] = {
-          "<3 bulan": 0,
-          ">3 bulan": 0,
-          "PROVIDE ORDER": { count: 0, revenue: 0 },
-          "IN PROCESS": { count: 0, revenue: 0 },
-          "READY TO BILL": { count: 0, revenue: 0 },
-        };
-      }
-
-      if (kategoriUmur === "< 3 BLN") acc[witel]["<3 bulan"]++;
-      if (kategoriUmur === "> 3 BLN") acc[witel][">3 bulan"]++;
-
-      if (kategori in acc[witel]) {
-        acc[witel][kategori].count++;
-        acc[witel][kategori].revenue += revenue;
-      }
-
-      return acc;
-    }, {});
-  };
+export default function ReportTable({ data, error, loading }) {
+  if (error) return <p className="error">Error: {error}</p>;
 
   const formatCurrency = (value) =>
     value === 0 ? null : `Rp.${value.toLocaleString("id-ID")}`;
@@ -65,15 +17,15 @@ export default function ReportTable() {
     grandTotal: 0,
   };
 
-  Object.values(counts).forEach((data) => {
-    grandTotals.provideOrder.count += data["PROVIDE ORDER"].count;
-    grandTotals.provideOrder.revenue += data["PROVIDE ORDER"].revenue;
-    grandTotals.inProcess.count += data["IN PROCESS"].count;
-    grandTotals.inProcess.revenue += data["IN PROCESS"].revenue;
-    grandTotals.readyToBill.count += data["READY TO BILL"].count;
-    grandTotals.readyToBill.revenue += data["READY TO BILL"].revenue;
-    grandTotals.total3Bln += data["<3 bulan"];
-    grandTotals.totalMore3Bln += data[">3 bulan"];
+  Object.values(data).forEach((entry) => {
+    grandTotals.provideOrder.count += entry["PROVIDE ORDER"].count;
+    grandTotals.provideOrder.revenue += entry["PROVIDE ORDER"].revenue;
+    grandTotals.inProcess.count += entry["IN PROCESS"].count;
+    grandTotals.inProcess.revenue += entry["IN PROCESS"].revenue;
+    grandTotals.readyToBill.count += entry["READY TO BILL"].count;
+    grandTotals.readyToBill.revenue += entry["READY TO BILL"].revenue;
+    grandTotals.total3Bln += entry["<3 bulan"];
+    grandTotals.totalMore3Bln += entry[">3 bulan"];
   });
 
   grandTotals.grandTotal = grandTotals.total3Bln + grandTotals.totalMore3Bln;
@@ -108,9 +60,9 @@ export default function ReportTable() {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(counts).map(([witel, data], index) => {
-                const total3Bln = data["<3 bulan"];
-                const totalMore3Bln = data[">3 bulan"];
+              {Object.entries(data).map(([witel, entry], index) => {
+                const total3Bln = entry["<3 bulan"];
+                const totalMore3Bln = entry[">3 bulan"];
                 const grandTotal = total3Bln + totalMore3Bln;
 
                 return (
@@ -121,8 +73,8 @@ export default function ReportTable() {
                     {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
                       (label, idx) => (
                         <td key={idx}>
-                          <h6>{data[label].count}</h6>
-                          <p>{formatCurrency(data[label].revenue)}</p>
+                          <h6>{entry[label]?.count || 0}</h6>
+                          <p>{formatCurrency(entry[label]?.revenue || 0)}</p>
                         </td>
                       )
                     )}
@@ -132,8 +84,8 @@ export default function ReportTable() {
                     {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
                       (label, idx) => (
                         <td key={idx}>
-                          <h6>{data[label].count}</h6>
-                          <p>{formatCurrency(data[label].revenue)}</p>
+                          <h6>{entry[label]?.count || 0}</h6>
+                          <p>{formatCurrency(entry[label]?.revenue || 0)}</p>
                         </td>
                       )
                     )}

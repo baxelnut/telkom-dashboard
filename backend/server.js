@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const processExcelData = require("./processExcelData");
 const processPerformanceData = require("./performanceData");
+const { processReportData } = require("./report");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -57,6 +58,24 @@ app.get("/api/performance", (req, res) => {
   } catch (error) {
     console.error("❌ Error processing performance data:", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 🟢 API: Get processed report data
+app.get("/api/report", (req, res) => {
+  try {
+    console.log("📊 Processing report data...");
+
+    const reportData = processReportData(filePath); // ✅ This now works!
+
+    if (Object.keys(reportData).length === 0) {
+      console.warn("⚠️ Report data is empty. Check your Excel file.");
+    }
+
+    res.json(reportData);
+  } catch (error) {
+    console.error("❌ Error processing report data:", error);
+    res.status(500).json({ error: "Failed to process report data" });
   }
 });
 
