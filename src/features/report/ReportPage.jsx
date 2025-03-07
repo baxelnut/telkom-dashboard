@@ -22,15 +22,13 @@ export default function ReportPage() {
         if (!response.ok) throw new Error("Failed to fetch report data");
 
         const data = await response.json();
-        console.log("🔥 Raw Data from API:", data); // Debugging line
 
-        // Convert object to array and rename witel names
         const renamedData = Object.keys(data).map((witelName) => ({
-          witelName: witelMapping[witelName] || witelName, // Rename if match, else keep same
-          ...data[witelName], // Spread the existing data
+          witelName: witelMapping[witelName] || witelName,
+          ...data[witelName],
         }));
 
-        console.log("🔥 Processed Data:", renamedData);
+        // console.log("🔥 Processed Data:", renamedData);
         setReportData(renamedData);
       } catch (err) {
         setError(err.message);
@@ -66,6 +64,7 @@ export default function ReportPage() {
           </div>
         </div>
       </div>
+      {/* <pre>{JSON.stringify(reportData, null, 2)}</pre> */}
     </div>
   );
 }
