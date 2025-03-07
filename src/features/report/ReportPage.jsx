@@ -8,6 +8,11 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const witelMapping = {
+    MALANG: "JATIM TIMUR",
+    SIDOARJO: "JATIM BARAT",
+  };
+
   useEffect(() => {
     async function fetchReport() {
       setLoading(true);
@@ -16,8 +21,17 @@ export default function ReportPage() {
         const response = await fetch("http://localhost:5000/api/report");
         if (!response.ok) throw new Error("Failed to fetch report data");
 
-        const rawData = await response.json();
-        setReportData(rawData);
+        const data = await response.json();
+        console.log("🔥 Raw Data from API:", data); // Debugging line
+
+        // Convert object to array and rename witel names
+        const renamedData = Object.keys(data).map((witelName) => ({
+          witelName: witelMapping[witelName] || witelName, // Rename if match, else keep same
+          ...data[witelName], // Spread the existing data
+        }));
+
+        console.log("🔥 Processed Data:", renamedData);
+        setReportData(renamedData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -27,35 +41,6 @@ export default function ReportPage() {
 
     fetchReport();
   }, []);
-
-  function processData(processedData) {
-    return processedData.reduce((acc, row) => {
-      const witel = row["SERVICE_WITEL"];
-      const kategoriUmur = row["KATEGORI_UMUR"];
-      const kategori = row["KATEGORI"];
-      const revenue = parseFloat(row["REVENUE"]) || 0;
-
-      if (!acc[witel]) {
-        acc[witel] = {
-          "<3 bulan": 0,
-          ">3 bulan": 0,
-          "PROVIDE ORDER": { count: 0, revenue: 0 },
-          "IN PROCESS": { count: 0, revenue: 0 },
-          "READY TO BILL": { count: 0, revenue: 0 },
-        };
-      }
-
-      if (kategoriUmur === "< 3 BLN") acc[witel]["<3 bulan"]++;
-      if (kategoriUmur === "> 3 BLN") acc[witel][">3 bulan"]++;
-
-      if (kategori in acc[witel]) {
-        acc[witel][kategori].count++;
-        acc[witel][kategori].revenue += revenue;
-      }
-
-      return acc;
-    }, {});
-  }
 
   return (
     <div className="report">

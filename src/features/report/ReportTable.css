@@ -40,6 +40,11 @@
   margin: 0;
 }
 
+tr.grand-total-row {
+  background-color: var(--color-primary) !important;
+  color: var(--color-surface) !important;
+}
+
 @media screen and (max-width: 1100px) {
   .report-table-wrapper {
     width: 100%;

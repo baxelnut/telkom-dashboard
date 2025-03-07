@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./ReportTable.css";
 import Loading from "../../components/Loading";
 
@@ -6,7 +6,7 @@ export default function ReportTable({ data, error, loading }) {
   if (error) return <p className="error">Error: {error}</p>;
 
   const formatCurrency = (value) =>
-    value === 0 ? null : `Rp.${value.toLocaleString("id-ID")}`;
+    value ? `Rp.${value.toLocaleString("id-ID")}` : "Rp.0";
 
   const grandTotals = {
     provideOrder: { count: 0, revenue: 0 },
@@ -18,14 +18,23 @@ export default function ReportTable({ data, error, loading }) {
   };
 
   Object.values(data).forEach((entry) => {
-    grandTotals.provideOrder.count += entry["PROVIDE ORDER"].count;
-    grandTotals.provideOrder.revenue += entry["PROVIDE ORDER"].revenue;
-    grandTotals.inProcess.count += entry["IN PROCESS"].count;
-    grandTotals.inProcess.revenue += entry["IN PROCESS"].revenue;
-    grandTotals.readyToBill.count += entry["READY TO BILL"].count;
-    grandTotals.readyToBill.revenue += entry["READY TO BILL"].revenue;
-    grandTotals.total3Bln += entry["<3 bulan"];
-    grandTotals.totalMore3Bln += entry[">3 bulan"];
+    grandTotals.provideOrder.count +=
+      (entry["PROVIDE ORDER"]?.["<3 BLN"] || 0) +
+      (entry["PROVIDE ORDER"]?.[">3 BLN"] || 0);
+    grandTotals.provideOrder.revenue += entry["PROVIDE ORDER"]?.revenue || 0;
+
+    grandTotals.inProcess.count +=
+      (entry["IN PROCESS"]?.["<3 BLN"] || 0) +
+      (entry["IN PROCESS"]?.[">3 BLN"] || 0);
+    grandTotals.inProcess.revenue += entry["IN PROCESS"]?.revenue || 0;
+
+    grandTotals.readyToBill.count +=
+      (entry["READY TO BILL"]?.["<3 BLN"] || 0) +
+      (entry["READY TO BILL"]?.[">3 BLN"] || 0);
+    grandTotals.readyToBill.revenue += entry["READY TO BILL"]?.revenue || 0;
+
+    grandTotals.total3Bln += entry["<3 BLN"] || 0;
+    grandTotals.totalMore3Bln += entry[">3 BLN"] || 0;
   });
 
   grandTotals.grandTotal = grandTotals.total3Bln + grandTotals.totalMore3Bln;
@@ -61,19 +70,19 @@ export default function ReportTable({ data, error, loading }) {
             </thead>
             <tbody>
               {Object.entries(data).map(([witel, entry], index) => {
-                const total3Bln = entry["<3 bulan"];
-                const totalMore3Bln = entry[">3 bulan"];
+                const total3Bln = entry["<3 BLN"] || 0;
+                const totalMore3Bln = entry[">3 BLN"] || 0;
                 const grandTotal = total3Bln + totalMore3Bln;
 
                 return (
                   <tr key={index}>
                     <td>
-                      <h6>{witel}</h6>
+                      <h6>{entry.witelName}</h6>
                     </td>
                     {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
                       (label, idx) => (
                         <td key={idx}>
-                          <h6>{entry[label]?.count || 0}</h6>
+                          <h6>{entry[label]?.["<3 BLN"] || 0}</h6>
                           <p>{formatCurrency(entry[label]?.revenue || 0)}</p>
                         </td>
                       )
@@ -84,7 +93,7 @@ export default function ReportTable({ data, error, loading }) {
                     {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
                       (label, idx) => (
                         <td key={idx}>
-                          <h6>{entry[label]?.count || 0}</h6>
+                          <h6>{entry[label]?.[">3 BLN"] || 0}</h6>
                           <p>{formatCurrency(entry[label]?.revenue || 0)}</p>
                         </td>
                       )

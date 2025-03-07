@@ -20,25 +20,39 @@ function processReportData(filePath) {
 
       if (!acc[witel]) {
         acc[witel] = {
-          "<3 bulan": 0,
-          ">3 bulan": 0,
-          "PROVIDE ORDER": { count: 0, revenue: 0 },
-          "IN PROCESS": { count: 0, revenue: 0 },
-          "READY TO BILL": { count: 0, revenue: 0 },
+          "<3 BLN": 0,
+          ">3 BLN": 0,
+          "PROVIDE ORDER": { "<3 BLN": 0, ">3 BLN": 0, revenue: 0 },
+          "IN PROCESS": { "<3 BLN": 0, ">3 BLN": 0, revenue: 0 },
+          "READY TO BILL": { "<3 BLN": 0, ">3 BLN": 0, revenue: 0 },
         };
       }
 
-      if (kategoriUmur === "< 3 BLN") acc[witel]["<3 bulan"]++;
-      if (kategoriUmur === "> 3 BLN") acc[witel][">3 bulan"]++;
-
       if (kategori in acc[witel]) {
-        acc[witel][kategori].count++;
-        acc[witel][kategori].revenue += revenue;
+        if (kategoriUmur === "< 3 BLN") {
+          acc[witel][kategori]["<3 BLN"]++; // Count orders in this category for <3 BLN
+          acc[witel][kategori].revenue += revenue;
+        } else if (kategoriUmur === "> 3 BLN") {
+          acc[witel][kategori][">3 BLN"]++; // Count orders in this category for >3 BLN
+          acc[witel][kategori].revenue += revenue;
+        }
       }
+
+      // Total each category for <3 BLN and >3 BLN
+      acc[witel]["<3 BLN"] =
+        acc[witel]["PROVIDE ORDER"]["<3 BLN"] +
+        acc[witel]["IN PROCESS"]["<3 BLN"] +
+        acc[witel]["READY TO BILL"]["<3 BLN"];
+
+      acc[witel][">3 BLN"] =
+        acc[witel]["PROVIDE ORDER"][">3 BLN"] +
+        acc[witel]["IN PROCESS"][">3 BLN"] +
+        acc[witel]["READY TO BILL"][">3 BLN"];
 
       return acc;
     }, {});
 
+    // console.log("🚀 Processed Data:", JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
     console.error("❌ Error processing report data:", error);

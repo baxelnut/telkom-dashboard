@@ -45,7 +45,6 @@
 
 .report .table-container .table {
   background-color: var(--color-surface-variant);
-  border-radius: 0;
   border: 0;
   height: auto;
 }
