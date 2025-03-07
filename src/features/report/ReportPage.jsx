@@ -8,11 +8,6 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const witelMapping = {
-    MALANG: "JATIM TIMUR",
-    SIDOARJO: "JATIM BARAT",
-  };
-
   useEffect(() => {
     async function fetchReport() {
       setLoading(true);
@@ -23,13 +18,8 @@ export default function ReportPage() {
 
         const data = await response.json();
 
-        const renamedData = Object.keys(data).map((witelName) => ({
-          witelName: witelMapping[witelName] || witelName,
-          ...data[witelName],
-        }));
-
         // console.log("🔥 Processed Data:", renamedData);
-        setReportData(renamedData);
+        setReportData(data);
       } catch (err) {
         setError(err.message);
       } finally {

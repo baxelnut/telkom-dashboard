@@ -120,7 +120,13 @@ export default function ReportTable({ data, error, loading }) {
                 return (
                   <tr key={index}>
                     <td>
-                      <h6>{entry?.witelName || "Unknown"}</h6>
+                      <h6>
+                        {entry?.witelName === "MALANG"
+                          ? "JATIM TIMUR"
+                          : entry?.witelName === "SIDOARJO"
+                          ? "JATIM BARAT"
+                          : entry?.witelName || "Unknown"}
+                      </h6>
                     </td>
                     {["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].map(
                       (label, idx) => (
