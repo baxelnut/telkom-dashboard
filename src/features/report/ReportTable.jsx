@@ -169,7 +169,12 @@ export default function ReportTable({ data, error, loading }) {
                   (key, idx) => (
                     <td key={idx}>
                       <h6>{grandTotals[key].count3Bln}</h6>
-                      <p>{formatCurrency(grandTotals[key].revenue3Bln)}</p>
+                      <p>
+                        {formatCurrency(
+                          grandTotals[key].revenue3Bln,
+                          grandTotals[key].count3Bln
+                        )}
+                      </p>
                     </td>
                   )
                 )}
@@ -180,7 +185,12 @@ export default function ReportTable({ data, error, loading }) {
                   (key, idx) => (
                     <td key={idx}>
                       <h6>{grandTotals[key].countMore3Bln}</h6>
-                      <p>{formatCurrency(grandTotals[key].revenueMore3Bln)}</p>
+                      <p>
+                        {formatCurrency(
+                          grandTotals[key].revenueMore3Bln,
+                          grandTotals[key].countMore3Bln
+                        )}
+                      </p>
                     </td>
                   )
                 )}
