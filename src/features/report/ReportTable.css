@@ -59,7 +59,7 @@ tr.grand-total-row {
   td:hover
   h6:not(.witel-name h6, .grand-total-row .grand-total-title h6) {
   font-weight: 900;
-  font-size: 1.5rem;
+  /* font-size: 1.5rem; */
 }
 
 @media screen and (max-width: 1100px) {
