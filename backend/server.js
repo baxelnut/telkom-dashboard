@@ -14,6 +14,15 @@ app.use(cors());
 const filePath = path.join(__dirname, "..", "public", "data", "dummy.xlsx");
 console.log("📂 Looking for file at:", filePath);
 
+// testing
+const reportFilePath = path.join(
+  __dirname,
+  "..",
+  "public",
+  "data",
+  "report_dummy.xlsx"
+);
+
 // 🟢 API: Get processed witel data only
 app.get("/api/processed_data", (req, res) => {
   try {
@@ -66,7 +75,8 @@ app.get("/api/report", (req, res) => {
   try {
     console.log("📊 Processing report data...");
 
-    const reportData = processReportData(filePath); // ✅ This now works!
+    // const reportData = processReportData(reportFilePath);
+    const reportData = processReportData(filePath);
 
     if (Object.keys(reportData).length === 0) {
       console.warn("⚠️ Report data is empty. Check your Excel file.");
