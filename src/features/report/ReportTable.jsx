@@ -182,20 +182,19 @@ export default function ReportTable({
                     </td>
 
                     {statusTypes.map((statusType, idx) => (
-                      <td key={idx}>
-                        <h6
-                          onClick={() =>
-                            sendData(
-                              entry?.witelName,
-                              data,
-                              statusType,
-                              "<3 BLN",
-                              "revenue<3bln"
-                            )
-                          }
-                        >
-                          {entry[statusType]?.["<3 BLN"] || 0}
-                        </h6>
+                      <td
+                        key={idx}
+                        onClick={() =>
+                          sendData(
+                            entry?.witelName,
+                            data,
+                            statusType,
+                            "<3 BLN",
+                            "revenue<3bln"
+                          )
+                        }
+                      >
+                        <h6>{entry[statusType]?.["<3 BLN"] || 0}</h6>
                         <p>
                           {formatCurrency(
                             entry[statusType]?.["revenue<3bln"],
@@ -206,52 +205,23 @@ export default function ReportTable({
                     ))}
 
                     <td>
-                      <h6
-                        onClick={() => {
-                          let timeRanges = [];
-
-                          if (columnKey === "total3Bln")
-                            timeRanges = ["<3 BLN"];
-                          else if (columnKey === "totalMore3Bln")
-                            timeRanges = [">3 BLN"];
-                          else if (columnKey === "grandTotal")
-                            timeRanges = ["<3 BLN", ">3 BLN"];
-
-                          timeRanges.forEach((ageCategory) => {
-                            [
-                              "PROVIDE ORDER",
-                              "IN PROCESS",
-                              "READY TO BILL",
-                            ].forEach((statusType) => {
-                              sendData(
-                                entry?.witelName,
-                                data,
-                                statusType,
-                                ageCategory
-                              );
-                            });
-                          });
-                        }}
-                      >
-                        {total3Bln}
-                      </h6>
+                      <h6>{total3Bln}X</h6>
                     </td>
 
                     {statusTypes.map((statusType, idx) => (
-                      <td key={idx}>
-                        <h6
-                          onClick={() =>
-                            sendData(
-                              entry?.witelName,
-                              data,
-                              statusType,
-                              ">3 BLN",
-                              "revenue>3bln"
-                            )
-                          }
-                        >
-                          {entry[statusType]?.[">3 BLN"] || 0}aaaaaa
-                        </h6>
+                      <td
+                        key={idx}
+                        onClick={() =>
+                          sendData(
+                            entry?.witelName,
+                            data,
+                            statusType,
+                            ">3 BLN",
+                            "revenue>3bln"
+                          )
+                        }
+                      >
+                        <h6>{entry[statusType]?.[">3 BLN"] || 0}</h6>
                         <p>
                           {formatCurrency(
                             entry[statusType]?.["revenue>3bln"],
@@ -262,10 +232,10 @@ export default function ReportTable({
                     ))}
 
                     <td>
-                      <h6>{totalMore3Bln}d</h6>
+                      <h6>{totalMore3Bln}X</h6>
                     </td>
                     <td>
-                      <h6>{grandTotal}e</h6>
+                      <h6>{grandTotal}X</h6>
                     </td>
                   </tr>
                 );
@@ -278,7 +248,7 @@ export default function ReportTable({
                 {["provideOrder", "inProcess", "readyToBill"].map(
                   (key, idx) => (
                     <td key={idx}>
-                      <h6>{grandTotals[key].count3Bln}f</h6>
+                      <h6>{grandTotals[key].count3Bln}X</h6>
                       <p>
                         {formatCurrency(
                           grandTotals[key].revenue3Bln,
@@ -289,12 +259,12 @@ export default function ReportTable({
                   )
                 )}
                 <td>
-                  <h6>{grandTotals.total3Bln}g</h6>
+                  <h6>{grandTotals.total3Bln}X</h6>
                 </td>
                 {["provideOrder", "inProcess", "readyToBill"].map(
                   (key, idx) => (
                     <td key={idx}>
-                      <h6>{grandTotals[key].countMore3Bln}h</h6>
+                      <h6>{grandTotals[key].countMore3Bln}X</h6>
                       <p>
                         {formatCurrency(
                           grandTotals[key].revenueMore3Bln,
@@ -305,10 +275,10 @@ export default function ReportTable({
                   )
                 )}
                 <td>
-                  <h6>{grandTotals.totalMore3Bln}i</h6>
+                  <h6>{grandTotals.totalMore3Bln}X</h6>
                 </td>
                 <td>
-                  <h6>{grandTotals.grandTotal}a</h6>
+                  <h6>{grandTotals.grandTotal}X</h6>
                 </td>
               </tr>
             </tbody>
