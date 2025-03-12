@@ -39,6 +39,8 @@ export default function ReportTable({
     grandTotal: 0,
   };
 
+  console.log("data:", data);
+
   data.forEach((entry) => {
     const provideOrder3Bln = entry?.["PROVIDE ORDER"]?.["<3 BLN"] || 0;
     const provideOrderMore3Bln = entry?.["PROVIDE ORDER"]?.[">3 BLN"] || 0;
@@ -107,23 +109,10 @@ export default function ReportTable({
         };
       });
 
-    // Dynamic title generation
     const title = `${witelName} - ${statusType} (${ageCategory})`;
-
     const finalData = { title, data: filteredData };
-
     setDataToSend(finalData);
     sendDataToParent(finalData);
-
-    console.log("Raw Entry Data:", data);
-    console.log(
-      "Extracted Revenue:",
-      data?.[statusType]?.[ageRevenue],
-      "Using Key:",
-      ageRevenue
-    );
-
-    console.log("Final Data Sent:", finalData);
   };
 
   const statusTypes = ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"];
@@ -171,7 +160,7 @@ export default function ReportTable({
 
                 return (
                   <tr key={index}>
-                    <td>
+                    <td className="witel-name">
                       <h6>
                         {entry?.witelName === "MALANG"
                           ? "JATIM TIMUR"
@@ -242,7 +231,7 @@ export default function ReportTable({
               })}
 
               <tr className="grand-total-row">
-                <td>
+                <td className="grand-total-title">
                   <h6>GRAND TOTAL</h6>
                 </td>
                 {["provideOrder", "inProcess", "readyToBill"].map(
