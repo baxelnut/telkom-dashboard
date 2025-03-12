@@ -8,11 +8,10 @@ export default function ReportPage() {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dataFromChild, setDataFromChild] = useState("Lorem");
+  const [dataFromChild, setDataFromChild] = useState("");
 
-  const handleChildData = ({ title, data }) => {
-    setDataFromChild({ title, data });
-    console.log("🔥 Received from child:", { title, data });
+  const handleChildData = (filteredData) => {
+    setDataFromChild(filteredData);
   };
 
   useEffect(() => {
@@ -50,12 +49,7 @@ export default function ReportPage() {
           </div>
         </div>
         <div className="details-container">
-          {dataFromChild && (
-            <ReportTableDetails
-              title={dataFromChild.title}
-              data={dataFromChild.data}
-            />
-          )}
+          {dataFromChild && <ReportTableDetails filteredData={dataFromChild} />}
         </div>
         <div className="table-container">
           <h5>LOREM IPSUM DOLOR SIT AMET</h5>

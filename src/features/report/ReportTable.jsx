@@ -39,8 +39,6 @@ export default function ReportTable({
     grandTotal: 0,
   };
 
-  console.log("data:", data);
-
   data.forEach((entry) => {
     const provideOrder3Bln = entry?.["PROVIDE ORDER"]?.["<3 BLN"] || 0;
     const provideOrderMore3Bln = entry?.["PROVIDE ORDER"]?.[">3 BLN"] || 0;
@@ -85,34 +83,38 @@ export default function ReportTable({
 
   const [dataToSend, setDataToSend] = useState("");
 
-  const sendData = (witelName, data, statusType, ageCategory, ageRevenue) => {
-    if (!witelName || !data || !statusType || !ageCategory) return;
+  const sendData = (entry, statusType, timeFilter) => {
+    if (!entry || typeof entry !== "object") {
+      console.error("sendData received invalid entry! Expected an object.");
+      return;
+    }
 
-    const filteredData = data
-      .filter((entry) => entry.witelName === witelName)
-      .map((entry) => {
-        const quantity = entry?.[statusType]?.[ageCategory] || 0;
-        const revenue = entry?.[statusType]?.[ageRevenue] || 0;
+    if (!statusType || !entry[statusType]) {
+      console.warn("No valid statusType provided. Sending all data.");
+      sendDataToParent(entry);
+      return;
+    }
 
-        const items = Array.from({ length: quantity }, (_, index) => ({
-          itemName: `Item ${index + 1}`,
-          itemRevenue: quantity ? revenue / quantity : 0,
-        }));
+    const isLessThan3Bln = timeFilter === "<3 BLN";
+    const isMoreThan3Bln = timeFilter === ">3 BLN";
 
-        return {
-          witelName: entry.witelName,
-          status: statusType,
-          age: ageCategory,
-          quantity,
-          revenue,
-          items,
-        };
-      });
+    const filteredData = {
+      witelName: entry.witelName,
+      statusType,
+      ...(isLessThan3Bln && {
+        "<3Bln": entry[statusType]["<3 BLN"] || 0,
+        "revenue<3Bln": entry[statusType]["revenue<3bln"] || 0,
+        "<3blnItems": entry[statusType]["<3blnItems"] || [],
+      }),
+      ...(isMoreThan3Bln && {
+        ">3Bln": entry[statusType][">3 BLN"] || 0,
+        "revenue>3Bln": entry[statusType]["revenue>3bln"] || 0,
+        ">3blnItems": entry[statusType][">3blnItems"] || [],
+      }),
+    };
 
-    const title = `${witelName} - ${statusType} (${ageCategory})`;
-    const finalData = { title, data: filteredData };
-    setDataToSend(finalData);
-    sendDataToParent(finalData);
+    console.log(`🔥 Sending ${statusType} data (${timeFilter}):`, filteredData);
+    sendDataToParent(filteredData);
   };
 
   const statusTypes = ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"];
@@ -161,27 +163,13 @@ export default function ReportTable({
                 return (
                   <tr key={index}>
                     <td className="witel-name">
-                      <h6>
-                        {entry?.witelName === "MALANG"
-                          ? "JATIM TIMUR"
-                          : entry?.witelName === "SIDOARJO"
-                          ? "JATIM BARAT"
-                          : entry?.witelName || "Unknown"}
-                      </h6>
+                      <h6>{entry?.witelName}</h6>
                     </td>
 
                     {statusTypes.map((statusType, idx) => (
                       <td
                         key={idx}
-                        onClick={() =>
-                          sendData(
-                            entry?.witelName,
-                            data,
-                            statusType,
-                            "<3 BLN",
-                            "revenue<3bln"
-                          )
-                        }
+                        onClick={() => sendData(entry, statusType, "<3 BLN")}
                       >
                         <h6>{entry[statusType]?.["<3 BLN"] || 0}</h6>
                         <p>
@@ -200,15 +188,7 @@ export default function ReportTable({
                     {statusTypes.map((statusType, idx) => (
                       <td
                         key={idx}
-                        onClick={() =>
-                          sendData(
-                            entry?.witelName,
-                            data,
-                            statusType,
-                            ">3 BLN",
-                            "revenue>3bln"
-                          )
-                        }
+                        onClick={() => sendData(entry, statusType, ">3 BLN")}
                       >
                         <h6>{entry[statusType]?.[">3 BLN"] || 0}</h6>
                         <p>

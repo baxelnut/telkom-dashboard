@@ -4,6 +4,11 @@ const path = require("path");
 
 const validWitels = ["BALI", "MALANG", "NUSA TENGGARA", "SIDOARJO", "SURAMADU"];
 
+const witelMapping = {
+  MALANG: "JATIM TIMUR",
+  SIDOARJO: "JATIM BARAT",
+};
+
 function processReportData(filePath) {
   try {
     const workbook = XLSX.readFile(filePath);
@@ -12,17 +17,13 @@ function processReportData(filePath) {
 
     const result = jsonData.reduce((acc, row) => {
       const witel = row["BILL_WITEL"];
-      const kategoriUmur = row["KATEGORI_UMUR"];
-      const kategori = row["KATEGORI"];
-      const orderId = row["ORDER_ID"];
-      const itemName = row["STANDARD_NAME"];
-      const itemRevenue = parseFloat(row["REVENUE"]) || 0;
-
       if (!validWitels.includes(witel)) return acc;
 
-      if (!acc[witel]) {
-        acc[witel] = {
-          witelName: witel,
+      const witelRenamed = witelMapping[witel] || witel;
+
+      if (!acc[witelRenamed]) {
+        acc[witelRenamed] = {
+          witelName: witelRenamed,
           "<3 BLN": 0,
           ">3 BLN": 0,
           "PROVIDE ORDER": {
@@ -52,8 +53,14 @@ function processReportData(filePath) {
         };
       }
 
-      if (kategori in acc[witel]) {
-        const categoryData = acc[witel][kategori];
+      const kategori = row["KATEGORI"];
+      const kategoriUmur = row["KATEGORI_UMUR"];
+      const orderId = row["ORDER_ID"];
+      const itemName = row["STANDARD_NAME"];
+      const itemRevenue = parseFloat(row["REVENUE"]) || 0;
+
+      if (kategori in acc[witelRenamed]) {
+        const categoryData = acc[witelRenamed][kategori];
 
         if (kategoriUmur === "< 3 BLN") {
           categoryData["<3 BLN"]++;
@@ -74,15 +81,15 @@ function processReportData(filePath) {
         }
       }
 
-      acc[witel]["<3 BLN"] =
-        acc[witel]["PROVIDE ORDER"]["<3 BLN"] +
-        acc[witel]["IN PROCESS"]["<3 BLN"] +
-        acc[witel]["READY TO BILL"]["<3 BLN"];
+      acc[witelRenamed]["<3 BLN"] =
+        acc[witelRenamed]["PROVIDE ORDER"]["<3 BLN"] +
+        acc[witelRenamed]["IN PROCESS"]["<3 BLN"] +
+        acc[witelRenamed]["READY TO BILL"]["<3 BLN"];
 
-      acc[witel][">3 BLN"] =
-        acc[witel]["PROVIDE ORDER"][">3 BLN"] +
-        acc[witel]["IN PROCESS"][">3 BLN"] +
-        acc[witel]["READY TO BILL"][">3 BLN"];
+      acc[witelRenamed][">3 BLN"] =
+        acc[witelRenamed]["PROVIDE ORDER"][">3 BLN"] +
+        acc[witelRenamed]["IN PROCESS"][">3 BLN"] +
+        acc[witelRenamed]["READY TO BILL"][">3 BLN"];
 
       return acc;
     }, {});
