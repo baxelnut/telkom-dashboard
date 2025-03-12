@@ -112,8 +112,6 @@ export default function ReportTable({
         ">3blnItems": entry[statusType][">3blnItems"] || [],
       }),
     };
-
-    console.log(`🔥 Sending ${statusType} data (${timeFilter}):`, filteredData);
     sendDataToParent(filteredData);
   };
 
