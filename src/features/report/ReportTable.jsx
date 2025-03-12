@@ -160,7 +160,7 @@ export default function ReportTable({
 
                 return (
                   <tr key={index}>
-                    <td className="witel-name">
+                    <td className="unresponsive">
                       <h6>{entry?.witelName}</h6>
                     </td>
 
@@ -179,8 +179,8 @@ export default function ReportTable({
                       </td>
                     ))}
 
-                    <td>
-                      <h6>{total3Bln}X</h6>
+                    <td className="unresponsive">
+                      <h6>{total3Bln}</h6>
                     </td>
 
                     {statusTypes.map((statusType, idx) => (
@@ -198,11 +198,11 @@ export default function ReportTable({
                       </td>
                     ))}
 
-                    <td>
-                      <h6>{totalMore3Bln}X</h6>
+                    <td className="unresponsive">
+                      <h6>{totalMore3Bln}</h6>
                     </td>
-                    <td>
-                      <h6>{grandTotal}X</h6>
+                    <td className="unresponsive">
+                      <h6>{grandTotal}</h6>
                     </td>
                   </tr>
                 );
@@ -214,8 +214,8 @@ export default function ReportTable({
                 </td>
                 {["provideOrder", "inProcess", "readyToBill"].map(
                   (key, idx) => (
-                    <td key={idx}>
-                      <h6>{grandTotals[key].count3Bln}X</h6>
+                    <td key={idx} className="unresponsive">
+                      <h6>{grandTotals[key].count3Bln}</h6>
                       <p>
                         {formatCurrency(
                           grandTotals[key].revenue3Bln,
@@ -225,13 +225,13 @@ export default function ReportTable({
                     </td>
                   )
                 )}
-                <td>
-                  <h6>{grandTotals.total3Bln}X</h6>
+                <td className="unresponsive">
+                  <h5>{grandTotals.total3Bln}</h5>
                 </td>
                 {["provideOrder", "inProcess", "readyToBill"].map(
                   (key, idx) => (
-                    <td key={idx}>
-                      <h6>{grandTotals[key].countMore3Bln}X</h6>
+                    <td key={idx} className="unresponsive">
+                      <h6>{grandTotals[key].countMore3Bln}</h6>
                       <p>
                         {formatCurrency(
                           grandTotals[key].revenueMore3Bln,
@@ -241,11 +241,11 @@ export default function ReportTable({
                     </td>
                   )
                 )}
-                <td>
-                  <h6>{grandTotals.totalMore3Bln}X</h6>
+                <td className="unresponsive">
+                  <h5>{grandTotals.totalMore3Bln}</h5>
                 </td>
-                <td>
-                  <h6>{grandTotals.grandTotal}X</h6>
+                <td className="unresponsive">
+                  <h5>{grandTotals.grandTotal}</h5>
                 </td>
               </tr>
             </tbody>

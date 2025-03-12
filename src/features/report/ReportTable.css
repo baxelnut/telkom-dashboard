@@ -49,7 +49,7 @@ tr.grand-total-row {
 }
 
 .report-table-wrapper
-  td:hover:not(.witel-name, .grand-total-row .grand-total-title) {
+  td:hover:not(.unresponsive, .grand-total-row .grand-total-title) {
   background-color: var(--color-surface);
   color: var(--color-secondary);
   cursor: pointer;
@@ -57,7 +57,7 @@ tr.grand-total-row {
 
 .report-table-wrapper
   td:hover
-  h6:not(.witel-name h6, .grand-total-row .grand-total-title h6) {
+  h6:not(.unresponsive h6, .grand-total-row .grand-total-title h6) {
   font-weight: 900;
   /* font-size: 1.5rem; */
 }

@@ -54,12 +54,12 @@ export default function ReportPage() {
         <div className="table-container">
           {dataFromChild ? (
             <>
-              <h5>{dataFromChild.witelName || "Unknown"}</h5>
+              <h5>{dataFromChild.witelName || "Unknown"} - {dataFromChild.statusType}</h5>
               <h6>Periode: {dataFromChild["<3Bln"] ? "<3 BLN" : ">3 BLN"}</h6>
             </>
           ) : (
             <>
-              <h5>Report</h5>
+              <h5>REPORT</h5>
               <h6>Periode: ALL</h6>
             </>
           )}

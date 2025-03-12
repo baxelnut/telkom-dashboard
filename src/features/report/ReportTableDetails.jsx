@@ -17,12 +17,6 @@ export default function ReportTableDetails({ filteredData }) {
         <table>
           <thead>
             <tr>
-              <th colSpan="4">
-                {filteredData.witelName} - {filteredData.statusType} (
-                {timeFilterLabel})
-              </th>
-            </tr>
-            <tr>
               <th>LI ID</th>
               <th>Name</th>
               <th>Revenue</th>
