@@ -55,7 +55,7 @@ function processReportData(filePath) {
 
       const kategori = row["KATEGORI"];
       const kategoriUmur = row["KATEGORI_UMUR"];
-      const orderId = row["ORDER_ID"];
+      const orderId = row["LI_ID"];
       const itemName = row["STANDARD_NAME"];
       const itemRevenue = parseFloat(row["REVENUE"]) || 0;
 
