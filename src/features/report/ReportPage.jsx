@@ -2,11 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./ReportPage.css";
 import ReportTable from "./ReportTable";
 import Loading from "../../components/Loading";
+import ReportTableDetails from "./ReportTableDetails";
 
 export default function ReportPage() {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dataFromChild, setDataFromChild] = useState("Lorem");
+
+  const handleChildData = ({ title, data }) => {
+    setDataFromChild({ title, data });
+    console.log("🔥 Received from child:", { title, data });
+  };
 
   useEffect(() => {
     async function fetchReport() {
@@ -42,6 +49,14 @@ export default function ReportPage() {
             <p>Select periode...</p>
           </div>
         </div>
+        <div className="details-container">
+          {dataFromChild && (
+            <ReportTableDetails
+              title={dataFromChild.title}
+              data={dataFromChild.data}
+            />
+          )}
+        </div>
         <div className="table-container">
           <h5>LOREM IPSUM DOLOR SIT AMET</h5>
           <h6>Periode: ALL</h6>
@@ -49,7 +64,12 @@ export default function ReportPage() {
             {loading ? (
               <Loading />
             ) : (
-              <ReportTable data={reportData} error={error} loading={loading} />
+              <ReportTable
+                data={reportData}
+                error={error}
+                loading={loading}
+                sendDataToParent={handleChildData}
+              />
             )}
           </div>
         </div>

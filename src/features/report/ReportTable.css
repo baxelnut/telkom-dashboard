@@ -23,12 +23,6 @@
   padding: 8px;
 }
 
-.report-table-wrapper td h6 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 .table-scroll tr th {
   background-color: var(--color-primary-variant);
   color: var(--color-surface);
@@ -43,6 +37,21 @@
 tr.grand-total-row {
   background-color: var(--color-primary) !important;
   color: var(--color-surface) !important;
+}
+
+.report-table-wrapper td h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  /* color: var(--color-on-surface); */
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  cursor: pointer;
+}
+
+.report-table-wrapper td h6:hover {
+  color: var(--color-secondary);
 }
 
 @media screen and (max-width: 1100px) {

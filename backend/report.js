@@ -14,7 +14,9 @@ function processReportData(filePath) {
       const witel = row["BILL_WITEL"];
       const kategoriUmur = row["KATEGORI_UMUR"];
       const kategori = row["KATEGORI"];
-      const revenue = parseFloat(row["REVENUE"]) || 0;
+      const orderId = row["ORDER_ID"];
+      const itemName = row["STANDARD_NAME"];
+      const itemRevenue = parseFloat(row["REVENUE"]) || 0;
 
       if (!validWitels.includes(witel)) return acc;
 
@@ -28,29 +30,47 @@ function processReportData(filePath) {
             ">3 BLN": 0,
             "revenue<3bln": 0,
             "revenue>3bln": 0,
+            "<3blnItems": [],
+            ">3blnItems": [],
           },
           "IN PROCESS": {
             "<3 BLN": 0,
             ">3 BLN": 0,
             "revenue<3bln": 0,
             "revenue>3bln": 0,
+            "<3blnItems": [],
+            ">3blnItems": [],
           },
           "READY TO BILL": {
             "<3 BLN": 0,
             ">3 BLN": 0,
             "revenue<3bln": 0,
             "revenue>3bln": 0,
+            "<3blnItems": [],
+            ">3blnItems": [],
           },
         };
       }
 
       if (kategori in acc[witel]) {
+        const categoryData = acc[witel][kategori];
+
         if (kategoriUmur === "< 3 BLN") {
-          acc[witel][kategori]["<3 BLN"]++;
-          acc[witel][kategori]["revenue<3bln"] += revenue;
+          categoryData["<3 BLN"]++;
+          categoryData["revenue<3bln"] += itemRevenue;
+          categoryData["<3blnItems"].push({
+            itemId: orderId,
+            itemName: itemName || "Unknown",
+            itemRevenue: itemRevenue,
+          });
         } else if (kategoriUmur === "> 3 BLN") {
-          acc[witel][kategori][">3 BLN"]++;
-          acc[witel][kategori]["revenue>3bln"] += revenue;
+          categoryData[">3 BLN"]++;
+          categoryData["revenue>3bln"] += itemRevenue;
+          categoryData[">3blnItems"].push({
+            itemId: orderId,
+            itemName: itemName || "Unknown",
+            itemRevenue: itemRevenue,
+          });
         }
       }
 

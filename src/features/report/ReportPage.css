@@ -15,7 +15,8 @@
 }
 
 .report .periode-filter,
-.report .table-container {
+.report .table-container,
+.report .details-container {
   background-color: var(--color-surface);
   border-radius: 12px;
   padding: 20px;
@@ -49,12 +50,13 @@
   height: auto;
 }
 
-.report .table-container {
+.report .table-container,
+.report .details-container {
   height: auto;
 }
 
-.report .table-container h6 {
-  cursor: pointer;
+.report .details-container {
+  margin-top: 20px;
 }
 
 @media screen and (max-width: 1100px) {
