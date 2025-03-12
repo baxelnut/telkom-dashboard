@@ -8,10 +8,14 @@ export default function ReportPage() {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dataFromChild, setDataFromChild] = useState("");
+  const [dataFromChild, setDataFromChild] = useState(null);
 
   const handleChildData = (filteredData) => {
     setDataFromChild(filteredData);
+  };
+
+  const goBack = () => {
+    setDataFromChild(null);
   };
 
   useEffect(() => {
@@ -23,8 +27,6 @@ export default function ReportPage() {
         if (!response.ok) throw new Error("Failed to fetch report data");
 
         const data = await response.json();
-
-        // console.log("🔥 Processed Data:", renamedData);
         setReportData(data);
       } catch (err) {
         setError(err.message);
@@ -48,16 +50,33 @@ export default function ReportPage() {
             <p>Select periode...</p>
           </div>
         </div>
-        <div className="details-container">
-          {dataFromChild && <ReportTableDetails filteredData={dataFromChild} />}
-        </div>
+
         <div className="table-container">
-          <h5>LOREM IPSUM DOLOR SIT AMET</h5>
-          <h6>Periode: ALL</h6>
+          {dataFromChild ? (
+            <>
+              <h5>{dataFromChild.witelName || "Unknown"}</h5>
+              <h6>Periode: {dataFromChild["<3Bln"] ? "<3 BLN" : ">3 BLN"}</h6>
+            </>
+          ) : (
+            <>
+              <h5>Report</h5>
+              <h6>Periode: ALL</h6>
+            </>
+          )}
+
           <div className="table">
             {loading ? (
               <Loading />
+            ) : dataFromChild ? (
+              /** Show Details Table if there's data */
+              <div>
+                <button onClick={goBack} className="back-button">
+                  <h6>← Back</h6>
+                </button>
+                <ReportTableDetails filteredData={dataFromChild} />
+              </div>
             ) : (
+              /** Show Main Table */
               <ReportTable
                 data={reportData}
                 error={error}
@@ -68,7 +87,6 @@ export default function ReportPage() {
           </div>
         </div>
       </div>
-      {/* <pre>{JSON.stringify(reportData, null, 2)}</pre> */}
     </div>
   );
 }
