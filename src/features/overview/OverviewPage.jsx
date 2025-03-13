@@ -116,18 +116,18 @@ export default function OverviewPage() {
   //       witelName: witel,
   //     })),
   //   },
-  //   {
-  //     title: "Bill Witel",
-  //     component: (
-  //       <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
-  //     ),
-  //   },
-  //   {
-  //     title: "Sub-segmen",
-  //     component: (
-  //       <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
-  //     ),
-  //   },
+  //   // {
+  //   //   title: "Bill Witel",
+  //   //   component: (
+  //   //     <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
+  //   //   ),
+  //   // },
+  //   // {
+  //   //   title: "Sub-segmen",
+  //   //   component: (
+  //   //     <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
+  //   //   ),
+  //   // },
   // ];
 
   // const processData = (data) => {
@@ -177,7 +177,9 @@ export default function OverviewPage() {
           {/* <pre>{JSON.stringify(processedData, null, 2)}</pre> */}
           <div className="p-overview-container">
             {loading ? (
-              <Loading />
+              <div className="overview-card-placeholder">
+                <Loading />
+              </div>
             ) : (
               <>
                 {processedData.map((witel) => {
