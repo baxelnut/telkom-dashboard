@@ -12,11 +12,27 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em var(--color-primary-variant));
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em var(--color-primary-variant));
+}
+
+.overview-card-placeholder {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  border: 0.5px solid var(--color-on-surface-variant);
+  height: 100%;
+  width: 100%;
+  display: block;
+  text-align: center;
+  margin-left: 20px;
+  padding-top: 12px;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
 }
 
 @keyframes logo-spin {
@@ -41,4 +57,3 @@
 .read-the-docs {
   color: #888;
 }
-

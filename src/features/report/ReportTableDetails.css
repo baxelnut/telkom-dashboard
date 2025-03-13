@@ -1,6 +1,77 @@
-.report-details {
+.report-details-wrapper {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.report-details-wrapper .table-scroll {
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+.report-details-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-details-wrapper th,
+.report-details-wrapper td {
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: center;
+  border: 0.5px solid var(--color-on-surface-variant);
+  padding: 8px;
+}
+
+.report-details-wrapper .table-scroll tr th {
+  background-color: var(--color-primary-variant);
+  color: var(--color-surface);
+}
+
+.report-details-wrapper td p {
+  font-style: italic !important;
+  font-family: inherit;
+  margin: 0;
+}
+
+.report-details-wrapper td h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
   display: flex;
-  flex-direction: column;
-  align-items: start;
-  justify-content: center;
+  align-items: center;
+  justify-self: center;
+}
+
+.report-details-wrapper .action-button {
+  margin: 0;
+  width: 100%;
+  padding-inline: 12px;
+  padding-block: 4px;
+  background-color: var(--color-secondary);
+  color: var(--color-on-surface);
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+.report-details-wrapper .action-button:hover {
+  background-color: var(--color-on-surface-variant);
+}
+
+@media screen and (max-width: 1100px) {
+  .report-details-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .report-details-wrapper table {
+    min-width: 1100px;
+  }
+
+  .report-details-wrapper p,
+  .report-details-wrapper h6 {
+    font-size: 14px;
+  }
 }
