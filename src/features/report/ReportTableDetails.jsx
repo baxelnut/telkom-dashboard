@@ -79,7 +79,7 @@ export default function ReportTableDetails({ filteredData }) {
             ) : (
               <tr>
                 <td
-                  colSpan={filteredData.statusType === "IN PROCESS" ? 5 : 4}
+                  colSpan={filteredData.statusType === "IN PROCESS" ? 6 : 5}
                   className="no-data"
                 >
                   <p>No items found.</p>

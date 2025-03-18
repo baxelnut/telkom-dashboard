@@ -12,11 +12,11 @@ export default function ReportTable({
 
   if (!data.length) return <p className="no-data">No matching data found.</p>;
 
-  console.log(JSON.stringify(data, null, 2));
+  // console.log(JSON.stringify(data, null, 2));
 
-  const formatCurrency = (value, orderCount) => {
-    if (!orderCount) return "";
-    return `Rp.${(value || 0).toLocaleString("id-ID")}`;
+  const formatCurrency = (value, orderCount, textAbove) => {
+    if (!orderCount || textAbove == 0) return "";
+    return `Rp${value.toLocaleString("id-ID")}`;
   };
 
   const grandTotals = {
@@ -44,37 +44,67 @@ export default function ReportTable({
   };
 
   data.forEach((entry) => {
-    const provideOrder3Bln = entry?.["PROVIDE ORDER"]?.["<3 BLN"] || 0;
-    const provideOrderMore3Bln = entry?.["PROVIDE ORDER"]?.[">3 BLN"] || 0;
-    const inProcess3Bln = entry?.["IN PROCESS"]?.["<3 BLN"] || 0;
-    const inProcessMore3Bln = entry?.["IN PROCESS"]?.[">3 BLN"] || 0;
-    const readyToBill3Bln = entry?.["READY TO BILL"]?.["<3 BLN"] || 0;
-    const readyToBillMore3Bln = entry?.["READY TO BILL"]?.[">3 BLN"] || 0;
+    const provideOrder3Bln =
+      entry?.["PROVIDE ORDER"]?.["<3blnItems"].length || 0;
+    const provideOrderMore3Bln =
+      entry?.["PROVIDE ORDER"]?.[">3blnItems"].length || 0;
+
+    const inProcess3Bln = entry?.["IN PROCESS"]?.["<3blnItems"].length || 0;
+    const inProcessMore3Bln = entry?.["IN PROCESS"]?.[">3blnItems"].length || 0;
+
+    const readyToBill3Bln =
+      entry?.["READY TO BILL"]?.["<3blnItems"].length || 0;
+    const readyToBillMore3Bln =
+      entry?.["READY TO BILL"]?.[">3blnItems"].length || 0;
 
     const revenueProvideOrder3Bln =
-      entry?.["PROVIDE ORDER"]?.["revenue<3bln"] || 0;
+      entry?.["PROVIDE ORDER"]?.["<3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
     const revenueProvideOrderMore3Bln =
-      entry?.["PROVIDE ORDER"]?.["revenue>3bln"] || 0;
-    const revenueInProcess3Bln = entry?.["IN PROCESS"]?.["revenue<3bln"] || 0;
+      entry?.["PROVIDE ORDER"]?.[">3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
+
+    const revenueInProcess3Bln =
+      entry?.["IN PROCESS"]?.["<3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
     const revenueInProcessMore3Bln =
-      entry?.["IN PROCESS"]?.["revenue>3bln"] || 0;
+      entry?.["IN PROCESS"]?.[">3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
+
     const revenueReadyToBill3Bln =
-      entry?.["READY TO BILL"]?.["revenue<3bln"] || 0;
+      entry?.["READY TO BILL"]?.["<3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
     const revenueReadyToBillMore3Bln =
-      entry?.["READY TO BILL"]?.["revenue>3bln"] || 0;
+      entry?.["READY TO BILL"]?.[">3blnItems"]?.reduce(
+        (sum, item) => sum + (item.itemRevenue || 0),
+        0
+      ) || 0;
 
     grandTotals.provideOrder.count3Bln += provideOrder3Bln;
     grandTotals.provideOrder.countMore3Bln += provideOrderMore3Bln;
+
     grandTotals.provideOrder.revenue3Bln += revenueProvideOrder3Bln;
     grandTotals.provideOrder.revenueMore3Bln += revenueProvideOrderMore3Bln;
 
     grandTotals.inProcess.count3Bln += inProcess3Bln;
     grandTotals.inProcess.countMore3Bln += inProcessMore3Bln;
+
     grandTotals.inProcess.revenue3Bln += revenueInProcess3Bln;
     grandTotals.inProcess.revenueMore3Bln += revenueInProcessMore3Bln;
 
     grandTotals.readyToBill.count3Bln += readyToBill3Bln;
     grandTotals.readyToBill.countMore3Bln += readyToBillMore3Bln;
+
     grandTotals.readyToBill.revenue3Bln += revenueReadyToBill3Bln;
     grandTotals.readyToBill.revenueMore3Bln += revenueReadyToBillMore3Bln;
 
@@ -119,7 +149,7 @@ export default function ReportTable({
     sendDataToParent(filteredData);
   };
 
-  const statusTypes = ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"];
+  const orderSubtypes = ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"];
 
   return (
     <div className="report-table-wrapper">
@@ -154,13 +184,13 @@ export default function ReportTable({
             <tbody>
               {data.map((entry, index) => {
                 const total3Bln =
-                  (entry?.["PROVIDE ORDER"]?.["<3 BLN"] || 0) +
-                  (entry?.["IN PROCESS"]?.["<3 BLN"] || 0) +
-                  (entry?.["READY TO BILL"]?.["<3 BLN"] || 0);
+                  (entry["PROVIDE ORDER"]?.["<3blnItems"].length || 0) +
+                  (entry?.["IN PROCESS"]?.["<3blnItems"].length || 0) +
+                  (entry?.["READY TO BILL"]?.["<3blnItems"].length || 0);
                 const totalMore3Bln =
-                  (entry?.["PROVIDE ORDER"]?.[">3 BLN"] || 0) +
-                  (entry?.["IN PROCESS"]?.[">3 BLN"] || 0) +
-                  (entry?.["READY TO BILL"]?.[">3 BLN"] || 0);
+                  (entry?.["PROVIDE ORDER"]?.[">3blnItems"].length || 0) +
+                  (entry?.["IN PROCESS"]?.[">3blnItems"].length || 0) +
+                  (entry?.["READY TO BILL"]?.[">3blnItems"].length || 0);
                 const grandTotal = total3Bln + totalMore3Bln;
 
                 return (
@@ -169,19 +199,22 @@ export default function ReportTable({
                       <h6>{entry?.witelName}</h6>
                     </td>
 
-                    {statusTypes.map((statusType, idx) => (
+                    {orderSubtypes.map((orderSubtype, idx) => (
                       <td
                         key={idx}
-                        onClick={() => sendData(entry, statusType, "<3 BLN")}
+                        onClick={() => sendData(entry, orderSubtype, "<3 BLN")}
                       >
-                        <h6>{entry[statusType]?.["<3blnItems"].length || 0}</h6>
+                        <h6>
+                          {entry[orderSubtype]?.["<3blnItems"].length || 0}
+                        </h6>
                         <p>
                           {formatCurrency(
-                            entry[statusType]?.["<3blnItems"]?.reduce(
+                            entry[orderSubtype]?.["<3blnItems"]?.reduce(
                               (sum, item) => sum + item.itemRevenue,
                               0
                             ),
-                            entry[statusType]?.["<3 BLN"]
+                            entry[orderSubtype]?.["<3 BLN"],
+                            entry[orderSubtype]?.["<3blnItems"].length
                           )}
                         </p>
                       </td>
@@ -191,19 +224,22 @@ export default function ReportTable({
                       <h6>{total3Bln}</h6>
                     </td>
 
-                    {statusTypes.map((statusType, idx) => (
+                    {orderSubtypes.map((orderSubtype, idx) => (
                       <td
                         key={idx}
-                        onClick={() => sendData(entry, statusType, ">3 BLN")}
+                        onClick={() => sendData(entry, orderSubtype, ">3 BLN")}
                       >
-                        <h6>{entry[statusType]?.[">3blnItems"].length || 0}</h6>
+                        <h6>
+                          {entry[orderSubtype]?.[">3blnItems"].length || 0}
+                        </h6>
                         <p>
                           {formatCurrency(
-                            entry[statusType]?.[">3blnItems"]?.reduce(
+                            entry[orderSubtype]?.[">3blnItems"]?.reduce(
                               (sum, item) => sum + item.itemRevenue,
                               0
                             ),
-                            entry[statusType]?.[">3 BLN"]
+                            entry[orderSubtype]?.[">3 BLN"],
+                            entry[orderSubtype]?.[">3blnItems"].length
                           )}
                         </p>
                       </td>
