@@ -172,14 +172,14 @@
           "itemName": "BANK PEMBANGUNAN DAERAH BALI",
           "itemRevenue": 1488000,
           "category": "AO",
-          "processStatus": ""
+          "processStatus": "Lanjut"
         },
         {
           "itemId": "1-IXD7XIU",
           "itemName": "PT JOHNSON CONTROLS INDONESIA",
           "itemRevenue": 0,
           "category": "SO",
-          "processStatus": ""
+          "processStatus": "Cancel"
         }
       ],
       ">3blnItems": []
@@ -327,7 +327,7 @@
           "itemName": "UNIVERSITAS TIMOR",
           "itemRevenue": 37482588,
           "category": "DO",
-          "processStatus": ""
+          "processStatus": "Bukan Order Reg"
         }
       ]
     },

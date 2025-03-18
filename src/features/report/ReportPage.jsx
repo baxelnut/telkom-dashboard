@@ -13,10 +13,27 @@ export default function ReportPage() {
 
   const handleChildData = (updatedData) => {
     setDataFromChild(updatedData);
+    saveToServer(updatedData);
   };
 
-  const goBack = () => {
+  const skedaddle = (data) => {
+    saveToServer(data);
     setDataFromChild(null);
+  };
+
+  const saveToServer = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/save-json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log("✅ Data saved:", result.message);
+    } catch (error) {
+      console.error("❌ Error saving data:", error);
+    }
   };
 
   useEffect(() => {
@@ -73,21 +90,6 @@ export default function ReportPage() {
           },
         }));
 
-  const saveToServer = async (data) => {
-    try {
-      const response = await fetch("http://localhost:5000/save-json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      console.log(result.message);
-    } catch (error) {
-      console.error("❌ Error saving data:", error);
-    }
-  };
-
   return (
     <div className="report">
       <div className="content">
@@ -111,7 +113,10 @@ export default function ReportPage() {
                 </h5>
                 <h6>Periode: {dataFromChild["<3Bln"] ? "<3 BLN" : ">3 BLN"}</h6>
               </div>
-              <button onClick={goBack} className="back-button">
+              <button
+                onClick={() => skedaddle(filteredReportData)}
+                className="back-button"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -166,7 +171,7 @@ export default function ReportPage() {
           </div>
         </div>
 
-        <div className="💪">
+        {/* <div className="💪">
           <button
             type="button"
             onClick={() => saveToServer(filteredReportData)}
@@ -179,7 +184,7 @@ export default function ReportPage() {
               {JSON.stringify(filteredReportData, null, 2)}
             </pre>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

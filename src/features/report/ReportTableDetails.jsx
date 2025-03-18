@@ -95,8 +95,7 @@ export default function ReportTableDetails({ filteredData, onUpdateStatus }) {
           </tbody>
         </table>
       </div>
-      <pre>{JSON.stringify(filteredData, null, 2)}</pre>
-      {/* pass this filtered data to parent*/}
+      {/* <pre>{JSON.stringify(filteredData, null, 2)}</pre> */}
     </div>
   );
 }
