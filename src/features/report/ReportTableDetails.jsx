@@ -31,6 +31,7 @@ export default function ReportTableDetails({ filteredData }) {
             <tr>
               {filteredData.statusType === "IN PROCESS" && <th>STATUS</th>}
               <th>LI ID</th>
+              <th>CATEGORY</th>
               <th>WITEL</th>
               <th>STANDARD NAME</th>
               <th>REVENUE</th>
@@ -62,6 +63,7 @@ export default function ReportTableDetails({ filteredData }) {
                     </td>
                   )}
                   <td>{item.itemId}</td>
+                  <td>{item.category}</td>
                   <td>{filteredData.witelName}</td>
                   <td>{item.itemName}</td>
                   <td>
@@ -80,7 +82,7 @@ export default function ReportTableDetails({ filteredData }) {
                   colSpan={filteredData.statusType === "IN PROCESS" ? 5 : 4}
                   className="no-data"
                 >
-                  No items found.
+                  <p>No items found.</p>
                 </td>
               </tr>
             )}
