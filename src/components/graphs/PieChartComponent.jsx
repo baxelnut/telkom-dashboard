@@ -90,58 +90,34 @@ const renderActiveShape = (props) => {
   );
 };
 
-export default function PieChartComponent({ columnName }) {
-  const [data, setData] = useState([]);
+export default function PieChartComponent({ fileData, columnName }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/data");
-        if (!response.ok) throw new Error("Failed to fetch data");
+  if (!fileData || fileData.length === 0) return <p>No data available.</p>;
 
-        const fileData = await response.json();
-        if (!Array.isArray(fileData)) throw new Error("Invalid data format");
+  const processedData = fileData.reduce((acc, row) => {
+    const category = row[columnName] || "Unknown";
+    const existing = acc.find((item) => item.name === category);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({ name: category, value: 1, fill: getRandomColor() });
+    }
+    return acc;
+  }, []);
 
-        // Process data into categories
-        const processedData = fileData.reduce((acc, row) => {
-          const category = row[columnName] || "Unknown";
-          const existing = acc.find((item) => item.name === category);
-          if (existing) {
-            existing.value += 1;
-          } else {
-            acc.push({ name: category, value: 1, fill: getRandomColor() });
-          }
-          return acc;
-        }, []);
-
-        setData(processedData);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [columnName]);
-
-  if (loading)
-    return (
-      <div className="pie-chart-container">
-        <Loading />
-      </div>
-    );
-  if (error)
-    return (
-      <div className="pie-chart-container">
-        <p>Error: {error}</p>
-      </div>
-    );
-  if (data.length === 0) return <p>No data available.</p>;
+  // if (loading)
+  //   return (
+  //     <div className="pie-chart-container">
+  //       <Loading />
+  //     </div>
+  //   );
+  // if (error)
+  //   return (
+  //     <div className="pie-chart-container">
+  //       <p>Error: {error}</p>
+  //     </div>
+  //   );
 
   return (
     <div className="pie-chart-container">
@@ -150,7 +126,7 @@ export default function PieChartComponent({ columnName }) {
           <Pie
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
-            data={data}
+            data={processedData}
             cx="50%"
             cy="50%"
             innerRadius={70}

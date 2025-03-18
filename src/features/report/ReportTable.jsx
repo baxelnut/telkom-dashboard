@@ -9,11 +9,9 @@ export default function ReportTable({
   sendDataToParent,
 }) {
   if (error) return <p className="error">Error: {error}</p>;
-
   if (!data.length) return <p className="no-data">No matching data found.</p>;
 
-  // console.log(JSON.stringify(data, null, 2));
-
+  const [dataToSend, setDataToSend] = useState("");
   const formatCurrency = (value, orderCount, textAbove) => {
     if (!orderCount || textAbove == 0) return "";
     return `Rp${value.toLocaleString("id-ID")}`;
@@ -114,8 +112,6 @@ export default function ReportTable({
   });
 
   grandTotals.grandTotal = grandTotals.total3Bln + grandTotals.totalMore3Bln;
-
-  const [dataToSend, setDataToSend] = useState("");
 
   const sendData = (entry, statusType, timeFilter) => {
     if (!entry || typeof entry !== "object") {
