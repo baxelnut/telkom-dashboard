@@ -40,14 +40,27 @@ export default function ReportPage() {
     async function fetchReport() {
       setLoading(true);
       setError(null);
+
       try {
-        const response = await fetch("http://localhost:5000/api/report");
-        if (!response.ok) throw new Error("Failed to fetch report data");
+        let response = await fetch("http://localhost:5000/save-json");
+        if (!response.ok) throw new Error("Fallback to /api/report");
 
         const data = await response.json();
         setReportData(data);
+        console.log("✅ Loaded from /save-json");
       } catch (err) {
-        setError(err.message);
+        console.warn("⚠️ /save-json not found, using /api/report instead");
+
+        try {
+          const response = await fetch("http://localhost:5000/api/report");
+          if (!response.ok) throw new Error("Failed to fetch report data");
+
+          const data = await response.json();
+          setReportData(data);
+          console.log("✅ Loaded from /api/report");
+        } catch (finalErr) {
+          setError(finalErr.message);
+        }
       } finally {
         setLoading(false);
       }
