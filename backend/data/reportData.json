@@ -1,0 +1,350 @@
+[
+  {
+    "witelName": "JATIM TIMUR",
+    "<3 BLN": 4,
+    ">3 BLN": 4,
+    "PROVIDE ORDER": {
+      "<3 BLN": 0,
+      ">3 BLN": 3,
+      "revenue<3bln": 0,
+      "revenue>3bln": 9090910,
+      "<3blnItems": [],
+      ">3blnItems": [
+        {
+          "itemId": "1-1NV1H57",
+          "itemName": "FAVEHOTEL TUBAN (ASTON GROUP)",
+          "itemRevenue": 9090910,
+          "category": "SO"
+        },
+        {
+          "itemId": "1-1NGSXHI",
+          "itemName": "PEMKOT  MADIUN",
+          "itemRevenue": 0,
+          "category": "SO"
+        },
+        {
+          "itemId": "1-1NGPYVN",
+          "itemName": "SMK NEGERI 2 MALANG",
+          "itemRevenue": 0,
+          "category": "SO"
+        }
+      ]
+    },
+    "IN PROCESS": {
+      "<3 BLN": 0,
+      ">3 BLN": 0,
+      "revenue<3bln": 0,
+      "revenue>3bln": 0,
+      "<3blnItems": [],
+      ">3blnItems": []
+    },
+    "READY TO BILL": {
+      "<3 BLN": 4,
+      ">3 BLN": 1,
+      "revenue<3bln": 63165756,
+      "revenue>3bln": 0,
+      "<3blnItems": [
+        {
+          "itemId": "1-IWZ5YU3",
+          "itemName": "PEMKOT MALANG",
+          "itemRevenue": 25685396,
+          "category": "DO"
+        },
+        {
+          "itemId": "1-IX87W26",
+          "itemName": "PEMKOT MALANG",
+          "itemRevenue": 18740180,
+          "category": "DO"
+        },
+        {
+          "itemId": "1-IX9FY8P",
+          "itemName": "PEMKOT MALANG",
+          "itemRevenue": 18740180,
+          "category": "DO"
+        },
+        {
+          "itemId": "1-IUOBRQ8",
+          "itemName": "JASA TIRTA I PERUM",
+          "itemRevenue": 0,
+          "category": "MO"
+        }
+      ],
+      ">3blnItems": [
+        {
+          "itemId": "1-IR40121",
+          "itemName": "JASA TIRTA I PERUM",
+          "itemRevenue": 0,
+          "category": "MO"
+        }
+      ]
+    }
+  },
+  {
+    "witelName": "SURAMADU",
+    "<3 BLN": 2,
+    ">3 BLN": 2,
+    "PROVIDE ORDER": {
+      "<3 BLN": 0,
+      ">3 BLN": 1,
+      "revenue<3bln": 0,
+      "revenue>3bln": 0,
+      "<3blnItems": [],
+      ">3blnItems": [
+        {
+          "itemId": "1-1TGV5SF",
+          "itemName": "PEMKOT SURABAYA",
+          "itemRevenue": 0,
+          "category": "DO"
+        }
+      ]
+    },
+    "IN PROCESS": {
+      "<3 BLN": 0,
+      ">3 BLN": 0,
+      "revenue<3bln": 0,
+      "revenue>3bln": 0,
+      "<3blnItems": [],
+      ">3blnItems": []
+    },
+    "READY TO BILL": {
+      "<3 BLN": 2,
+      ">3 BLN": 1,
+      "revenue<3bln": 24276066,
+      "revenue>3bln": 1300000,
+      "<3blnItems": [
+        {
+          "itemId": "1-IYCVZE5",
+          "itemName": "PEMKAB LAMONGAN",
+          "itemRevenue": 23050916,
+          "category": "MO"
+        },
+        {
+          "itemId": "1-IX3HU4J",
+          "itemName": "SALAM PASIFIC",
+          "itemRevenue": 1225150,
+          "category": "AO"
+        }
+      ],
+      ">3blnItems": [
+        {
+          "itemId": "1-IEOS6B8",
+          "itemName": "SIANTAR TOP PT",
+          "itemRevenue": 1300000,
+          "category": "RO"
+        }
+      ]
+    }
+  },
+  {
+    "witelName": "BALI",
+    "<3 BLN": 6,
+    ">3 BLN": 1,
+    "PROVIDE ORDER": {
+      "<3 BLN": 1,
+      ">3 BLN": 1,
+      "revenue<3bln": 298520,
+      "revenue>3bln": 833175,
+      "<3blnItems": [
+        {
+          "itemId": "1-IWZ5QRA",
+          "itemName": "BANK PEMBANGUNAN DAERAH BALI",
+          "itemRevenue": 298520,
+          "category": "AO"
+        }
+      ],
+      ">3blnItems": [
+        {
+          "itemId": "1-1NGMXTM",
+          "itemName": "PEMKAB BULELENG",
+          "itemRevenue": 833175,
+          "category": "SO"
+        }
+      ]
+    },
+    "IN PROCESS": {
+      "<3 BLN": 2,
+      ">3 BLN": 0,
+      "revenue<3bln": 1488000,
+      "revenue>3bln": 0,
+      "<3blnItems": [
+        {
+          "itemId": "1-IVLVAX7",
+          "itemName": "BANK PEMBANGUNAN DAERAH BALI",
+          "itemRevenue": 1488000,
+          "category": "AO",
+          "processStatus": ""
+        },
+        {
+          "itemId": "1-IXD7XIU",
+          "itemName": "PT JOHNSON CONTROLS INDONESIA",
+          "itemRevenue": 0,
+          "category": "SO",
+          "processStatus": ""
+        }
+      ],
+      ">3blnItems": []
+    },
+    "READY TO BILL": {
+      "<3 BLN": 3,
+      ">3 BLN": 0,
+      "revenue<3bln": 3695000,
+      "revenue>3bln": 0,
+      "<3blnItems": [
+        {
+          "itemId": "1-IV6YTXK",
+          "itemName": "BANK PEMBANGUNAN DAERAH BALI",
+          "itemRevenue": 3500000,
+          "category": "AO"
+        },
+        {
+          "itemId": "1-IVLVAWG",
+          "itemName": "BANK PEMBANGUNAN DAERAH BALI",
+          "itemRevenue": 195000,
+          "category": "AO"
+        },
+        {
+          "itemId": "1-IWPKRFN",
+          "itemName": "PEMPROV BALI",
+          "itemRevenue": 0,
+          "category": "AO"
+        }
+      ],
+      ">3blnItems": []
+    }
+  },
+  {
+    "witelName": "JATIM BARAT",
+    "<3 BLN": 5,
+    ">3 BLN": 1,
+    "PROVIDE ORDER": {
+      "<3 BLN": 0,
+      ">3 BLN": 1,
+      "revenue<3bln": 0,
+      "revenue>3bln": 454545,
+      "<3blnItems": [],
+      ">3blnItems": [
+        {
+          "itemId": "1-1NGNV8B",
+          "itemName": "PEMKOT MOJOKERTO",
+          "itemRevenue": 454545,
+          "category": "SO"
+        }
+      ]
+    },
+    "IN PROCESS": {
+      "<3 BLN": 1,
+      ">3 BLN": 0,
+      "revenue<3bln": 5125500,
+      "revenue>3bln": 0,
+      "<3blnItems": [
+        {
+          "itemId": "1-IVM2N8P",
+          "itemName": "PT KEMASAN CIPTA UTAMA",
+          "itemRevenue": 5125500,
+          "category": "MO",
+          "processStatus": "Bukan Order Reg"
+        }
+      ],
+      ">3blnItems": []
+    },
+    "READY TO BILL": {
+      "<3 BLN": 4,
+      ">3 BLN": 0,
+      "revenue<3bln": 24038802,
+      "revenue>3bln": 0,
+      "<3blnItems": [
+        {
+          "itemId": "1-IXRXD6E",
+          "itemName": "PEMKAB BANYUWANGI",
+          "itemRevenue": 1467181,
+          "category": "MO"
+        },
+        {
+          "itemId": "1-IXW27KZ",
+          "itemName": "PEMKAB BANYUWANGI",
+          "itemRevenue": 0,
+          "category": "MO"
+        },
+        {
+          "itemId": "1-IXO0TF8",
+          "itemName": "PEMKAB BANYUWANGI",
+          "itemRevenue": 21621621,
+          "category": "MO"
+        },
+        {
+          "itemId": "1-IXO2BHH",
+          "itemName": "PEMKAB BANYUWANGI",
+          "itemRevenue": 950000,
+          "category": "MO"
+        }
+      ],
+      ">3blnItems": []
+    }
+  },
+  {
+    "witelName": "NUSA TENGGARA",
+    "<3 BLN": 2,
+    ">3 BLN": 3,
+    "PROVIDE ORDER": {
+      "<3 BLN": 0,
+      ">3 BLN": 1,
+      "revenue<3bln": 0,
+      "revenue>3bln": 0,
+      "<3blnItems": [],
+      ">3blnItems": [
+        {
+          "itemId": "1-1NGMAIX",
+          "itemName": "KIOS BAKTI",
+          "itemRevenue": 0,
+          "category": "SO"
+        }
+      ]
+    },
+    "IN PROCESS": {
+      "<3 BLN": 2,
+      ">3 BLN": 1,
+      "revenue<3bln": 25470400,
+      "revenue>3bln": 37482588,
+      "<3blnItems": [
+        {
+          "itemId": "1-IV9L5J2",
+          "itemName": "UNIVERSITAS TIMOR",
+          "itemRevenue": 24050400,
+          "category": "DO",
+          "processStatus": "Bukan Order Reg"
+        },
+        {
+          "itemId": "1-IUMR9G3",
+          "itemName": "SMA NEGERI 1 KUPANG",
+          "itemRevenue": 1420000,
+          "category": "MO",
+          "processStatus": "Bukan Order Reg"
+        }
+      ],
+      ">3blnItems": [
+        {
+          "itemId": "1-ISV3J30",
+          "itemName": "UNIVERSITAS TIMOR",
+          "itemRevenue": 37482588,
+          "category": "DO",
+          "processStatus": ""
+        }
+      ]
+    },
+    "READY TO BILL": {
+      "<3 BLN": 0,
+      ">3 BLN": 1,
+      "revenue<3bln": 0,
+      "revenue>3bln": 470000,
+      "<3blnItems": [],
+      ">3blnItems": [
+        {
+          "itemId": "1-IRH3UM0",
+          "itemName": "SMA NEGERI 1 KUPANG",
+          "itemRevenue": 470000,
+          "category": "MO"
+        }
+      ]
+    }
+  }
+]
