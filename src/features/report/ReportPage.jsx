@@ -11,8 +11,8 @@ export default function ReportPage() {
   const [dataFromChild, setDataFromChild] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  const handleChildData = (filteredData) => {
-    setDataFromChild(filteredData);
+  const handleChildData = (updatedData) => {
+    setDataFromChild(updatedData);
   };
 
   const goBack = () => {
@@ -72,6 +72,21 @@ export default function ReportPage() {
             ),
           },
         }));
+
+  const saveToServer = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/save-json", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log(result.message);
+    } catch (error) {
+      console.error("❌ Error saving data:", error);
+    }
+  };
 
   return (
     <div className="report">
@@ -133,16 +148,36 @@ export default function ReportPage() {
               </div>
             ) : dataFromChild ? (
               <div className="details-container">
-                <ReportTableDetails filteredData={dataFromChild} />
+                <ReportTableDetails
+                  filteredData={dataFromChild}
+                  onUpdateStatus={handleChildData}
+                />
               </div>
             ) : (
-              <ReportTable
-                data={filteredReportData}
-                error={error}
-                loading={loading}
-                sendDataToParent={handleChildData}
-              />
+              <>
+                <ReportTable
+                  data={filteredReportData}
+                  error={error}
+                  loading={loading}
+                  sendDataToParent={handleChildData}
+                />
+              </>
             )}
+          </div>
+        </div>
+
+        <div className="💪">
+          <button
+            type="button"
+            onClick={() => saveToServer(filteredReportData)}
+          >
+            Save to database
+          </button>
+          <div className="b4-AF">
+            <pre>
+              <h6>JSON</h6> <br />
+              {JSON.stringify(filteredReportData, null, 2)}
+            </pre>
           </div>
         </div>
       </div>
