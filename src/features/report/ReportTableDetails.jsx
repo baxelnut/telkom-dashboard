@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ReportTableDetails.css";
 
-export default function ReportTableDetails({ filteredData }) {
+export default function ReportTableDetails({ filteredData, onUpdateStatus }) {
   if (!filteredData) return <p className="error">No data available.</p>;
 
   const isLessThan3Bln = filteredData["<3Bln"] !== undefined;
@@ -10,17 +10,25 @@ export default function ReportTableDetails({ filteredData }) {
 
   const statusOptions = ["", "Lanjut", "Cancel", "Bukan Order Reg"];
 
-  const [localData, setLocalData] = useState(
-    items.map((item) => ({
-      ...item,
-      processStatus: item.processStatus || "",
-    }))
-  );
+  const [localData, setLocalData] = useState([]);
+
+  useEffect(() => {
+    setLocalData(
+      items.map((item) => ({
+        ...item,
+        processStatus: item.processStatus || "",
+      }))
+    );
+  }, [filteredData]);
 
   const handleStatusChange = (index, newStatus) => {
     const updatedData = [...localData];
     updatedData[index].processStatus = newStatus;
     setLocalData(updatedData);
+
+    const updatedFilteredData = { ...filteredData };
+    updatedFilteredData[itemKey][index].processStatus = newStatus;
+    onUpdateStatus(updatedFilteredData);
   };
 
   return (
@@ -45,9 +53,7 @@ export default function ReportTableDetails({ filteredData }) {
                     <td>
                       <select
                         className={`action-dropdown ${
-                          item.processStatus && item.processStatus !== ""
-                            ? "selected"
-                            : "not-selected"
+                          item.processStatus ? "selected" : "not-selected"
                         }`}
                         value={item.processStatus}
                         onChange={(e) =>
@@ -89,6 +95,8 @@ export default function ReportTableDetails({ filteredData }) {
           </tbody>
         </table>
       </div>
+      <pre>{JSON.stringify(filteredData, null, 2)}</pre>
+      {/* pass this filtered data to parent*/}
     </div>
   );
 }
