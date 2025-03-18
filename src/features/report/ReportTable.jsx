@@ -10,6 +10,10 @@ export default function ReportTable({
 }) {
   if (error) return <p className="error">Error: {error}</p>;
 
+  if (!data.length) return <p className="no-data">No matching data found.</p>;
+
+  console.log(JSON.stringify(data, null, 2));
+
   const formatCurrency = (value, orderCount) => {
     if (!orderCount) return "";
     return `Rp.${(value || 0).toLocaleString("id-ID")}`;
@@ -123,6 +127,7 @@ export default function ReportTable({
         <Loading />
       ) : (
         <div className="table-scroll">
+          {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
           <table>
             <thead>
               <tr>
@@ -169,10 +174,13 @@ export default function ReportTable({
                         key={idx}
                         onClick={() => sendData(entry, statusType, "<3 BLN")}
                       >
-                        <h6>{entry[statusType]?.["<3 BLN"] || 0}</h6>
+                        <h6>{entry[statusType]?.["<3blnItems"].length || 0}</h6>
                         <p>
                           {formatCurrency(
-                            entry[statusType]?.["revenue<3bln"],
+                            entry[statusType]?.["<3blnItems"]?.reduce(
+                              (sum, item) => sum + item.itemRevenue,
+                              0
+                            ),
                             entry[statusType]?.["<3 BLN"]
                           )}
                         </p>
@@ -188,10 +196,13 @@ export default function ReportTable({
                         key={idx}
                         onClick={() => sendData(entry, statusType, ">3 BLN")}
                       >
-                        <h6>{entry[statusType]?.[">3 BLN"] || 0}</h6>
+                        <h6>{entry[statusType]?.[">3blnItems"].length || 0}</h6>
                         <p>
                           {formatCurrency(
-                            entry[statusType]?.["revenue>3bln"],
+                            entry[statusType]?.[">3blnItems"]?.reduce(
+                              (sum, item) => sum + item.itemRevenue,
+                              0
+                            ),
                             entry[statusType]?.[">3 BLN"]
                           )}
                         </p>
