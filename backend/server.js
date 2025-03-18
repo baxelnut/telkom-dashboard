@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
+
 const processExcelData = require("./processExcelData");
 const processPerformanceData = require("./performanceData");
 const { processReportData } = require("./report");
@@ -9,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
+app.use(express.json());
 
 // Define the file path for the Excel file
 const filePath = path.join(__dirname, "..", "public", "data", "dummy.xlsx");
@@ -87,6 +90,35 @@ app.get("/api/report", (req, res) => {
     console.error("❌ Error processing report data:", error);
     res.status(500).json({ error: "Failed to process report data" });
   }
+});
+
+app.post("/save-json", (req, res) => {
+  try {
+    const data = JSON.stringify(req.body, null, 2);
+    const dirPath = path.join(__dirname, "data");
+    const filePath = path.join(dirPath, "reportData.json");
+
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+
+    fs.writeFileSync(filePath, data);
+    res.json({ message: "JSON saved successfully" });
+  } catch (err) {
+    console.error("❌ Error saving file:", err);
+    res.status(500).json({ message: "Failed to save JSON" });
+  }
+});
+
+app.get("/save-json", (req, res) => {
+  const filePath = path.join(__dirname, "data", "reportData.json");
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "No saved report data found" });
+  }
+
+  const jsonData = fs.readFileSync(filePath, "utf-8");
+  res.json(JSON.parse(jsonData));
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
