@@ -101,6 +101,18 @@
   justify-content: space-between;
 }
 
+.filter-container select {
+  background-color: var(--color-surface-variant);
+  color: var(--color-on-surface);
+  padding: 4px;
+  border-radius: 8px;
+  margin-inline: 6px;
+}
+
+.filter-container * {
+  font-weight: bold;
+}
+
 @media screen and (max-width: 1100px) {
   .report {
     width: 90%;

@@ -9,6 +9,7 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dataFromChild, setDataFromChild] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const handleChildData = (filteredData) => {
     setDataFromChild(filteredData);
@@ -37,6 +38,40 @@ export default function ReportPage() {
 
     fetchReport();
   }, []);
+
+  const filteredReportData =
+    selectedCategory === "ALL"
+      ? reportData
+      : reportData.map((witel) => ({
+          ...witel,
+          "PROVIDE ORDER": {
+            ...witel["PROVIDE ORDER"],
+            ">3blnItems": witel["PROVIDE ORDER"][">3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+            "<3blnItems": witel["PROVIDE ORDER"]["<3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+          },
+          "IN PROCESS": {
+            ...witel["IN PROCESS"],
+            ">3blnItems": witel["IN PROCESS"][">3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+            "<3blnItems": witel["IN PROCESS"]["<3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+          },
+          "READY TO BILL": {
+            ...witel["READY TO BILL"],
+            ">3blnItems": witel["READY TO BILL"][">3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+            "<3blnItems": witel["READY TO BILL"]["<3blnItems"].filter(
+              (item) => item.category === selectedCategory
+            ),
+          },
+        }));
 
   return (
     <div className="report">
@@ -74,7 +109,20 @@ export default function ReportPage() {
           ) : (
             <>
               <h5>REPORT</h5>
-              <h6>Periode: ALL</h6>
+              <div className="filter-container">
+                <label>Category:</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="ALL">All</option>
+                  <option value="AO">AO</option>
+                  <option value="SO">SO</option>
+                  <option value="DO">DO</option>
+                  <option value="MO">MO</option>
+                  <option value="RO">RO</option>
+                </select>
+              </div>
             </>
           )}
 
@@ -84,14 +132,12 @@ export default function ReportPage() {
                 <Loading />
               </div>
             ) : dataFromChild ? (
-              /** Show Details Table if there's data */
               <div className="details-container">
                 <ReportTableDetails filteredData={dataFromChild} />
               </div>
             ) : (
-              /** Show Main Table */
               <ReportTable
-                data={reportData}
+                data={filteredReportData}
                 error={error}
                 loading={loading}
                 sendDataToParent={handleChildData}
