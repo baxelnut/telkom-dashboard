@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ReportTableDetails.css";
 
 export default function ReportTableDetails({ filteredData }) {
   if (!filteredData) return <p className="error">No data available.</p>;
 
   const isLessThan3Bln = filteredData["<3Bln"] !== undefined;
-  const isMoreThan3Bln = filteredData[">3Bln"] !== undefined;
-
-  const timeFilterKey = isLessThan3Bln ? "<3Bln" : ">3Bln";
   const itemKey = isLessThan3Bln ? "<3blnItems" : ">3blnItems";
   const items = filteredData[itemKey] || [];
+
+  const statusOptions = ["", "Lanjut", "Cancel", "Bukan Order Reg"];
+
+  const [localData, setLocalData] = useState(
+    items.map((item) => ({
+      ...item,
+      processStatus: item.processStatus || "",
+    }))
+  );
+
+  const handleStatusChange = (index, newStatus) => {
+    const updatedData = [...localData];
+    updatedData[index].processStatus = newStatus;
+    setLocalData(updatedData);
+  };
 
   return (
     <div className="report-details-wrapper">
@@ -19,22 +31,38 @@ export default function ReportTableDetails({ filteredData }) {
             <tr>
               {filteredData.statusType === "IN PROCESS" && <th>STATUS</th>}
               <th>LI ID</th>
+              <th>WITEL</th>
               <th>STANDARD NAME</th>
               <th>REVENUE</th>
             </tr>
           </thead>
           <tbody>
-            {items.length > 0 ? (
-              items.map((item, index) => (
+            {localData.length > 0 ? (
+              localData.map((item, index) => (
                 <tr key={index}>
                   {filteredData.statusType === "IN PROCESS" && (
                     <td>
-                      <button className="action-button">
-                        {item.status || "null"}
-                      </button>
+                      <select
+                        className={`action-dropdown ${
+                          item.processStatus && item.processStatus !== ""
+                            ? "selected"
+                            : "not-selected"
+                        }`}
+                        value={item.processStatus}
+                        onChange={(e) =>
+                          handleStatusChange(index, e.target.value)
+                        }
+                      >
+                        {statusOptions.map((option, idx) => (
+                          <option key={idx} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                   )}
                   <td>{item.itemId}</td>
+                  <td>{filteredData.witelName}</td>
                   <td>{item.itemName}</td>
                   <td>
                     {new Intl.NumberFormat("id-ID", {
@@ -49,7 +77,7 @@ export default function ReportTableDetails({ filteredData }) {
             ) : (
               <tr>
                 <td
-                  colSpan={filteredData.statusType === "IN PROCESS" ? 4 : 3}
+                  colSpan={filteredData.statusType === "IN PROCESS" ? 5 : 4}
                   className="no-data"
                 >
                   No items found.
