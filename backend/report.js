@@ -13,7 +13,13 @@ const categoryMapping = {
   AO: ["New Install"],
   SO: ["Suspend"],
   DO: ["Disconnect"],
-  MO: ["Modify", "Modify Price", "Renewal Agreement", "Modify Termin"],
+  MO: [
+    "Modify",
+    "Modify BA",
+    "Modify Price",
+    "Renewal Agreement",
+    "Modify Termin",
+  ],
   RO: ["Resume"],
 };
 
