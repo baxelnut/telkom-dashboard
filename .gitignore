@@ -25,7 +25,9 @@ example
 *.sln
 *.sw?
 
-public/data/data.csv
 public/data/*.csv
-public/data/report_dummy.xlsx
-public/data/data.xlsx
+public/data/*.xlsx
+
+# exclude
+!public/data/dummy.xlsx
+!dist/data/dummy.xlsx
