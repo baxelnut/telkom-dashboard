@@ -72,7 +72,18 @@ export default function OverViewCard({ data, title }) {
   const isPositive = percentageChange >= 0;
   const percentageClass = isPositive ? "positive" : "negative";
   const symbol = percentageChange === "0.00" ? "" : isPositive ? "+" : "";
+
   const percentageSubtitle = "Compared to yesterday"; // compared to yesterday for now
+
+  const completedPercentage =
+    total > 0
+      ? (
+          ((data.find((item) => item.name === "Billing Completed")?.value ||
+            0) /
+            total) *
+          100
+        ).toFixed(2)
+      : "0.00";
 
   return (
     <div className="overview-card">
@@ -99,6 +110,10 @@ export default function OverViewCard({ data, title }) {
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+      <div>
+        <h6>{completedPercentage}% Completed</h6>
+        {/*  show percentage on how many has been completed */}
       </div>
       <div className="comparison">
         <div className={`percentage ${percentageClass}`}>
