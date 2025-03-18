@@ -9,6 +9,21 @@ const witelMapping = {
   SIDOARJO: "JATIM BARAT",
 };
 
+const categoryMapping = {
+  AO: ["New Install"],
+  SO: ["Suspend"],
+  DO: ["Disconnect"],
+  MO: ["Modify", "Modify Price", "Renewal Agreement", "Modify Termin"],
+  RO: ["Resume"],
+};
+
+function getCategory(orderSubtype) {
+  for (const [category, subtypes] of Object.entries(categoryMapping)) {
+    if (subtypes.includes(orderSubtype)) return category;
+  }
+  return "UNKNOWN";
+}
+
 function processReportData(filePath) {
   try {
     const workbook = XLSX.readFile(filePath);
@@ -58,26 +73,27 @@ function processReportData(filePath) {
       const orderId = row["LI_ID"];
       const itemName = row["STANDARD_NAME"];
       const itemRevenue = parseFloat(row["REVENUE"]) || 0;
+      const orderSubtype = row["ORDER_SUBTYPE"];
+      const category = getCategory(orderSubtype);
 
       if (kategori in acc[witelRenamed]) {
         const categoryData = acc[witelRenamed][kategori];
 
+        const itemObject = {
+          itemId: orderId,
+          itemName: itemName || "Unknown",
+          itemRevenue: itemRevenue,
+          category: category,
+        };
+
         if (kategoriUmur === "< 3 BLN") {
           categoryData["<3 BLN"]++;
           categoryData["revenue<3bln"] += itemRevenue;
-          categoryData["<3blnItems"].push({
-            itemId: orderId,
-            itemName: itemName || "Unknown",
-            itemRevenue: itemRevenue,
-          });
+          categoryData["<3blnItems"].push(itemObject);
         } else if (kategoriUmur === "> 3 BLN") {
           categoryData[">3 BLN"]++;
           categoryData["revenue>3bln"] += itemRevenue;
-          categoryData[">3blnItems"].push({
-            itemId: orderId,
-            itemName: itemName || "Unknown",
-            itemRevenue: itemRevenue,
-          });
+          categoryData[">3blnItems"].push(itemObject);
         }
       }
 

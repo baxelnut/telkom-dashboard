@@ -26,6 +26,6 @@ example
 *.sw?
 
 public/data/data.csv
-public/data/dummy.xlsx
 public/data/*.csv
-public/data/*.xlsx
+public/data/report_dummy.xlsx
+public/data/data.xlsx
