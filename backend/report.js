@@ -92,6 +92,10 @@ function processReportData(filePath) {
           category: category,
         };
 
+        if (kategori === "IN PROCESS") {
+          itemObject.processStatus = "";
+        }
+
         if (kategoriUmur === "< 3 BLN") {
           categoryData["<3 BLN"]++;
           categoryData["revenue<3bln"] += itemRevenue;
