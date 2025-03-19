@@ -106,29 +106,27 @@ export default function OverviewPage() {
     { title: "Total Target", amount: "XXX", percentage: 45 },
   ];
 
-  // const graphData = [
-  //   {
-  //     title: "Segmen",
-  //     component: (
-  //       <RadarChartComponent fileData={fileData} columnName="SEGMEN" />
-  //     ),
-  //     data: top5Witel.map((witel) => ({
-  //       witelName: witel,
-  //     })),
-  //   },
-  //   // {
-  //   //   title: "Bill Witel",
-  //   //   component: (
-  //   //     <PieChartComponent fileData={fileData} columnName="BILL_WITEL" />
-  //   //   ),
-  //   // },
-  //   // {
-  //   //   title: "Sub-segmen",
-  //   //   component: (
-  //   //     <BarChartComponent fileData={fileData} columnName="SUB_SEGMEN" />
-  //   //   ),
-  //   // },
-  // ];
+  const graphData = [
+    {
+      title: "Segmen",
+      component: <RadarChartComponent fileData={rawData} columnName="SEGMEN" />,
+      data: rawData.map((witel) => ({
+        witelName: witel,
+      })),
+    },
+    {
+      title: "Bill Witel",
+      component: (
+        <PieChartComponent fileData={rawData} columnName="BILL_WITEL" />
+      ),
+    },
+    {
+      title: "Sub-segmen",
+      component: (
+        <BarChartComponent fileData={rawData} columnName="SUB_SEGMEN" />
+      ),
+    },
+  ];
 
   // const processData = (data) => {
   //   const result = {};
@@ -249,13 +247,13 @@ export default function OverviewPage() {
             />
           </div>
           <div className="p-graphs-container">
-            {/* {graphData.map((graph, index) => (
+            {graphData.map((graph, index) => (
               <GraphCard
                 key={index}
                 title={graph.title}
                 graphComponent={graph.component}
               />
-            ))} */}
+            ))}
           </div>
           <OverviewTable data={rawData} loading={loading} error={error} />
         </div>

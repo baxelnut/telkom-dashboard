@@ -112,8 +112,11 @@ export default function OverViewCard({ data, title }) {
         </ResponsiveContainer>
       </div>
       <div>
-        <h6>{completedPercentage}% Completed</h6>
-        {/*  show percentage on how many has been completed */}
+        <h6>
+          {completedPercentage}% Completed <br /> (
+          {data.find((item) => item.name === "Billing Completed")?.value || 0})
+        </h6>
+        <h6></h6>
       </div>
       <div className="comparison">
         <div className={`percentage ${percentageClass}`}>

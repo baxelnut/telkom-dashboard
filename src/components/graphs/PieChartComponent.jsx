@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import "./PieChartComponent.css";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 import Loading from "../Loading";
@@ -93,31 +93,32 @@ const renderActiveShape = (props) => {
 export default function PieChartComponent({ fileData, columnName }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (!fileData || fileData.length === 0) return <p>No data available.</p>;
+  const processedData = useMemo(() => {
+    const colorMap = {};
 
-  const processedData = fileData.reduce((acc, row) => {
-    const category = row[columnName] || "Unknown";
-    const existing = acc.find((item) => item.name === category);
-    if (existing) {
-      existing.value += 1;
-    } else {
-      acc.push({ name: category, value: 1, fill: getRandomColor() });
-    }
-    return acc;
-  }, []);
+    return fileData.reduce((acc, row) => {
+      const category = row[columnName] || "Unknown";
 
-  // if (loading)
-  //   return (
-  //     <div className="pie-chart-container">
-  //       <Loading />
-  //     </div>
-  //   );
-  // if (error)
-  //   return (
-  //     <div className="pie-chart-container">
-  //       <p>Error: {error}</p>
-  //     </div>
-  //   );
+      if (!colorMap[category]) {
+        colorMap[category] = getRandomColor();
+      }
+
+      const existing = acc.find((item) => item.name === category);
+      if (existing) {
+        existing.value += 1;
+      } else {
+        acc.push({ name: category, value: 1, fill: colorMap[category] });
+      }
+      return acc;
+    }, []);
+  }, [fileData, columnName]);
+
+  if (!fileData || fileData.length === 0)
+    return (
+      <div className="radar-container">
+        <Loading />
+      </div>
+    );
 
   return (
     <div className="pie-chart-container">
