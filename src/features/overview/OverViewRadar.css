@@ -1,0 +1,10 @@
+.overtime-radar-container {
+  flex: 1;
+}
+
+.overview-radar-content {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-height: 30vh;
+}
