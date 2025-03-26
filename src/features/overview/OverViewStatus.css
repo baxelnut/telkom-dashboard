@@ -1,0 +1,50 @@
+.overview-pie {
+  background-color: var(--surface);
+  height: 100%;
+  width: 16vw;
+  border-radius: 8px;
+  text-align: center;
+  border: 0.5px solid var(--text-variant);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 1%;
+  padding-top: 1.5%;
+}
+
+.overview-pie-content {
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comparison {
+  padding-top: 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 2%;
+  width: 100%;
+}
+
+.comparison p {
+  font-size: 14px;
+}
+
+.percentage {
+  color: var(--surface);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.percentage.positive {
+  background-color: var(--success);
+}
+
+.percentage.negative {
+  background-color: var(--error);
+}
