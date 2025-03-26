@@ -13,17 +13,47 @@
   margin-top: 1%;
   display: flex;
   align-items: stretch;
-  justify-content: space-between;
   gap: 1%;
-  height: fit-content;
+  height: 60vh;
 }
 
-.session-chart-container > :first-child {
+.session-chart-container > :nth-child(1) {
   flex: 3;
-  height: 100%;
 }
 
 .session-chart-container > :nth-child(2) {
   flex: 1;
-  height: 100%;
+}
+
+.analysis-container {
+  margin-top: 1%;
+  display: flex;
+  align-items: stretch;
+  gap: 1%;
+}
+
+.analysis-container > :nth-child(1) {
+  flex: 1;
+}
+
+.analysis-container > :nth-child(2) {
+  flex: 2;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-evenly;
+  gap: 1%;
+  border-radius: 8px;
+  background-color: var(--surface);
+  border: 0.5px solid var(--text-variant);
+  background-color: var(--surface);
+  padding: 1rem;
+  text-align: start;
+}
+
+.table-container {
+  text-align: start;
+  background-color: var(--surface);
+  border: 0.5px solid var(--text-variant);
+  margin-top: 1%;
+  border-radius: 8px;
 }
