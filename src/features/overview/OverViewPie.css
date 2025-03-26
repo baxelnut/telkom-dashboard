@@ -1,0 +1,10 @@
+.overview-pie-container {
+  flex: 1;
+}
+
+.overview-pie-content {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-height: 30vh;
+}
