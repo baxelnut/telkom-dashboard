@@ -3,6 +3,10 @@ import "./OverviewPage.css";
 import OverViewStatus from "./OverViewStatus";
 import OverViewOverTime from "./OverViewOverTime";
 import OverViewSession from "./OverViewSession";
+import OverviewTable from "./OverviewTable";
+import OverViewRadar from "./OverViewRadar";
+import OverViewPie from "./OverViewPie";
+import OverViewBar from "./OverViewBar";
 
 const overviewStatus = [
   {
@@ -50,6 +54,10 @@ const overviewOvertimeInfo = [
   { title: "Total Target", amount: "XXX", percentage: 45 },
 ];
 
+const overviewBar = { content: "<i show bar content here??>" };
+const overviewPie = { content: "<i show pie content here??>" };
+const overviewRadar = { content: "<i show radar content here??>" };
+
 export default function OverviewPage() {
   return (
     <div className="overview-container">
@@ -58,6 +66,7 @@ export default function OverviewPage() {
           return <OverViewStatus key={index} overviewStatus={item} />;
         })}
       </div>
+
       <div className="session-chart-container">
         <OverViewOverTime
           title="Revenue Over Time"
@@ -69,6 +78,33 @@ export default function OverviewPage() {
           subtitle="Showing data for top order sub-type."
           overviewSession={overviewSession}
         />
+      </div>
+
+      <div className="analysis-container">
+        <div>
+          <OverViewBar
+            title="Sub-segmen"
+            subtitle="Showing data for ... lorem ipsum."
+            overviewBar={overviewBar}
+          />
+        </div>
+
+        <div>
+          <OverViewRadar
+            title="Segmen"
+            subtitle="Showing data for ... lorem ipsum."
+            overviewRadar={overviewRadar}
+          />
+          <OverViewPie
+            title="Bill Witel"
+            subtitle="Showing data for ... lorem ipsum."
+            overviewPie={overviewPie}
+          />
+        </div>
+      </div>
+
+      <div className="table-container">
+        <OverviewTable title="Data Overview" />
       </div>
     </div>
   );
