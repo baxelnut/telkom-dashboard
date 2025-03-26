@@ -132,20 +132,23 @@ button:focus-visible {
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
+  display: none;
 }
 
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px #bcbcbc;
   border-radius: 8px;
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--text-variant);
   border-radius: 8px;
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: grey;
+  display: none;
 }
 
 @media (prefers-color-scheme: light) {
