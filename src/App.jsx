@@ -47,7 +47,6 @@ function AppContent() {
             />
           )}
         </div>
-
         <div className="content">
           <Routes>
             <Route path="/" element={<Navigate to="/overview" replace />} />
@@ -57,9 +56,9 @@ function AppContent() {
             <Route path="/example" element={<ExamplePage />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
-        </div>
 
-        <div className="footer">{!isNotFound && <Footer />}</div>
+          <div className="footer">{!isNotFound && <Footer />}</div>
+        </div>
       </div>
     </div>
   );
