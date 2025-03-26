@@ -1,0 +1,29 @@
+.overview-container {
+  padding: 1%;
+}
+
+.status-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1%;
+}
+
+.session-chart-container {
+  margin-top: 1%;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1%;
+  height: fit-content;
+}
+
+.session-chart-container > :first-child {
+  flex: 3;
+  height: 100%;
+}
+
+.session-chart-container > :nth-child(2) {
+  flex: 1;
+  height: 100%;
+}
