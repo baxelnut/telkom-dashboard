@@ -1,0 +1,9 @@
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--surface);
+  height: 40px;
+  padding-inline: 1%;
+  border-top: 0.5px solid var(--text-variant);
+}

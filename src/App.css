@@ -33,7 +33,7 @@
 }
 
 .header {
-  width: inherit; 
+  width: inherit;
   z-index: 1;
 }
 
@@ -51,7 +51,6 @@
 }
 
 .footer {
-  background-color: yellow;
   width: inherit;
   height: fit-content;
   z-index: 1;
