@@ -1,0 +1,162 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400&display=swap");
+
+:root {
+  --primary: #312a68;
+  --primary-variant: #45448b;
+  --secondary: #e76705;
+  --secondary-variant: #f38405;
+  --surface: #f0f3ff;
+  --card: #d5d9e7;
+  --text: #000000;
+  --text-variant: #8f8f8f;
+  --error: #d72323;
+  --success: #5cb338;
+  --heading: "Poppins", sans-serif;
+  --body: "Roboto", sans-serif;
+
+  line-height: 1;
+  font-weight: 400;
+
+  width: 100%;
+  max-width: none;
+
+  color-scheme: light dark;
+  background-color: var(--surface);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--surface);
+  color: var(--text);
+  font-family: var(--body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--heading);
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 32px;
+}
+
+h3 {
+  font-size: 28px;
+}
+
+h4 {
+  font-size: 24px;
+}
+
+h5 {
+  font-size: 20px;
+}
+
+h6 {
+  font-size: 16px;
+}
+
+p {
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+a {
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--primary-variant);
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--primary);
+}
+
+blockquote {
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 400;
+  font-style: italic;
+  border-left: 4px solid var(--text-variant);
+  padding-left: 10px;
+  margin: 10px 0;
+}
+
+button {
+  font-family: var(--heading);
+  font-size: 16px;
+  font-weight: 400;
+  border: 1px solid transparent;
+  padding: 10px 20px;
+  background-color: var(--primary);
+  cursor: pointer;
+  transition: border-color 0.25s;
+  border-radius: 8px;
+}
+
+button:hover {
+  background-color: var(--secondary-variant);
+  font-weight: 600;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #bcbcbc;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-variant);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

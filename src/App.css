@@ -1,0 +1,58 @@
+#root {
+  max-width: 1280px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  position: relative;
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app-container {
+  display: flex;
+  justify-content: start;
+  width: 100vw;
+  height: 100vh;
+}
+
+.content-container {
+  width: 100%;
+  min-height: 100vh;
+  max-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.header {
+  width: inherit; 
+  z-index: 1;
+}
+
+.sidebar {
+  width: 18vw;
+  z-index: 2;
+}
+
+.content {
+  width: inherit;
+  height: 100%;
+  position: relative;
+  background-color: var(--card);
+  z-index: 0;
+}
+
+.footer {
+  background-color: yellow;
+  width: inherit;
+  height: fit-content;
+  z-index: 1;
+}

@@ -1,0 +1,42 @@
+.header-container {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: inset 0 -1px 0 var(--text-variant),
+    inset 1px 0 0 var(--text-variant);
+  background-color: var(--surface);
+  padding-inline: 1%;
+}
+
+.profile {
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 22%;
+  max-width: 45%;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.profile .picture {
+  max-width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--text-variant);
+}
+
+.profile .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  padding-block: 6px;
+  height: fit-content;
+}
+
+.profile .chevron-down {
+  max-width: 30px;
+  aspect-ratio: 1;
+}
