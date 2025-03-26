@@ -3,15 +3,16 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import "./App.css";
 import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
-import OverviewPage from "./features/OverviewPage";
-import PerformancePage from "./features/PerformancePage";
-import ReportPage from "./features/ReportPage";
-import ExamplePage from "./features/ExamplePage";
+import OverviewPage from "./features/overview/OverviewPage";
+import PerformancePage from "./features/performance/PerformancePage";
+import ReportPage from "./features/report/ReportPage";
+import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 
 function AppContent() {
@@ -19,17 +20,14 @@ function AppContent() {
   const pathname = location.pathname;
 
   const pageConfig = {
-    "/overview": { title: "Overview", showFilter: true, customActions: null },
-    "/performance": {
-      title: "Performance",
-      showFilter: false,
-      customActions: null,
-    },
-    "/report": { title: "Report", showFilter: false, customActions: null },
-    "/example": { title: "Example", showFilter: false, customActions: null },
+    "/": { title: "Overview" },
+    "/overview": { title: "Overview" },
+    "/performance": { title: "Performance" },
+    "/report": { title: "Report" },
+    "/example": { title: "Example" },
   };
 
-  const isNotFound = !pageConfig[pathname];
+  const isNotFound = !(pageConfig[pathname] || pathname === "/");
 
   return (
     <div className="app-container">
@@ -52,11 +50,11 @@ function AppContent() {
 
         <div className="content">
           <Routes>
+            <Route path="/" element={<Navigate to="/overview" replace />} />
             <Route path="/overview" element={<OverviewPage />} />
             <Route path="/performance" element={<PerformancePage />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/example" element={<ExamplePage />} />
-            <Route path="/" element={<OverviewPage />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </div>
