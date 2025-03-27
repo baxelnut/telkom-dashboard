@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "./ExamplePage.css";
 
 export default function ExamplePage() {
   const [data, setData] = useState(null);
+  const [hello, setHello] = useState(null);
   // i use axios and python
   // useEffect(() => {
   //   axios
@@ -21,9 +22,16 @@ export default function ExamplePage() {
   const fetchData = async () => {
     try {
       const response = await fetch(`${API_URL}/data`);
+      const helloResponse = await fetch(`${API_URL}/hello`);
+
       const data = await response.json();
+      const hello = await helloResponse.json(); // <- Should be from helloResponse
+
       setData(data);
+      setHello(hello);
+
       console.log("🔥 Fetched Data:", data);
+      console.log("🔥 Fetched Hello:", hello);
     } catch (error) {
       console.error("🚨 Fetch Error:", error);
     }
@@ -46,6 +54,7 @@ export default function ExamplePage() {
 
   return (
     <div className="example">
+      <pre>{JSON.stringify(hello, null, 2)}</pre>
       <h1>ExamplePage</h1>
       <div className="example1">
         <pre>{data ? JSON.stringify(data, null, 2) : "Loading..."}</pre>
