@@ -32,12 +32,12 @@ export default function ReportPage() {
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           />
-          <p className="label">Select period...</p>
+          <p className="label">{`within ${selectedPeriod} period`}</p>
         </div>
       </div>
 
       <div className="report-table">
-        <h5>Report Table</h5>
+        <h5>{`Report for ${selectedCategory}`}</h5>
         <div className="category-filter">
           <p className="label">Category:</p>
           <Dropdown
