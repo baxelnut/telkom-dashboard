@@ -58,15 +58,29 @@
 .menu-selection .icon {
   width: 20px;
   height: 20px;
-  padding-inline: 20px;
+  padding-inline: 18px;
+}
+
+.menu-selection .label {
+  padding: 0;
+  margin: 0;
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.menu-selection.selected .label {
+  font-weight: 600;
+  font-size: 16px;
 }
 
 @media screen and (max-width: 1200px) {
   .sidebar {
-    width: 12%;
+    min-width: 10%;
+    /* display: none; */
   }
 
-  .menu-selection h6 {
+  .menu-selection .label {
     display: none;
   }
 
@@ -75,6 +89,7 @@
     justify-content: center;
     width: fit-content;
     border-radius: 8px;
+    min-width: 12%;
   }
 
   .menu-selection .icon {
@@ -98,10 +113,6 @@
 }
 
 @media screen and (max-width: 768px) {
-  .sidebar {
-    max-width: 10%;
-  }
-
   .menu-selection .icon {
     padding: 5px;
     max-width: 20px;

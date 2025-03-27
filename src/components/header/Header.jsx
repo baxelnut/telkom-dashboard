@@ -7,10 +7,10 @@ export default function Header({ title, user }) {
 
   return (
     <div className="header-container">
-      <h2>{title}</h2>
+      <h5 className="title">{title}</h5>
       <div className="profile">
         <img className="picture" src={user.imageUrl} alt="Profile" />
-        <h6 className="name">{user.name}</h6>
+        <p className="name">{user.name}</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"

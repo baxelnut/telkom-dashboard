@@ -1,11 +1,11 @@
 .header-container {
-  height: 70px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 0.5px solid var(--text-variant);
   background-color: var(--surface);
-  padding-inline: 1%;
+  padding-inline: 1rem;
 }
 
 .profile {
@@ -13,14 +13,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 22%;
-  max-width: 45%;
-  gap: 4px;
+  min-width: 20%;
+  max-width: 50%;
+  gap: 1rem;
   cursor: pointer;
 }
 
 .profile .picture {
-  max-width: 50px;
+  max-width: 35px;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 1px solid var(--text-variant);
@@ -31,11 +31,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  padding-block: 6px;
+  padding-block: 4px;
   height: fit-content;
 }
 
 .profile .chevron-down {
-  max-width: 30px;
+  max-width: 22px;
   aspect-ratio: 1;
+}
+
+.profile * {
+  font-family: var(--heading);
+  font-weight: 500;
 }

@@ -72,7 +72,7 @@ export default function SideBar() {
             }}
           >
             <div className="icon">{item.icon}</div>
-            <h6>{item.label}</h6>
+            <p className="label">{item.label}</p>
           </div>
         ))}
       </div>
