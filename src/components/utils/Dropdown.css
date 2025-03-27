@@ -4,7 +4,7 @@
   padding-block: 0.25rem;
   border-radius: 6px;
 
-  background-color: var(--surface);
+  background-color: rgb(var(--surface-rgb), 1);
   color: var(--text);
   min-height: 2rem;
 }
