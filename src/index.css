@@ -14,6 +14,17 @@
   --heading: "Poppins", sans-serif;
   --body: "Montserrat", sans-serif;
 
+  --primary-rgb: 49, 42, 104;
+  --primary-variant-rgb: 69, 68, 139;
+  --secondary-rgb: 231, 103, 5;
+  --secondary-variant-rgb: 243, 132, 5;
+  --surface-rgb: 240, 243, 255;
+  --bg-rgb: 213, 217, 231;
+  --text-rgb: 0, 0, 0;
+  --text-variant-rgb: 143, 143, 143;
+  --error-rgb: 215, 35, 35;
+  --success-rgb: 92, 179, 56;
+
   line-height: 1;
   font-weight: 400;
 
@@ -42,6 +53,11 @@ body {
   font-family: var(--body);
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 h1,
 h2,
 h3,
@@ -50,8 +66,6 @@ h5,
 h6 {
   font-family: var(--heading);
   font-weight: 600;
-  margin: 0;
-  padding: 0;
 }
 
 h1 {
