@@ -4,8 +4,7 @@
 }
 
 .period-container,
-.report-table,
-.report-table-container {
+.report-table {
   border-radius: 8px;
   background-color: var(--surface);
   border: 0.5px solid var(--text-variant);
@@ -39,8 +38,8 @@
   gap: 1rem;
 }
 
-.report-table-container {
+/* .report-table-container {
   border: none;
   background-color: var(--bg);
   min-height: 54vh;
-}
+} */
