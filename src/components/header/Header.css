@@ -41,6 +41,5 @@
 }
 
 .profile * {
-  font-family: var(--heading);
   font-weight: 500;
 }
