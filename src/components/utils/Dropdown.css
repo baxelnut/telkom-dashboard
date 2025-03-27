@@ -1,0 +1,15 @@
+.dropdown {
+  width: fit-content;
+  padding-inline: 1rem;
+  padding-block: 0.25rem;
+  border-radius: 6px;
+
+  background-color: var(--surface);
+  color: var(--text);
+  min-height: 2rem;
+}
+
+select,
+option {
+  font-weight: 600;
+}
