@@ -109,14 +109,17 @@ blockquote {
 
 button {
   font-family: var(--heading);
-  font-size: 16px;
-  font-weight: 400;
+  font-weight: 600;
   border: 1px solid transparent;
-  padding: 10px 20px;
-  background-color: var(--primary);
+  padding-inline: 1rem;
+  padding-block: 0.4rem;
+  background-color: var(--primary-variant);
   cursor: pointer;
   transition: border-color 0.25s;
-  border-radius: 8px;
+  border-radius: 6px;
+  height: fit-content;
+  align-self: center;
+  margin: 0.5rem;
 }
 
 button:hover {
