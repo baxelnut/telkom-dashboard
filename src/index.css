@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --primary: #312a68;
@@ -6,13 +6,13 @@
   --secondary: #e76705;
   --secondary-variant: #f38405;
   --surface: #f0f3ff;
-  --card: #d5d9e7;
+  --bg: #d5d9e7;
   --text: #000000;
   --text-variant: #8f8f8f;
   --error: #d72323;
   --success: #5cb338;
   --heading: "Poppins", sans-serif;
-  --body: "Roboto", sans-serif;
+  --body: "Montserrat", sans-serif;
 
   line-height: 1;
   font-weight: 400;
@@ -80,7 +80,7 @@ h6 {
 
 p {
   font-family: var(--body);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
 }
 
