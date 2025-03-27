@@ -1,6 +1,6 @@
-require("dotenv").config();
-
-const { createClient } = require("@supabase/supabase-js");
+import allowCors from "./cors";
+import "dotenv/config";
+import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
@@ -13,7 +13,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   try {
     const { data, error } = await supabase.from("aosodomoro").select("*");
     if (error) throw error;
@@ -23,3 +23,5 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export default allowCors(handler);
