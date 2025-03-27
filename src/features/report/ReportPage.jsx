@@ -1,5 +1,10 @@
 import React from "react";
+import "./ReportPage.css";
 
 export default function ReportPage() {
-  return <div>ReportPage</div>;
+  return (
+    <div className="report-container">
+      <p>ReportPage</p>
+    </div>
+  );
 }
