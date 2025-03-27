@@ -103,7 +103,7 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      <div className="table-container">
+      <div className="overview-table-container">
         <OverviewTable title="Data Overview" />
       </div>
     </div>

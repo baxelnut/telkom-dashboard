@@ -47,7 +47,7 @@ export default function ReportPage() {
           />
         </div>
 
-        <div className="table-container"></div>
+        <div className="report-table-container"></div>
       </div>
     </div>
   );
