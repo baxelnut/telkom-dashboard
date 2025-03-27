@@ -7,5 +7,6 @@
   "routes": [
     { "src": "/api/hello", "dest": "/api/hello.js" },
     { "src": "/api/data", "dest": "/api/data.js" }
-  ]
+  ],
+  "alias": "backend-baxelnuts-projects.vercel.app"
 }
