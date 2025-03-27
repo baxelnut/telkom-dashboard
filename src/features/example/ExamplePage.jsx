@@ -15,10 +15,12 @@ export default function ExamplePage() {
   //     .catch((error) => console.error("🚨 API Error:", error));
   // }, []);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // usual
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/data");
+      const response = await fetch(`${API_URL}/data`);
       const data = await response.json();
       setData(data);
       console.log("🔥 Fetched Data:", data);
