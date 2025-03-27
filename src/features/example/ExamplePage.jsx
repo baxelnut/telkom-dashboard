@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 // import axios from "axios";
 import "./ExamplePage.css";
+import Loading from "../../components/Loading";
 
 export default function ExamplePage() {
   const [data, setData] = useState(null);
@@ -54,10 +55,12 @@ export default function ExamplePage() {
 
   return (
     <div className="example">
-      <pre>{JSON.stringify(hello, null, 2)}</pre>
       <h1>ExamplePage</h1>
       <div className="example1">
-        <pre>{data ? JSON.stringify(data, null, 2) : "Loading..."}</pre>
+        {hello ? <pre>{JSON.stringify(hello, null, 2)}</pre> : <Loading />}
+      </div>
+      <div className="example1">
+        {data ? <p>{JSON.stringify(data, null, 2)}</p> : <Loading />}
       </div>
     </div>
   );
