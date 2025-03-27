@@ -1,3 +1,46 @@
 .report-container {
-    background-color: red;
+  height: 100%;
+  padding: 1rem;
+}
+
+.period-container,
+.report-table,
+.table-container {
+  border-radius: 8px;
+  background-color: var(--surface);
+  border: 0.5px solid var(--text-variant);
+  text-align: start;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.period-filter {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.period-container .label {
+  color: var(--text-variant);
+}
+
+.report-table {
+  margin-top: 1rem;
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.table-container {
+  border: none;
+  background-color: var(--bg);
+  min-height: 52vh;
 }
