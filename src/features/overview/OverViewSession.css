@@ -17,7 +17,7 @@
   align-items: stretch;
   margin-block: 16px;
   height: 100%;
-  gap: 1%;
+  gap: 1rem;
 }
 
 .head h6 {
@@ -45,4 +45,18 @@
 .bar .active {
   width: auto;
   background-color: var(--primary-variant);
+}
+
+.session-title {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .session-content,
+  .session-title {
+    gap: 0.5rem;
+  }
 }
