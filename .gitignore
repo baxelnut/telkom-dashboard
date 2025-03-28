@@ -24,6 +24,7 @@ build/
 .env
 .env.*
 firestore.rules
+.firebase
 
 # 🔥 Lockfiles (Optional)
 package-lock.json
