@@ -75,20 +75,15 @@
 
 @media screen and (max-width: 1200px) {
   .sidebar {
-    min-width: 10%;
-    /* display: none; */
-  }
-
-  .menu-selection .label {
-    display: none;
+    max-width: 60%;
   }
 
   .menu-selection {
     padding: 0;
-    justify-content: center;
-    width: fit-content;
+    justify-content: start;
+    gap: 0.5rem;
     border-radius: 8px;
-    min-width: 12%;
+    width: 100%;
   }
 
   .menu-selection .icon {
@@ -99,8 +94,9 @@
   .menu {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
+    padding-top: 2rem;
   }
 
   .logo {
