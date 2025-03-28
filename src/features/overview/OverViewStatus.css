@@ -9,12 +9,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  padding: 1%;
-  padding-top: 1.5%;
+  justify-content: space-between;
+  padding: 1rem;
+  padding-top: 1.5rem;
 }
 
-.overview-pie-content {
+.overview-status-pie-content {
   width: 100%;
   height: 20vh;
   display: flex;
@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  gap: 2%;
+  gap: 2rem;
   width: 100%;
 }
 
@@ -47,4 +47,23 @@
 
 .percentage.negative {
   background-color: var(--error);
+}
+
+@media screen and (max-width: 768px) {
+  .overview-pie {
+    width: calc(100% - 2rem);
+  }
+
+  .overview-status-pie-content {
+    width: 100%;
+    max-height: 20vh;
+    margin: 1rem;
+  }
+
+  .comparison {
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    gap: 1rem;
+  }
 }

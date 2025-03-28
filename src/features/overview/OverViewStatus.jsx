@@ -20,7 +20,7 @@ export default function OverViewStatus({ overviewStatus }) {
     <div className="overview-pie">
       <h5>{overviewStatus.title}</h5>
 
-      <div className="overview-pie-content">
+      <div className="overview-status-pie-content">
         <pre>{overviewStatus.content}</pre>
       </div>
 
