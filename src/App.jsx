@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -15,25 +16,55 @@ import ReportPage from "./features/report/ReportPage";
 import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 
+const pageConfig = {
+  "/": { title: "Overview" },
+  "/overview": { title: "Overview" },
+  "/performance": { title: "Performance" },
+  "/report": { title: "Report" },
+  "/example": { title: "Example" },
+};
+
 function AppContent() {
   const location = useLocation();
   const pathname = location.pathname;
-
-  const pageConfig = {
-    "/": { title: "Overview" },
-    "/overview": { title: "Overview" },
-    "/performance": { title: "Performance" },
-    "/report": { title: "Report" },
-    "/example": { title: "Example" },
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
 
   const isNotFound = !(pageConfig[pathname] || pathname === "/");
 
+  const handleMobileMenuClick = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        isSidebarOpen
+      ) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
   return (
     <div className="app-container">
-      <div className="sidebar">
+      {isSidebarOpen && (
+        <div className="overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+      <div
+        ref={sidebarRef}
+        className={`sidebar ${isSidebarOpen ? "active" : ""}`}
+      >
         <SideBar />
       </div>
+
       <div className="content-container">
         <div className="header">
           {!isNotFound && (
@@ -44,6 +75,7 @@ function AppContent() {
                 imageUrl:
                   "https://media.licdn.com/dms/image/v2/D5603AQEOUn3wMVGnGQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1701105430319?e=1746057600&v=beta&t=UpXVCVR_jttTVKh1Q-YsfJ-1_3kwWzKCTVmiKwdGi6A",
               }}
+              onMenuClick={handleMobileMenuClick}
             />
           )}
         </div>
