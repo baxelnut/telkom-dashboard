@@ -7,3 +7,9 @@
   padding-inline: 1%;
   border-top: 0.5px solid var(--text-variant);
 }
+
+@media screen and (max-width: 768px) {
+  .footer-container {
+    height: 25px;
+  }
+}
