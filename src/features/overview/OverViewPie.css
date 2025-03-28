@@ -4,7 +4,21 @@
 
 .overview-pie-content {
   display: flex;
-  align-items: center;
   justify-content: start;
+  align-items: center;
   min-height: 30vh;
+}
+
+.overview-pie-title {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .overview-pie-title,
+  .overview-pie-content {
+    padding: 0.5rem;
+  }
 }
