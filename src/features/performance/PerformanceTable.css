@@ -1,0 +1,12 @@
+.performance-table {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .performance-table {
+    gap: 0.5rem;
+  }
+}

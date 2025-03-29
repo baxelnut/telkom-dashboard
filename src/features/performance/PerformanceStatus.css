@@ -1,4 +1,4 @@
-.status {
+.performance-status {
   width: 100%;
   background-color: var(--surface);
   border-radius: 8px;
@@ -6,15 +6,39 @@
   border: 0.5px solid var(--text-variant);
   display: flex;
   align-items: start;
+  text-align: start;
 }
 
-.status-title {
+.performance-status-title {
   margin-inline: 12px;
 }
 
-.status-subtitle {
+.performance-status-subtitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 1.5rem;
+}
+
+.performance-status-icon svg {
+  width: 24px;
+  height: 24px;
+  aspect-ratio: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .performance-status {
+    width: inherit;
+    min-height: 10vh;
+    padding: 0.5rem;
+  }
+
+  .performance-status-title {
+    margin-inline: 12px;
+  }
+
+  .performance-status-icon svg {
+    width: 14px;
+    height: 14px; 
+  }
 }

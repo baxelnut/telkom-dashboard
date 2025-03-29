@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./PerformancePage.css";
 import PerformanceStatus from "./PerformanceStatus";
+import PerformanceSummarize from "./PerformanceSummarize";
+import PerformanceTable from "./PerformanceTable";
+import PerformanceLargeVisualize from "./PerformanceLargeVisualize";
 
 const counts = Object.fromEntries(
   ["Lanjut", "Cancel", "Bukan Order Reg", ""].map((key) => [key, 0])
@@ -54,10 +57,7 @@ export default function PerformancePage() {
       </div>
 
       <div className="summarize-container">
-        <p>Performance details will be displayed here.</p>
-        <p>Ensure that the data is updated in real-time for accuracy.</p>
-        <p>Monitor the performance trends over time for better insights.</p>
-        <p>Consider implementing alerts for significant performance changes.</p>
+        <PerformanceSummarize />
       </div>
 
       <div className="visualize-container">
@@ -90,37 +90,17 @@ export default function PerformancePage() {
           <div className="graph-content">
             <h5>Additional Insights</h5>
             <p>Graphs to showcase trends and patterns.</p>
-            <pre>Insert convent here...</pre>
+            <pre>Insert content here...</pre>
           </div>
         </div>
       </div>
 
       <div className="large-visualize-container">
-        <h5>Large Visualization</h5>
-        <div className="head">
-          <p>Detailed graphs and charts for in-depth analysis.</p>
-          <div className="comparison-desc">
-            {statusData.map((item, index) => (
-              <div key={index} className="comparison-item">
-                <div className="comparison-icon">
-                  <div
-                    className="dot"
-                    style={{ backgroundColor: item.backgroundColor }}
-                  ></div>
-                  <p>{item.title}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <pre>Insert convent here...</pre>
+        <PerformanceLargeVisualize statusData={statusData} />
       </div>
 
       <div className="performance-table-container">
-        <h5>Performance Table</h5>
-        <p>Table to display detailed performance data.</p>
-        <table className="table-wrapper"></table>
+        <PerformanceTable />
       </div>
     </div>
   );
