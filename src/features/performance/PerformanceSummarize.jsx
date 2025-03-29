@@ -153,7 +153,10 @@ export default function PerformanceSummarize({ statusData }) {
             {statusData.map((item, index) => {
               return (
                 <div key={index} className="detailed-cards-item">
-                  <p>{item.title}</p>
+                  <h6>{item.title}</h6>
+                  <p style={{ backgroundColor: `${item.backgroundColor}` }}>
+                    {item.icon}
+                  </p>
                 </div>
               );
             })}
