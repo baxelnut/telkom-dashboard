@@ -8,18 +8,20 @@ export default function OverViewSession({ title, subtitle, overviewSession }) {
         <h4>{title}</h4>
         <p>{subtitle}</p>
       </div>
+      
       <div className="session-content">
         {overviewSession.map((customer, index) => (
           <div className="widget" key={index}>
             <div className="head">
               <h6 title={customer.name}>{customer.name}</h6>
+
               <h6>
                 {customer.sessions} • {customer.percentage.toFixed(2)}%
               </h6>
             </div>
-            <div className="bar">
+            <div className="session-bar-graph">
               <div
-                className="active"
+                className="session-bar-active"
                 style={{ width: `${customer.percentage}%` }}
               ></div>
             </div>

@@ -1,4 +1,101 @@
 .performance-summarize {
   display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summary-container,
+.detailed-container {
+  display: flex;
   flex-direction: column;
+  align-items: start;
+  text-align: start;
+  gap: 1rem;
+}
+
+.summary-container {
+  flex: 2;
+}
+
+.detailed-container {
+  flex: 1;
+  background-color: blue;
+}
+
+.status-graph-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-block: 10px;
+}
+
+.status-bar-container {
+  width: inherit;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.status-bar {
+  width: 100%;
+  height: 24px;
+  border-radius: 4px;
+  background-color: var(--bg);
+}
+
+.status-bar-active {
+  background-color: var(--primary-variant);
+  height: inherit;
+  border-radius: 4px;
+  width: 0%; /* Start at 0% */
+  transition: width 0.6s ease-in-out;
+}
+
+.status-text {
+  width: 60px;
+  text-overflow: ellipsis;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.bar-title {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: start;
+  text-align: start;
+  width: 100%;
+}
+
+.object-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .performance-summarize {
+    gap: 0.5rem;
+    flex-direction: column;
+  }
+
+  .summary-container,
+  .detailed-container {
+    flex: 1;
+    gap: 0.5rem;
+  }
+
+  .status-graph-container {
+    gap: 0.5rem;
+  }
+
+  .status-bar {
+    height: 20px;
+  }
 }
