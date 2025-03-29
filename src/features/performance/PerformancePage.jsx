@@ -32,7 +32,7 @@ const statusData = [
     icon: "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1z",
     title: "Bukan Order Reg",
     // value: counts["Bukan Order Reg"],
-    value:  2,
+    value: 2,
     color: "rgb(var(--text-rgb), 1)",
     backgroundColor: "rgb(255, 255, 0, 0.7)",
   },
@@ -67,7 +67,7 @@ export default function PerformancePage() {
       </div>
 
       <div className="visualize-container">
-        <PerformanceVisualizeCards />
+        <PerformanceVisualizeCards statusData={statusData} />
 
         <PerformanceVGraphContent />
       </div>
