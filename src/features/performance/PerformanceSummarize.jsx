@@ -9,6 +9,7 @@ export default function PerformanceSummarize({ statusData }) {
       <div className="summary-container">
         <h5>In Progress Status</h5>
         <p>Showing visualization for In Progress Status.</p>
+
         <div className="status-graph-container">
           {statusData.map((item, index) => {
             const itemPercentage = ((item.value / totalValue) * 100).toFixed(2);
@@ -46,6 +47,10 @@ export default function PerformanceSummarize({ statusData }) {
 
         <table className="table-wrapper"></table>
 
+        <button type="button">
+          <h6>See all details</h6>
+        </button>
+
         <h5>Summary</h5>
         <p>Showing summary for In Progress Status.</p>
         <div className="summary-table-wrapper">
@@ -67,14 +72,98 @@ export default function PerformanceSummarize({ statusData }) {
               );
             })}
           </div>
+        </div>
+
+        <button type="button">
+          <h6>See all details</h6>
+        </button>
+      </div>
+
+      <div className="detailed-container">
+        <div className="detailed-bar-container">
+          <h5>In Progress Status</h5>
+          <p>Showing visualization for In Progress Status.</p>
+
+          <div className="detaield-content-text">
+            <p>0%</p> <p>100%</p>
+          </div>
+          <div className="detailed-content-container">
+            {statusData.map((item, index) => {
+              const itemPercentage = ((item.value / totalValue) * 100).toFixed(
+                2
+              );
+
+              return (
+                <div
+                  key={index}
+                  className="item-bar"
+                  style={{
+                    backgroundColor: item.backgroundColor,
+                    width: `${itemPercentage}%`,
+                    borderRadius:
+                      index === 0
+                        ? "12px 0 0 12px"
+                        : index === statusData.length - 1
+                        ? "0 12px 12px 0"
+                        : "0",
+                  }}
+                ></div>
+              );
+            })}
+          </div>
+
+          <div className="detailed-desc">
+            {statusData.map((item, index) => {
+              const itemPercentage = ((item.value / totalValue) * 100).toFixed(
+                2
+              );
+
+              return (
+                <div key={index} className="desc-item">
+                  <div className="desc-item-title">
+                    <div
+                      className="box"
+                      style={{ backgroundColor: `${item.backgroundColor}` }}
+                    ></div>
+                    <p>{item.title}</p>
+                  </div>
+
+                  <h5>{item.value}</h5>
+                  <p>{itemPercentage}%</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.{" "}
+          </p>
+
+          <button type="button">
+            <h6>See all details</h6>
+          </button>
+        </div>
+
+        <div className="detailed-cards-container">
+          <h5>In Progress Status</h5>
+          <p>Showing visualization for In Progress Status.</p>
+
+          <div className="detailed-cards-content-container">
+            {statusData.map((item, index) => {
+              return (
+                <div key={index} className="detailed-cards-item">
+                  <p>{item.title}</p>
+                </div>
+              );
+            })}
+          </div>
 
           <button type="button">
             <h6>See all details</h6>
           </button>
         </div>
       </div>
-
-      <div className="detailed-container"></div>
     </div>
   );
 }
