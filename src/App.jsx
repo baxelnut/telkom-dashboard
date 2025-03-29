@@ -7,6 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
+import { SupabaseProvider } from "./services/SupabaseContext";
 import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
@@ -98,9 +99,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <SupabaseProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </SupabaseProvider>
   );
 }
 
