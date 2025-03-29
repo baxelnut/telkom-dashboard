@@ -42,3 +42,25 @@
   background-color: var(--bg);
   min-height: 54vh;
 } */
+
+@media screen and (max-width: 768px) {
+  .report-container,
+  .period-filter,
+  .period-container,
+  .report-table {
+    padding: 0.5rem;
+  }
+
+  .report-table {
+    margin-top: 0.5rem;
+  }
+
+  .category-filter {
+    gap: 0.5rem;
+  }
+
+  .period-filter {
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+}
