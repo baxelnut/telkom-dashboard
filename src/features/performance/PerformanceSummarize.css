@@ -42,7 +42,6 @@
 
 .status-bar {
   width: 100%;
-  height: 24px;
   border-radius: 4px;
   background-color: var(--bg);
 }
@@ -58,7 +57,6 @@
 .status-text {
   width: 60px;
   text-overflow: ellipsis;
-  height: 28px;
   display: flex;
   align-items: center;
 }
@@ -79,6 +77,56 @@
   gap: 5px;
 }
 
+.status-bar,
+.status-text {
+  height: 22px;
+}
+
+.summary-container .table-wrapper {
+  min-height: 200px;
+  flex-direction: column;
+}
+
+.summary-table-wrapper {
+  min-height: 200px;
+  flex-direction: column;
+  overflow-x: auto;
+  border: 0.5px solid var(--text-variant);
+  background: rgb(var(--primary-rgb), 0.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.circle-avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.circle-avatar {
+  width: 70px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem;
+  border: 0.5px solid var(--text-variant);
+  text-overflow: ellipsis;
+}
+
+.circle-avatar * {
+  font-weight: 500;
+}
+
 @media screen and (max-width: 768px) {
   .performance-summarize {
     gap: 0.5rem;
@@ -91,11 +139,29 @@
     gap: 0.5rem;
   }
 
-  .status-graph-container {
+  .status-graph-container,
+  .circle-avatar-container {
     gap: 0.5rem;
   }
 
-  .status-bar {
-    height: 20px;
+  .status-bar,
+  .status-text {
+    height: 16px;
+  }
+
+  .summary-container .table-wrapper {
+    min-height: 100px;
+  }
+
+  .circle-avatar {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    width: 40px;
+  }
+
+  .summary-table-wrapper {
+    padding: 0.5rem;
+    min-height: 100px;
+    width: calc(100% - 1rem);
   }
 }

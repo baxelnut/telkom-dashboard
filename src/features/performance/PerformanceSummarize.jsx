@@ -48,8 +48,30 @@ export default function PerformanceSummarize({ statusData }) {
 
         <h5>Summary</h5>
         <p>Showing summary for In Progress Status.</p>
-        <table className="table-wrapper">
-        </table>
+        <div className="summary-table-wrapper">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.{" "}
+          </p>
+
+          <div className="circle-avatar-container">
+            {statusData.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className="circle-avatar"
+                  style={{ backgroundColor: `${item.backgroundColor}` }}
+                >
+                  <p>{item.title}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <button type="button">
+            <h6>See all details</h6>
+          </button>
+        </div>
       </div>
 
       <div className="detailed-container"></div>
