@@ -1,0 +1,40 @@
+.v-graph-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 0.5px solid var(--text-variant);
+  text-align: start;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.v-graph-container {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.v-graph-container .v-graph-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .v-graph-container {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .v-graph-container .v-graph-content {
+    padding: 0.5rem;
+  }
+
+  .v-graph-container .v-graph-content {
+    gap: 0.5rem;
+  }
+}

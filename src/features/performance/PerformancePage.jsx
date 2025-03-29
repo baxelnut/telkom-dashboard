@@ -4,6 +4,8 @@ import PerformanceStatus from "./PerformanceStatus";
 import PerformanceSummarize from "./PerformanceSummarize";
 import PerformanceTable from "./PerformanceTable";
 import PerformanceLargeVisualize from "./PerformanceLargeVisualize";
+import PerformanceVisualizeCards from "./PerformanceVisualizeCards";
+import PerformanceVGraphContent from "./PerformanceVGraphContent";
 
 const counts = Object.fromEntries(
   ["Lanjut", "Cancel", "Bukan Order Reg", ""].map((key) => [key, 0])
@@ -61,38 +63,9 @@ export default function PerformancePage() {
       </div>
 
       <div className="visualize-container">
-        <div className="cards-container">
-          <div className="v-card">
-            <h6>Card Title</h6>
-            <h4>85</h4>
-            <p>Additional information about the card.</p>
-          </div>
-          <div className="v-card">
-            <h6>Card Title</h6>
-            <h4>31</h4>
-            <p>Additional information about the card.</p>
-          </div>
+        <PerformanceVisualizeCards />
 
-          <div className="v-card">
-            <h6>Card Title</h6>
-            <h4>1</h4>
-            <p>Additional information about the card.</p>
-          </div>
-
-          <div className="v-card">
-            <h6>Card Title</h6>
-            <h4>0</h4>
-            <p>Additional information about the card.</p>
-          </div>
-        </div>
-
-        <div className="graph-container">
-          <div className="graph-content">
-            <h5>Additional Insights</h5>
-            <p>Graphs to showcase trends and patterns.</p>
-            <pre>Insert content here...</pre>
-          </div>
-        </div>
+        <PerformanceVGraphContent />
       </div>
 
       <div className="large-visualize-container">

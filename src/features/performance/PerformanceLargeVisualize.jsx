@@ -1,5 +1,5 @@
 import React from "react";
-import "./PerformanceLargeVisualize..css";
+import "./PerformanceLargeVisualize.css";
 
 export default function PerformanceLargeVisualize({ statusData }) {
   return (
