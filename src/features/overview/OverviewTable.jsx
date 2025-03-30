@@ -3,14 +3,20 @@ import "./OverviewTable.css";
 import ReactPaginate from "react-paginate";
 import Loading from "../../components/Loading";
 import Error from "../../components/Error";
+import Dropdown from "../../components/utils/Dropdown";
+
+const rowPerPageOptions = [10, 20, 50, 100, 200].map((value) => ({
+  value,
+  label: `Show ${value} rows`,
+}));
 
 export default function OverviewTable() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowPerPage] = useState(20);
 
-  const rowsPerPage = 50;
   const API_URL = import.meta.env.VITE_DEV_API;
 
   useEffect(() => {
@@ -48,7 +54,14 @@ export default function OverviewTable() {
 
   return (
     <div className="overview-table">
-      <h5>Data Overview</h5>
+      <div className="overview-table-title">
+        <h5>Data Overview</h5>
+        <Dropdown
+          options={rowPerPageOptions}
+          value={rowsPerPage}
+          onChange={(e) => setRowPerPage(e.target.value)}
+        />
+      </div>
 
       <div className="table-wrapper">
         {loading ? (
