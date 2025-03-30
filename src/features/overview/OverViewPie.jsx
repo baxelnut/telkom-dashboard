@@ -1,6 +1,6 @@
 import React from "react";
 import "./OverViewPie.css";
-import Loading from "../../components/Loading";
+import Loading from "../../components/utils/Loading";
 
 export default function OverViewPie({ title, subtitle, overviewPie }) {
   return (

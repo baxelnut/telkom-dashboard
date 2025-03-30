@@ -1,6 +1,6 @@
 import React from "react";
 import "./OverViewRadar.css";
-import Loading from "../../components/Loading";
+import Loading from "../../components/utils/Loading";
 
 export default function OverViewRadar({ title, subtitle, overviewRadar }) {
   return (

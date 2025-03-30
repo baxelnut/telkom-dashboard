@@ -1,6 +1,6 @@
 import React from "react";
 import "./Performancesummarize.css";
-import Loading from "../../components/Loading";
+import Loading from "../../components/utils/Loading";
 
 export default function PerformanceSummarize({ statusData }) {
   const totalValue = statusData.reduce((sum, item) => sum + item.value, 0);

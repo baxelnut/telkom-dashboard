@@ -1,6 +1,6 @@
 import React from "react";
 import "./OverViewStatus.css";
-import Loading from "../../components/Loading";
+import Loading from "../../components/utils/Loading";
 
 export default function OverViewStatus({ overviewStatus }) {
   const total = 100;
