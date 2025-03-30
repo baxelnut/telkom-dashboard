@@ -1,5 +1,6 @@
 import React from "react";
 import "./OverViewRadar.css";
+import Loading from "../../components/Loading";
 
 export default function OverViewRadar({ title, subtitle, overviewRadar }) {
   return (
@@ -10,7 +11,7 @@ export default function OverViewRadar({ title, subtitle, overviewRadar }) {
       </div>
 
       <div className="overview-radar-content">
-        <pre>{overviewRadar.content}</pre>
+        <Loading backgroundColor="transparent" />
       </div>
     </div>
   );

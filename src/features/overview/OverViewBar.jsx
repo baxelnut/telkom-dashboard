@@ -1,5 +1,6 @@
 import React from "react";
 import "./OverViewBar.css";
+import Loading from "../../components/Loading";
 
 export default function OverViewBar({ title, subtitle, overviewBar }) {
   return (
@@ -9,7 +10,7 @@ export default function OverViewBar({ title, subtitle, overviewBar }) {
         <p>{subtitle}</p>
       </div>
       <div className="overview-bar-content">
-        <pre>{overviewBar.content}</pre>
+        <Loading backgroundColor="transparent" />
       </div>
     </div>
   );

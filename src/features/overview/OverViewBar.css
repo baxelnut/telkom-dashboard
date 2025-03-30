@@ -14,6 +14,8 @@
   align-items: center;
   justify-content: start;
   min-height: 30vh;
+  border-radius: 8px;
+  margin-top: 1rem;
 }
 
 .overview-bar-title {
@@ -21,4 +23,10 @@
   flex-direction: column;
   align-items: start;
   gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .overview-bar-content {
+    margin-top: 0.5rem;
+  }
 }

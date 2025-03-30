@@ -1,5 +1,6 @@
 import React from "react";
 import "./OverViewPie.css";
+import Loading from "../../components/Loading";
 
 export default function OverViewPie({ title, subtitle, overviewPie }) {
   return (
@@ -10,7 +11,7 @@ export default function OverViewPie({ title, subtitle, overviewPie }) {
       </div>
 
       <div className="overview-pie-content">
-        <pre>{overviewPie.content}</pre>
+        <Loading backgroundColor="transparent" />
       </div>
     </div>
   );

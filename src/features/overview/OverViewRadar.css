@@ -7,6 +7,8 @@
   align-items: center;
   justify-content: start;
   min-height: 30vh;
+  margin-top: 1rem;
+  border-radius: 8px;
 }
 
 .overview-radar-title {
@@ -20,5 +22,9 @@
   .overview-radar-title,
   .overview-radar-content {
     padding: 0.5rem;
+  }
+
+  .overview-radar-content {
+    margin-top: 0.5rem;
   }
 }

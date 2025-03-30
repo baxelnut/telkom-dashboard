@@ -42,6 +42,10 @@ export default function OverviewTable() {
     (currentPage + 1) * rowsPerPage
   );
 
+  const handleClick = (value) => {
+    console.log(`Clicked: ${value}`);
+  };
+
   return (
     <div className="overview-table">
       <h5>Data Overview</h5>
@@ -76,7 +80,12 @@ export default function OverviewTable() {
                     </td>
                     {Object.values(row).map((value, i) => (
                       <td key={i}>
-                        <p>{value || "-"}</p>
+                        <p
+                          className="overview-table-items"
+                          onClick={() => handleClick(value)}
+                        >
+                          {value || "-"}
+                        </p>
                       </td>
                     ))}
                   </tr>

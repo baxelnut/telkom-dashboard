@@ -7,6 +7,8 @@
   justify-content: start;
   align-items: center;
   min-height: 30vh;
+  margin-top: 1rem;
+  border-radius: 8px;
 }
 
 .overview-pie-title {
@@ -20,5 +22,9 @@
   .overview-pie-title,
   .overview-pie-content {
     padding: 0.5rem;
+  }
+
+  .overview-pie-content {
+    margin-top: 0.5rem;
   }
 }
