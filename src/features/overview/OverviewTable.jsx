@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./OverviewTable.css";
-import ReactPaginate from "react-paginate";
-import Loading from "../../components/Loading";
-import Error from "../../components/Error";
+import Loading from "../../components/utils/Loading";
+import Error from "../../components/utils/Error";
 import Dropdown from "../../components/utils/Dropdown";
+import Pagination from "../../components/table/Pagination";
+import TableScroll from "../../components/table/TableScroll";
 
 const rowPerPageOptions = [10, 20, 50, 100, 200].map((value) => ({
   value,
@@ -73,58 +74,24 @@ export default function OverviewTable() {
 
       <div className="table-wrapper">
         {loading ? (
-          <Loading />
+          <Loading backgroundColor="transparent" />
         ) : error ? (
           <Error message={error} />
         ) : data.length === 0 ? (
           <p>No data available.</p>
         ) : (
-          <div className="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  {Object.keys(data[0] || {}).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((row, index) => (
-                  <tr key={index}>
-                    <td>{currentPage * rowsPerPage + index + 1}</td>
-                    {Object.values(row).map((value, i) => (
-                      <td key={i}>
-                        <p className="overview-table-items">{value || "-"}</p>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <TableScroll
+            data={data}
+            currentPage={currentPage}
+            rowsPerPage={rowsPerPage}
+          />
         )}
       </div>
 
       {data.length > 0 && (
-        <ReactPaginate
-          previousLabel={"← Previous"}
-          nextLabel={"Next →"}
-          breakLabel={"..."}
+        <Pagination
           pageCount={pageCount}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={2}
-          onPageChange={(event) => setCurrentPage(event.selected)}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item"}
-          nextLinkClassName={"page-link"}
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
+          onPageChange={(selectedPage) => setCurrentPage(selectedPage)}
         />
       )}
     </div>
