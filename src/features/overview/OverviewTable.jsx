@@ -11,9 +11,8 @@ export default function OverviewTable({ title }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/data?page=${currentPage}&limit=${itemsPerPage}`
-        );
+        const response = await fetch(`${API_URL}/data`);
+
         if (!response.ok) throw new Error("Failed to fetch data");
 
         const result = await response.json();
@@ -33,6 +32,8 @@ export default function OverviewTable({ title }) {
   }, [currentPage]); // Re-fetch data when page changes
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  console.log(`${API_URL}/data`);
 
   return (
     <div className="overview-table">

@@ -1,23 +1,23 @@
 import { useState, useEffect } from "react";
-
 import "./ExamplePage.css";
 import Loading from "../../components/Loading";
 
 export default function ExamplePage() {
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
   const [hello, setHello] = useState(null);
 
   const API_URL = import.meta.env.VITE_DEV_API;
-
+  
   const fetchData = async () => {
     try {
-      const response = await fetch(`${API_URL}/data`);
+      // const response = await fetch(`${API_URL}/data`);
       const helloResponse = await fetch(`${API_URL}/hello`);
+      // const helloResponse = await fetch("http://localhost:3000/api/hello");
 
-      const data = await response.json();
+      // const data = await response.json();
       const hello = await helloResponse.json();
 
-      setData(data);
+      // setData(data);
       setHello(hello);
     } catch (error) {
       console.error("🚨 Fetch Error:", error);

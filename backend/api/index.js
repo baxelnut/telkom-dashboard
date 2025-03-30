@@ -1,0 +1,12 @@
+import express from "express";
+import cors from "cors";
+import aosodomoroRoutes from "./routes/aosodomoro.js";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use("/api/aosodomoro", aosodomoroRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
