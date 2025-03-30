@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./ExamplePage.css";
-import Loading from "../../components/Loading";
-import Error from "../../components/Error";
+import Loading from "../../components/utils/Loading";
+import Error from "../../components/utils/Error";
 
 export default function ExamplePage() {
   const [data, setData] = useState(null);
