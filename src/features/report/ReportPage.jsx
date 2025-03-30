@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ReportPage.css";
 import Dropdown from "../../components/utils/Dropdown";
+import Loading from "../../components/Loading";
 
 export default function ReportPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
@@ -47,7 +48,9 @@ export default function ReportPage() {
           />
         </div>
 
-        <div className="table-wrapper"></div>
+        <div className="table-wrapper">
+          <Loading />
+        </div>
       </div>
     </div>
   );
