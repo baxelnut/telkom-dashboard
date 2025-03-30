@@ -3,26 +3,18 @@ import "./ReportPage.css";
 import Dropdown from "../../components/utils/Dropdown";
 import Loading from "../../components/Loading";
 
+const periodOptions = ["ALL", "1 month", "2 months", "3 months", "..."].map(
+  (value) => ({ value, label: value })
+);
+
+const categoryOptions = ["ALL", "AO", "SO", "DO", "MO", "RO"].map((value) => ({
+  value,
+  label: value,
+}));
+
 export default function ReportPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-
-  const periodOptions = [
-    { value: "ALL", label: "ALL" },
-    { value: "1 month", label: "1 month" },
-    { value: "2 month", label: "2 month" },
-    { value: "3 month", label: "3 month" },
-    { value: "...", label: "..." },
-  ];
-
-  const categoryOptions = [
-    { value: "ALL", label: "ALL" },
-    { value: "AO", label: "AO" },
-    { value: "SO", label: "SO" },
-    { value: "DO", label: "DO" },
-    { value: "MO", label: "MO" },
-    { value: "RO", label: "RO" },
-  ];
 
   return (
     <div className="report-container">
