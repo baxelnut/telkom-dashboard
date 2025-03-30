@@ -1,5 +1,6 @@
 import React from "react";
 import "./OverViewStatus.css";
+import Loading from "../../components/Loading";
 
 export default function OverViewStatus({ overviewStatus }) {
   const total = 100;
@@ -21,7 +22,7 @@ export default function OverViewStatus({ overviewStatus }) {
       <h5>{overviewStatus.title}</h5>
 
       <div className="overview-status-pie-content">
-        <pre>{overviewStatus.content}</pre>
+        <Loading backgroundColor="transparent" />
       </div>
 
       {/* random for now */}

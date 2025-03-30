@@ -1,5 +1,6 @@
 import React from "react";
 import "./OverViewOverTime.css";
+import Loading from "../../components/Loading";
 
 export default function OverViewOverTime({
   title,
@@ -26,7 +27,9 @@ export default function OverViewOverTime({
           </div>
         ))}
       </div>
-      <div className="overtime-graph"></div>
+      <div className="overtime-graph">
+        <Loading />
+      </div>
     </div>
   );
 }
