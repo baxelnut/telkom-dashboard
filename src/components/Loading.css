@@ -14,9 +14,12 @@
   inset: 0;
   z-index: 10;
   width: 100%;
+  min-height: inherit;
   height: 100%;
   max-width: unset;
   position: relative;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border-radius: inherit;
 }
 
 .spinner {

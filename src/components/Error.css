@@ -10,7 +10,7 @@
   min-height: inherit;
   height: 100%;
   flex-grow: 1;
-  border-radius: 8px;
+  border-radius: inherit;
 }
 
 .error-icon {
@@ -30,6 +30,6 @@
     transform: translateY(-10px);
   }
   to {
-    transform: translateY(10px);
+    transform: translateY(5px);
   }
 }
