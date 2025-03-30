@@ -68,6 +68,7 @@
 
 .table-wrapper {
   min-height: 400px;
+  height: 100%;
   width: 100%;
   overflow-x: auto;
   border: 0.5px solid var(--text-variant);
