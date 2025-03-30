@@ -16,6 +16,8 @@
 .error-icon {
   font-size: 2rem;
   animation: shake 1s ease-in-out infinite alternate;
+  filter: invert(21%) sepia(83%) saturate(6697%) hue-rotate(354deg)
+    brightness(90%) contrast(86%);
 }
 
 .error-message {
