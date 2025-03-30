@@ -1,0 +1,49 @@
+.table-scroll {
+  overflow-x: auto;
+  min-height: inherit;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+th,
+td {
+  padding: 10px;
+  border-block: 0.5px solid var(--text-variant);
+  border-inline-end: 0.5px solid var(--text-variant);
+  text-align: left;
+  font-family: var(--body);
+}
+
+th {
+  background-color: var(--primary-variant);
+  color: var(--surface);
+  position: sticky;
+  font-family: var(--heading);
+}
+
+td p {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+}
+
+td p:hover {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible;
+  background: var(--surface);
+  padding: 6px;
+  border-radius: 4px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: fit-content;
+  height: fit-content;
+}
