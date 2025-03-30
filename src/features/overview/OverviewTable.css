@@ -118,6 +118,14 @@ td p:hover {
   background-color: var(--surface);
 } */
 
+.overview-table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
 @media (max-width: 768px) {
   .overview-table {
     padding: 0.5rem;
