@@ -1,5 +1,6 @@
 import React from "react";
 import "./Performancesummarize.css";
+import Loading from "../../components/Loading";
 
 export default function PerformanceSummarize({ statusData }) {
   const totalValue = statusData.reduce((sum, item) => sum + item.value, 0);
@@ -45,7 +46,9 @@ export default function PerformanceSummarize({ statusData }) {
           })}
         </div>
 
-        <table className="table-wrapper"></table>
+        <table className="table-wrapper">
+          <Loading />
+        </table>
 
         <button type="button">
           <h6>See all details</h6>

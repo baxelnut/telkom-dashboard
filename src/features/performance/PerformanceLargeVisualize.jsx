@@ -1,5 +1,6 @@
 import React from "react";
 import "./PerformanceLargeVisualize.css";
+import Loading from "../../components/Loading";
 
 export default function PerformanceLargeVisualize({ statusData }) {
   return (
@@ -26,7 +27,7 @@ export default function PerformanceLargeVisualize({ statusData }) {
       </div>
 
       <div className="large-visualize-content">
-        <pre>Insert content here...</pre>
+        <Loading />
       </div>
     </div>
   );

@@ -6,7 +6,6 @@
   padding: 1rem;
   border: 0.5px solid var(--text-variant);
   text-align: start;
-  margin-top: 1rem;
   gap: 1rem;
 }
 
@@ -16,15 +15,15 @@
   margin: 0;
 }
 
-.v-graph-container .v-graph-content {
+.v-graph-content {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  gap: 1rem;
-  padding: 1rem;
-  min-height: 20vh;
+  margin: 1rem;
+  margin-top: 0;
+  height: 100%;
   align-items: center;
   justify-content: center;
+  border-radius: 8px;
 }
 
 .v-graph-container .head {
@@ -34,6 +33,7 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
+  padding-bottom: 0;
 }
 
 @media screen and (max-width: 768px) {

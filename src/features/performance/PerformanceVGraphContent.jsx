@@ -1,5 +1,6 @@
 import React from "react";
 import "./PerformanceVGraphContent.css";
+import Loading from "../../components/Loading";
 
 export default function PerformanceVGraphContent() {
   return (
@@ -10,7 +11,7 @@ export default function PerformanceVGraphContent() {
       </div>
 
       <div className="v-graph-content">
-        <pre>Insert content here...</pre>
+        <Loading />
       </div>
     </div>
   );

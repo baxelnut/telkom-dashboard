@@ -32,12 +32,12 @@
   gap: 0.5rem;
 }
 
-.large-visualize-content {
-  padding: 1rem;
+.large-visualize-content { 
   min-height: 30vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 8px; 
 }
 
 @media screen and (max-width: 768px) {
