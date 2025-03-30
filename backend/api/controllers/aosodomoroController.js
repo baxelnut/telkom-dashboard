@@ -2,10 +2,8 @@ import supabase from "../services/supabaseService.js";
 
 export const getAllAosodomoro = async (req, res) => {
   try {
-    let { data, error } = await supabase
-      .from("aosodomoro")
-      .select("*")
-      .limit(69);
+    let { data, error } = await supabase.from("aosodomoro").select("*");
+    // .limit(69);
 
     if (error) throw error;
     res.json(data);
