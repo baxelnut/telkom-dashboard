@@ -16,50 +16,58 @@ export default function OverviewTable() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowPerPage] = useState(20);
+  const [totalRows, setTotalRows] = useState(0);
 
   const API_URL = import.meta.env.VITE_DEV_API;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchData = async (page, limit) => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const response = await fetch(`${API_URL}/aosodomoro`);
-        if (!response.ok) throw new Error("Failed to fetch data");
+    try {
+      const response = await fetch(
+        `${API_URL}/aosodomoro?page=${page}&limit=${limit}`
+      );
 
-        const result = await response.json();
-        setData(result);
-        console.log(`📊 Total items: ${result.length}`);
-      } catch (error) {
-        console.error("🚨 API Fetch Error:", error);
-        setError(error.message || "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    };
+      if (!response.ok) throw new Error("Failed to fetch data");
 
-    fetchData();
-  }, []);
+      const result = await response.json();
+      setData(result.data);
+      setTotalRows(result.total);
 
-  const pageCount = Math.ceil(data.length / rowsPerPage);
-  const displayedData = data.slice(
-    currentPage * rowsPerPage,
-    (currentPage + 1) * rowsPerPage
-  );
-
-  const handleClick = (value) => {
-    console.log(`Clicked: ${value}`);
+      console.log(
+        `📊 Fetched ${result.data.length} rows (Page ${page} of ${Math.ceil(
+          result.total / limit
+        )})`
+      );
+    } catch (error) {
+      console.error("🚨 API Fetch Error:", error);
+      setError(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchData(currentPage + 1, rowsPerPage);
+  }, [currentPage, rowsPerPage]);
+
+  const pageCount = Math.ceil(totalRows / rowsPerPage);
 
   return (
     <div className="overview-table">
       <div className="overview-table-title">
-        <h5>Data Overview</h5>
+        <h5>
+          Data Overview
+          <p className="debug-info">{`( Total rows: ${totalRows
+            .toLocaleString("id-ID")
+            .replace(",", ".")} )`}</p>
+        </h5>
+
         <Dropdown
           options={rowPerPageOptions}
           value={rowsPerPage}
-          onChange={(e) => setRowPerPage(e.target.value)}
+          onChange={(e) => setRowPerPage(Number(e.target.value))}
         />
       </div>
 
@@ -75,30 +83,19 @@ export default function OverviewTable() {
             <table>
               <thead>
                 <tr>
-                  <th>
-                    <h6>No</h6>
-                  </th>
+                  <th>No</th>
                   {Object.keys(data[0] || {}).map((key) => (
-                    <th key={key}>
-                      <h6>{key}</h6>
-                    </th>
+                    <th key={key}>{key}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {displayedData.map((row, index) => (
+                {data.map((row, index) => (
                   <tr key={index}>
-                    <td>
-                      <p>{currentPage * rowsPerPage + index + 1}</p>
-                    </td>
+                    <td>{currentPage * rowsPerPage + index + 1}</td>
                     {Object.values(row).map((value, i) => (
                       <td key={i}>
-                        <p
-                          className="overview-table-items"
-                          onClick={() => handleClick(value)}
-                        >
-                          {value || "-"}
-                        </p>
+                        <p className="overview-table-items">{value || "-"}</p>
                       </td>
                     ))}
                   </tr>
