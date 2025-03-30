@@ -5,7 +5,7 @@ export const getAllAosodomoro = async (req, res) => {
     let { data, error } = await supabase
       .from("aosodomoro")
       .select("*")
-      .limit(11);
+      .limit(69);
 
     if (error) throw error;
     res.json(data);
