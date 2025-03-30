@@ -2,11 +2,26 @@ import supabase from "../services/supabaseService.js";
 
 export const getAllAosodomoro = async (req, res) => {
   try {
-    let { data, error } = await supabase.from("aosodomoro").select("*");
-    // .limit(69);
+    const { page = 1, limit = 100 } = req.query;
+    const start = (page - 1) * limit;
+    const end = start + parseInt(limit) - 1;
+
+    // Fetch paginated data
+    const { data, error } = await supabase
+      .from("aosodomoro")
+      .select("*")
+      .range(start, end);
 
     if (error) throw error;
-    res.json(data);
+
+    // Fetch total row count
+    const { count, error: countError } = await supabase
+      .from("aosodomoro")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) throw countError;
+
+    res.json({ data, total: count });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
