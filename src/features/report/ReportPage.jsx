@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ReportPage.css";
 import Dropdown from "../../components/utils/Dropdown";
-import Loading from "../../components/Loading";
+import Loading from "../../components/utils/Loading";
 
 const periodOptions = ["ALL", "1 month", "2 months", "3 months", "..."].map(
   (value) => ({ value, label: value })
