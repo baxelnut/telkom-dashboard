@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./OverviewTable.css";
+import Loading from "../../components/Loading";
+import Error from "../../components/Error";
 
 export default function OverviewTable({ title }) {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const API_URL = import.meta.env.VITE_DEV_API;
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const response = await fetch(`${API_URL}/aosodomoro`);
         if (!response.ok) throw new Error("Failed to fetch data");
 
         const result = await response.json();
-
         setData(result.slice(0, 10));
-
         console.log(`📊 Total items: ${result.length}`);
       } catch (error) {
         console.error("🚨 API Fetch Error:", error);
+        setError(error.message || "Something went wrong");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -30,7 +38,11 @@ export default function OverviewTable({ title }) {
       <h5>{title}</h5>
 
       <div className="table-wrapper">
-        {data.length > 0 ? (
+        {loading ? (
+          <Loading />
+        ) : error ? (
+          <Error message={error} />
+        ) : data.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -50,7 +62,7 @@ export default function OverviewTable({ title }) {
             </tbody>
           </table>
         ) : (
-          <p>Loading...</p>
+          <p>No data available</p>
         )}
       </div>
     </div>
