@@ -51,27 +51,50 @@ export default function ExamplePage() {
   }, []);
 
   return (
-    <div className="example">
+    <div className="example-container">
       <h1>ExamplePage</h1>
 
-      <div className="example1">
-        {loading ? (
-          <Loading />
-        ) : error ? (
-          <Error message={error} />
-        ) : (
-          <pre>{JSON.stringify(hello, null, 2)}</pre>
-        )}
+      <div className="example-items">
+        <h6>trynna fetch helloResponse from `${API_URL}/hello`</h6>
+
+        <div className="example-content">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <Error message={error} />
+          ) : (
+            <pre>{JSON.stringify(hello, null, 2)}</pre>
+          )}
+        </div>
       </div>
 
-      <div className="example1">
-        {loading ? (
-          <Loading />
-        ) : error ? (
-          <Error message={error} />
-        ) : (
-          <p>{JSON.stringify(data, null, 2)}</p>
-        )}
+      <div className="example-items">
+        <h6>trynna fetch aosodomoro respones from `${API_URL}/aosodomoro`</h6>
+
+        <div className="example-content">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <Error message={error} />
+          ) : (
+            <p>{JSON.stringify(data, null, 2)}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="example-items">
+        <h6>dynamic universal component display</h6>
+
+        <div className="component-display-container">
+          <div className="component-display">
+            <p>for loading:</p>
+            <Loading />
+          </div>
+          <div className="component-display">
+            <p>for error:</p>
+            <Error />
+          </div>
+        </div>
       </div>
     </div>
   );
