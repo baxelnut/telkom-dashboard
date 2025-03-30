@@ -9,12 +9,6 @@
   gap: 1rem;
 }
 
-.overview-table .table-wrapper {
-  display: flex;
-  align-items: start;
-  height: fit-content;
-}
-
 .table-scroll {
   overflow-x: auto;
   min-height: inherit;
@@ -30,7 +24,7 @@ th,
 td {
   padding: 10px;
   border-block: 0.5px solid var(--text-variant);
-  border-inline-end:  0.5px solid var(--text-variant);
+  border-inline-end: 0.5px solid var(--text-variant);
   text-align: left;
   font-family: var(--body);
 }
