@@ -35,12 +35,6 @@ export default function OverviewTable() {
       const result = await response.json();
       setData(result.data);
       setTotalRows(result.total);
-
-      console.log(
-        `📊 Fetched ${result.data.length} rows (Page ${page} of ${Math.ceil(
-          result.total / limit
-        )})`
-      );
     } catch (error) {
       console.error("🚨 API Fetch Error:", error);
       setError(error.message || "Something went wrong");
