@@ -68,7 +68,7 @@ export default function OverViewStatus({ overviewStatus, loading, error }) {
           </div>
         ))}
 
-      <h6>{completedPercentage}% Completed</h6>
+      <h6 style={{marginTop: "10px"}}>{completedPercentage}% Completed</h6>
       <p>({completed})</p>
 
       {/* <pre>{JSON.stringify(overviewStatus, null, 2)}</pre> */}
