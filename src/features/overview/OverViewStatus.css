@@ -1,6 +1,7 @@
 .overview-pie {
   background-color: var(--surface);
   height: 100%;
+  min-height: 350px;
   width: 16vw;
   border-radius: 8px;
   text-align: center;
@@ -51,9 +52,21 @@
   background-color: var(--error);
 }
 
+.o-pie-dec {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.o-pie-dec * {
+  font-weight: 600;
+}
+
 @media screen and (max-width: 768px) {
   .overview-pie {
     width: calc(100% - 2rem);
+    min-height: 300px;
   }
 
   .overview-status-pie-content {
@@ -69,7 +82,7 @@
     gap: 1rem;
   }
 
-  .overview-status-pie-content{
+  .overview-status-pie-content {
     margin-block: 0.5rem;
   }
 }

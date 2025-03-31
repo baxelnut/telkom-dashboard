@@ -1,40 +1,77 @@
 import React from "react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import "./OverViewStatus.css";
 import Loading from "../../components/utils/Loading";
 
-export default function OverViewStatus({ overviewStatus }) {
-  const total = 100;
+export default function OverViewStatus({ overviewStatus, loading, error }) {
+  if (!overviewStatus) return <Loading />;
 
-  const randomChange =
-    Math.floor(Math.random() * 10) * (Math.random() < 0.5 ? -1 : 1);
-  const previousTotal = total + randomChange;
+  const completed = overviewStatus["complete"] || 0;
 
-  const percentageChange = previousTotal
-    ? (((total - previousTotal) / previousTotal) * 100).toFixed(2)
-    : "0.00";
+  const pieData = [
+    {
+      name: "Pending BASO",
+      value: overviewStatus["pending_baso"] || 0,
+      color: "#e76705",
+    },
+    {
+      name: "In Progress",
+      value: overviewStatus["in_progress"] || 0,
+      color: "#312a68",
+    },
+    {
+      name: "Pending",
+      value: overviewStatus["pending"] || 0,
+      color: "#14A44D",
+    },
+    {
+      name: "Pending Bill Apv",
+      value: overviewStatus["pending_bill_apv"] || 0,
+      color: "#2D82B7",
+    },
+    {
+      name: "Sending",
+      value: overviewStatus["sending"] || 0,
+      color: "#892CDC",
+    },
+    {
+      name: "Submitted",
+      value: overviewStatus["submitted"] || 0,
+      color: "#FF4D6D",
+    },
+  ];
 
-  const isPositive = percentageChange >= 0;
-  const percentageClass = isPositive ? "positive" : "negative";
-  const symbol = percentageChange === "0.00" ? "" : isPositive ? "+" : "";
+  const totalOtherStatuses = pieData.reduce((sum, item) => sum + item.value, 0);
+  const totalAll = totalOtherStatuses + completed;
+  const completedPercentage =
+    totalAll > 0 ? ((completed / totalAll) * 100).toFixed(2) : 0;
 
   return (
     <div className="overview-pie">
-      <h5>{overviewStatus.title}</h5>
+      <h5>{overviewStatus["witel_name"] || "Unknown"}</h5>
 
-      <div className="overview-status-pie-content">
-        <Loading backgroundColor="transparent" />
-      </div>
+      <PieChart width={200} height={220}>
+        <Pie data={pieData} cx="50%" cy="50%" outerRadius={90} dataKey="value">
+          {pieData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
 
-      {/* random for now */}
-      <h6>{Math.abs(randomChange * 10)}% Completed</h6>
+      {pieData
+        .filter((item) => item.value > 0)
+        .map((item, index) => (
+          <div key={index} className="o-pie-dec" style={{ color: item.color }}>
+            <p>{item.name}</p>
+            <p>{item.value}</p>
+          </div>
+        ))}
 
-      <div className="comparison">
-        <div className={`percentage ${percentageClass}`}>
-          {/* random for now */}
-          <h6>{`${symbol}${percentageChange}%`}</h6>
-        </div>
-        <p>{overviewStatus.description}</p>
-      </div>
+      <h6>{completedPercentage}% Completed</h6>
+      <p>({completed})</p>
+
+      {/* <pre>{JSON.stringify(overviewStatus, null, 2)}</pre> */}
     </div>
   );
 }
