@@ -12,14 +12,6 @@ import Error from "../../components/utils/Error";
 
 const API_URL = import.meta.env.VITE_DEV_API;
 
-const overviewSession = [
-  { name: "sub-type1", sessions: 120, percentage: 25.5 },
-  { name: "sub-type2", sessions: 95, percentage: 13.2 },
-  { name: "sub-type3", sessions: 150, percentage: 18.9 },
-  { name: "sub-type4", sessions: 80, percentage: 5.7 },
-  { name: "sub-type5", sessions: 110, percentage: 2.3 },
-];
-
 const overviewOvertimeInfo = [
   { title: "Total Revenue", amount: "XXX", percentage: 55 },
   { title: "Total Target", amount: "XXX", percentage: 45 },
@@ -30,7 +22,8 @@ const overviewPie = { content: "<i show pie content here??>" };
 const overviewRadar = { content: "<i show radar content here??>" };
 
 export default function OverviewPage() {
-  const [reg3Data, setReg3Data] = useState([]);
+  const [statusData, setStatusData] = useState([]);
+  const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,11 +33,20 @@ export default function OverviewPage() {
       setError(null);
 
       try {
-        const reg3Response = await fetch(`${API_URL}/aosodomoro/reg_3`);
-        if (!reg3Response.ok) throw new Error("Failed to fetch filtered data");
+        const [statusResponse, sessionResponse] = await Promise.all([
+          fetch(`${API_URL}/aosodomoro/reg_3_status`),
+          fetch(`${API_URL}/aosodomoro/reg_3_subtypes`),
+        ]);
 
-        const reg3Result = await reg3Response.json();
-        setReg3Data(reg3Result.data);
+        if (!statusResponse.ok) throw new Error("Failed to fetch status data");
+        if (!sessionResponse.ok)
+          throw new Error("Failed to fetch session data");
+
+        const statusResult = await statusResponse.json();
+        const sessionResult = await sessionResponse.json();
+
+        setStatusData(statusResult.data);
+        setSessionData(sessionResult.data);
       } catch (err) {
         console.error("🚨 Error Fetching Filtered Data:", err);
         setError(err.message);
@@ -59,7 +61,6 @@ export default function OverviewPage() {
   return (
     <div className="overview-container">
       <div className="status-chart-container">
-        {/* 🔥 Show placeholders if loading or error */}
         {loading || error
           ? Array.from({ length: 5 }).map((_, index) => (
               <div key={index} className="status-placeholder">
@@ -70,7 +71,7 @@ export default function OverviewPage() {
                 )}
               </div>
             ))
-          : reg3Data.map((item, index) => (
+          : statusData.map((item, index) => (
               <OverViewStatus
                 key={index}
                 overviewStatus={item}
@@ -86,10 +87,13 @@ export default function OverviewPage() {
           subtitle="Showing data for revenue overtime."
           overviewOvertimeInfo={overviewOvertimeInfo}
         />
+
         <OverViewSession
           title="Session by Sub-type"
           subtitle="Showing data for top order sub-type."
-          overviewSession={overviewSession}
+          overviewSession={sessionData}
+          loading={loading}
+          error={error}
         />
       </div>
 
