@@ -15,13 +15,23 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
-  margin-block: 16px;
+  margin-top: 16px;
   height: 100%;
   gap: 1rem;
+  border-radius: 8px;
 }
 
-.head h6 {
-  max-width: 50%;
+.session-content .widget {
+  cursor: pointer;
+}
+
+.head .title {
+  flex: 1;
+  max-width: 60%;
+  overflow: visible;
+}
+
+.head * {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
