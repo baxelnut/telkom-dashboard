@@ -26,3 +26,16 @@ export const getAllAosodomoro = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get Only Filtered `bill_witel`
+export const getReg3Aosodomoro = async (req, res) => {
+  try {
+    const { data, error } = await supabase.from("aosodomoro_reg_3").select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
