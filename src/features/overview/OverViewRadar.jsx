@@ -35,20 +35,17 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     fetchData();
   }, [API_URL]);
 
-  const segmenFields = [
-    "regional",
-    "government",
-    "state-owned_enterprise_service",
-    "private_service",
-    "enterprise",
-  ];
+  const segmenFields = useMemo(() => {
+    if (data.length === 0) return [];
+    return Object.keys(data[0]).filter((key) => key !== "witel_name");
+  }, [data]);
 
   const fullMarks = useMemo(() => {
     return segmenFields.reduce((acc, field) => {
       acc[field] = Math.max(...data.map((item) => item[field] || 0), 0);
       return acc;
     }, {});
-  }, [data]);
+  }, [data, segmenFields]);
 
   const generateChartData = useMemo(() => {
     return segmenFields.map((field) => ({
@@ -61,19 +58,17 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
         return acc;
       }, {}),
     }));
-  }, [data, fullMarks]);
+  }, [data, segmenFields, fullMarks]);
 
   const colorSet = ["#e76705", "#5cb338", "#EB5B00", "#D91656", "#640D5F"];
 
   const witelOptions = useMemo(
     () => [
       { value: "ALL", label: "ALL" },
-      ...Array.from(new Set(data.map((item) => item.witel_name))).map(
-        (witel) => ({
-          value: witel,
-          label: witel,
-        })
-      ),
+      ...[...new Set(data.map((item) => item.witel_name))].map((witel) => ({
+        value: witel,
+        label: witel,
+      })),
     ],
     [data]
   );
@@ -85,8 +80,6 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
         : data.filter((item) => item.witel_name === selectedWitel),
     [selectedWitel, data]
   );
-
-  const handleChange = (e) => setSelectedWitel(e.target.value);
 
   return (
     <div className="overtime-radar-container">
@@ -105,7 +98,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
             <Dropdown
               options={witelOptions}
               value={selectedWitel}
-              onChange={handleChange}
+              onChange={(e) => setSelectedWitel(e.target.value)}
             />
 
             <ResponsiveContainer width="100%" height={300}>
@@ -142,15 +135,12 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
                   {key
                     .replace(/_/g, " ")
                     .replace(/\b\w/g, (c) => c.toUpperCase())}
-                  :
+                  :{" "}
                   <strong>
-                    {" "}
-                    {selectedWitel === "ALL"
-                      ? filteredData.reduce(
-                          (sum, item) => sum + (item[key] || 0),
-                          0
-                        )
-                      : filteredData[0]?.[key] || 0}
+                    {filteredData.reduce(
+                      (sum, item) => sum + (item[key] || 0),
+                      0
+                    )}
                   </strong>
                 </p>
               ))}
