@@ -3,13 +3,11 @@ import "./ExamplePage.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-export default function ExamplePage() {
+export default function ExamplePage({ API_URL }) {
   const [data, setData] = useState(null);
   const [hello, setHello] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const API_URL = import.meta.env.VITE_DEV_API;
 
   useEffect(() => {
     const fetchData = async () => {
