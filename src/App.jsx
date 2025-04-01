@@ -17,7 +17,8 @@ import ReportPage from "./features/report/ReportPage";
 import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 
-const API_URL = import.meta.env.VITE_DEV_API;
+const API_URL = import.meta.env.VITE_API_URL;
+const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 const pageConfig = {
   "/": { title: "Overview" },
@@ -93,7 +94,7 @@ function AppContent() {
             <Route path="/report" element={<ReportPage />} />
             <Route
               path="/example"
-              element={<ExamplePage API_URL={API_URL} />}
+              element={<ExamplePage API_URL={DEV_API_URL} />}
             />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
