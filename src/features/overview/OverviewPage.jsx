@@ -106,6 +106,7 @@ export default function OverviewPage() {
           <OverViewRadar
             title="Segmen"
             subtitle="Showing data for ... lorem ipsum."
+            API_URL={API_URL}
           />
           <OverViewPie
             title="Bill Witel"
