@@ -105,7 +105,7 @@ export default function OverviewPage() {
         <div>
           <OverViewRadar
             title="Segmen"
-            subtitle="Showing data for ... lorem ipsum."
+            subtitle="Showing data for segmen in"
             API_URL={API_URL}
           />
           <OverViewPie
