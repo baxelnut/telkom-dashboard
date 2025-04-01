@@ -131,4 +131,9 @@
   .status-placeholder {
     width: calc(100% - 1rem);
   }
+
+  .analysis-container > :nth-child(2) {
+    padding: 0;
+    gap: 0;
+  }
 }
