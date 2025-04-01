@@ -10,11 +10,6 @@ import OverViewBar from "./OverViewBar";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const overviewOvertimeInfo = [
-  { title: "Total Revenue", amount: "XXX", percentage: 55 },
-  { title: "Total Target", amount: "XXX", percentage: 45 },
-];
-
 export default function OverviewPage({ API_URL }) {
   const [statusData, setStatusData] = useState([]);
   const [sessionData, setSessionData] = useState([]);
@@ -79,7 +74,7 @@ export default function OverviewPage({ API_URL }) {
         <OverViewOverTime
           title="Revenue Over Time"
           subtitle="Showing data for revenue overtime."
-          overviewOvertimeInfo={overviewOvertimeInfo}
+          API_URL={API_URL}
         />
 
         <OverViewSession
