@@ -6,6 +6,7 @@ import {
   getReg3SubSegmen,
   getReg3Segmen,
   getReg3Kategori,
+  getReg3Progress,
 } from "../controllers/aosodomoroController.js";
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.get("/reg_3_subtypes", getReg3OrderSubtype);
 router.get("/reg_3_subsegmen", getReg3SubSegmen);
 router.get("/reg_3_segmen", getReg3Segmen);
 router.get("/reg_3_kategori", getReg3Kategori);
+router.get("/reg_3_progress", getReg3Progress);
 
 export default router;

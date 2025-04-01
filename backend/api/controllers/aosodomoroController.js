@@ -75,9 +75,7 @@ export const getReg3SubSegmen = async (req, res) => {
 // Get `segmen` based `bill_witel`
 export const getReg3Segmen = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("reg_3_segmen")
-      .select("*");
+    const { data, error } = await supabase.from("reg_3_segmen").select("*");
 
     if (error) throw error;
 
@@ -90,8 +88,21 @@ export const getReg3Segmen = async (req, res) => {
 // Get `kategori` based `bill_witel`
 export const getReg3Kategori = async (req, res) => {
   try {
+    const { data, error } = await supabase.from("reg_3_kategori").select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get numeric per date based `bill_witel`
+export const getReg3Progress = async (req, res) => {
+  try {
     const { data, error } = await supabase
-      .from("reg_3_kategori")
+      .from("regional_3_progress")
       .select("*");
 
     if (error) throw error;
