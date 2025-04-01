@@ -54,7 +54,7 @@ export default function OverViewSession({
           loading ? (
             <Loading />
           ) : (
-            <Error />
+            <Error message={error} />
           )
         ) : (
           displayData.map((display, index) => (
