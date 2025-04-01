@@ -54,7 +54,7 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
     <div className="overview-bar-container">
       <div className="overview-bar-title">
         <h4>{title}</h4>
-        <p>{`${subtitle}: ${selectedWitel}`}</p>
+        <p>{`${subtitle} ${selectedWitel}`}</p>
       </div>
 
       <div className="overview-bar-content">
