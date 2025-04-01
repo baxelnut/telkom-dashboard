@@ -67,7 +67,7 @@ export default function OverviewPage() {
                 {loading ? (
                   <Loading backgroundColor="transparent" />
                 ) : (
-                  <Error />
+                  <Error message={error} />
                 )}
               </div>
             ))
@@ -101,8 +101,8 @@ export default function OverviewPage() {
         <div>
           <OverViewBar
             title="Sub-segmen"
-            subtitle="Showing data for ... lorem ipsum."
-            overviewBar={overviewBar}
+            subtitle="Showing data for sub-segmen in"
+            API_URL={API_URL}
           />
         </div>
 
@@ -121,7 +121,7 @@ export default function OverviewPage() {
       </div>
 
       <div className="overview-table-container">
-        <OverviewTable title="Data Overview" />
+        <OverviewTable title="Data Overview" API_URL={API_URL} />
       </div>
     </div>
   );
