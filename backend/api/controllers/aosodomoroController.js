@@ -71,3 +71,18 @@ export const getReg3SubSegmen = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get  segmen based `bill_witel`
+export const getReg3Segmen = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reg_3_segmen")
+      .select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
