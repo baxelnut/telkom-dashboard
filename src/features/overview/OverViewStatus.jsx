@@ -3,43 +3,28 @@ import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import "./OverViewStatus.css";
 import Loading from "../../components/utils/Loading";
 
+const STATUS_COLORS = {
+  pending_baso: "#e76705",
+  in_progress: "#312a68",
+  pending: "#14A44D",
+  pending_bill_apv: "#2D82B7",
+  sending: "#892CDC",
+  submitted: "#FF4D6D",
+};
+
 export default function OverViewStatus({ overviewStatus, loading, error }) {
-  if (!overviewStatus) return <Loading />;
+  if (loading || !overviewStatus) return <Loading />;
 
   const completed = overviewStatus["complete"] || 0;
+  const statuses = Object.entries(STATUS_COLORS);
 
-  const pieData = [
-    {
-      name: "Pending BASO",
-      value: overviewStatus["pending_baso"] || 0,
-      color: "#e76705",
-    },
-    {
-      name: "In Progress",
-      value: overviewStatus["in_progress"] || 0,
-      color: "#312a68",
-    },
-    {
-      name: "Pending",
-      value: overviewStatus["pending"] || 0,
-      color: "#14A44D",
-    },
-    {
-      name: "Pending Bill Apv",
-      value: overviewStatus["pending_bill_apv"] || 0,
-      color: "#2D82B7",
-    },
-    {
-      name: "Sending",
-      value: overviewStatus["sending"] || 0,
-      color: "#892CDC",
-    },
-    {
-      name: "Submitted",
-      value: overviewStatus["submitted"] || 0,
-      color: "#FF4D6D",
-    },
-  ];
+  const pieData = statuses
+    .map(([key, color]) => ({
+      name: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      value: overviewStatus[key] || 0,
+      color,
+    }))
+    .filter((item) => item.value > 0);
 
   const totalOtherStatuses = pieData.reduce((sum, item) => sum + item.value, 0);
   const totalAll = totalOtherStatuses + completed;
@@ -59,19 +44,15 @@ export default function OverViewStatus({ overviewStatus, loading, error }) {
         <Tooltip />
       </PieChart>
 
-      {pieData
-        .filter((item) => item.value > 0)
-        .map((item, index) => (
-          <div key={index} className="o-pie-dec" style={{ color: item.color }}>
-            <p>{item.name}</p>
-            <p>{item.value}</p>
-          </div>
-        ))}
+      {pieData.map((item, index) => (
+        <div key={index} className="o-pie-dec" style={{ color: item.color }}>
+          <p>{item.name}</p>
+          <p>{item.value}</p>
+        </div>
+      ))}
 
-      <h6 style={{marginTop: "10px"}}>{completedPercentage}% Completed</h6>
+      <h6 style={{ marginTop: "10px" }}>{completedPercentage}% Completed</h6>
       <p>({completed})</p>
-
-      {/* <pre>{JSON.stringify(overviewStatus, null, 2)}</pre> */}
     </div>
   );
 }
