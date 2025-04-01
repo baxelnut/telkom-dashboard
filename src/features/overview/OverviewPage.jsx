@@ -10,14 +10,12 @@ import OverViewBar from "./OverViewBar";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const API_URL = import.meta.env.VITE_DEV_API;
-
 const overviewOvertimeInfo = [
   { title: "Total Revenue", amount: "XXX", percentage: 55 },
   { title: "Total Target", amount: "XXX", percentage: 45 },
 ];
 
-export default function OverviewPage() {
+export default function OverviewPage({ API_URL }) {
   const [statusData, setStatusData] = useState([]);
   const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,8 +107,9 @@ export default function OverviewPage() {
             API_URL={API_URL}
           />
           <OverViewPie
-            title="Bill Witel"
-            subtitle="Showing data for ... lorem ipsum."
+            title="Category"
+            subtitle="Showing data for category per witel"
+            API_URL={API_URL}
           />
         </div>
       </div>
