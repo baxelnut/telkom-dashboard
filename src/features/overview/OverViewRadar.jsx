@@ -13,6 +13,8 @@ import {
 } from "recharts";
 import Dropdown from "../../components/utils/Dropdown";
 
+const colorSet = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#640D5F"];
+
 export default function OverViewRadar({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     };
 
     fetchData();
-  }, [API_URL]);
+  }, []);
 
   const segmenFields = useMemo(() => {
     if (data.length === 0) return [];
@@ -59,8 +61,6 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
       }, {}),
     }));
   }, [data, segmenFields, fullMarks]);
-
-  const colorSet = ["#e76705", "#5cb338", "#EB5B00", "#D91656", "#640D5F"];
 
   const witelOptions = useMemo(
     () => [
