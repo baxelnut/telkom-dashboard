@@ -17,10 +17,6 @@ const overviewOvertimeInfo = [
   { title: "Total Target", amount: "XXX", percentage: 45 },
 ];
 
-const overviewBar = { content: "<i show bar content here??>" };
-const overviewPie = { content: "<i show pie content here??>" };
-const overviewRadar = { content: "<i show radar content here??>" };
-
 export default function OverviewPage() {
   const [statusData, setStatusData] = useState([]);
   const [sessionData, setSessionData] = useState([]);
@@ -110,12 +106,10 @@ export default function OverviewPage() {
           <OverViewRadar
             title="Segmen"
             subtitle="Showing data for ... lorem ipsum."
-            overviewRadar={overviewRadar}
           />
           <OverViewPie
             title="Bill Witel"
             subtitle="Showing data for ... lorem ipsum."
-            overviewPie={overviewPie}
           />
         </div>
       </div>
