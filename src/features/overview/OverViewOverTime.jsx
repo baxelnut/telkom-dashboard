@@ -24,6 +24,7 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
+  const [excludedWitels, setExcludedWitels] = useState(["SURAMADU"]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,7 +97,7 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
   const formatValue = (value) => {
     const suffixes = ["", "K", "M", "B"];
     let index = 0;
-    value = Number(value);
+    value = Math.abs(Number(value));
 
     if (isNaN(value)) return "0";
 
@@ -105,7 +106,8 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
       index++;
     }
 
-    return `${value.toFixed(2)}${suffixes[index]}`;
+    const formattedValue = `${value.toFixed(2)}${suffixes[index]}`;
+    return value < 0 ? `-${formattedValue}` : formattedValue;
   };
 
   const getWitelRevenue = (witel) => {
@@ -115,6 +117,29 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
     );
   };
 
+  const getMinMaxYAxis = () => {
+    const filteredData = chartData.filter((entry) =>
+      OVERVIEW_DATA.some(
+        (item) =>
+          !excludedWitels.includes(item.witel) &&
+          entry[item.witel.toLowerCase().replace(/\s/g, "")] > 0
+      )
+    );
+
+    const values = filteredData.flatMap((entry) =>
+      OVERVIEW_DATA.filter((item) => !excludedWitels.includes(item.witel)).map(
+        (item) => entry[item.witel.toLowerCase().replace(/\s/g, "")]
+      )
+    );
+
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+
+    return [minValue * 0.9, maxValue * 1.1];
+  };
+
+  const [minYAxis, maxYAxis] = getMinMaxYAxis();
+
   return (
     <div className="overtime-container">
       <div className="overtime-title">
@@ -123,7 +148,9 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
       </div>
 
       <div className="info">
-        {OVERVIEW_DATA.map((item) => {
+        {OVERVIEW_DATA.filter(
+          (item) => !excludedWitels.includes(item.witel)
+        ).map((item) => {
           const witelRevenue = getWitelRevenue(item.witel);
           const percentage = totalRevenueAll
             ? ((witelRevenue / totalRevenueAll) * 100).toFixed(2)
@@ -138,7 +165,7 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
 
               <div className="main">
                 <h6 className="witel-title">{item.witel}</h6>
-                <p>Total Revenue</p>
+                <p>Revenue</p>
                 <h6 className="amount">Rp{formatValue(witelRevenue)}</h6>
               </div>
 
@@ -156,34 +183,68 @@ export default function OverViewOverTime({ title, subtitle, API_URL }) {
         ) : error ? (
           <Error message={error} />
         ) : (
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart
-              data={chartData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <style>
-                  {`
-                  .recharts-text { font-size: 12px; }
-                `}
-                </style>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <XAxis dataKey="date" />
-              <YAxis tickFormatter={formatValue} className="recharts-text" />
-              {OVERVIEW_DATA.map((item) => (
-                <Area
-                  key={item.witel}
-                  type="monotone"
-                  dataKey={item.witel.toLowerCase().replace(/\s/g, "")}
-                  stackId="1"
-                  stroke={item.color}
-                  fill={item.color}
+          <>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart
+                data={chartData.filter((entry) =>
+                  OVERVIEW_DATA.some(
+                    (item) =>
+                      !excludedWitels.includes(item.witel) &&
+                      entry[item.witel.toLowerCase().replace(/\s/g, "")] > 0
+                  )
+                )}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <style>{`.recharts-text { font-size: 12px; }`}</style>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <Tooltip />
+                <XAxis dataKey="date" />
+                <YAxis
+                  tickFormatter={formatValue}
+                  className="recharts-text"
+                  domain={[minYAxis, maxYAxis]}
                 />
-              ))}
-            </AreaChart>
-          </ResponsiveContainer>
+                {OVERVIEW_DATA.filter(
+                  (item) => !excludedWitels.includes(item.witel)
+                ).map((item) => (
+                  <Area
+                    key={item.witel}
+                    type="monotone"
+                    dataKey={item.witel.toLowerCase().replace(/\s/g, "")}
+                    stackId="1"
+                    stroke={item.color}
+                    fill={item.color}
+                  />
+                ))}
+              </AreaChart>
+            </ResponsiveContainer>
+
+            <div className="witel-exclude">
+              {OVERVIEW_DATA.map((item) => {
+                const isExcluded = excludedWitels.includes(item.witel);
+                return (
+                  <div key={item.witel} className="checkbox-container">
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      checked={!isExcluded}
+                      onChange={() => {
+                        setExcludedWitels((prev) =>
+                          isExcluded
+                            ? prev.filter((witel) => witel !== item.witel)
+                            : [...prev, item.witel]
+                        );
+                      }}
+                    />
+
+                    <p>{item.witel}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>
