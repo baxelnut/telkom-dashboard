@@ -207,7 +207,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
                   const isExcluded = excludedCategories.includes(categoryName);
 
                   return (
-                    <div key={categoryName} className="category-container">
+                    <p key={categoryName} className="category-container">
                       <input
                         className="checkbox"
                         type="checkbox"
@@ -226,7 +226,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
                       <strong style={{ display: isExcluded ? "none" : "flex" }}>
                         → {filteredData[key]}
                       </strong>
-                    </div>
+                    </p>
                   );
                 })}
             </div>

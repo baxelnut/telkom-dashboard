@@ -64,7 +64,10 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
           <Error message={error} />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer
+              width="100%"
+              height={window.innerWidth < 768 ? 250 : 420}
+            >
               <BarChart
                 data={chartData.sort((a, b) => a.quantity - b.quantity)}
               >

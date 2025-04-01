@@ -16,7 +16,6 @@
   min-height: 30vh;
   border-radius: 8px;
   margin-top: 1rem;
-  
 }
 
 .overview-bar-title {
@@ -29,5 +28,9 @@
 @media screen and (max-width: 768px) {
   .overview-bar-content {
     margin-top: 0.5rem;
+  }
+  
+  .overview-bar-title{
+    gap: 0.5rem;
   }
 }

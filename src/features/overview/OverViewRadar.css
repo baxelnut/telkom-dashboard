@@ -20,10 +20,21 @@
   gap: 1rem;
 }
 
+.radar-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 @media screen and (max-width: 768px) {
   .overview-radar-title,
   .overview-radar-content {
     padding: 0.5rem;
+  }
+
+  .overview-radar-title,
+  .overview-radar-content {
+    gap: 0.5rem;
   }
 
   .overview-radar-content {
