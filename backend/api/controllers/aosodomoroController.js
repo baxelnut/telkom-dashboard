@@ -56,3 +56,18 @@ export const getReg3OrderSubtype = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get sub_segmen based `bill_witel`
+export const getReg3SubSegmen = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("aosodomoro_reg_3_subsegmen")
+      .select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
