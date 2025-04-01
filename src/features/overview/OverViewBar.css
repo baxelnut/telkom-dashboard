@@ -11,8 +11,8 @@
 
 .overview-bar-content {
   display: flex;
-  align-items: center;
-  justify-content: start;
+  align-items: end;
+  flex-direction: column;
   min-height: 30vh;
   border-radius: 8px;
   margin-top: 1rem;
