@@ -42,8 +42,6 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
     quantity: item.quantity,
   }));
 
-  console.log("Chart Data:", chartData);
-
   const witelOptions = Array.from(
     new Set(data.map((item) => item.bill_witel))
   ).map((witel) => ({ value: witel, label: witel }));
