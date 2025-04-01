@@ -1,34 +1,190 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./OverViewOverTime.css";
 import Loading from "../../components/utils/Loading";
+import Error from "../../components/utils/Error";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-export default function OverViewOverTime({
-  title,
-  subtitle,
-  overviewOvertimeInfo,
-}) {
+const OVERVIEW_DATA = [
+  { witel: "MALANG", color: "#5cb338" },
+  { witel: "NUSA TENGARA", color: "#e76705" },
+  { witel: "BALI", color: "#2DAA9E" },
+  { witel: "SURAMADU", color: "#D91656" },
+  { witel: "SIDOARJO", color: "#640D5F" },
+];
+
+export default function OverViewOverTime({ title, subtitle, API_URL }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/aosodomoro/reg_3_progress`);
+        const result = await response.json();
+        setData(result.data || []);
+      } catch (error) {
+        setError(error.message || "Something went wrong while fetching data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const revenueByMonthAndWitel = useMemo(() => {
+    const revenueMap = {};
+
+    data.forEach((item) => {
+      const dateStr = item.li_billdate;
+      if (!dateStr) return;
+
+      const date = new Date(dateStr);
+      if (isNaN(date)) return;
+
+      const monthYear = date.toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      });
+      const witel = item.bill_witel;
+      const revenue = parseFloat(item.revenue) || 0;
+
+      revenueMap[monthYear] = revenueMap[monthYear] || {};
+      revenueMap[monthYear][witel] =
+        (revenueMap[monthYear][witel] || 0) + revenue;
+    });
+
+    return revenueMap;
+  }, [data]);
+
+  const totalRevenueAll = useMemo(() => {
+    return OVERVIEW_DATA.reduce((acc, item) => {
+      const itemRevenue = Object.values(revenueByMonthAndWitel).reduce(
+        (monthAcc, monthData) => monthAcc + (monthData[item.witel] || 0),
+        0
+      );
+      return acc + itemRevenue;
+    }, 0);
+  }, [revenueByMonthAndWitel]);
+
+  const chartData = useMemo(() => {
+    const months = Object.keys(revenueByMonthAndWitel).sort(
+      (a, b) => new Date(a) - new Date(b)
+    );
+
+    return months.map((month) => {
+      const entry = { date: month };
+
+      OVERVIEW_DATA.forEach((item) => {
+        entry[item.witel.toLowerCase().replace(/\s/g, "")] =
+          revenueByMonthAndWitel[month]?.[item.witel] || 0;
+      });
+
+      return entry;
+    });
+  }, [revenueByMonthAndWitel]);
+
+  const formatValue = (value) => {
+    const suffixes = ["", "K", "M", "B"];
+    let index = 0;
+    value = Number(value);
+
+    if (isNaN(value)) return "0";
+
+    while (value >= 1000 && index < suffixes.length - 1) {
+      value /= 1000;
+      index++;
+    }
+
+    return `${value.toFixed(2)}${suffixes[index]}`;
+  };
+
+  const getWitelRevenue = (witel) => {
+    return Object.values(revenueByMonthAndWitel).reduce(
+      (acc, monthData) => acc + (monthData[witel] || 0),
+      0
+    );
+  };
+
   return (
     <div className="overtime-container">
       <div className="overtime-title">
         <h4>{title}</h4>
         <p>{subtitle}</p>
       </div>
+
       <div className="info">
-        {overviewOvertimeInfo.map((item, index) => (
-          <div key={index} className={`total-p${index + 1}`}>
-            <div className="leading"></div>
-            <div className="main">
-              <h6>{item.title}</h6>
-              <h6 className="amount">Rp{item.amount}</h6>
+        {OVERVIEW_DATA.map((item) => {
+          const witelRevenue = getWitelRevenue(item.witel);
+          const percentage = totalRevenueAll
+            ? ((witelRevenue / totalRevenueAll) * 100).toFixed(2)
+            : "0.00%";
+
+          return (
+            <div key={item.witel} className="total-p">
+              <div
+                className="leading"
+                style={{ backgroundColor: item.color }}
+              ></div>
+
+              <div className="main">
+                <h6 className="witel-title">{item.witel}</h6>
+                <p>Total Revenue</p>
+                <h6 className="amount">Rp{formatValue(witelRevenue)}</h6>
+              </div>
+
+              <div className="trailing">
+                <h5>{percentage}%</h5>
+              </div>
             </div>
-            <div className="trailing">
-              <h3>{item.percentage}%</h3>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
       <div className="overtime-graph">
-        <Loading />
+        {loading ? (
+          <Loading backgroundColor="transparent" />
+        ) : error ? (
+          <Error message={error} />
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart
+              data={chartData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <style>
+                  {`
+                  .recharts-text { font-size: 12px; }
+                `}
+                </style>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <XAxis dataKey="date" />
+              <YAxis tickFormatter={formatValue} className="recharts-text" />
+              {OVERVIEW_DATA.map((item) => (
+                <Area
+                  key={item.witel}
+                  type="monotone"
+                  dataKey={item.witel.toLowerCase().replace(/\s/g, "")}
+                  stackId="1"
+                  stroke={item.color}
+                  fill={item.color}
+                />
+              ))}
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );
