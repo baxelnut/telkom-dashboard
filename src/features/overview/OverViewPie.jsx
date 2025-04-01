@@ -3,7 +3,7 @@ import "./OverViewPie.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 import Dropdown from "../../components/utils/Dropdown";
-import { PieChart, Pie, Sector, ResponsiveContainer, Legend } from "recharts";
+import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
 const colorSet = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#640D5F"];
 
