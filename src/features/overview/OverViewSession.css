@@ -16,6 +16,7 @@
   justify-content: space-between;
   align-items: stretch;
   margin-top: 16px;
+  min-height: 20vh;
   height: 100%;
   gap: 1rem;
   border-radius: 8px;
@@ -68,5 +69,9 @@
   .session-content,
   .session-title {
     gap: 0.5rem;
+  }
+
+  .session-container {
+    padding: 0.5rem;
   }
 }
