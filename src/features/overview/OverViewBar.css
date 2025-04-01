@@ -26,11 +26,15 @@
 }
 
 @media screen and (max-width: 768px) {
+  .overview-bar-container {
+    padding: 0.5rem;
+  }
+
   .overview-bar-content {
     margin-top: 0.5rem;
   }
-  
-  .overview-bar-title{
+
+  .overview-bar-title {
     gap: 0.5rem;
   }
 }
