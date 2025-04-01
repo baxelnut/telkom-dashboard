@@ -4,10 +4,11 @@ import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
 export default function ExamplePage({ API_URL }) {
-  const [data, setData] = useState(null);
-  const [hello, setHello] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const [hello, setHello] = useState(null);
+  const [progressData, setProgressData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,9 +25,13 @@ export default function ExamplePage({ API_URL }) {
             if (!res.ok) throw new Error("Failed to fetch hello data");
             return res.json();
           }),
+          fetch(`${API_URL}/aosodomoro/reg_3_progress`).then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch hello data");
+            return res.json();
+          }),
         ]);
 
-        const [aosodomoroResult, helloResult] = responses;
+        const [aosodomoroResult, helloResult, progressResult] = responses;
 
         if (aosodomoroResult.status === "rejected") {
           throw new Error("Backend failed to fetch aosodomoro data.");
@@ -34,9 +39,13 @@ export default function ExamplePage({ API_URL }) {
         if (helloResult.status === "rejected") {
           throw new Error("Backend failed to fetch hello data.");
         }
+        if (progressResult.status === "rejected") {
+          throw new Error("Backend failed to fetch progress data.");
+        }
 
         setData(aosodomoroResult.value);
         setHello(helloResult.value);
+        setProgressData(progressResult.value);
       } catch (error) {
         console.error("🚨 API Fetch Error:", error);
         setError(error.message || "Something went wrong");
@@ -67,7 +76,24 @@ export default function ExamplePage({ API_URL }) {
       </div>
 
       <div className="example-items">
-        <h6>trynna fetch aosodomoro respones from `${API_URL}/aosodomoro`</h6>
+        <h6>
+          trynna fetch progressResponse from `${API_URL}
+          /aosodomoro/reg_3_progress`
+        </h6>
+
+        <div className="example-content">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <Error message={error} />
+          ) : (
+            <p>{JSON.stringify(progressData, null, 2)}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="example-items">
+        <h6>trynna fetch aosodomoroResponse from `${API_URL}/aosodomoro`</h6>
 
         <div className="example-content">
           {loading ? (
