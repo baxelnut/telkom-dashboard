@@ -237,7 +237,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* <3 BLN PROVIDE ORDER */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,
@@ -257,7 +257,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* <3 BLN IN PROCESS */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,
@@ -277,7 +277,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* <3 BLN READY TO BILL */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,
@@ -302,7 +302,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* >3 BLN PROVIDE ORDER */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,
@@ -322,7 +322,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* >3 BLN IN PROCESS */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,
@@ -342,7 +342,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
               </td>
 
               {/* >3 BLN READY TO BILL */}
-              <td>
+              <td className="unresponsive">
                 <h6>
                   {calculateCategoryGrandTotal(
                     reportTableData,

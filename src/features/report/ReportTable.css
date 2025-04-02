@@ -65,10 +65,15 @@
     transform 0.2s ease-in-out;
 }
 
-.disabled-cell {
+.disabled-cell,
+.unresponsive,
+.grand-total-title {
   pointer-events: none;
-  opacity: 0.5;
   cursor: default;
   transform: none !important;
   pointer-events: none;
+}
+
+.disabled-cell {
+  opacity: 0.5;
 }
