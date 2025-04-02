@@ -2,7 +2,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  min-height: 400px;
+  min-height: inherit;
   overflow-x: auto;
 }
 
@@ -76,4 +76,21 @@
 
 .disabled-cell {
   opacity: 0.5;
+}
+
+.grand-total-row,
+.grand-total-row td p {
+  background-color: var(--primary-variant);
+  color: var(--surface);
+}
+
+@media screen and (max-width: 768px) {
+  .table-scroll table {
+    width: fit-content;
+    table-layout: auto;
+  }
+
+  .table-scroll td p {
+    font-size: 12px;
+  }
 }
