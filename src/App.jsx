@@ -90,8 +90,8 @@ function AppContent() {
               path="/overview"
               element={<OverviewPage API_URL={API_URL} />}
             />
+            <Route path="/report" element={<ReportPage API_URL={API_URL} />} />
             <Route path="/performance" element={<PerformancePage />} />
-            <Route path="/report" element={<ReportPage />} />
             <Route
               path="/example"
               element={<ExamplePage API_URL={DEV_API_URL} />}
