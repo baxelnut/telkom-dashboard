@@ -3,7 +3,7 @@
 }
 
 .period-container,
-.report-table {
+.report-table-container {
   border-radius: 8px;
   background-color: var(--surface);
   border: 0.5px solid var(--text-variant);
@@ -27,7 +27,7 @@
   color: var(--text-variant);
 }
 
-.report-table {
+.report-table-container {
   margin-top: 1rem;
 }
 
@@ -37,7 +37,7 @@
   gap: 1rem;
 }
 
-/* .report-table-container {
+/* .report-table-container-container {
   border: none;
   background-color: var(--bg);
   min-height: 54vh;
@@ -47,11 +47,11 @@
   .report-container,
   .period-filter,
   .period-container,
-  .report-table {
+  .report-table-container {
     padding: 0.5rem;
   }
 
-  .report-table {
+  .report-table-container {
     margin-top: 0.5rem;
   }
 
