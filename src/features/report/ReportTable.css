@@ -2,4 +2,73 @@
   width: 100%;
   height: 100%;
   position: relative;
+  min-height: 400px;
+  overflow-x: auto;
+}
+
+.table-scroll table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.table-scroll th,
+.table-scroll td {
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+.table-scroll th {
+  text-align: center;
+  cursor: pointer;
+}
+
+.table-scroll th:hover {
+  background-color: var(--primary);
+  transform: scale(1.02);
+  transition: background-color 0.3s ease, color 0.3s ease,
+    transform 0.2s ease-in-out;
+}
+
+.table-scroll td:not(.witel-name) {
+  text-align: center;
+}
+
+.table-scroll td p {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.table-scroll td p:hover {
+  white-space: none;
+  word-wrap: normal;
+  overflow: none;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  width: inherit;
+  height: inherit;
+}
+
+.table-scroll td:hover,
+.table-scroll td:hover p {
+  background-color: var(--secondary);
+  color: var(--surface);
+  cursor: pointer;
+  transform: scale(1.1);
+  transition: background-color 0.3s ease, color 0.3s ease,
+    transform 0.2s ease-in-out;
+}
+
+.disabled-cell {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: default;
+  transform: none !important;
+  pointer-events: none;
 }
