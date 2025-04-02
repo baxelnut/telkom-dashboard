@@ -11,8 +11,10 @@ export default function ReportTable({
   return (
     <div className="report-table">
       <p>ReportTable</p>
-      <p>selectedCategory: {selectedCategory}</p>
-      <p>selectedPeriod: {selectedPeriod}</p>
+      <div>
+        <p>selectedCategory: {selectedCategory}</p>
+        <p>selectedPeriod: {selectedPeriod}</p>
+      </div>
       {loading ? (
         <p>loading</p>
       ) : error ? (
