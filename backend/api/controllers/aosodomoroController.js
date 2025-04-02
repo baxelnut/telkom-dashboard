@@ -10,6 +10,7 @@ export const getAllAosodomoro = async (req, res) => {
     const { data, error } = await supabase
       .from("aosodomoro")
       .select("*")
+      .order("id", { ascending: true })
       .range(start, end);
 
     if (error) throw error;
@@ -101,9 +102,7 @@ export const getReg3Kategori = async (req, res) => {
 // Get numeric per date based `bill_witel`
 export const getReg3Progress = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("regional_3_progress")
-      .select("*");
+    const { data, error } = await supabase.from("reg_3_progress").select("*");
 
     if (error) throw error;
 
