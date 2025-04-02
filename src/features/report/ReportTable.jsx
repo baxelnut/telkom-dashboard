@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ReportTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
@@ -15,8 +15,30 @@ const calculateTotal = (entry, category) =>
   );
 
 export default function ReportTable({ reportTableData, loading, error }) {
+  const [selectedCell, setSelectedCell] = useState(null);
+
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
+
+  const handleCellClick = (witelName, idString) => {
+    const [mainCategory, subCategory] = idString.split("-");
+    const entry = reportTableData.data.find(
+      (item) => item.witelName === witelName
+    );
+    if (!entry || !entry[mainCategory]) {
+      console.log("No matching data found");
+      return;
+    }
+
+    const categoryKey = subCategory.includes("<3bln")
+      ? "<3blnItems"
+      : ">3blnItems";
+    const extractedIds =
+      entry[mainCategory]?.[categoryKey]?.map((i) => i.id) || [];
+
+    setSelectedCell({ witelName, id: idString, extractedIds });
+    console.log("Extracted IDs:", extractedIds);
+  };
 
   const calculateCategoryGrandTotal = (reportData, categoryKey, subtypeKey) => {
     return reportData["data"].reduce((total, entry) => {
@@ -107,9 +129,25 @@ export default function ReportTable({ reportTableData, loading, error }) {
       const count = entry?.[subtype]?.[categoryKey] ?? 0;
       const revenue = formatCurrency(entry?.[subtype]?.[revenueKey]);
       const isDisabled = count === 0;
+      const cellData = {
+        witelName: entry.witelName,
+        id: `${subtype}-${categoryKey}`,
+      };
+      const isSelected =
+        selectedCell &&
+        selectedCell.witelName === entry.witelName &&
+        selectedCell.id === cellData.id;
 
       return (
-        <td key={idx} className={isDisabled ? "disabled-cell" : ""}>
+        <td
+          key={idx}
+          className={`${isDisabled ? "disabled-cell" : ""} ${
+            isSelected ? "selected-cell" : ""
+          }`}
+          onClick={() =>
+            !isDisabled && handleCellClick(cellData.witelName, cellData.id)
+          }
+        >
           <h6>{count}</h6>
           <p>{revenue}</p>
         </td>
@@ -257,12 +295,12 @@ export default function ReportTable({ reportTableData, loading, error }) {
                   )}
                 </p>
               </td>
-
-              {/* <3 BLN Total */}
+ 
               <td className="unresponsive">
                 <h6>{total3BlnGrand}</h6>
                 <p>{formatCurrency(totalRevenue3BlnGrand)}</p>
               </td>
+              {/* how to do it here too, the onclick to print the ids???*/}
 
               {/* >3 BLN PROVIDE ORDER */}
               <td>
@@ -329,6 +367,7 @@ export default function ReportTable({ reportTableData, loading, error }) {
                 <h6>{totalMore3BlnGrand}</h6>
                 <p>{formatCurrency(totalRevenueMore3BlnGrand)}</p>
               </td>
+              {/* how to do it here too, the onclick to print the ids???*/}
 
               {/* Grand Total */}
               <td className="unresponsive">
