@@ -18,6 +18,90 @@ export default function ReportTable({ reportTableData, loading, error }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
 
+  const calculateCategoryGrandTotal = (reportData, categoryKey, subtypeKey) => {
+    return reportData["data"].reduce((total, entry) => {
+      const value = entry?.[subtypeKey]?.[categoryKey] ?? 0;
+      return total + value;
+    }, 0);
+  };
+
+  const totalProvideOrder3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_<3bln",
+    "PROVIDE ORDER"
+  );
+  const totalProvideOrderMore3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_>3bln",
+    "PROVIDE ORDER"
+  );
+  const totalInProcess3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_<3bln",
+    "IN PROCESS"
+  );
+  const totalInProcessMore3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_>3bln",
+    "IN PROCESS"
+  );
+  const totalReadyToBill3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_<3bln",
+    "READY TO BILL"
+  );
+  const totalReadyToBillMore3BlnGrand = calculateCategoryGrandTotal(
+    reportTableData,
+    "kategori_umur_>3bln",
+    "READY TO BILL"
+  );
+
+  const total3BlnGrand =
+    totalProvideOrder3BlnGrand +
+    totalInProcess3BlnGrand +
+    totalReadyToBill3BlnGrand;
+  const totalMore3BlnGrand =
+    totalProvideOrderMore3BlnGrand +
+    totalInProcessMore3BlnGrand +
+    totalReadyToBillMore3BlnGrand;
+
+  const totalRevenue3BlnGrand =
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_<3bln",
+      "PROVIDE ORDER"
+    ) +
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_<3bln",
+      "IN PROCESS"
+    ) +
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_<3bln",
+      "READY TO BILL"
+    );
+
+  const totalRevenueMore3BlnGrand =
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_>3bln",
+      "PROVIDE ORDER"
+    ) +
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_>3bln",
+      "IN PROCESS"
+    ) +
+    calculateCategoryGrandTotal(
+      reportTableData,
+      "revenue_>3bln",
+      "READY TO BILL"
+    );
+
+  const grandTotal = total3BlnGrand + totalMore3BlnGrand;
+  const grandRevenue = totalRevenue3BlnGrand + totalRevenueMore3BlnGrand;
+
   const renderRowCells = (entry, categoryKey, revenueKey) =>
     orderSubtypes.map((subtype, idx) => {
       const count = entry?.[subtype]?.[categoryKey] ?? 0;
@@ -107,6 +191,151 @@ export default function ReportTable({ reportTableData, loading, error }) {
                 </tr>
               );
             })}
+
+            {/* Grand Total Row */}
+            <tr className="grand-total-row">
+              <td className="grand-total-title">
+                <h6>GRAND TOTAL</h6>
+              </td>
+
+              {/* <3 BLN PROVIDE ORDER */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_<3bln",
+                    "PROVIDE ORDER"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_<3bln",
+                      "PROVIDE ORDER"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* <3 BLN IN PROCESS */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_<3bln",
+                    "IN PROCESS"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_<3bln",
+                      "IN PROCESS"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* <3 BLN READY TO BILL */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_<3bln",
+                    "READY TO BILL"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_<3bln",
+                      "READY TO BILL"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* <3 BLN Total */}
+              <td className="unresponsive">
+                <h6>{total3BlnGrand}</h6>
+                <p>{formatCurrency(totalRevenue3BlnGrand)}</p>
+              </td>
+
+              {/* >3 BLN PROVIDE ORDER */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_>3bln",
+                    "PROVIDE ORDER"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_>3bln",
+                      "PROVIDE ORDER"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* >3 BLN IN PROCESS */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_>3bln",
+                    "IN PROCESS"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_>3bln",
+                      "IN PROCESS"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* >3 BLN READY TO BILL */}
+              <td>
+                <h6>
+                  {calculateCategoryGrandTotal(
+                    reportTableData,
+                    "kategori_umur_>3bln",
+                    "READY TO BILL"
+                  )}
+                </h6>
+                <p>
+                  {formatCurrency(
+                    calculateCategoryGrandTotal(
+                      reportTableData,
+                      "revenue_>3bln",
+                      "READY TO BILL"
+                    )
+                  )}
+                </p>
+              </td>
+
+              {/* >3 BLN Total */}
+              <td className="unresponsive">
+                <h6>{totalMore3BlnGrand}</h6>
+                <p>{formatCurrency(totalRevenueMore3BlnGrand)}</p>
+              </td>
+
+              {/* Grand Total */}
+              <td className="unresponsive">
+                <h6>{grandTotal}</h6>
+                <p>{formatCurrency(grandRevenue)}</p>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
