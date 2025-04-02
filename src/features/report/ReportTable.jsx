@@ -295,12 +295,11 @@ export default function ReportTable({ reportTableData, loading, error }) {
                   )}
                 </p>
               </td>
- 
+
               <td className="unresponsive">
                 <h6>{total3BlnGrand}</h6>
                 <p>{formatCurrency(totalRevenue3BlnGrand)}</p>
               </td>
-              {/* how to do it here too, the onclick to print the ids???*/}
 
               {/* >3 BLN PROVIDE ORDER */}
               <td>
@@ -367,7 +366,6 @@ export default function ReportTable({ reportTableData, loading, error }) {
                 <h6>{totalMore3BlnGrand}</h6>
                 <p>{formatCurrency(totalRevenueMore3BlnGrand)}</p>
               </td>
-              {/* how to do it here too, the onclick to print the ids???*/}
 
               {/* Grand Total */}
               <td className="unresponsive">
