@@ -58,7 +58,14 @@ export default function ReportPage({ API_URL }) {
       </div>
 
       <div className="report-table-container">
-        <h5>{`Report for ${selectedCategory}`}</h5>
+        <div className="title-container">
+          <h5>{`Report for ${selectedCategory}`}</h5>
+
+          <div>
+            <p>Total Raw Data: {data.totalRawData}</p>
+            <p>Processed into: {data.totalProcessedData}</p>
+          </div>
+        </div>
 
         <div className="category-filter">
           <p className="label">Category:</p>

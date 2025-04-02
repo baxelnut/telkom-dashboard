@@ -37,11 +37,11 @@
   gap: 1rem;
 }
 
-/* .report-table-container-container {
-  border: none;
-  background-color: var(--bg);
-  min-height: 54vh;
-} */
+.report-table-container .title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 @media screen and (max-width: 768px) {
   .report-container,
