@@ -141,7 +141,11 @@ export const getReg3ReportData = async (req, res) => {
 
     const processedData = processData(data);
 
-    res.json({ data: processedData });
+    res.json({
+      data: processedData,
+      totalRawData: data.length,
+      totalProcessedData: processData(data).length,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

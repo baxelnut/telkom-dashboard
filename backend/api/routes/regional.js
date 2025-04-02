@@ -1,7 +1,7 @@
 import express from "express";
 import {
-  getReg3ReportData,
   getAllRegional3Data,
+  getReg3ReportData,
 } from "../controllers/regional3Controller.js";
 
 const router = express.Router();
