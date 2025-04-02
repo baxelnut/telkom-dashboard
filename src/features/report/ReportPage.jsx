@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ReportPage.css";
 import Dropdown from "../../components/utils/Dropdown";
-// import Loading from "../../components/utils/Loading";
 import ReportTable from "./ReportTable";
 
 const periodOptions = [
@@ -62,8 +61,8 @@ export default function ReportPage({ API_URL }) {
           <h5>{`Report for ${selectedCategory}`}</h5>
 
           <div>
-            <p>Total Raw Data: {data.totalRawData}</p>
-            <p>Processed into: {data.totalProcessedData}</p>
+            <p>Total Raw Data: {data.totalRawData ?? "loading..."}</p>
+            <p>Processed into: {data.totalProcessedData ?? "loading..."}</p>
           </div>
         </div>
 
@@ -77,7 +76,6 @@ export default function ReportPage({ API_URL }) {
         </div>
 
         <div className="table-wrapper">
-          {/* <Loading backgroundColor="transparent" /> */}
           <ReportTable
             reportTableData={data}
             selectedCategory={selectedCategory}
