@@ -162,8 +162,7 @@ export default function ReportTable({
           selectedCategory === "ALL" || item[subtypeKey] === selectedCategory
       );
 
-      // Count the number of matching items (RO, MO, AO)
-      const count = filteredItems?.length || 0; // count based on the filtered list
+      const count = filteredItems?.length || 0;
 
       const revenue = formatCurrency(entry?.[subtype]?.[revenueKey]);
       const orderSubtypeList =

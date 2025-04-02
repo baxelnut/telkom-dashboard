@@ -6,26 +6,26 @@
   overflow-x: auto;
 }
 
-.table-scroll table {
+.report-table .table-scroll table {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
-.table-scroll th,
-.table-scroll td {
+.report-table .table-scroll th,
+.report-table .table-scroll td {
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
   text-align: center;
 }
 
-.table-scroll th {
+.report-table .table-scroll th {
   text-align: center;
   cursor: pointer;
 }
 
-.table-scroll th:hover,
+.report-table .table-scroll th:hover,
 .grand-total-row .unresponsive:hover,
 .grand-total-title:hover,
 .unresponsive:hover p {
@@ -40,18 +40,18 @@
   pointer-events: none;
 }
 
-.table-scroll td:not(.witel-name) {
+.report-table .table-scroll td:not(.witel-name) {
   text-align: center;
 }
 
-.table-scroll td p {
+.report-table .table-scroll td p {
   color: var(--primary);
   font-weight: 600;
   font-size: 14px;
   font-style: italic;
 }
 
-.table-scroll td p:hover {
+.report-table .table-scroll td p:hover {
   white-space: none;
   word-wrap: normal;
   overflow: none;
@@ -63,8 +63,8 @@
   height: inherit;
 }
 
-.table-scroll td:hover,
-.table-scroll td:hover p:not(.unresponsive:hover p) {
+.report-table .table-scroll td:hover,
+.report-table .table-scroll td:hover p:not(.unresponsive:hover p) {
   background-color: var(--secondary);
   color: var(--surface);
   cursor: pointer;
@@ -90,12 +90,12 @@
 }
 
 @media screen and (max-width: 768px) {
-  .table-scroll table {
+  .report-table .table-scroll table {
     width: fit-content;
     table-layout: auto;
   }
 
-  .table-scroll td p {
+  .report-table .table-scroll td p {
     font-size: 12px;
   }
 }
