@@ -14,11 +14,36 @@ const calculateTotal = (entry, category) =>
     0
   );
 
-export default function ReportTable({ reportTableData, loading, error }) {
+export default function ReportTable({
+  reportTableData,
+  selectedCategory,
+  selectedPeriod,
+  loading,
+  error,
+}) {
   const [selectedCell, setSelectedCell] = useState(null);
 
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
+
+  const filteredData = reportTableData.data.map((entry) => {
+    return {
+      ...entry,
+      "BILLING COMPLETED": {
+        ...entry["BILLING COMPLETED"],
+        "<3blnItems": entry["BILLING COMPLETED"]["<3blnItems"].filter(
+          (item) =>
+            selectedCategory === "ALL" ||
+            item.order_subtype === selectedCategory
+        ),
+        ">3blnItems": entry["BILLING COMPLETED"][">3blnItems"].filter(
+          (item) =>
+            selectedCategory === "ALL" ||
+            item.order_subtype === selectedCategory
+        ),
+      },
+    };
+  });
 
   const handleCellClick = (witelName, idString) => {
     const [mainCategory, subCategory] = idString.split("-");
@@ -124,10 +149,26 @@ export default function ReportTable({ reportTableData, loading, error }) {
   const grandTotal = total3BlnGrand + totalMore3BlnGrand;
   const grandRevenue = totalRevenue3BlnGrand + totalRevenueMore3BlnGrand;
 
-  const renderRowCells = (entry, categoryKey, revenueKey) =>
+  const renderRowCells = (
+    entry,
+    categoryKey,
+    revenueKey,
+    kategoriUmurKey,
+    subtypeKey
+  ) =>
     orderSubtypes.map((subtype, idx) => {
-      const count = entry?.[subtype]?.[categoryKey] ?? 0;
+      const filteredItems = entry?.[subtype]?.[kategoriUmurKey]?.filter(
+        (item) =>
+          selectedCategory === "ALL" || item[subtypeKey] === selectedCategory
+      );
+
+      // Count the number of matching items (RO, MO, AO)
+      const count = filteredItems?.length || 0; // count based on the filtered list
+
       const revenue = formatCurrency(entry?.[subtype]?.[revenueKey]);
+      const orderSubtypeList =
+        filteredItems?.map((item) => item[subtypeKey]).join(", ") || null;
+
       const isDisabled = count === 0;
       const cellData = {
         witelName: entry.witelName,
@@ -148,8 +189,10 @@ export default function ReportTable({ reportTableData, loading, error }) {
             !isDisabled && handleCellClick(cellData.witelName, cellData.id)
           }
         >
-          <h6>{count}</h6>
-          <p>{revenue}</p>
+          <h6>{orderSubtypeList ? count : "0"}</h6>
+
+          <p>{orderSubtypeList ? revenue : null}</p>
+          <p>{orderSubtypeList}</p>
         </td>
       );
     });
@@ -202,7 +245,9 @@ export default function ReportTable({ reportTableData, loading, error }) {
                   {renderRowCells(
                     entry,
                     "kategori_umur_<3bln",
-                    "revenue_<3bln"
+                    "revenue_<3bln",
+                    "<3blnItems",
+                    "order_subtype"
                   )}
 
                   <td className="unresponsive">
@@ -214,7 +259,9 @@ export default function ReportTable({ reportTableData, loading, error }) {
                   {renderRowCells(
                     entry,
                     "kategori_umur_>3bln",
-                    "revenue_>3bln"
+                    "revenue_>3bln",
+                    ">3blnItems",
+                    "order_subtype"
                   )}
 
                   <td className="unresponsive">

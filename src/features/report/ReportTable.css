@@ -25,11 +25,19 @@
   cursor: pointer;
 }
 
-.table-scroll th:hover {
+.table-scroll th:hover,
+.grand-total-row .unresponsive:hover,
+.grand-total-title:hover,
+.unresponsive:hover p {
   background-color: var(--primary);
   transform: scale(1.02);
   transition: background-color 0.3s ease, color 0.3s ease,
     transform 0.2s ease-in-out;
+}
+
+.unresponsive:not(.grand-total-row td),
+.grand-total-title:hover {
+  pointer-events: none;
 }
 
 .table-scroll td:not(.witel-name) {
@@ -56,7 +64,7 @@
 }
 
 .table-scroll td:hover,
-.table-scroll td:hover p {
+.table-scroll td:hover p:not(.unresponsive:hover p) {
   background-color: var(--secondary);
   color: var(--surface);
   cursor: pointer;
@@ -65,10 +73,7 @@
     transform 0.2s ease-in-out;
 }
 
-.disabled-cell,
-.unresponsive,
-.grand-total-title {
-  pointer-events: none;
+.disabled-cell {
   cursor: default;
   transform: none !important;
   pointer-events: none;
