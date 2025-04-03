@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./ReportPage.css";
 import Dropdown from "../../components/utils/Dropdown";
 import ReportTable from "./ReportTable";
+import SelectedTable from "./SelectedTable";
 
 const periodOptions = [
   "ALL",
@@ -129,10 +130,14 @@ export default function ReportPage({ API_URL }) {
 
       <div className="report-table-container">
         <div className="title-container">
-          <h5>Selected cell</h5>
+          <h5>Selected cell for {selectedCell?.witelName}</h5>
         </div>
+        <p>Subtype: {selectedCell?.subType}</p>
+        <p>Category: {selectedCell?.kategoriUmur}</p>
 
-        <pre>{JSON.stringify(selectedCell, null, 2)}</pre>
+        <div className="table-wrapper">
+          <SelectedTable selectedCell={selectedCell} data={data.data} />
+        </div>
       </div>
     </div>
   );
