@@ -34,7 +34,7 @@
 .category-filter {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .report-table-container .title-container {
