@@ -3,16 +3,15 @@ import "./ReportTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const orderSubtypes = ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"];
+const orderSubtypes = [
+  "BILLING COMPLETED",
+  "PROVIDE ORDER",
+  "IN PROCESS",
+  "READY TO BILL",
+];
 
 const formatCurrency = (value) =>
   value ? `Rp${value.toLocaleString("id-ID")}` : null;
-
-const calculateTotal = (entry, category) =>
-  orderSubtypes.reduce(
-    (total, subtype) => total + (entry?.[subtype]?.[category] ?? 0),
-    0
-  );
 
 export default function ReportTable({
   reportTableData,
@@ -151,17 +150,15 @@ export default function ReportTable({
     entry,
     categoryKey,
     revenueKey,
-    kategoriUmurKey,
+    kategoriUmurKeyKey,
     subtypeKey
   ) =>
     orderSubtypes.map((subtype, idx) => {
-      const filteredItems = entry?.[subtype]?.[kategoriUmurKey]?.filter(
+      const filteredItems = entry?.[subtype]?.[kategoriUmurKeyKey]?.filter(
         (item) =>
           selectedCategory === "ALL" || item[subtypeKey] === selectedCategory
       );
-
       const count = filteredItems?.length || 0;
-
       const revenue = formatCurrency(entry?.[subtype]?.[revenueKey]);
       const orderSubtypeList =
         filteredItems?.map((item) => item[subtypeKey]).join(", ") || null;
@@ -171,6 +168,7 @@ export default function ReportTable({
         witelName: entry.witelName,
         id: `${subtype}-${categoryKey}`,
       };
+
       const isSelected =
         selectedCell &&
         selectedCell.witelName === entry.witelName &&
@@ -187,12 +185,68 @@ export default function ReportTable({
           }
         >
           <h6>{orderSubtypeList ? count : "0"}</h6>
-
           <p>{orderSubtypeList ? revenue : null}</p>
-          <pre>{orderSubtypeList}</pre>
         </td>
       );
     });
+
+  const renderTotalCells = (entry, kategoriUmurKey, subtypeKey) => {
+    let totalCount = 0;
+    let totalRevenue = 0;
+
+    orderSubtypes.forEach((subtype) => {
+      const itemData = entry?.[subtype]?.[kategoriUmurKey] || [];
+
+      const filteredItems = itemData.filter((item) => {
+        return (
+          selectedCategory === "ALL" || selectedCategory === item[subtypeKey]
+        );
+      });
+
+      totalCount += filteredItems.length;
+      totalRevenue += filteredItems.reduce(
+        (total, item) => total + (item.revenue || 0),
+        0
+      );
+    });
+
+    return (
+      <td className="unresponsive">
+        <h6>{totalCount}</h6>
+        <p>{formatCurrency(totalRevenue)}</p>
+      </td>
+    );
+  };
+
+  const renderGrandTotalCells = (entry, subtypeKey) => {
+    let totalCount = 0;
+    let totalRevenue = 0;
+
+    ["<3blnItems", ">3blnItems"].forEach((kategoriUmurKey) => {
+      orderSubtypes.forEach((subtype) => {
+        const itemData = entry?.[subtype]?.[kategoriUmurKey] || [];
+
+        const filteredItems = itemData.filter((item) => {
+          return (
+            selectedCategory === "ALL" || selectedCategory === item[subtypeKey]
+          );
+        });
+
+        totalCount += filteredItems.length;
+        totalRevenue += filteredItems.reduce(
+          (total, item) => total + (item.revenue || 0),
+          0
+        );
+      });
+    });
+
+    return (
+      <td className="unresponsive">
+        <h6>{totalCount}</h6>
+        <p>{formatCurrency(totalRevenue)}</p>
+      </td>
+    );
+  };
 
   return (
     <div className="report-table">
@@ -201,9 +255,9 @@ export default function ReportTable({
           <thead>
             <tr>
               <th rowSpan="2">WITEL</th>
-              <th colSpan="3">&lt;3 BLN</th>
+              <th colSpan={orderSubtypes.length}>&lt;3 BLN</th>
               <th rowSpan="2">&lt;3 BLN Total</th>
-              <th colSpan="3">&gt;3 BLN</th>
+              <th colSpan={orderSubtypes.length}>&gt;3 BLN</th>
               <th rowSpan="2">&gt;3 BLN Total</th>
               <th rowSpan="2">Grand Total</th>
             </tr>
@@ -219,20 +273,6 @@ export default function ReportTable({
 
           <tbody>
             {reportTableData["data"].map((entry, index) => {
-              const total3Bln = calculateTotal(entry, "kategori_umur_<3bln");
-              const totalRevenue3Bln = calculateTotal(entry, "revenue_<3bln");
-              const totalMore3Bln = calculateTotal(
-                entry,
-                "kategori_umur_>3bln"
-              );
-              const totalRevenueMore3Bln = calculateTotal(
-                entry,
-                "revenue_>3bln"
-              );
-              
-              const grandTotal = total3Bln + totalMore3Bln;
-              const grandRevenue = totalRevenue3Bln + totalRevenueMore3Bln;
-
               return (
                 <tr key={index}>
                   <td className="unresponsive">
@@ -248,19 +288,8 @@ export default function ReportTable({
                     "order_subtype"
                   )}
 
-                  <td className="unresponsive">
-                    <h6>{total3Bln}</h6>
-                    <p>{formatCurrency(totalRevenue3Bln)}</p>
-                    {orderSubtypes.map((status, i) =>
-                      entry[status]?.["<3blnItems"]?.length ? (
-                        <pre key={i}>
-                          {entry[status]["<3blnItems"]
-                            .map((order) => order["order_subtype"])
-                            .join(", ")}
-                        </pre>
-                      ) : null
-                    )}
-                  </td>
+                  {/* Grand Total <3 BLN on each witel */}
+                  {renderTotalCells(entry, "<3blnItems", "order_subtype")}
 
                   {/* Render >3 BLN columns */}
                   {renderRowCells(
@@ -271,38 +300,11 @@ export default function ReportTable({
                     "order_subtype"
                   )}
 
-                  <td className="unresponsive">
-                    <h6>{totalMore3Bln}</h6>
-                    <p>{formatCurrency(totalRevenueMore3Bln)}</p>
-                    {orderSubtypes.map((status, i) =>
-                      entry[status]?.[">3blnItems"]?.length ? (
-                        <pre key={i}>
-                          {entry[status][">3blnItems"]
-                            .map((order) => order["order_subtype"])
-                            .join(", ")}
-                        </pre>
-                      ) : null
-                    )}
-                  </td>
-                  
-                  <td className="unresponsive">
-                    <h6>{grandTotal}</h6>
-                    <p>{formatCurrency(grandRevenue)}</p>
-                    {orderSubtypes.map((status, i) => {
-                      const items = [
-                        ...(entry[status]?.["<3blnItems"] || []),
-                        ...(entry[status]?.[">3blnItems"] || []),
-                      ];
+                  {/* Grand Total >3 BLN on each witel */}
+                  {renderTotalCells(entry, ">3blnItems", "order_subtype")}
 
-                      return items.length ? (
-                        <pre key={i}>
-                          {items
-                            .map((order) => order["order_subtype"])
-                            .join(", ")}
-                        </pre>
-                      ) : null;
-                    })}
-                  </td>
+                  {/* Grand Total*/}
+                  {renderGrandTotalCells(entry, "order_subtype")}
                 </tr>
               );
             })}
