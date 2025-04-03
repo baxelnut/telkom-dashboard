@@ -31,6 +31,11 @@ export default function ReportPage({ API_URL }) {
       ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
     )
   );
+  const [selectedCell, setSelectedCell] = useState(null);
+
+  const handleCellSelection = (cellData) => {
+    setSelectedCell(cellData);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,7 +100,7 @@ export default function ReportPage({ API_URL }) {
             onChange={(e) => setSelectedCategory(e.target.value)}
           />
           <p className="subtype-label">Order Subtype:</p>
-          <div className="subtype-filter-container"> 
+          <div className="subtype-filter-container">
             {orderSubtypes.map((subtype) => (
               <label key={subtype} className="subtype-filter">
                 <input
@@ -117,8 +122,17 @@ export default function ReportPage({ API_URL }) {
             orderSubtypes={selectedSubtypes}
             loading={loading}
             error={error}
+            onCellSelect={handleCellSelection}
           />
         </div>
+      </div>
+
+      <div className="report-table-container">
+        <div className="title-container">
+          <h5>Selected cell</h5>
+        </div>
+
+        <pre>{JSON.stringify(selectedCell, null, 2)}</pre>
       </div>
     </div>
   );

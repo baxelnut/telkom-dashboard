@@ -13,6 +13,7 @@ export default function ReportTable({
   orderSubtypes,
   loading,
   error,
+  onCellSelect,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
@@ -22,9 +23,10 @@ export default function ReportTable({
     );
 
   const [selectedCell, setSelectedCell] = useState(null);
+  const handleCellClick = (cellData) => {
+    const { witelName, selectedCellId } = cellData;
+    const [mainCategory, subCategory] = selectedCellId.split("-");
 
-  const handleCellClick = (witelName, idString) => {
-    const [mainCategory, subCategory] = idString.split("-");
     const entry = reportTableData.data.find(
       (item) => item.witelName === witelName
     );
@@ -38,7 +40,10 @@ export default function ReportTable({
     const extractedIds =
       entry[mainCategory]?.[categoryKey]?.map((i) => i.id) || [];
 
-    setSelectedCell({ witelName, id: idString, extractedIds });
+    const updatedCellData = { ...cellData, extractedIds };
+
+    setSelectedCell(updatedCellData);
+    onCellSelect(updatedCellData);
   };
 
   const processData = (entry, umurKeys) => {
@@ -101,13 +106,16 @@ export default function ReportTable({
       const isDisabled = count === 0;
       const cellData = {
         witelName: entry.witelName,
-        id: `${subtype}-kategori_umur_${umurKey}3bln`,
+        subType: subtype,
+        kategoriUmur: `${umurKey}3bln`,
+        selectedCellId: `${subtype}-kategori_umur_${umurKey}3bln`,
       };
 
       const isSelected =
         selectedCell &&
         selectedCell.witelName === entry.witelName &&
-        selectedCell.id === cellData.id;
+        selectedCell.subType === cellData.subType &&
+        selectedCell.kategoriUmur === cellData.kategoriUmur;
 
       return (
         <td
@@ -115,9 +123,7 @@ export default function ReportTable({
           className={`${isDisabled ? "disabled-cell" : ""} ${
             isSelected ? "selected-cell" : ""
           }`}
-          onClick={() =>
-            !isDisabled && handleCellClick(cellData.witelName, cellData.id)
-          }
+          onClick={() => !isDisabled && handleCellClick(cellData)}
         >
           <h6>{orderSubtypeList ? count : 0}</h6>
           <p>{count == 0 ? null : formattedRevenue}</p>
