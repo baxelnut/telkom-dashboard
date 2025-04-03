@@ -39,8 +39,9 @@ export default function ReportTable({
       : ">3blnItems";
     const extractedIds =
       entry[mainCategory]?.[categoryKey]?.map((i) => i.id) || [];
+    const extractedCategory = selectedCategory;
 
-    const updatedCellData = { ...cellData, extractedIds };
+    const updatedCellData = { ...cellData, extractedIds, extractedCategory };
 
     setSelectedCell(updatedCellData);
     onCellSelect(updatedCellData);
