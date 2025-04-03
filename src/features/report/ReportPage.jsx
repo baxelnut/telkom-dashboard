@@ -61,8 +61,8 @@ export default function ReportPage({ API_URL }) {
           <h5>{`Report for ${selectedCategory}`}</h5>
 
           <div>
-            <p>Total Raw Data: {data.totalRawData ?? "loading..."}</p>
-            <p>Processed into: {data.totalProcessedData ?? "loading..."}</p>
+            <p>Total data rows: {data.totalRawData ?? " ..."}</p>
+            <p>Processed into: {data.totalProcessedData ?? " ..."}</p>
           </div>
         </div>
 
