@@ -1,15 +1,18 @@
 import React from "react";
 import "./SelectedTable.css";
 
-export default function SelectedTable({ selectedCell, data }) {
+export default function SelectedTable({
+  selectedCell,
+  data,
+  selectedCategory,
+}) {
   if (!selectedCell) {
     return <div>No data available for selection.</div>;
   }
+  console.log("selectedCell", selectedCell);
+  console.log("data", data);
 
   const { extractedIds, witelName, subType, kategoriUmur } = selectedCell;
-
-  console.log("kategoriUmur", kategoriUmur);
-  console.log("subType", subType);
 
   const foundItem = data.find(
     (item) =>
@@ -18,53 +21,29 @@ export default function SelectedTable({ selectedCell, data }) {
       item[subType][`${kategoriUmur}Items`]
   );
 
-  if (foundItem) {
-    console.log("Found item:", foundItem);
-
-    const items = foundItem[subType][`${kategoriUmur}Items`];
-    const filteredItems = items.filter((item) =>
-      extractedIds.includes(item.id)
-    );
-
-    console.log("Filtered Items based on extractedIds:", filteredItems);
-
-    if (filteredItems.length === 0) {
-      console.log("No matching items found with the extractedIds");
-    }
-  } else {
+  if (!foundItem) {
     console.log(
       "Error: No item found with witelName:",
       witelName,
       "and subType:",
       subType
     );
+    return <div>No matching data found.</div>;
   }
 
-  if (!Array.isArray(data)) {
-    return (
-      <div>Error: Data is not available or not in the correct format.</div>
-    );
+  const items = foundItem[subType][`${kategoriUmur}Items`] || [];
+
+  const filteredItems = items.filter(
+    (item) =>
+      extractedIds.includes(item.id) &&
+      (selectedCategory === "ALL" || item.order_subtype === selectedCategory)
+  );
+
+  console.log("Filtered Items:", filteredItems);
+
+  if (filteredItems.length === 0) {
+    return <div>No matching data found.</div>;
   }
-
-  const rows = extractedIds.map((id) => {
-    const itemInfo = foundItem
-      ? foundItem[subType][`${kategoriUmur}Items`].find(
-          (item) => item.id === id
-        )
-      : null;
-
-    return itemInfo ? (
-      <tr key={id}>
-        <td>{itemInfo.id}</td>
-        <td>{itemInfo.order_subtype}</td>
-        <td>{itemInfo.revenue}</td>
-      </tr>
-    ) : (
-      <tr key={id}>
-        <td colSpan="3">No data found for ID {id}</td>
-      </tr>
-    );
-  });
 
   return (
     <div className="selected-table">
@@ -77,7 +56,15 @@ export default function SelectedTable({ selectedCell, data }) {
               <th>Revenue</th>
             </tr>
           </thead>
-          <tbody>{rows}</tbody>
+          <tbody>
+            {filteredItems.map((item) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.order_subtype}</td>
+                <td>{item.revenue}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
