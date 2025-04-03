@@ -278,7 +278,6 @@ export default function ReportTable({
                   <td className="unresponsive">
                     <h6>{entry?.witelName}</h6>
                   </td>
-
                   {/* Render <3 BLN columns */}
                   {renderRowCells(
                     entry,
@@ -287,10 +286,8 @@ export default function ReportTable({
                     "<3blnItems",
                     "order_subtype"
                   )}
-
                   {/* Grand Total <3 BLN on each witel */}
                   {renderTotalCells(entry, "<3blnItems", "order_subtype")}
-
                   {/* Render >3 BLN columns */}
                   {renderRowCells(
                     entry,
@@ -299,10 +296,8 @@ export default function ReportTable({
                     ">3blnItems",
                     "order_subtype"
                   )}
-
                   {/* Grand Total >3 BLN on each witel */}
                   {renderTotalCells(entry, ">3blnItems", "order_subtype")}
-
                   {/* Grand Total*/}
                   {renderGrandTotalCells(entry, "order_subtype")}
                 </tr>
