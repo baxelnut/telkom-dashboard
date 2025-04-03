@@ -136,7 +136,11 @@ export default function ReportPage({ API_URL }) {
         <p>Category: {selectedCell?.kategoriUmur}</p>
 
         <div className="table-wrapper">
-          <SelectedTable selectedCell={selectedCell} data={data.data} />
+          <SelectedTable
+            selectedCell={selectedCell}
+            data={data.data}
+            selectedCategory={selectedCategory}
+          />
         </div>
       </div>
     </div>
