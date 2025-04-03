@@ -20,29 +20,10 @@ export default function ReportTable({
   loading,
   error,
 }) {
-  const [selectedCell, setSelectedCell] = useState(null);
-
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
 
-  const filteredData = reportTableData.data.map((entry) => {
-    return {
-      ...entry,
-      "BILLING COMPLETED": {
-        ...entry["BILLING COMPLETED"],
-        "<3blnItems": entry["BILLING COMPLETED"]["<3blnItems"].filter(
-          (item) =>
-            selectedCategory === "ALL" ||
-            item.order_subtype === selectedCategory
-        ),
-        ">3blnItems": entry["BILLING COMPLETED"][">3blnItems"].filter(
-          (item) =>
-            selectedCategory === "ALL" ||
-            item.order_subtype === selectedCategory
-        ),
-      },
-    };
-  });
+  const [selectedCell, setSelectedCell] = useState(null);
 
   const handleCellClick = (witelName, idString) => {
     const [mainCategory, subCategory] = idString.split("-");
@@ -62,111 +43,28 @@ export default function ReportTable({
     setSelectedCell({ witelName, id: idString, extractedIds });
   };
 
-  const calculateCategoryGrandTotal = (reportData, categoryKey, subtypeKey) => {
-    return reportData["data"].reduce((total, entry) => {
-      const value = entry?.[subtypeKey]?.[categoryKey] ?? 0;
-      return total + value;
-    }, 0);
-  };
-
-  const totalProvideOrder3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_<3bln",
-    "PROVIDE ORDER"
-  );
-  const totalProvideOrderMore3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_>3bln",
-    "PROVIDE ORDER"
-  );
-  const totalInProcess3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_<3bln",
-    "IN PROCESS"
-  );
-  const totalInProcessMore3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_>3bln",
-    "IN PROCESS"
-  );
-  const totalReadyToBill3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_<3bln",
-    "READY TO BILL"
-  );
-  const totalReadyToBillMore3BlnGrand = calculateCategoryGrandTotal(
-    reportTableData,
-    "kategori_umur_>3bln",
-    "READY TO BILL"
-  );
-
-  const total3BlnGrand =
-    totalProvideOrder3BlnGrand +
-    totalInProcess3BlnGrand +
-    totalReadyToBill3BlnGrand;
-  const totalMore3BlnGrand =
-    totalProvideOrderMore3BlnGrand +
-    totalInProcessMore3BlnGrand +
-    totalReadyToBillMore3BlnGrand;
-
-  const totalRevenue3BlnGrand =
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_<3bln",
-      "PROVIDE ORDER"
-    ) +
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_<3bln",
-      "IN PROCESS"
-    ) +
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_<3bln",
-      "READY TO BILL"
-    );
-
-  const totalRevenueMore3BlnGrand =
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_>3bln",
-      "PROVIDE ORDER"
-    ) +
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_>3bln",
-      "IN PROCESS"
-    ) +
-    calculateCategoryGrandTotal(
-      reportTableData,
-      "revenue_>3bln",
-      "READY TO BILL"
-    );
-
-  const grandTotal = total3BlnGrand + totalMore3BlnGrand;
-  const grandRevenue = totalRevenue3BlnGrand + totalRevenueMore3BlnGrand;
-
-  const renderRowCells = (
-    entry,
-    categoryKey,
-    revenueKey,
-    kategoriUmurKeyKey,
-    subtypeKey
-  ) =>
-    orderSubtypes.map((subtype, idx) => {
-      const filteredItems = entry?.[subtype]?.[kategoriUmurKeyKey]?.filter(
+  const renderRowCells = (entry, umurKey) => {
+    return orderSubtypes.map((subtype, idx) => {
+      const filteredItems = entry?.[subtype]?.[`${umurKey}3blnItems`]?.filter(
         (item) =>
-          selectedCategory === "ALL" || item[subtypeKey] === selectedCategory
+          selectedCategory === "ALL" ||
+          selectedCategory === item["order_subtype"]
       );
+
       const count = filteredItems?.length || 0;
-      const revenue = formatCurrency(entry?.[subtype]?.[revenueKey]);
+      const revenue = filteredItems?.reduce(
+        (totalRevenue, item) => totalRevenue + (item.revenue || 0),
+        0
+      );
+
+      const formattedRevenue = formatCurrency(revenue);
       const orderSubtypeList =
-        filteredItems?.map((item) => item[subtypeKey]).join(", ") || null;
+        filteredItems?.map((item) => item["order_subtype"]).join(", ") || null;
 
       const isDisabled = count === 0;
       const cellData = {
         witelName: entry.witelName,
-        id: `${subtype}-${categoryKey}`,
+        id: `${subtype}-kategori_umur_${umurKey}3bln`,
       };
 
       const isSelected =
@@ -185,21 +83,23 @@ export default function ReportTable({
           }
         >
           <h6>{orderSubtypeList ? count : "0"}</h6>
-          <p>{orderSubtypeList ? revenue : null}</p>
+          <p>{orderSubtypeList ? formattedRevenue : null}</p>
         </td>
       );
     });
+  };
 
-  const renderTotalCells = (entry, kategoriUmurKey, subtypeKey) => {
+  const renderTotalCells = (entry, umurKey) => {
     let totalCount = 0;
     let totalRevenue = 0;
 
     orderSubtypes.forEach((subtype) => {
-      const itemData = entry?.[subtype]?.[kategoriUmurKey] || [];
+      const itemData = entry?.[subtype]?.[`${umurKey}3blnItems`] || [];
 
       const filteredItems = itemData.filter((item) => {
         return (
-          selectedCategory === "ALL" || selectedCategory === item[subtypeKey]
+          selectedCategory === "ALL" ||
+          selectedCategory === item["order_subtype"]
         );
       });
 
@@ -218,7 +118,7 @@ export default function ReportTable({
     );
   };
 
-  const renderGrandTotalCells = (entry, subtypeKey) => {
+  const renderGrandTotalCells = (entry) => {
     let totalCount = 0;
     let totalRevenue = 0;
 
@@ -228,7 +128,8 @@ export default function ReportTable({
 
         const filteredItems = itemData.filter((item) => {
           return (
-            selectedCategory === "ALL" || selectedCategory === item[subtypeKey]
+            selectedCategory === "ALL" ||
+            selectedCategory === item["order_subtype"]
           );
         });
 
@@ -244,6 +145,80 @@ export default function ReportTable({
       <td className="unresponsive">
         <h6>{totalCount}</h6>
         <p>{formatCurrency(totalRevenue)}</p>
+      </td>
+    );
+  };
+
+  const renderReportCells = (umurKey) => {
+    return orderSubtypes.map((grandItem, grandIndex) => {
+      const totalCount = reportTableData["data"].reduce((totalCount, data) => {
+        const items = data[grandItem]?.[`${umurKey}3blnItems`] || [];
+        const filteredItems = items.filter(
+          (item) =>
+            selectedCategory === "ALL" ||
+            selectedCategory === item["order_subtype"]
+        );
+        return totalCount + filteredItems.length;
+      }, 0);
+      const totalRevenue = reportTableData["data"].reduce(
+        (totalRevenue, data) => {
+          const items = data[grandItem]?.[`${umurKey}3blnItems`] || [];
+          const filteredItems = items.filter(
+            (item) =>
+              selectedCategory === "ALL" ||
+              selectedCategory === item["order_subtype"]
+          );
+          const revenueSum = filteredItems.reduce(
+            (sum, item) => sum + (item.revenue || 0),
+            0
+          );
+          return totalRevenue + revenueSum;
+        },
+        0
+      );
+
+      return (
+        <td key={grandIndex} className="unresponsive">
+          <h6>{totalCount}</h6>
+          <p>{formatCurrency(totalRevenue)}</p>
+        </td>
+      );
+    });
+  };
+
+  const renderGrandTotals = (umurKey) => {
+    const totalCountAndRevenue = reportTableData["data"].reduce(
+      (acc, data) => {
+        const keysToCheck =
+          umurKey === "both"
+            ? ["<3blnItems", ">3blnItems"]
+            : [`${umurKey}3blnItems`];
+
+        keysToCheck.forEach((key) => {
+          orderSubtypes.forEach((grandItem) => {
+            const items = data[grandItem]?.[key] || [];
+            const filteredItems = items.filter(
+              (item) =>
+                selectedCategory === "ALL" ||
+                selectedCategory === item["order_subtype"]
+            );
+            acc.totalCount += filteredItems.length;
+            acc.totalRevenue += filteredItems.reduce(
+              (sum, item) => sum + (item.revenue || 0),
+              0
+            );
+          });
+        });
+
+        return acc;
+      },
+      { totalCount: 0, totalRevenue: 0 }
+    );
+
+    return (
+      <td className="unresponsive">
+        <h6>{totalCountAndRevenue.totalCount}</h6>
+        <p>{formatCurrency(totalCountAndRevenue.totalRevenue)}</p>
       </td>
     );
   };
@@ -278,174 +253,24 @@ export default function ReportTable({
                   <td className="unresponsive">
                     <h6>{entry?.witelName}</h6>
                   </td>
-                  {/* Render <3 BLN columns */}
-                  {renderRowCells(
-                    entry,
-                    "kategori_umur_<3bln",
-                    "revenue_<3bln",
-                    "<3blnItems",
-                    "order_subtype"
-                  )}
-                  {/* Grand Total <3 BLN on each witel */}
-                  {renderTotalCells(entry, "<3blnItems", "order_subtype")}
-                  {/* Render >3 BLN columns */}
-                  {renderRowCells(
-                    entry,
-                    "kategori_umur_>3bln",
-                    "revenue_>3bln",
-                    ">3blnItems",
-                    "order_subtype"
-                  )}
-                  {/* Grand Total >3 BLN on each witel */}
-                  {renderTotalCells(entry, ">3blnItems", "order_subtype")}
-                  {/* Grand Total*/}
-                  {renderGrandTotalCells(entry, "order_subtype")}
+                  {renderRowCells(entry, "<")}
+                  {renderTotalCells(entry, "<")}
+                  {renderRowCells(entry, ">")}
+                  {renderTotalCells(entry, ">")}
+                  {renderGrandTotalCells(entry)}
                 </tr>
               );
             })}
 
-            {/* Grand Total Row */}
             <tr className="grand-total-row">
               <td className="grand-total-title">
                 <h6>GRAND TOTAL</h6>
               </td>
-
-              {/* <3 BLN PROVIDE ORDER */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_<3bln",
-                    "PROVIDE ORDER"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_<3bln",
-                      "PROVIDE ORDER"
-                    )
-                  )}
-                </p>
-              </td>
-
-              {/* <3 BLN IN PROCESS */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_<3bln",
-                    "IN PROCESS"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_<3bln",
-                      "IN PROCESS"
-                    )
-                  )}
-                </p>
-              </td>
-
-              {/* <3 BLN READY TO BILL */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_<3bln",
-                    "READY TO BILL"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_<3bln",
-                      "READY TO BILL"
-                    )
-                  )}
-                </p>
-              </td>
-
-              <td className="unresponsive">
-                <h6>{total3BlnGrand}</h6>
-                <p>{formatCurrency(totalRevenue3BlnGrand)}</p>
-              </td>
-
-              {/* >3 BLN PROVIDE ORDER */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_>3bln",
-                    "PROVIDE ORDER"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_>3bln",
-                      "PROVIDE ORDER"
-                    )
-                  )}
-                </p>
-              </td>
-
-              {/* >3 BLN IN PROCESS */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_>3bln",
-                    "IN PROCESS"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_>3bln",
-                      "IN PROCESS"
-                    )
-                  )}
-                </p>
-              </td>
-
-              {/* >3 BLN READY TO BILL */}
-              <td className="unresponsive">
-                <h6>
-                  {calculateCategoryGrandTotal(
-                    reportTableData,
-                    "kategori_umur_>3bln",
-                    "READY TO BILL"
-                  )}
-                </h6>
-                <p>
-                  {formatCurrency(
-                    calculateCategoryGrandTotal(
-                      reportTableData,
-                      "revenue_>3bln",
-                      "READY TO BILL"
-                    )
-                  )}
-                </p>
-              </td>
-
-              {/* >3 BLN Total */}
-              <td className="unresponsive">
-                <h6>{totalMore3BlnGrand}</h6>
-                <p>{formatCurrency(totalRevenueMore3BlnGrand)}</p>
-              </td>
-
-              {/* Grand Total */}
-              <td className="unresponsive">
-                <h6>{grandTotal}</h6>
-                <p>{formatCurrency(grandRevenue)}</p>
-              </td>
+              {renderReportCells("<")}
+              {renderGrandTotals("<")}
+              {renderReportCells(">")}
+              {renderGrandTotals(">")}
+              {renderGrandTotals("both")}
             </tr>
           </tbody>
         </table>
