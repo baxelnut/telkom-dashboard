@@ -25,11 +25,21 @@
   cursor: pointer;
 }
 
+.report-table .table-scroll td:hover,
+.report-table .table-scroll td:hover p {
+  background-color: var(--secondary);
+  color: var(--surface);
+  cursor: pointer;
+  transform: scale(1.1);
+  transition: background-color 0.3s ease, color 0.3s ease,
+    transform 0.2s ease-in-out;
+}
+
 .report-table .table-scroll th:hover,
 .grand-total-row .unresponsive:hover,
 .grand-total-title:hover,
 .unresponsive:hover p {
-  background-color: var(--primary);
+  background-color: var(--primary)  !important;
   transform: scale(1.02);
   transition: background-color 0.3s ease, color 0.3s ease,
     transform 0.2s ease-in-out;
@@ -63,16 +73,6 @@
   height: inherit;
 }
 
-.report-table .table-scroll td:hover,
-.report-table .table-scroll td:hover p:not(.unresponsive:hover p) {
-  background-color: var(--secondary);
-  color: var(--surface);
-  cursor: pointer;
-  transform: scale(1.1);
-  transition: background-color 0.3s ease, color 0.3s ease,
-    transform 0.2s ease-in-out;
-}
-
 .disabled-cell {
   cursor: default;
   transform: none !important;
@@ -83,10 +83,15 @@
   opacity: 0.5;
 }
 
-.grand-total-row,
-.grand-total-row td p {
+.grand-total-row .unresponsive,
+.grand-total-title {
   background-color: var(--primary-variant);
-  color: var(--surface);
+}
+
+.grand-total-row .unresponsive p,
+.grand-total-row .unresponsive,
+.grand-total-title {
+  color: var(--surface) !important;
 }
 
 @media screen and (max-width: 768px) {
