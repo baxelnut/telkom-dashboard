@@ -10,6 +10,8 @@
 
 @media screen and (max-width: 768px) {
   .footer-container {
-    height: 25px;
+    padding-inline: 4%;
+    padding-block: 3%;
+    height: fit-content;
   }
 }
