@@ -12,12 +12,25 @@ const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
   (value) => ({ value, label: value })
 );
 
+const orderSubtypes = [
+  "PROV. COMPLETE",
+  "BILLING COMPLETED",
+  "PROVIDE ORDER",
+  "IN PROCESS",
+  "READY TO BILL",
+];
+
 export default function ReportPage({ API_URL }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedSubtypes, setSelectedSubtypes] = useState(
+    orderSubtypes.filter((subtype) =>
+      ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
+    )
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +55,14 @@ export default function ReportPage({ API_URL }) {
     fetchData();
   }, []);
 
+  const handleCheckboxChange = (subtype) => {
+    setSelectedSubtypes((prev) =>
+      prev.includes(subtype)
+        ? prev.filter((item) => item !== subtype)
+        : [...prev, subtype]
+    );
+  };
+
   return (
     <div className="report-container">
       <div className="period-container">
@@ -61,8 +82,8 @@ export default function ReportPage({ API_URL }) {
           <h5>{`Report for ${selectedCategory}`}</h5>
 
           <div>
-            <p>Total data rows: {data.totalRawData ?? " ..."}</p>
-            <p>Processed into: {data.totalProcessedData ?? " ..."}</p>
+            <p>Total raw data: {data.totalRawData ?? " ..."} rows</p>
+            <p>Processed into: {data.totalProcessedData ?? " ..."} rows</p>
           </div>
         </div>
 
@@ -73,6 +94,19 @@ export default function ReportPage({ API_URL }) {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           />
+          <p className="subtype-label">Order Subtype:</p>
+          <div className="subtype-filter-container"> 
+            {orderSubtypes.map((subtype) => (
+              <label key={subtype} className="subtype-filter">
+                <input
+                  type="checkbox"
+                  checked={selectedSubtypes.includes(subtype)}
+                  onChange={() => handleCheckboxChange(subtype)}
+                />
+                <p>{subtype}</p>
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="table-wrapper">
@@ -80,6 +114,7 @@ export default function ReportPage({ API_URL }) {
             reportTableData={data}
             selectedCategory={selectedCategory}
             selectedPeriod={selectedPeriod}
+            orderSubtypes={selectedSubtypes}
             loading={loading}
             error={error}
           />

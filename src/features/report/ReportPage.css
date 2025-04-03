@@ -23,7 +23,8 @@
   padding: 0.5rem;
 }
 
-.period-container .label {
+.period-container .category-filter .label,
+.period-container .category-filter .subtype-label {
   color: var(--text-variant);
 }
 
@@ -45,6 +46,18 @@
 
 .report-container .table-wrapper {
   min-height: 375px;
+}
+
+.subtype-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subtype-filter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 @media screen and (max-width: 768px) {
@@ -70,5 +83,20 @@
 
   .report-container .table-wrapper {
     min-height: 340px;
+  }
+
+  .subtype-filter-container {
+    gap: 4px;
+    display: block;
+    width: 100%;
+  }
+
+  .subtype-filter {
+    gap: 4px;
+    flex-direction: row-reverse;
+  }
+
+  .category-filter .subtype-label {
+    display: none;
   }
 }
