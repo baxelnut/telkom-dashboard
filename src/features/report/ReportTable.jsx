@@ -3,14 +3,6 @@ import "./ReportTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const orderSubtypes = [
-  "PROV. COMPLETE",
-  "BILLING COMPLETED",
-  "PROVIDE ORDER",
-  "IN PROCESS",
-  "READY TO BILL",
-];
-
 const formatCurrency = (value) =>
   value ? `Rp${value.toLocaleString("id-ID")}` : "Rp0";
 
@@ -18,11 +10,16 @@ export default function ReportTable({
   reportTableData,
   selectedCategory,
   selectedPeriod,
+  orderSubtypes,
   loading,
   error,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
+  if (!orderSubtypes || orderSubtypes.length === 0)
+    return (
+      <p>No data to be displayed. Please choose at least one order subtype.</p>
+    );
 
   const [selectedCell, setSelectedCell] = useState(null);
 
@@ -189,19 +186,35 @@ export default function ReportTable({
         <table>
           <thead>
             <tr>
-              <th rowSpan="2">WITEL</th>
-              <th colSpan={orderSubtypes.length}>&lt;3 BLN</th>
-              <th rowSpan="2">&lt;3 BLN Total</th>
-              <th colSpan={orderSubtypes.length}>&gt;3 BLN</th>
-              <th rowSpan="2">&gt;3 BLN Total</th>
-              <th rowSpan="2">Grand Total</th>
+              <th rowSpan="2">
+                <h6>WITEL</h6>
+              </th>
+              <th colSpan={orderSubtypes.length}>
+                <h6>&lt;3 BLN</h6>
+              </th>
+              <th rowSpan="2">
+                &lt;<h6>3 BLN Total</h6>
+              </th>
+              <th colSpan={orderSubtypes.length}>
+                <h6>&gt;3 BLN</h6>
+              </th>
+              <th rowSpan="2">
+                <h6>&gt;3 BLN Total</h6>
+              </th>
+              <th rowSpan="2">
+                <h6>Grand Total</h6>
+              </th>
             </tr>
             <tr>
               {orderSubtypes.map((label, index) => (
-                <th key={index}>{label}</th>
+                <th key={index}>
+                  <h6>{label}</h6>
+                </th>
               ))}
               {orderSubtypes.map((label, index) => (
-                <th key={index}>{label}</th>
+                <th key={index}>
+                  <h6>{label}</h6>
+                </th>
               ))}
             </tr>
           </thead>
