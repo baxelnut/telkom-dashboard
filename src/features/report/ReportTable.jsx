@@ -81,7 +81,7 @@ export default function ReportTable({
     return (
       <td className="unresponsive">
         <h6>{totalCount}</h6>
-        <p>{formatCurrency(totalRevenue)}</p>
+        <p>{totalCount == 0 ? null : formatCurrency(totalRevenue)}</p>
       </td>
     );
   };
@@ -182,7 +182,7 @@ export default function ReportTable({
     return (
       <td className="unresponsive">
         <h6>{totalCount}</h6>
-        <p>{formatCurrency(totalRevenue)}</p>
+        <p>{totalCount == 0 ? null : formatCurrency(totalRevenue)}</p>
       </td>
     );
   };
