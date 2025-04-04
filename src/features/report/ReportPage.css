@@ -3,7 +3,8 @@
 }
 
 .period-container,
-.report-table-container {
+.report-table-container,
+.selected-table-container {
   border-radius: 8px;
   background-color: var(--surface);
   border: 0.5px solid var(--text-variant);
@@ -31,7 +32,8 @@
   color: var(--text-variant);
 }
 
-.report-table-container {
+.report-table-container,
+.selected-table-container {
   margin-top: 1rem;
 }
 
@@ -41,7 +43,8 @@
   gap: 0.5rem;
 }
 
-.report-table-container .title-container {
+.report-table-container .title-container,
+.selected-table-container .title-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -67,17 +70,24 @@
 .subtype-label {
   width: fit-content;
   flex: 0;
+  font-weight: 600;
+}
+
+.selected-table-container .table-wrapper {
+  min-height: 60px;
 }
 
 @media screen and (max-width: 768px) {
   .report-container,
   .period-filter,
   .period-container,
-  .report-table-container {
+  .report-table-container,
+  .selected-table-container {
     padding: 0.5rem;
   }
 
-  .report-table-container {
+  .report-table-container,
+  .selected-table-container {
     margin-top: 0.5rem;
   }
 
@@ -92,7 +102,7 @@
   }
 
   .report-container .table-wrapper {
-    min-height: 340px;  
+    min-height: 340px;
   }
 
   .subtype-filter-container {
