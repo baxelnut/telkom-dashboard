@@ -101,17 +101,15 @@ const processKategoriData = (witelData, kategori) => {
         kategoriCounts["<3bln"] += 1;
         revenueCounts["<3bln"] += revenue;
         items["<3bln"].push({
-          id: item.id,
-          order_subtype: newOrderSubtype,
-          revenue: item.revenue,
+          normalized_order_subtype: newOrderSubtype,
+          ...item,
         });
       } else if (kategoriUmur === "> 3 BLN") {
         kategoriCounts[">3bln"] += 1;
         revenueCounts[">3bln"] += revenue;
         items[">3bln"].push({
-          id: item.id,
-          order_subtype: newOrderSubtype,
-          revenue: item.revenue,
+          normalized_order_subtype: newOrderSubtype,
+          ...item,
         });
       }
     }
