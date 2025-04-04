@@ -14,6 +14,10 @@
   gap: 0.5rem;
 }
 
+.period-container {
+  flex-direction: row;
+}
+
 .period-filter {
   display: flex;
   align-items: center;
@@ -23,8 +27,7 @@
   padding: 0.5rem;
 }
 
-.period-container .category-filter .label,
-.period-container .category-filter .subtype-label {
+.period-container .label {
   color: var(--text-variant);
 }
 
@@ -51,13 +54,19 @@
 .subtype-filter-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-evenly;
+  width: 100%;
 }
 
 .subtype-filter {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.subtype-label {
+  width: fit-content;
+  flex: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -77,18 +86,20 @@
   }
 
   .period-filter {
-    gap: 0.25rem;
+    gap: 0.5rem;
     padding: 0.25rem;
+    flex-direction: row;
   }
 
   .report-container .table-wrapper {
-    min-height: 340px;
+    min-height: 340px;  
   }
 
   .subtype-filter-container {
     gap: 4px;
-    display: block;
     width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .subtype-filter {
@@ -96,7 +107,11 @@
     flex-direction: row-reverse;
   }
 
-  .category-filter .subtype-label {
+  .period-filter .subtype-label {
     display: none;
+  }
+
+  .period-container {
+    flex-direction: column;
   }
 }

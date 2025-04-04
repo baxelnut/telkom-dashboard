@@ -78,8 +78,22 @@ export default function ReportPage({ API_URL }) {
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           />
-
           <p className="label">{`within ${selectedPeriod} period`}</p>
+        </div>
+        <div className="period-filter" style={{ flex: 1 }}>
+          <p className="subtype-label">Subtype:</p>
+          <div className="subtype-filter-container">
+            {orderSubtypes.map((subtype) => (
+              <label key={subtype} className="subtype-filter">
+                <input
+                  type="checkbox"
+                  checked={selectedSubtypes.includes(subtype)}
+                  onChange={() => handleCheckboxChange(subtype)}
+                />
+                <p>{subtype}</p>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -100,19 +114,6 @@ export default function ReportPage({ API_URL }) {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           />
-          <p className="subtype-label">Order Subtype:</p>
-          <div className="subtype-filter-container">
-            {orderSubtypes.map((subtype) => (
-              <label key={subtype} className="subtype-filter">
-                <input
-                  type="checkbox"
-                  checked={selectedSubtypes.includes(subtype)}
-                  onChange={() => handleCheckboxChange(subtype)}
-                />
-                <p>{subtype}</p>
-              </label>
-            ))}
-          </div>
         </div>
 
         <div className="table-wrapper">
