@@ -81,7 +81,7 @@ export default function ReportPage({ API_URL }) {
           <p className="label">{`within ${selectedPeriod} period`}</p>
         </div>
         <div className="period-filter" style={{ flex: 1 }}>
-          <p className="subtype-label">Subtype:</p>
+          <p className="subtype-label" >Subtype:</p>
           <div className="subtype-filter-container">
             {orderSubtypes.map((subtype) => (
               <label key={subtype} className="subtype-filter">
@@ -129,7 +129,7 @@ export default function ReportPage({ API_URL }) {
         </div>
       </div>
 
-      <div className="report-table-container">
+      <div className="selected-table-container">
         <div className="title-container">
           <h5>Selected cell for {selectedCell?.witelName}</h5>
         </div>
