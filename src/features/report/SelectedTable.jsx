@@ -7,7 +7,11 @@ export default function SelectedTable({
   selectedCategory,
 }) {
   if (!selectedCell) {
-    return <div>No data available for selection.</div>;
+    return (
+      <div>
+        <p>No data available for selection.</p>
+      </div>
+    );
   }
   console.log("selectedCell", selectedCell);
   console.log("data", data);
@@ -28,7 +32,11 @@ export default function SelectedTable({
       "and subType:",
       subType
     );
-    return <div>No matching data found.</div>;
+    return (
+      <div>
+        <p>No matching data found.</p>
+      </div>
+    );
   }
 
   const items = foundItem[subType][`${kategoriUmur}Items`] || [];
@@ -42,7 +50,11 @@ export default function SelectedTable({
   console.log("Filtered Items:", filteredItems);
 
   if (filteredItems.length === 0) {
-    return <div>No matching data found.</div>;
+    return (
+      <div>
+        <p>No matching data found.</p>
+      </div>
+    );
   }
 
   return (
