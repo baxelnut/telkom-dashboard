@@ -1,5 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SelectedTable.css";
+import Dropdown from "../../components/utils/Dropdown";
+
+const actionOptions = [" ", "Lanjut", "Cancel", "Bukan Order Reg"].map(
+  (value) => ({
+    value,
+    label: value,
+  })
+);
 
 const formatCurrency = (value) =>
   value ? `Rp${value.toLocaleString("id-ID")}` : "Rp0";
@@ -17,6 +25,7 @@ export default function SelectedTable({
     );
   }
 
+  const [selectedActions, setSelectedActions] = useState({});
   const { extractedIds, witelName, subType, kategoriUmur } = selectedCell;
 
   const foundItem = data.find(
@@ -81,11 +90,24 @@ export default function SelectedTable({
                   {hasInProgress && (
                     <td>
                       {isInProgress && (
-                        <button
-                          onClick={() => console.log("Action for ID:", item.id)}
-                        >
-                          Action
-                        </button>
+                        <Dropdown
+                          key={item.id}
+                          options={actionOptions}
+                          value={selectedActions[item.id] || " "}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            setSelectedActions((prev) => ({
+                              ...prev,
+                              [item.id]: newValue,
+                            }));
+                            console.log(
+                              "ID:",
+                              item.id,
+                              ", is now changed status to:",
+                              newValue
+                            );
+                          }}
+                        />
                       )}
                     </td>
                   )}
