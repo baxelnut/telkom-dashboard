@@ -32,8 +32,7 @@
   color: var(--text-variant);
 }
 
-.report-table-container,
-.selected-table-container {
+.report-table-container {
   margin-top: 1rem;
 }
 
@@ -48,6 +47,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.selected-table-container .title-container {
+  justify-content: center;
+  gap: 5px;
 }
 
 .report-container .table-wrapper {
@@ -75,6 +79,10 @@
 
 .selected-table-container .table-wrapper {
   min-height: 60px;
+}
+
+.back-button-container button {
+  margin: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -123,5 +131,9 @@
 
   .period-container {
     flex-direction: column;
+  }
+
+  .selected-table-container .table-wrapper {
+    min-height: 60px;
   }
 }
