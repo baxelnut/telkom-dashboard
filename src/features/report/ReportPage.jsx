@@ -71,7 +71,10 @@ export default function ReportPage({ API_URL }) {
 
   return (
     <div className="report-container">
-      <div className="period-container">
+      <div
+        className="period-container"
+        style={{ display: selectedCell ? "none" : "flex" }}
+      >
         <div className="period-filter">
           <Dropdown
             options={periodOptions}
@@ -81,7 +84,7 @@ export default function ReportPage({ API_URL }) {
           <p className="label">{`within ${selectedPeriod} period`}</p>
         </div>
         <div className="period-filter" style={{ flex: 1 }}>
-          <p className="subtype-label" >Subtype:</p>
+          <p className="subtype-label">Subtype:</p>
           <div className="subtype-filter-container">
             {orderSubtypes.map((subtype) => (
               <label key={subtype} className="subtype-filter">
@@ -97,7 +100,10 @@ export default function ReportPage({ API_URL }) {
         </div>
       </div>
 
-      <div className="report-table-container">
+      <div
+        className="report-table-container"
+        style={{ display: selectedCell ? "none" : "flex" }}
+      >
         <div className="title-container">
           <h5>{`Report for ${selectedCategory}`}</h5>
 
@@ -129,12 +135,23 @@ export default function ReportPage({ API_URL }) {
         </div>
       </div>
 
-      <div className="selected-table-container">
-        <div className="title-container">
-          <h5>Selected cell for {selectedCell?.witelName}</h5>
+      <div
+        className="selected-table-container"
+        style={{ display: selectedCell ? "flex" : "none" }}
+      >
+        <div className="back-button-container">
+          <button onClick={() => setSelectedCell(null)}>
+            <p>View Full Table</p>
+          </button>
         </div>
-        <p>Subtype: {selectedCell?.subType}</p>
-        <p>Category: {selectedCell?.kategoriUmur}</p>
+
+        <div className="title-container">
+          <h5>{selectedCell?.witelName}</h5>
+          <h6>→</h6>
+          <h5>{selectedCell?.kategoriUmur}</h5>
+          <h6>→</h6>
+          <h5>{selectedCell?.subType}</h5>
+        </div>
 
         <div className="table-wrapper">
           <SelectedTable
