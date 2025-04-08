@@ -36,10 +36,15 @@
   margin-top: 1rem;
 }
 
-.category-filter {
+.category-filter,
+.filter-container {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.category-filter {
+  justify-content: space-between;
 }
 
 .report-table-container .title-container,
@@ -85,6 +90,13 @@
   margin: 0;
 }
 
+.back-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 @media screen and (max-width: 768px) {
   .report-container,
   .period-filter,
@@ -99,7 +111,8 @@
     margin-top: 0.5rem;
   }
 
-  .category-filter {
+  .category-filter,
+  .filter-container {
     gap: 0.5rem;
   }
 
