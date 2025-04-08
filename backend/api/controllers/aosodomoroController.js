@@ -73,10 +73,25 @@ export const getReg3SubSegmen = async (req, res) => {
   }
 };
 
-// Get `segmen` based `bill_witel`
+// Get `segmen` based `bill_witel` for radar chart
 export const getReg3Segmen = async (req, res) => {
   try {
     const { data, error } = await supabase.from("reg_3_segmen").select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get `segmen` based `bill_witel` for bar chart
+export const getAosodomoroSegmen = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("aosodomoro_reg_3_segmen")
+      .select("*");
 
     if (error) throw error;
 
