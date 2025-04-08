@@ -158,6 +158,7 @@ export default function ReportPage({ API_URL }) {
             selectedCell={selectedCell}
             data={data.data}
             selectedCategory={selectedCategory}
+            API_URL={API_URL}
           />
         </div>
       </div>
