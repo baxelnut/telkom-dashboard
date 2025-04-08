@@ -6,25 +6,33 @@ export const getAllAosodomoro = async (req, res) => {
     const start = (page - 1) * limit;
     const end = start + parseInt(limit) - 1;
 
-    // Fetch paginated data
+    console.log("📦 Fetching AOSODOMORO data from", start, "to", end);
+
     const { data, error } = await supabase
       .from("aosodomoro")
       .select("*")
       .order("id", { ascending: true })
       .range(start, end);
 
-    if (error) throw error;
+    if (error) throw new Error("❌ Data fetch failed: " + error.message);
 
-    // Fetch total row count
-    const { count, error: countError } = await supabase
-      .from("aosodomoro")
-      .select("*", { count: "exact", head: true });
+    let total = null;
+    try {
+      const { count, error: countError } = await supabase
+        .from("aosodomoro")
+        .select("id", { count: "exact", head: true });
 
-    if (countError) throw countError;
+      if (countError) throw countError;
+      total = count;
+    } catch (err) {
+      console.warn("⚠️ Count failed, using fallback total");
+      total = null;
+    }
 
-    res.json({ data, total: count });
+    res.json({ data, total });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("🔥 Backend Crash in getAllAosodomoro:", err);
+    res.status(500).json({ error: err.message || "Unknown server error" });
   }
 };
 
