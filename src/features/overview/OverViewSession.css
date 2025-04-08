@@ -7,6 +7,7 @@
   background-color: var(--surface);
   padding: 1rem;
   text-align: start;
+  height: calc(100% - 2rem);
 }
 
 .session-content {
@@ -17,9 +18,9 @@
   align-items: stretch;
   margin-top: 16px;
   min-height: 20vh;
-  height: 100%;
   gap: 1rem;
   border-radius: 8px;
+  height: 100%;
 }
 
 .session-content .widget {
