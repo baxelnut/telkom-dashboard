@@ -89,20 +89,20 @@ export default function OverviewPage({ API_URL }) {
       <div className="analysis-container">
         <div>
           <OverViewBar
-            title="Sub-segmen"
-            subtitle="Showing data for sub-segmen in"
+            title="Segmen Bar Chart"
+            subtitle="Showing data for segmen in"
             API_URL={API_URL}
           />
         </div>
 
         <div>
           <OverViewRadar
-            title="Segmen"
+            title="Segmen Radar Chart"
             subtitle="Showing data for segmen in"
             API_URL={API_URL}
           />
           <OverViewPie
-            title="Category"
+            title="Category Pie Chart"
             subtitle="Showing data for category per witel"
             API_URL={API_URL}
           />
