@@ -6,7 +6,7 @@ const STATUS_COLORS = {
   lanjut: "#e76705",
   cancel: "#312a68",
   bukan_order_reg: "#14A44D",
-  no_status: "grey",
+  no_status: "#B4B4B3",
 };
 
 export default function OverViewStatus({ overviewStatus }) {
