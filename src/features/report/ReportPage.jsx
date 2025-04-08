@@ -114,11 +114,11 @@ export default function ReportPage({ API_URL }) {
       const blob = new Blob([excelBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "report.xlsx");
+      saveAs(blob, "Report.xlsx");
     } else if (type === "CSV") {
       const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
       const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, "report.csv");
+      saveAs(blob, "Report.csv");
     }
 
     console.log("✅ Exported as", type);
