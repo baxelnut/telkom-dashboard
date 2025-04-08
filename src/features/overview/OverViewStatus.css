@@ -63,6 +63,15 @@
   font-weight: 500;
 }
 
+.o-pie-dec-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 5px;
+}
+
 @media screen and (max-width: 768px) {
   .overview-pie {
     width: calc(100% - 2rem);
