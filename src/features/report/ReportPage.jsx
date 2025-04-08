@@ -4,6 +4,9 @@ import Dropdown from "../../components/utils/Dropdown";
 import ReportTable from "./ReportTable";
 import SelectedTable from "./SelectedTable";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 const periodOptions = [
   "ALL",
   ...[1, 3, 6, 12, 24].map((n) => `${n} months`),
@@ -12,6 +15,11 @@ const periodOptions = [
 const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
   (value) => ({ value, label: value })
 );
+
+const exportOptions = [..."Excel CSV".split(" ")].map((value) => ({
+  value,
+  label: value,
+}));
 
 const orderSubtypes = [
   "PROV. COMPLETE",
@@ -27,16 +35,13 @@ export default function ReportPage({ API_URL }) {
   const [error, setError] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedExport, setSelectedExport] = useState("Excel");
+  const [selectedCell, setSelectedCell] = useState(null);
   const [selectedSubtypes, setSelectedSubtypes] = useState(
     orderSubtypes.filter((subtype) =>
       ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
     )
   );
-  const [selectedCell, setSelectedCell] = useState(null);
-
-  const handleCellSelection = (cellData) => {
-    setSelectedCell(cellData);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,12 +66,62 @@ export default function ReportPage({ API_URL }) {
     fetchData();
   }, []);
 
+  const handleCellSelection = (cellData) => {
+    setSelectedCell(cellData);
+  };
+
   const handleCheckboxChange = (subtype) => {
     setSelectedSubtypes((prev) =>
       prev.includes(subtype)
         ? prev.filter((item) => item !== subtype)
         : [...prev, subtype]
     );
+  };
+
+  const handleExport = (type) => {
+    setSelectedExport(type);
+    // Flatten the structure
+    const flatData = data.data?.flatMap((entry) => {
+      const witel = entry.witelName;
+      return Object.entries(entry).flatMap(([subtype, values]) => {
+        if (subtype === "witelName") return [];
+        return Object.entries(values || {}).flatMap(([ageCategory, value]) => {
+          if (!Array.isArray(value)) return [];
+          return value.map((item) => ({
+            witel,
+            subType: subtype,
+            ageCategory,
+            ...item,
+          }));
+        });
+      });
+    });
+
+    if (!flatData || flatData.length === 0) {
+      alert("No data to export");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+    if (type === "Excel") {
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "report.xlsx");
+    } else if (type === "CSV") {
+      const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+      const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, "report.csv");
+    }
+
+    console.log("✅ Exported as", type);
   };
 
   return (
@@ -114,14 +169,24 @@ export default function ReportPage({ API_URL }) {
         </div>
 
         <div className="category-filter">
-          <p className="label">Category:</p>
-          <Dropdown
-            options={categoryOptions}
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          />
-        </div>
+          <div className="filter-container">
+            <p className="label">Filtery by:</p>
+            <Dropdown
+              options={categoryOptions}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+          </div>
 
+          <div className="filter-container">
+            <p className="label">Export as:</p>
+            <Dropdown
+              options={exportOptions}
+              value={selectedExport}
+              onChange={(e) => handleExport(e.target.value)}
+            />
+          </div>
+        </div>
         <div className="table-wrapper">
           <ReportTable
             reportTableData={data}
@@ -141,8 +206,17 @@ export default function ReportPage({ API_URL }) {
       >
         <div className="back-button-container">
           <button onClick={() => setSelectedCell(null)}>
-            <p>View Full Table</p>
+            <p>← View full table</p>
           </button>
+
+          <div className="filter-container">
+            <p className="label">Export as:</p>
+            <Dropdown
+              options={exportOptions}
+              value={selectedExport}
+              onChange={(e) => handleExport(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="title-container">
