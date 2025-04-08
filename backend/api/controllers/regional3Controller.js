@@ -237,3 +237,17 @@ export const updateReg3Data = async (req, res) => {
 
   return res.status(200).json({ data });
 };
+
+export const getReg3ProgressOst = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("v_reg_3_order_subtype")
+      .select("*");
+
+    if (error) throw error;
+
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
