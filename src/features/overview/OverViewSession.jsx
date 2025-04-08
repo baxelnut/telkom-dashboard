@@ -52,7 +52,7 @@ export default function OverViewSession({
       <div className="session-content">
         {loading || error ? (
           loading ? (
-            <Loading />
+            <Loading backgroundColor="transparent" />
           ) : (
             <Error message={error} />
           )

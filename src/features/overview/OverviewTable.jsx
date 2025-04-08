@@ -34,7 +34,7 @@ export default function OverviewTable({ API_URL }) {
 
     try {
       const response = await fetch(
-        `${API_URL}/aosodomoro?page=${page}&limit=${limit}`
+        `${API_URL}/regional_3?page=${page}&limit=${limit}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch data");
