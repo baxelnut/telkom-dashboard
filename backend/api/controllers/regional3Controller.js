@@ -148,3 +148,20 @@ export const getReg3ReportData = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const updateReg3Data = async (req, res) => {
+  const { id } = req.params;
+  const { in_process_status } = req.body;
+
+  const { data, error } = await supabase
+    .from("regional_3")
+    .update({ in_process_status })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Update failed:", error);
+    return res.status(500).json({ error: "Update failed" });
+  }
+
+  return res.status(200).json({ data });
+};

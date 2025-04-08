@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import aosodomoroRoutes from "./routes/aosodomoro.js";
 import regional3Routes from "./routes/regional.js";
+import updateReg3Data from "./routes/regional.js";
 import helloExample from "./example/hello.js";
 
 const app = express();
@@ -16,8 +17,11 @@ app.use("/api/hello", helloExample);
 // Fetch all AOSODOMORO table
 app.use("/api/aosodomoro", aosodomoroRoutes);
 
-// Fetch regional 3 table
+// Fetch regional_3 table
 app.use("/api/regional_3", regional3Routes);
+
+// Update regional_3 table
+app.patch("/api/regional_3/:id", updateReg3Data);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
