@@ -22,7 +22,9 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/aosodomoro/reg_3_subsegmen`);
+        const response = await fetch(
+          `${API_URL}/aosodomoro/aosodomoro_reg_3_segmen`
+        );
         const result = await response.json();
         setData(result.data);
         setLoading(false);
@@ -33,12 +35,12 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
     };
 
     fetchData();
-  }, [API_URL]);
+  }, []);
 
   const filteredData = data.filter((item) => item.bill_witel === selectedWitel);
 
   const chartData = filteredData.map((item) => ({
-    name: item.sub_segmen_name,
+    name: item.segmen,
     quantity: item.quantity,
   }));
 
