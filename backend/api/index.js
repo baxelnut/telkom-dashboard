@@ -20,9 +20,6 @@ app.use("/api/aosodomoro", aosodomoroRoutes);
 // Fetch regional_3 table
 app.use("/api/regional_3", regional3Routes);
 
-// Update regional_3 table
-app.patch("/api/regional_3/:id", updateReg3Data);
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

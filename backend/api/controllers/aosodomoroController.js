@@ -28,21 +28,6 @@ export const getAllAosodomoro = async (req, res) => {
   }
 };
 
-// Get `status` based `bill_witel`
-export const getReg3Status = async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from("aosodomoro_reg_3_status")
-      .select("*");
-
-    if (error) throw error;
-
-    res.json({ data });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
 // Get `order_type` based `bill_witel`
 export const getReg3OrderSubtype = async (req, res) => {
   try {

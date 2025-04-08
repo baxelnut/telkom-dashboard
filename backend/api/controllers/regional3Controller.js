@@ -125,6 +125,53 @@ const processKategoriData = (witelData, kategori) => {
   };
 };
 
+// Get `status` based `bill_witel`
+export const getReg3Status = async (req, res) => {
+  try {
+    const BIG5 = ["BALI", "MALANG", "NUSA TENGGARA", "SIDOARJO", "SURAMADU"];
+
+    const { data, error } = await supabase
+      .from("regional_3_in_process")
+      .select("id, bill_witel, in_process_status")
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    const grouped = {};
+
+    data.forEach((row) => {
+      const witel = row.bill_witel?.trim().toUpperCase();
+      if (!BIG5.includes(witel)) return;
+
+      const rawStatus = row.in_process_status?.trim() || "No Status";
+
+      let key;
+      if (rawStatus === "Lanjut") key = "lanjut";
+      else if (rawStatus === "Cancel") key = "cancel";
+      else if (rawStatus === "Bukan Order Reg") key = "bukan_order_reg";
+      else key = "no_status";
+
+      if (!grouped[witel]) {
+        grouped[witel] = {
+          bill_witel: witel,
+          lanjut: 0,
+          cancel: 0,
+          bukan_order_reg: 0,
+          no_status: 0,
+        };
+      }
+
+      grouped[witel][key]++;
+    });
+
+    const result = Object.values(grouped);
+    res.json({ data: result });
+  } catch (err) {
+    console.error("🔥 Backend error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const getReg3ReportData = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -142,7 +189,31 @@ export const getReg3ReportData = async (req, res) => {
     res.json({
       data: processedData,
       totalRawData: data.length,
-      totalProcessedData: processData(data).length,
+      totalProcessedData: processedData.length,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getReg3InProcessData = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("regional_3_in_process")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    console.log("Total raw data: ", data.length);
+    console.log("Total processed data: ", processData(data).length);
+
+    const processedData = processData(data);
+
+    res.json({
+      data: processedData,
+      totalRawData: data.length,
+      totalProcessedData: processedData.length,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -156,7 +227,8 @@ export const updateReg3Data = async (req, res) => {
   const { data, error } = await supabase
     .from("regional_3")
     .update({ in_process_status })
-    .eq("id", id);
+    .eq("id", id)
+    .select();
 
   if (error) {
     console.error("Update failed:", error);
