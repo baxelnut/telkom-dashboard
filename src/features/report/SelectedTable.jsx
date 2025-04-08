@@ -16,6 +16,7 @@ export default function SelectedTable({
   selectedCell,
   data,
   selectedCategory,
+  API_URL,
 }) {
   if (!selectedCell) {
     return (
@@ -93,19 +94,55 @@ export default function SelectedTable({
                         <Dropdown
                           key={item.id}
                           options={actionOptions}
-                          value={selectedActions[item.id] || " "}
-                          onChange={(e) => {
+                          value={
+                            selectedActions[item.id] ??
+                            item.in_process_status ??
+                            " "
+                          }
+                          onChange={async (e) => {
                             const newValue = e.target.value;
+
                             setSelectedActions((prev) => ({
                               ...prev,
                               [item.id]: newValue,
                             }));
+
                             console.log(
                               "ID:",
                               item.id,
-                              ", is now changed status to:",
+                              "is now changed status to:",
                               newValue
                             );
+
+                            try {
+                              const res = await fetch(
+                                `${API_URL}/regional_3/${item.id}`,
+                                {
+                                  method: "PATCH",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    in_process_status: newValue,
+                                  }),
+                                }
+                              );
+
+                              if (!res.ok) {
+                                throw new Error("Failed to update status");
+                              }
+
+                              const responseData = await res.json();
+                              console.log(
+                                "Successfully updated:",
+                                responseData
+                              );
+                            } catch (err) {
+                              console.error(
+                                "Error updating in_process_status:",
+                                err
+                              );
+                            }
                           }}
                         />
                       )}
