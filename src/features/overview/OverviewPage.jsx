@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./OverviewPage.css";
 import OverViewStatus from "./OverViewStatus";
-import OverViewOverTime from "./OverViewOverTime";
+import OverViewRevenue from "./OverViewRevenue";
 import OverViewSession from "./OverViewSession";
 import OverviewTable from "./OverviewTable";
 import OverViewRadar from "./OverViewRadar";
@@ -66,27 +66,27 @@ export default function OverviewPage({ API_URL }) {
       </div>
 
       <div className="session-chart-container">
-        <OverViewOverTime
-          title="Revenue Over Time"
-          subtitle="Showing data for revenue overtime."
+        <OverViewRevenue
+          title="Revenue by Order Sub-type"
+          subtitle="Showing data for revenue by order sub-type per witel in"
           API_URL={API_URL}
         />
 
-        <OverViewSession
-          title="Session by Sub-type"
-          subtitle="Showing data for top order sub-type."
-          overviewSession={sessionData}
-          loading={loading}
-          error={error}
+        <OverViewBar
+          title="Segmen Bar Chart"
+          subtitle="Showing data for segmen in"
+          API_URL={API_URL}
         />
       </div>
 
       <div className="analysis-container">
         <div>
-          <OverViewBar
-            title="Segmen Bar Chart"
-            subtitle="Showing data for segmen in"
-            API_URL={API_URL}
+          <OverViewSession
+            title="Session by Sub-type"
+            subtitle="Showing data for top order sub-type."
+            overviewSession={sessionData}
+            loading={loading}
+            error={error}
           />
         </div>
 
