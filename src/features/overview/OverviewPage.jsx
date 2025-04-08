@@ -23,7 +23,7 @@ export default function OverviewPage({ API_URL }) {
 
       try {
         const [statusResponse, sessionResponse] = await Promise.all([
-          fetch(`${API_URL}/aosodomoro/reg_3_status`),
+          fetch(`${API_URL}/regional_3/progress_status`),
           fetch(`${API_URL}/aosodomoro/reg_3_subtypes`),
         ]);
 
@@ -61,12 +61,7 @@ export default function OverviewPage({ API_URL }) {
               </div>
             ))
           : statusData.map((item, index) => (
-              <OverViewStatus
-                key={index}
-                overviewStatus={item}
-                loading={loading}
-                error={error}
-              />
+              <OverViewStatus key={index} overviewStatus={item} />
             ))}
       </div>
 
