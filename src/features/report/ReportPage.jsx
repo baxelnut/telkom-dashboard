@@ -31,6 +31,7 @@ const orderSubtypes = [
 
 export default function ReportPage({ API_URL }) {
   const [data, setData] = useState([]);
+  const [inProcessData, setInProcessData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
@@ -49,15 +50,25 @@ export default function ReportPage({ API_URL }) {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/regional_3/report`);
+        const [response, inProcessResponse] = await Promise.all([
+          fetch(`${API_URL}/regional_3/report`),
+          fetch(`${API_URL}/regional_3/report/in_process`),
+        ]);
 
-        if (!response.ok) throw new Error("Failed to fetch data");
+        if (!response.ok || !inProcessResponse.ok) {
+          throw new Error("❌ One or both API calls failed");
+        }
 
-        const result = await response.json();
+        const [result, inProcessResult] = await Promise.all([
+          response.json(),
+          inProcessResponse.json(),
+        ]);
+
         setData(result);
-      } catch (error) {
-        console.error("🚨 API Fetch Error:", error);
-        setError(error.message || "Something went wrong");
+        setInProcessData(inProcessResult);
+      } catch (err) {
+        console.error("🚨 API Fetch Error:", err);
+        setError(err.message || "Something went wrong while fetching data");
       } finally {
         setLoading(false);
       }
@@ -71,11 +82,21 @@ export default function ReportPage({ API_URL }) {
   };
 
   const handleCheckboxChange = (subtype) => {
-    setSelectedSubtypes((prev) =>
-      prev.includes(subtype)
-        ? prev.filter((item) => item !== subtype)
-        : [...prev, subtype]
-    );
+    setSelectedSubtypes((prev) => {
+      const isSelected = prev.includes(subtype);
+      if (!isSelected && subtype === "IN PROCESS") {
+        return ["IN PROCESS"];
+      }
+      if (isSelected && subtype === "IN PROCESS") {
+        return [];
+      }
+      if (!isSelected && prev.includes("IN PROCESS")) {
+        return [...prev.filter((s) => s !== "IN PROCESS"), subtype];
+      }
+      return isSelected
+        ? prev.filter((s) => s !== subtype)
+        : [...prev, subtype];
+    });
   };
 
   const handleExport = (type) => {
@@ -189,7 +210,9 @@ export default function ReportPage({ API_URL }) {
         </div>
         <div className="table-wrapper">
           <ReportTable
-            reportTableData={data}
+            reportTableData={
+              selectedSubtypes == "IN PROCESS" ? inProcessData : data
+            }
             selectedCategory={selectedCategory}
             selectedPeriod={selectedPeriod}
             orderSubtypes={selectedSubtypes}
@@ -230,7 +253,9 @@ export default function ReportPage({ API_URL }) {
         <div className="table-wrapper">
           <SelectedTable
             selectedCell={selectedCell}
-            data={data.data}
+            data={
+              selectedSubtypes == "IN PROCESS" ? inProcessData.data : data.data
+            }
             selectedCategory={selectedCategory}
             API_URL={API_URL}
           />
