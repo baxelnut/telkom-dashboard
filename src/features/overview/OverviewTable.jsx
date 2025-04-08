@@ -9,7 +9,7 @@ import TableScroll from "../../components/table/TableScroll";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-const rowPerPageOptions = [10, 20, 50, 100, 200].map((value) => ({
+const rowPerPageOptions = [10, 20, 50, 100, 200, 500, 1000].map((value) => ({
   value,
   label: `Show ${value} rows`,
 }));
@@ -56,31 +56,15 @@ export default function OverviewTable({ API_URL }) {
 
   const pageCount = Math.ceil(totalRows / rowsPerPage);
 
-  const fetchAllDataForExport = async () => {
-    try {
-      const response = await fetch(`${API_URL}/aosodomoro?page=1&limit=100000`);
-      if (!response.ok) throw new Error("Failed to fetch full data for export");
-
-      const result = await response.json();
-      return result.data;
-    } catch (error) {
-      console.error("🚨 Export Fetch Error:", error);
-      alert("Failed to fetch full data for export");
-      return [];
-    }
-  };
-
   const handleExport = async (type) => {
     setSelectedExport(type);
 
-    const fullData = await fetchAllDataForExport();
-
-    if (!fullData || fullData.length === 0) {
+    if (!data || data.length === 0) {
       alert("No data to export");
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(fullData);
+    const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 
