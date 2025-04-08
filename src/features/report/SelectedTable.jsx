@@ -107,13 +107,6 @@ export default function SelectedTable({
                               [item.id]: newValue,
                             }));
 
-                            console.log(
-                              "ID:",
-                              item.id,
-                              "is now changed status to:",
-                              newValue
-                            );
-
                             try {
                               const res = await fetch(
                                 `${API_URL}/regional_3/${item.id}`,
@@ -131,12 +124,6 @@ export default function SelectedTable({
                               if (!res.ok) {
                                 throw new Error("Failed to update status");
                               }
-
-                              const responseData = await res.json();
-                              console.log(
-                                "Successfully updated:",
-                                responseData
-                              );
                             } catch (err) {
                               console.error(
                                 "Error updating in_process_status:",
