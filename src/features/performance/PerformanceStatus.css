@@ -7,6 +7,7 @@
   display: flex;
   align-items: start;
   text-align: start;
+  min-height: 75px;
 }
 
 .performance-status-title {
