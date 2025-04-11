@@ -46,9 +46,9 @@ export default function PerformanceSummarize({ statusData }) {
           })}
         </div>
 
-        <table className="table-wrapper">
+        <div className="table-wrapper">
           <Loading />
-        </table>
+        </div>
 
         <button type="button">
           <h6>See all details</h6>

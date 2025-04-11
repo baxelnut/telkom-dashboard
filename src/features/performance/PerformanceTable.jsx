@@ -8,9 +8,9 @@ export default function PerformanceTable() {
       <h5>Performance Table</h5>
       <p>Table to display detailed performance data.</p>
 
-      <table className="table-wrapper">
+      <div className="table-wrapper">
         <Loading />
-      </table>
+      </div>
     </div>
   );
 }
