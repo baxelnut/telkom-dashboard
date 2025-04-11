@@ -10,6 +10,7 @@ import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
 export default function PerformancePage({ API_URL }) {
+  const [rawData, setRawData] = useState([]);
   const [statusData, setStatusData] = useState([]);
   const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,7 @@ export default function PerformancePage({ API_URL }) {
         const sessionResult = await sessionResponse.json();
 
         const rawData = statusResult.data;
+        setRawData(rawData);
 
         const totals = rawData.reduce(
           (acc, curr) => {
@@ -116,7 +118,12 @@ export default function PerformancePage({ API_URL }) {
       </div>
 
       <div className="summarize-container">
-        <PerformanceSummarize statusData={statusData} />
+        <PerformanceSummarize
+          rawData={rawData}
+          statusData={statusData}
+          loading={loading}
+          error={error}
+        />
       </div>
 
       <div className="visualize-container">
