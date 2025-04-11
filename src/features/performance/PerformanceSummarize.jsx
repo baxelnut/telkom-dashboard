@@ -155,8 +155,6 @@ export default function PerformanceSummarize({
             })}
           </div>
         </div>
-
-        <ToggleDetailsButton />
       </div>
 
       <div className="detailed-container">
