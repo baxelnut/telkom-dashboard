@@ -8,7 +8,8 @@ export default function ExamplePage({ API_URL }) {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [hello, setHello] = useState(null);
-  const [progressData, setProgressData] = useState(null);
+  const [statusData, setStatusData] = useState([]);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,13 +26,13 @@ export default function ExamplePage({ API_URL }) {
             if (!res.ok) throw new Error("Failed to fetch hello data");
             return res.json();
           }),
-          fetch(`${API_URL}/aosodomoro/reg_3_progress`).then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch hello data");
+          fetch(`${API_URL}/regional_3/progress_status`).then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch progress data");
             return res.json();
           }),
         ]);
 
-        const [aosodomoroResult, helloResult, progressResult] = responses;
+        const [aosodomoroResult, helloResult, statusResult] = responses;
 
         if (aosodomoroResult.status === "rejected") {
           throw new Error("Backend failed to fetch aosodomoro data.");
@@ -39,13 +40,13 @@ export default function ExamplePage({ API_URL }) {
         if (helloResult.status === "rejected") {
           throw new Error("Backend failed to fetch hello data.");
         }
-        if (progressResult.status === "rejected") {
-          throw new Error("Backend failed to fetch progress data.");
-        }
+        // if (statusResult.status === "rejected") {
+        //   throw new Error("Backend failed to fetch progress data.");
+        // }
 
         setData(aosodomoroResult.value);
         setHello(helloResult.value);
-        setProgressData(progressResult.value);
+        setStatusData(statusResult.value.data);
       } catch (error) {
         console.error("🚨 API Fetch Error:", error);
         setError(error.message || "Something went wrong");
@@ -57,13 +58,65 @@ export default function ExamplePage({ API_URL }) {
     fetchData();
   }, []);
 
+  const handleExport = async () => {
+    if (!statusData || !Array.isArray(statusData)) {
+      return alert("No data to export");
+    }
+
+    setExporting(true);
+    try {
+      // Convert the object data to array format for the sheet
+      const formattedData = [
+        ["Witel", "Lanjut", "Cancel", "Bukan Order Reg", "No Status", "Total"],
+        ...statusData.map((item) => [
+          item.bill_witel,
+          item.lanjut,
+          item.cancel,
+          item.bukan_order_reg,
+          item.no_status,
+          item.lanjut + item.cancel + item.bukan_order_reg + item.no_status,
+        ]),
+      ];
+
+      const res = await fetch(`${API_URL}/export_to_sheet`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: formattedData }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        alert("Exported to Google Sheet 🧾✅");
+      } else {
+        throw new Error(result.error || "Export failed");
+      }
+    } catch (err) {
+      alert(`❌ Export failed: ${err.message}`);
+      console.error("Export error:", err);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="example-container">
       <h1>ExamplePage</h1>
 
       <div className="example-items">
-        <h6>trynna fetch helloResponse from `${API_URL}/hello`</h6>
+        <button
+          onClick={handleExport}
+          disabled={exporting || !statusData}
+          className="export-btn"
+        >
+          {exporting
+            ? "Exporting..."
+            : "Export 'in progress' → Google Sheet 🧾"}
+        </button>
+      </div>
 
+      <div className="example-items">
+        <h6>trynna fetch helloResponse from `${API_URL}/hello`</h6>
         <div className="example-content">
           {loading ? (
             <Loading />
@@ -77,24 +130,22 @@ export default function ExamplePage({ API_URL }) {
 
       <div className="example-items">
         <h6>
-          trynna fetch progressResponse from `${API_URL}
-          /aosodomoro/reg_3_progress`
+          trynna fetch statusData from `${API_URL}
+          /regional_3/progress_status`
         </h6>
-
         <div className="example-content">
           {loading ? (
             <Loading />
           ) : error ? (
             <Error message={error} />
           ) : (
-            <p>{JSON.stringify(progressData, null, 2)}</p>
+            <p>{JSON.stringify(statusData, null, 2)}</p>
           )}
         </div>
       </div>
 
-      <div className="example-items">
+      {/* <div className="example-items">
         <h6>trynna fetch aosodomoroResponse from `${API_URL}/aosodomoro`</h6>
-
         <div className="example-content">
           {loading ? (
             <Loading />
@@ -104,11 +155,10 @@ export default function ExamplePage({ API_URL }) {
             <p>{JSON.stringify(data, null, 2)}</p>
           )}
         </div>
-      </div>
+      </div> */}
 
       <div className="example-items">
         <h6>dynamic universal component display</h6>
-
         <div className="component-display-container">
           <div className="component-display">
             <p>for loading:</p>
