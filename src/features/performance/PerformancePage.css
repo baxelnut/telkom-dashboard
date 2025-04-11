@@ -42,6 +42,18 @@
   flex: 1;
 }
 
+.performance-container .status-placeholder {
+  width: 100%;
+  background-color: var(--surface);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 0.5px solid var(--text-variant);
+  display: flex;
+  align-items: start;
+  text-align: start;
+  min-height: 75px;
+}
+
 @media screen and (max-width: 768px) {
   .status-container {
     display: grid;
@@ -49,8 +61,13 @@
     gap: 0.5rem;
   }
 
-  .performance-container {
+  .performance-container,
+  .performance-container .status-placeholder {
     padding: 0.5rem;
+  }
+
+  .performance-container .status-placeholder {
+    width: calc(100% - 1rem);
   }
 
   .comparison-desc {
