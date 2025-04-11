@@ -6,6 +6,8 @@ import PerformanceTable from "./PerformanceTable";
 import PerformanceLargeVisualize from "./PerformanceLargeVisualize";
 import PerformanceVisualizeCards from "./PerformanceVisualizeCards";
 import PerformanceVGraphContent from "./PerformanceVGraphContent";
+import Loading from "../../components/utils/Loading";
+import Error from "../../components/utils/Error";
 
 export default function PerformancePage({ API_URL }) {
   const [statusData, setStatusData] = useState([]);
@@ -91,16 +93,26 @@ export default function PerformancePage({ API_URL }) {
   return (
     <div className="performance-container">
       <div className="status-container">
-        {statusData.map((item, index) => (
-          <PerformanceStatus
-            key={index}
-            icon={item.icon}
-            title={item.title}
-            value={item.value}
-            backgroundColor={item.backgroundColor}
-            color={item.color}
-          />
-        ))}
+        {loading || error
+          ? Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="status-placeholder">
+                {loading ? (
+                  <Loading backgroundColor="transparent" />
+                ) : (
+                  <Error message={error} />
+                )}
+              </div>
+            ))
+          : statusData.map((item, index) => (
+              <PerformanceStatus
+                key={index}
+                icon={item.icon}
+                title={item.title}
+                value={item.value}
+                backgroundColor={item.backgroundColor}
+                color={item.color}
+              />
+            ))}
       </div>
 
       <div className="summarize-container">
