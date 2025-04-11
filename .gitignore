@@ -43,4 +43,4 @@ pnpm-lock.yaml
 *.sw?
 
 # 🔥 Ignore API Data (Sensitive files)
-public/data/* 
+public/data/*
