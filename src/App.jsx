@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { SupabaseProvider } from "./services/supabase/SupabaseContext";
+import { AuthProvider } from "./services/firebase/AuthContext";
+import ProtectedRoute from "./services/firebase/ProtectedRoute";
 import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
@@ -16,6 +18,7 @@ import PerformancePage from "./features/performance/PerformancePage";
 import ReportPage from "./features/report/ReportPage";
 import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
+import LoginPage from "./features/LoginPage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
@@ -34,7 +37,11 @@ function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
 
-  const isNotFound = !(pageConfig[pathname] || pathname === "/");
+  const isNotFound = !(
+    pageConfig[pathname] ||
+    pathname === "/" ||
+    pathname !== "/login"
+  );
 
   const handleMobileMenuClick = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -62,12 +69,14 @@ function AppContent() {
       {isSidebarOpen && (
         <div className="overlay" onClick={() => setIsSidebarOpen(false)}></div>
       )}
-      <div
-        ref={sidebarRef}
-        className={`sidebar ${isSidebarOpen ? "active" : ""}`}
-      >
-        <SideBar />
-      </div>
+      {!isNotFound && (
+        <div
+          ref={sidebarRef}
+          className={`sidebar ${isSidebarOpen ? "active" : ""}`}
+        >
+          <SideBar />
+        </div>
+      )}
 
       <div className="content-container">
         <div className="header">
@@ -88,17 +97,37 @@ function AppContent() {
             <Route path="/" element={<Navigate to="/overview" replace />} />
             <Route
               path="/overview"
-              element={<OverviewPage API_URL={API_URL} />}
+              element={
+                <ProtectedRoute>
+                  <OverviewPage API_URL={API_URL} />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/report" element={<ReportPage API_URL={API_URL} />} />
+            <Route
+              path="/report"
+              element={
+                <ProtectedRoute>
+                  <ReportPage API_URL={API_URL} />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/performance"
-              element={<PerformancePage API_URL={API_URL} />}
+              element={
+                <ProtectedRoute>
+                  <PerformancePage API_URL={API_URL} />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/example"
-              element={<ExamplePage API_URL={DEV_API_URL} />}
+              element={
+                <ProtectedRoute>
+                  <ExamplePage API_URL={DEV_API_URL} />
+                </ProtectedRoute>
+              }
             />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
 
@@ -112,9 +141,11 @@ function AppContent() {
 function App() {
   return (
     <SupabaseProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </SupabaseProvider>
   );
 }
