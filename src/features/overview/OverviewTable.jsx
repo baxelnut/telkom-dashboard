@@ -127,10 +127,8 @@ export default function OverviewTable({ API_URL }) {
       <div className="table-wrapper">
         {loading ? (
           <Loading backgroundColor="transparent" />
-        ) : error ? (
+        ) : error || data.length === 0 ? (
           <Error message={error} />
-        ) : data.length === 0 ? (
-          <p>No data available.</p>
         ) : (
           <TableScroll
             data={data}
