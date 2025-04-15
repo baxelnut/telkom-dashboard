@@ -37,14 +37,22 @@ export default function OverviewTable({ API_URL }) {
         `${API_URL}/regional_3?page=${page}&limit=${limit}`
       );
 
-      if (!response.ok) throw new Error("Failed to fetch data");
+      if (!response.ok) {
+        const responseText = await response.text();
+        console.error("🚨 API Fetch Error:", responseText);
+        throw new Error("Failed to fetch data");
+      }
 
       const result = await response.json();
       setData(result.data);
-      setTotalRows(result.total);
-    } catch (error) {
-      console.error("🚨 API Fetch Error:", error);
-      setError(error.message || "Something went wrong");
+
+      setTotalRows(result.total ?? result.data.length ?? 0);
+    } catch (err) {
+      console.error("API Error:", err);
+      res.status(500).json({
+        error: err.message || "An unexpected error occurred.",
+        stack: err.stack,
+      });
     } finally {
       setLoading(false);
     }
@@ -112,11 +120,6 @@ export default function OverviewTable({ API_URL }) {
             options={exportOptions}
             value={selectedExport}
             onChange={(e) => handleExport(e.target.value)}
-            // onChange={(e) => {
-            //   setSelectedExport(e.target.value);
-            //   console.log("🚨 Exporting as:", e.target.value);
-            //   console.log("🚨 Exporting data:", data);
-            // }}
           />
         </div>
       </div>
