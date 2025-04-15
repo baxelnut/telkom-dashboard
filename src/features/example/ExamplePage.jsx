@@ -81,7 +81,10 @@ export default function ExamplePage({ API_URL }) {
       const res = await fetch(`${API_URL}/export_to_sheet`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: formattedData }),
+        body: JSON.stringify({
+          data: formattedData,
+          sheetName: "Example",
+        }),
       });
 
       const result = await res.json();
