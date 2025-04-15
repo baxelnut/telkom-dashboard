@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import { SupabaseProvider } from "./services/SupabaseContext";
+import { SupabaseProvider } from "./services/supabase/SupabaseContext";
 import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
