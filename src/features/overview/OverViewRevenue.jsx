@@ -21,21 +21,38 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const response = await fetch(
           `${API_URL}/regional_3/report/order_sub_type`
         );
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`API Error ${response.status}: ${text}`);
+        }
+
         const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+          throw new Error(
+            "Invalid response structure: expected array in result.data"
+          );
+        }
+
         setData(result.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message || "Something went wrong while fetching data.");
+      } catch (err) {
+        console.error("🚨 Error Fetching Filtered Data:", err);
+        setError(err.message || "Something went wrong while fetching data.");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [API_URL]);
 
   const formatValue = (value) => {
     const suffixes = ["", "K", "M", "B"];
@@ -54,7 +71,9 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
   };
 
   const chartData = useMemo(() => {
-    const current = data.find((item) => item.bill_witel === selectedWitel);
+    const current = Array.isArray(data)
+      ? data.find((item) => item.bill_witel === selectedWitel)
+      : null;
     if (!current) return [];
 
     return Object.entries(current)
