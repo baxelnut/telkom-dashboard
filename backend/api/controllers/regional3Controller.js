@@ -2,27 +2,40 @@ import supabase from "../services/supabaseService.js";
 
 export const getAllRegional3Data = async (req, res) => {
   try {
-    const { page = 1, limit = 100 } = req.query;
+    let { page = 1, limit = 100 } = req.query;
+
+    page = Math.max(1, parseInt(page));
+    limit = Math.max(1, Math.min(1000, parseInt(limit)));
+
     const start = (page - 1) * limit;
-    const end = start + parseInt(limit) - 1;
+    const end = start + limit - 1;
 
-    const { data, error } = await supabase
-      .from("regional_3")
-      .select("*")
-      .order("id", { ascending: true })
-      .range(start, end);
+    const [dataResponse, countResponse] = await Promise.all([
+      supabase
+        .from("regional_3")
+        .select("*")
+        .order("id", { ascending: true })
+        .range(start, end),
 
-    if (error) throw error;
+      supabase.from("regional_3").select("*", { count: "exact", head: true }),
+    ]);
 
-    const { count, error: countError } = await supabase
-      .from("regional_3")
-      .select("*", { count: "exact", head: true });
+    if (dataResponse.error) {
+      console.error("Error fetching data:", dataResponse.error);
+      throw new Error("Failed to fetch regional data.");
+    }
 
-    if (countError) throw countError;
+    if (countResponse.error) {
+      console.error("Error fetching count:", countResponse.error);
+      throw new Error("Failed to fetch total count.");
+    }
 
-    res.json({ data, total: count });
+    res.json({ data: dataResponse.data, total: countResponse.count || 0 });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("API Error:", err);
+    res
+      .status(500)
+      .json({ error: err.message || "An unexpected error occurred." });
   }
 };
 
@@ -241,8 +254,9 @@ export const updateReg3Data = async (req, res) => {
 export const getReg3ProgressOst = async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from("v_reg_3_order_subtype")
-      .select("*");
+      .from("mv_reg_3_order_subtype")
+      .select("*")
+      .limit(100);
 
     if (error) throw error;
 
