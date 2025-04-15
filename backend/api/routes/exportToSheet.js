@@ -4,11 +4,11 @@ import { google } from "googleapis";
 const router = express.Router();
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: "./keys/export-sheet-test-f66d9a06e655.json",
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  keyFile: process.env.GOOGLE_KEY_FILE,
+  scopes: [process.env.GOOGLE_SCOPES],
 });
 
-const SPREADSHEET_ID = "1kz3hx8f_kRnpsRIULAaXWMQQ8wVLMlvDpYhHwhYr3Ww";
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 router.post("/", async (req, res) => {
   try {
