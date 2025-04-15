@@ -16,11 +16,6 @@ const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
   (value) => ({ value, label: value })
 );
 
-const exportOptions = [..."Excel CSV".split(" ")].map((value) => ({
-  value,
-  label: value,
-}));
-
 const orderSubtypes = [
   "PROV. COMPLETE",
   "BILLING COMPLETED",
@@ -38,6 +33,7 @@ export default function ReportPage({ API_URL }) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
+  const [exporting, setExporting] = useState(false);
   const [selectedSubtypes, setSelectedSubtypes] = useState(
     orderSubtypes.filter((subtype) =>
       ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
@@ -99,33 +95,168 @@ export default function ReportPage({ API_URL }) {
     });
   };
 
-  const handleExport = (type) => {
-    setSelectedExport(type);
-    // Flatten the structure
-    const flatData = data.data?.flatMap((entry) => {
-      const witel = entry.witelName;
-      return Object.entries(entry).flatMap(([subtype, values]) => {
-        if (subtype === "witelName") return [];
-        return Object.entries(values || {}).flatMap(([ageCategory, value]) => {
-          if (!Array.isArray(value)) return [];
-          return value.map((item) => ({
-            witel,
-            subType: subtype,
-            ageCategory,
-            ...item,
-          }));
-        });
-      });
-    });
+  const getExportOptions = () => {
+    const baseOptions = ["Excel", "CSV"];
+    const extendedOptions = [...baseOptions];
 
-    if (!flatData || flatData.length === 0) {
+    if (selectedSubtypes.length === 1 && selectedSubtypes[0] === "IN PROCESS") {
+      extendedOptions.push("Spreadsheets");
+    }
+
+    return extendedOptions.map((value) => ({
+      value,
+      label: value,
+    }));
+  };
+
+  const handleExport = async (
+    type,
+    customSheetName = "Report",
+    customData = null
+  ) => {
+    setSelectedExport(type);
+
+    // Special logic for "Spreadsheets" + IN PROCESS
+    if (type === "Spreadsheets") {
+      if (!inProcessData.data || !Array.isArray(inProcessData.data)) {
+        return alert("No data to export bbb");
+      }
+
+      setExporting(true);
+      try {
+        const formattedData = [
+          // Header Row 1
+          [
+            "Witel",
+            "<3 BLN",
+            "<3 BLN",
+            "<3 BLN",
+            "<3 BLN",
+            "<3 BLN Total",
+            ">3 BLN",
+            ">3 BLN",
+            ">3 BLN",
+            ">3 BLN",
+            ">3 BLN Total",
+            "Grand Total",
+          ],
+          // Header Row 2
+          [
+            "",
+            "Lanjut",
+            "Cancel",
+            "Bukan Order Reg",
+            "No Status",
+            "",
+            "Lanjut",
+            "Cancel",
+            "Bukan Order Reg",
+            "No Status",
+            "",
+            "",
+          ],
+          ...inProcessData.data.map((item) => {
+            const lessThan3BlnItems = item["IN PROCESS"]["<3blnItems"];
+            const greaterThan3BlnItems = item["IN PROCESS"][">3blnItems"];
+
+            const countStatus = (items, status) =>
+              items.filter((i) => i.in_process_status === status).length;
+
+            const countNoStatus = (items) =>
+              items.filter((i) => i.in_process_status === "").length;
+
+            const lt3 = {
+              lanjut: countStatus(lessThan3BlnItems, "Lanjut"),
+              cancel: countStatus(lessThan3BlnItems, "Cancel"),
+              bukan: countStatus(lessThan3BlnItems, "Bukan Order Reg"),
+              noStatus: countNoStatus(lessThan3BlnItems),
+            };
+
+            const gt3 = {
+              lanjut: countStatus(greaterThan3BlnItems, "Lanjut"),
+              cancel: countStatus(greaterThan3BlnItems, "Cancel"),
+              bukan: countStatus(greaterThan3BlnItems, "Bukan Order Reg"),
+              noStatus: countNoStatus(greaterThan3BlnItems),
+            };
+
+            const lt3Total = lt3.lanjut + lt3.cancel + lt3.bukan + lt3.noStatus;
+
+            const gt3Total = gt3.lanjut + gt3.cancel + gt3.bukan + gt3.noStatus;
+
+            const grandTotal = lt3Total + gt3Total;
+
+            return [
+              item.witelName,
+              lt3.lanjut,
+              lt3.cancel,
+              lt3.bukan,
+              lt3.noStatus,
+              lt3Total,
+              gt3.lanjut,
+              gt3.cancel,
+              gt3.bukan,
+              gt3.noStatus,
+              gt3Total,
+              grandTotal,
+            ];
+          }),
+        ];
+
+        const res = await fetch(`${API_URL}/export_to_sheet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            data: formattedData,
+            sheetName: "In Progress Report",
+          }),
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert("Exported to Google Sheet ✅");
+        } else {
+          throw new Error(result.error || "Export failed");
+        }
+      } catch (err) {
+        alert(`❌ Export failed: ${err.message}`);
+        console.error("Export error:", err);
+      } finally {
+        setExporting(false);
+      }
+
+      return;
+    }
+
+    // Regular export for Excel / CSV
+    const exportData = customData
+      ? customData
+      : data.data?.flatMap((entry) => {
+          const witel = entry.witelName;
+          return Object.entries(entry).flatMap(([subtype, values]) => {
+            if (subtype === "witelName") return [];
+            return Object.entries(values || {}).flatMap(
+              ([ageCategory, value]) => {
+                if (!Array.isArray(value)) return [];
+                return value.map((item) => ({
+                  witel,
+                  subType: subtype,
+                  ageCategory,
+                  ...item,
+                }));
+              }
+            );
+          });
+        });
+
+    if (!exportData || exportData.length === 0) {
       alert("No data to export");
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+    XLSX.utils.book_append_sheet(workbook, worksheet, customSheetName);
 
     if (type === "Excel") {
       const excelBuffer = XLSX.write(workbook, {
@@ -135,14 +266,14 @@ export default function ReportPage({ API_URL }) {
       const blob = new Blob([excelBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, "Report.xlsx");
+      saveAs(blob, `${customSheetName}.xlsx`);
     } else if (type === "CSV") {
       const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
       const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, "Report.csv");
+      saveAs(blob, `${customSheetName}.csv`);
     }
 
-    console.log("✅ Exported as", type);
+    console.log("✅ Exported as", type, "->", customSheetName);
   };
 
   return (
@@ -202,7 +333,7 @@ export default function ReportPage({ API_URL }) {
           <div className="filter-container">
             <p className="label">Export as:</p>
             <Dropdown
-              options={exportOptions}
+              options={getExportOptions()}
               value={selectedExport}
               onChange={(e) => handleExport(e.target.value)}
             />
@@ -235,7 +366,7 @@ export default function ReportPage({ API_URL }) {
           <div className="filter-container">
             <p className="label">Export as:</p>
             <Dropdown
-              options={exportOptions}
+              options={getExportOptions()}
               value={selectedExport}
               onChange={(e) => handleExport(e.target.value)}
             />
