@@ -12,10 +12,10 @@ const SPREADSHEET_ID = "1kz3hx8f_kRnpsRIULAaXWMQQ8wVLMlvDpYhHwhYr3Ww";
 
 router.post("/", async (req, res) => {
   try {
-    const client = await auth.getClient(); // ✅ wait for the real auth
+    const client = await auth.getClient();
     const sheets = google.sheets({ version: "v4", auth: client });
 
-    const { data } = req.body; // array of objects
+    const { data, sheetName = "Example" } = req.body;
 
     if (!Array.isArray(data)) {
       return res.status(400).json({ error: "Invalid data format" });
@@ -23,17 +23,21 @@ router.post("/", async (req, res) => {
 
     const values = data.map((obj) => Object.values(obj));
 
-    await sheets.spreadsheets.values.append({
+    await sheets.spreadsheets.values.clear({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Sheet1!A1",
+      range: `${sheetName}`,
+    });
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A1`,
       valueInputOption: "RAW",
-      insertDataOption: "INSERT_ROWS",
       requestBody: {
         values,
       },
     });
 
-    res.status(200).json({ message: "Exported to Google Sheet ✅" });
+    res.status(200).json({ message: `Exported to ${sheetName} ✅` });
   } catch (error) {
     console.error("Export error:", error);
     res.status(500).json({ error: "Failed to export to sheet" });
