@@ -206,12 +206,9 @@ button:focus-visible {
     font-size: 12px;
   }
 
-  p {
-    font-size: 10px;
-  }
-
+  p,
   a {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   blockquote {
