@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { SupabaseProvider } from "./services/supabase/SupabaseContext";
-import { AuthProvider } from "./services/firebase/AuthContext";
+import { AuthProvider, useAuth } from "./services/firebase/AuthContext";
 import ProtectedRoute from "./services/firebase/ProtectedRoute";
 import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
@@ -35,7 +35,9 @@ function AppContent() {
   const location = useLocation();
   const pathname = location.pathname;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const sidebarRef = useRef(null);
+  const { user } = useAuth();
 
   const isNotFound = !(
     pageConfig[pathname] ||
@@ -64,12 +66,18 @@ function AppContent() {
     };
   }, [isSidebarOpen]);
 
+  useEffect(() => {
+    if (showDropdown) {
+      setIsSidebarOpen(false);
+    }
+  }, [showDropdown]);
+
   return (
     <div className="app-container">
       {isSidebarOpen && (
         <div className="overlay" onClick={() => setIsSidebarOpen(false)}></div>
       )}
-      {!isNotFound && (
+      {!isNotFound && !showDropdown && (
         <div
           ref={sidebarRef}
           className={`sidebar ${isSidebarOpen ? "active" : ""}`}
@@ -84,11 +92,13 @@ function AppContent() {
             <Header
               title={pageConfig[location.pathname]?.title || "Dashboard"}
               user={{
-                name: "Basilius Tengang",
-                imageUrl:
-                  "https://media.licdn.com/dms/image/v2/D5603AQEOUn3wMVGnGQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1701105430319?e=1746057600&v=beta&t=UpXVCVR_jttTVKh1Q-YsfJ-1_3kwWzKCTVmiKwdGi6A",
+                name: user?.displayName,
+                email: user?.email,
+                imageUrl: user?.photoURL,
               }}
               onMenuClick={handleMobileMenuClick}
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
             />
           )}
         </div>
