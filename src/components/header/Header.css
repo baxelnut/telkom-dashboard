@@ -15,7 +15,6 @@
   justify-content: space-between;
   width: 20%;
   gap: 1rem;
-  cursor: pointer;
 }
 
 .profile .picture {
@@ -37,6 +36,7 @@
 .profile .chevron-down {
   max-width: 24px;
   aspect-ratio: 1;
+  cursor: pointer;
 }
 
 .profile * {

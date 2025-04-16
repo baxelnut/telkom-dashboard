@@ -1,9 +1,20 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
+import UserProfile from "./UserProfile";
 
-export default function Header({ title, user, onMenuClick }) {
+export default function Header({
+  title,
+  user,
+  onMenuClick,
+  showDropdown,
+  setShowDropdown,
+}) {
   const location = useLocation();
+
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
+  };
 
   return (
     <div className="header-container">
@@ -12,13 +23,16 @@ export default function Header({ title, user, onMenuClick }) {
       </div>
 
       <div className="profile">
-        <img className="picture" src={user.imageUrl} alt="Profile" />
+        <img className="picture" src={user.imageUrl} onClick={toggleDropdown} />
         <p className="name">{user.name}</p>
+
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
           className="chevron-down"
           viewBox="0 0 16 16"
+          style={{ cursor: "pointer" }}
+          onClick={toggleDropdown}
         >
           <path
             fillRule="evenodd"
@@ -40,6 +54,10 @@ export default function Header({ title, user, onMenuClick }) {
             d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
           />
         </svg>
+
+        {showDropdown && (
+          <UserProfile user={user} toggleDropdown={toggleDropdown} />
+        )}
       </div>
     </div>
   );
