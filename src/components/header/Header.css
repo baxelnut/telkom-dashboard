@@ -66,6 +66,8 @@
 
   .profile .picture {
     max-width: 20px;
+    aspect-ratio: 1;
+    object-fit: cover;
   }
 
   .profile .chevron-down,

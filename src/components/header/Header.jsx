@@ -23,8 +23,12 @@ export default function Header({
       </div>
 
       <div className="profile">
-        <img className="picture" src={user.imageUrl} onClick={toggleDropdown} />
-        <p className="name">{user.name}</p>
+        <img
+          className="picture"
+          src={user.imageUrl ?? "/images/default_profile.png"}
+          onClick={toggleDropdown}
+        />
+        <p className="name">{user.name ?? "Guest"}</p>
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
