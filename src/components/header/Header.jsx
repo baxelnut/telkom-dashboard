@@ -28,7 +28,7 @@ export default function Header({
           src={user.imageUrl ?? "/images/default_profile.png"}
           onClick={toggleDropdown}
         />
-        <p className="name">{user.name ?? "Guest"}</p>
+        <p className="name">{user.name ?? user.email ?? "Error: no email"}</p>
 
         <svg
           xmlns="http://www.w3.org/2000/svg"

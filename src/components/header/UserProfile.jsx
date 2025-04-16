@@ -19,7 +19,7 @@ export default function UserProfile({ user, toggleDropdown }) {
 
         <div className="user-section">
           <p className="label">Email</p>
-          <div className="user-info">{user.email}</div>
+          <div className="user-info">{user.email ?? "Error: no email"}</div>
         </div>
 
         <button className="edit-profile-btn">
