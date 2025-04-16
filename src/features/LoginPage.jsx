@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/firebase/AuthContext";
 import "./LoginPage.css";
@@ -10,31 +20,30 @@ export default function LoginPage() {
   const { user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [greeting, setGreeting] = useState("");
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isSignup, setIsSignup] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (user) navigate("/overview");
   }, [user]);
 
   useEffect(() => {
+    const remembered = localStorage.getItem("rememberMe") === "true";
+    setRememberMe(remembered);
+  }, []);
+
+  useEffect(() => {
     const updateGreeting = () => {
       const hour = new Date().getHours();
-
-      if (hour >= 5 && hour < 12) {
-        setGreeting("Good morning!");
-      } else if (hour >= 12 && hour < 17) {
-        setGreeting("Good afternoon!");
-      } else {
-        setGreeting("Good evening!");
-      }
+      if (hour >= 5 && hour < 12) setGreeting("Good morning!");
+      else if (hour >= 12 && hour < 17) setGreeting("Good afternoon!");
+      else setGreeting("Good evening!");
     };
-
     updateGreeting();
     const interval = setInterval(updateGreeting, 60 * 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -49,18 +58,31 @@ export default function LoginPage() {
     }
   };
 
-  const handleEmailLogin = async () => {
+  const handleEmailAuth = async () => {
     if (!email || !password) {
       setErrorMsg("Email and password cannot be empty.");
       return;
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const persistence = rememberMe
+        ? browserLocalPersistence
+        : browserSessionPersistence;
+
+      await setPersistence(auth, persistence);
+
+      if (isSignup) {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
       navigate("/overview");
     } catch (err) {
-      console.error("Email login error:", err.message);
+      console.error(`${isSignup ? "Signup" : "Login"} error:`, err.message);
       switch (err.code) {
+        case "auth/email-already-in-use":
+          setErrorMsg("Email already in use.");
+          break;
         case "auth/invalid-email":
           setErrorMsg("Invalid email format.");
           break;
@@ -68,8 +90,35 @@ export default function LoginPage() {
         case "auth/wrong-password":
           setErrorMsg("Wrong email or password.");
           break;
+        case "auth/weak-password":
+          setErrorMsg("Password should be at least 6 characters.");
+          break;
         default:
-          setErrorMsg("Login failed. Please try again.");
+          setErrorMsg("Authentication failed. Please try again.");
+      }
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setErrorMsg("Please enter your email first.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setErrorMsg("Reset email sent! Check your inbox.");
+    } catch (err) {
+      console.error("Password reset error:", err.message);
+      switch (err.code) {
+        case "auth/invalid-email":
+          setErrorMsg("Invalid email address.");
+          break;
+        case "auth/user-not-found":
+          setErrorMsg("No user found with this email.");
+          break;
+        default:
+          setErrorMsg("Failed to send reset email. Try again later.");
       }
     }
   };
@@ -80,7 +129,7 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <h3>{greeting}</h3>
-          <p>Please login or sign up to continue</p>
+          <p>{isSignup ? "Create your account" : "Please login to continue"}</p>
         </div>
 
         <div className="email-field">
@@ -100,7 +149,6 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <div
-            type="button"
             className="toggle-password"
             onClick={() => setShowPassword(!showPassword)}
           >
@@ -134,15 +182,32 @@ export default function LoginPage() {
 
         <div className="helper-container">
           <div className="remember-me">
-            <input className="checkbox" type="checkbox" />
+            <input
+              className="checkbox"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+
             <p>Remember me</p>
           </div>
-          <a href="">Forgot Password?</a>
+          {!isSignup && (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleForgotPassword();
+              }}
+            >
+              Forgot Password?
+            </a>
+          )}
         </div>
 
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
-        <button onClick={handleEmailLogin}>
-          <p>Sign in</p>
+
+        <button onClick={handleEmailAuth}>
+          <p>{isSignup ? "Sign up" : "Sign in"}</p>
         </button>
 
         <div className="divider">
@@ -161,8 +226,19 @@ export default function LoginPage() {
         </button>
 
         <div className="sign-up">
-          <p>Don't have an account?</p>
-          <a href="">Sign up</a>
+          <p>
+            {isSignup ? "Already have an account?" : "Don't have an account?"}
+          </p>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsSignup(!isSignup);
+              setErrorMsg("");
+            }}
+          >
+            {isSignup ? "Login" : "Sign up"}
+          </a>
         </div>
       </div>
     </div>
