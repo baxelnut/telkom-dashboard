@@ -15,9 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // useEffect(() => {
-  //   if (user) navigate("/overview");
-  // }, [user]);
+  useEffect(() => {
+    if (user) navigate("/overview");
+  }, [user]);
 
   useEffect(() => {
     const updateGreeting = () => {
