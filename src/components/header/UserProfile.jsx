@@ -10,11 +10,11 @@ export default function UserProfile({ user, toggleDropdown }) {
           <h6>✕</h6>
         </div>
 
-        <img src={user.imageUrl} />
+        <img src={user.imageUrl ?? "/images/default_profile.png"} />
 
         <div className="user-section">
           <p className="label">Username</p>
-          <div className="user-info">{user.name}</div>
+          <div className="user-info">{user.name ?? "Guest"}</div>
         </div>
 
         <div className="user-section">

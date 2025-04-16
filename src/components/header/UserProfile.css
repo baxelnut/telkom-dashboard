@@ -101,8 +101,8 @@
 .dropdown-user img {
   width: 120px;
   aspect-ratio: 1;
-  background-color: red;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 @media screen and (max-width: 768px) {
