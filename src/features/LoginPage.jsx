@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
@@ -27,7 +28,9 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
-    if (user) navigate("/overview");
+    if (user && user.emailVerified) {
+      navigate("/overview");
+    }
   }, [user]);
 
   useEffect(() => {
@@ -72,11 +75,31 @@ export default function LoginPage() {
       await setPersistence(auth, persistence);
 
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const newUser = userCredential.user;
+
+        if (!newUser.emailVerified) {
+          await sendEmailVerification(newUser);
+          setErrorMsg("Verification email sent! Please check your inbox.");
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const loginUser = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        if (!loginUser.user.emailVerified) {
+          setErrorMsg("Please verify your email before logging in.");
+          return;
+        }
+
+        // navigate("/overview");
       }
-      navigate("/overview");
     } catch (err) {
       console.error(`${isSignup ? "Signup" : "Login"} error:`, err.message);
       switch (err.code) {
