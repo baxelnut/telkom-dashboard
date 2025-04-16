@@ -108,7 +108,7 @@ a {
 }
 
 a:hover {
-  color: var(--primary);
+  color: var(--secondary);
 }
 
 blockquote {
