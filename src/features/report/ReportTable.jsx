@@ -28,7 +28,7 @@ export default function ReportTable({
     const [mainCategory, subCategory] = selectedCellId.split("-");
 
     const entry = reportTableData.data.find(
-      (item) => item.witelName === witelName
+      (item) => item['witelName'] === witelName
     );
     if (!entry || !entry[mainCategory]) {
       return;
@@ -57,12 +57,12 @@ export default function ReportTable({
         const filteredItems = items.filter(
           (item) =>
             selectedCategory === "ALL" ||
-            selectedCategory === item["order_subtype"]
+            selectedCategory === item["ORDER_SUBTYPE2"]
         );
 
         totalCount += filteredItems.length;
         totalRevenue += filteredItems.reduce(
-          (sum, item) => sum + (item.revenue || 0),
+          (sum, item) => sum + (item["REVENUE"] || 0),
           0
         );
       });
@@ -92,17 +92,17 @@ export default function ReportTable({
       const filteredItems = entry?.[subtype]?.[key]?.filter(
         (item) =>
           selectedCategory === "ALL" ||
-          selectedCategory === item["order_subtype"]
+          selectedCategory === item["ORDER_SUBTYPE2"]
       );
 
       const count = filteredItems?.length || 0;
       const revenue = filteredItems?.reduce(
-        (total, item) => total + (item.revenue || 0),
+        (total, item) => total + (item["REVENUE"] || 0),
         0
       );
       const formattedRevenue = formatCurrency(revenue);
       const orderSubtypeList =
-        filteredItems?.map((item) => item["order_subtype"]).join(", ") || null;
+        filteredItems?.map((item) => item["ORDER_SUBTYPE2"]).join(", ") || null;
 
       const isDisabled = count === 0;
       const cellData = {
@@ -142,12 +142,12 @@ export default function ReportTable({
           const filteredItems = items.filter(
             (item) =>
               selectedCategory === "ALL" ||
-              selectedCategory === item["order_subtype"]
+              selectedCategory === item["ORDER_SUBTYPE2"]
           );
 
           acc.totalCount += filteredItems.length;
           acc.totalRevenue += filteredItems.reduce(
-            (sum, item) => sum + (item.revenue || 0),
+            (sum, item) => sum + (item["REVENUE"] || 0),
             0
           );
           return acc;
