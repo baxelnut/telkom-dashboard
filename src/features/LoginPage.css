@@ -170,7 +170,7 @@ input::placeholder {
 
   .email-field input::placeholder,
   .password-field input::placeholder {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .login-container .logo {
