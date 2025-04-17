@@ -1,5 +1,4 @@
-import supabase from "../services/supabaseService.js";
-import { v4 as uuidv4 } from "uuid";
+import supabase from "../services/supabaseService.js"; 
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SPREADSHEET_GID = process.env.SPREADSHEET_GID;
@@ -108,7 +107,7 @@ const processKategoriData = (witelData, kategori) => {
     const kategoriUmur = item["KATEGORI_UMUR"];
 
     let rawRevenue = item["REVENUE"];
-    console.log("Revenue Field:", item["REVENUE"]);
+    // console.log("Revenue Field:", item["REVENUE"]);
 
     // Set revenue to 0 if it's null, NaN, or empty
     let revenue = rawRevenue;
@@ -117,15 +116,15 @@ const processKategoriData = (witelData, kategori) => {
       rawRevenue === "" ||
       isNaN(parseFloat(rawRevenue))
     ) {
-      console.log("Invalid revenue detected. Setting to 0.");
+      // console.log("Invalid revenue detected. Setting to 0.");
       revenue = 0;
     } else {
       revenue = parseFloat(rawRevenue);
     }
 
     // Debugging logs
-    console.log("Raw Revenue:", rawRevenue);
-    console.log("Parsed Revenue:", revenue);
+    // console.log("Raw Revenue:", rawRevenue);
+    // console.log("Parsed Revenue:", revenue);
 
     const orderSubtype = item["ORDER_SUBTYPE"];
 
@@ -255,8 +254,8 @@ export const getReg3ReportData = async (req, res) => {
 
     const processedData = processData(rows);
 
-    console.log("Total raw data: ", rows.length);
-    console.log("Total processed data: ", processedData.length);
+    // console.log("Total raw data: ", rows.length);
+    // console.log("Total processed data: ", processedData.length);
 
     res.json({
       data: processedData,
