@@ -1,4 +1,9 @@
 import supabase from "../services/supabaseService.js";
+import { v4 as uuidv4 } from "uuid";
+
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+const SPREADSHEET_GID = process.env.SPREADSHEET_GID;
+const FORMATTED_GID = process.env.FORMATTED_GID;
 
 export const getAllRegional3Data = async (req, res) => {
   try {
@@ -56,7 +61,7 @@ const namingConvention = {
 const processData = (data) => {
   const big5Witel = ["MALANG", "SIDOARJO", "NUSA TENGGARA", "BALI", "SURAMADU"];
 
-  const groupedByWitel = groupBy(data, "bill_witel");
+  const groupedByWitel = groupBy(data, "BILL_WITEL");
 
   return Object.keys(groupedByWitel)
     .map((witelName) => {
@@ -67,7 +72,7 @@ const processData = (data) => {
       const witelData = groupedByWitel[witelName];
 
       const kategoriData = witelData.reduce((result, item) => {
-        const kategori = item.kategori;
+        const kategori = item["KATEGORI"];
         if (!result[kategori]) {
           result[kategori] = processKategoriData(witelData, kategori);
         }
@@ -99,10 +104,30 @@ const processKategoriData = (witelData, kategori) => {
   const items = { "<3bln": [], ">3bln": [] };
 
   witelData.forEach((item) => {
-    const currentKategori = item.kategori;
-    const kategoriUmur = item.kategori_umur;
-    const revenue = item.revenue;
-    const orderSubtype = item.order_subtype;
+    const currentKategori = item["KATEGORI"];
+    const kategoriUmur = item["KATEGORI_UMUR"];
+
+    let rawRevenue = item["REVENUE"];
+    console.log("Revenue Field:", item["REVENUE"]);
+
+    // Set revenue to 0 if it's null, NaN, or empty
+    let revenue = rawRevenue;
+    if (
+      rawRevenue === null ||
+      rawRevenue === "" ||
+      isNaN(parseFloat(rawRevenue))
+    ) {
+      console.log("Invalid revenue detected. Setting to 0.");
+      revenue = 0;
+    } else {
+      revenue = parseFloat(rawRevenue);
+    }
+
+    // Debugging logs
+    console.log("Raw Revenue:", rawRevenue);
+    console.log("Parsed Revenue:", revenue);
+
+    const orderSubtype = item["ORDER_SUBTYPE"];
 
     if (currentKategori === kategori) {
       const newOrderSubtype =
@@ -185,50 +210,123 @@ export const getReg3Status = async (req, res) => {
   }
 };
 
+// export const getReg3ReportData = async (req, res) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from("regional_3")
+//       .select("*")
+//       .order("id", { ascending: true });
+
+//     if (error) throw error;
+
+//     console.log("Total raw data: ", data.length);
+//     console.log("Total processed data: ", processData(data).length);
+
+//     const processedData = processData(data);
+
+//     res.json({
+//       data: processedData,
+//       totalRawData: data.length,
+//       totalProcessedData: processedData.length,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 export const getReg3ReportData = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("regional_3")
-      .select("*")
-      .order("id", { ascending: true });
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
 
-    if (error) throw error;
+    const response = await fetch(sheetURL);
+    const text = await response.text();
+    const json = JSON.parse(text.substring(47).slice(0, -2));
 
-    console.log("Total raw data: ", data.length);
-    console.log("Total processed data: ", processData(data).length);
+    const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
 
-    const processedData = processData(data);
+    const rows = json.table.rows.map((row) => {
+      const obj = {};
+      row.c.forEach((cell, index) => {
+        obj[cols[index]] = cell?.v || null;
+      });
+
+      return obj;
+    });
+
+    const processedData = processData(rows);
+
+    console.log("Total raw data: ", rows.length);
+    console.log("Total processed data: ", processedData.length);
 
     res.json({
       data: processedData,
-      totalRawData: data.length,
+      totalRawData: rows.length,
       totalProcessedData: processedData.length,
     });
   } catch (err) {
+    console.error("Failed to fetch sheet:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
+// export const getReg3InProcessData = async (req, res) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from("regional_3_in_process")
+//       .select("*")
+//       .order("id", { ascending: true });
+
+//     if (error) throw error;
+
+//     console.log("Total raw data: ", data.length);
+//     console.log("Total processed data: ", processData(data).length);
+
+//     const processedData = processData(data);
+
+//     res.json({
+//       data: processedData,
+//       totalRawData: data.length,
+//       totalProcessedData: processedData.length,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 export const getReg3InProcessData = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("regional_3_in_process")
-      .select("*")
-      .order("id", { ascending: true });
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
 
-    if (error) throw error;
+    const response = await fetch(sheetURL);
+    const text = await response.text();
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+ 
+    const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
+ 
+    const rows = json.table.rows.map((row) => {
+      const obj = {};
+      row.c.forEach((cell, index) => {
+        obj[cols[index]] = cell?.v || null;
+      });
+      return obj;
+    });
+ 
+    const normalize = (str) => str?.replace(/\s+/g, " ").trim().toUpperCase();
+ 
+    const inProcessRows = rows.filter(
+      (row) => normalize(row["KATEGORI"]) === "IN PROCESS"
+    );
 
-    console.log("Total raw data: ", data.length);
-    console.log("Total processed data: ", processData(data).length);
-
-    const processedData = processData(data);
+  
+    const processedData = processData(inProcessRows);
 
     res.json({
       data: processedData,
-      totalRawData: data.length,
+      totalRawData: rows.length,
       totalProcessedData: processedData.length,
     });
   } catch (err) {
+    console.error("🔥 Failed to fetch sheet:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
