@@ -24,9 +24,39 @@ const orderSubtypes = [
   "READY TO BILL",
 ];
 
+const headers = [
+  "NIPNAS",
+  "STANDARD_NAME",
+  "ORDER_ID",
+  "ORDER_SUBTYPE",
+  "ORDER_SUBTYPE2",
+  "LI_SID",
+  "SID",
+  "SEGMEN",
+  "SUB_SEGMEN",
+  "CUSTACCNTNAME",
+  "BILL_REGION",
+  "BILL_WITEL",
+  "LI_PRODUCT_NAME",
+  "IS_NONCONN",
+  "LI_BILLDATE",
+  "LI_MILESTONE",
+  "KATEGORI",
+  "LI_STATUS",
+  "LI_STATUS_DATE",
+  "LI_FULFILLMENT_STATUS",
+  "REVENUE",
+  "LI_CREATED_DATE",
+  "ORDER_CREATEDBY_NAME",
+  "ACTION_CD",
+  "KATEGORI_UMUR",
+  "UMUR_ORDER",
+  "PIC",
+  "KATEGORI_UMUR2",
+];
+
 export default function ReportPage({ API_URL }) {
   const [data, setData] = useState([]);
-  const [inProcessData, setInProcessData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("ALL");
@@ -34,11 +64,18 @@ export default function ReportPage({ API_URL }) {
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
   const [exporting, setExporting] = useState(false);
-  const [selectedSubtypes, setSelectedSubtypes] = useState(
-    orderSubtypes.filter((subtype) =>
-      ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
-    )
-  );
+  const [selectedSubtypes, setSelectedSubtypes] = useState(() => {
+    const saved = localStorage.getItem("selectedSubtypes");
+    return saved
+      ? JSON.parse(saved)
+      : orderSubtypes.filter((subtype) =>
+          ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
+        );
+  });
+
+  useEffect(() => {
+    localStorage.setItem("selectedSubtypes", JSON.stringify(selectedSubtypes));
+  }, [selectedSubtypes]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,22 +83,11 @@ export default function ReportPage({ API_URL }) {
       setError(null);
 
       try {
-        const [response, inProcessResponse] = await Promise.all([
-          fetch(`${API_URL}/regional_3/report`),
-          fetch(`${API_URL}/regional_3/report/in_process`),
-        ]);
+        const response = await fetch(`${API_URL}/regional_3/report`);
+        if (!response.ok) throw new Error("❌ API call failed");
 
-        if (!response.ok || !inProcessResponse.ok) {
-          throw new Error("❌ One or both API calls failed");
-        }
-
-        const [result, inProcessResult] = await Promise.all([
-          response.json(),
-          inProcessResponse.json(),
-        ]);
-
+        const result = await response.json();
         setData(result);
-        setInProcessData(inProcessResult);
       } catch (err) {
         console.error("🚨 API Fetch Error:", err);
         setError(err.message || "Something went wrong while fetching data");
@@ -80,15 +106,6 @@ export default function ReportPage({ API_URL }) {
   const handleCheckboxChange = (subtype) => {
     setSelectedSubtypes((prev) => {
       const isSelected = prev.includes(subtype);
-      if (!isSelected && subtype === "IN PROCESS") {
-        return ["IN PROCESS"];
-      }
-      if (isSelected && subtype === "IN PROCESS") {
-        return [];
-      }
-      if (!isSelected && prev.includes("IN PROCESS")) {
-        return [...prev.filter((s) => s !== "IN PROCESS"), subtype];
-      }
       return isSelected
         ? prev.filter((s) => s !== subtype)
         : [...prev, subtype];
@@ -96,17 +113,7 @@ export default function ReportPage({ API_URL }) {
   };
 
   const getExportOptions = () => {
-    const baseOptions = ["Excel", "CSV"];
-    const extendedOptions = [...baseOptions];
-
-    if (selectedSubtypes.length === 1 && selectedSubtypes[0] === "IN PROCESS") {
-      extendedOptions.push("Spreadsheets");
-    }
-
-    return extendedOptions.map((value) => ({
-      value,
-      label: value,
-    }));
+    return ["Excel", "CSV"].map((value) => ({ value, label: value }));
   };
 
   const handleExport = async (
@@ -116,119 +123,6 @@ export default function ReportPage({ API_URL }) {
   ) => {
     setSelectedExport(type);
 
-    // Special logic for "Spreadsheets" + IN PROCESS
-    if (type === "Spreadsheets") {
-      if (!inProcessData.data || !Array.isArray(inProcessData.data)) {
-        return alert("No data to export bbb");
-      }
-
-      setExporting(true);
-      try {
-        const formattedData = [
-          // Header Row 1
-          [
-            "Witel",
-            "<3 BLN",
-            "<3 BLN",
-            "<3 BLN",
-            "<3 BLN",
-            "<3 BLN Total",
-            ">3 BLN",
-            ">3 BLN",
-            ">3 BLN",
-            ">3 BLN",
-            ">3 BLN Total",
-            "Grand Total",
-          ],
-          // Header Row 2
-          [
-            "",
-            "Lanjut",
-            "Cancel",
-            "Bukan Order Reg",
-            "No Status",
-            "",
-            "Lanjut",
-            "Cancel",
-            "Bukan Order Reg",
-            "No Status",
-            "",
-            "",
-          ],
-          ...inProcessData.data.map((item) => {
-            const lessThan3BlnItems = item["IN PROCESS"]["<3blnItems"];
-            const greaterThan3BlnItems = item["IN PROCESS"][">3blnItems"];
-
-            const countStatus = (items, status) =>
-              items.filter((i) => i.in_process_status === status).length;
-
-            const countNoStatus = (items) =>
-              items.filter((i) => i.in_process_status === "").length;
-
-            const lt3 = {
-              lanjut: countStatus(lessThan3BlnItems, "Lanjut"),
-              cancel: countStatus(lessThan3BlnItems, "Cancel"),
-              bukan: countStatus(lessThan3BlnItems, "Bukan Order Reg"),
-              noStatus: countNoStatus(lessThan3BlnItems),
-            };
-
-            const gt3 = {
-              lanjut: countStatus(greaterThan3BlnItems, "Lanjut"),
-              cancel: countStatus(greaterThan3BlnItems, "Cancel"),
-              bukan: countStatus(greaterThan3BlnItems, "Bukan Order Reg"),
-              noStatus: countNoStatus(greaterThan3BlnItems),
-            };
-
-            const lt3Total = lt3.lanjut + lt3.cancel + lt3.bukan + lt3.noStatus;
-
-            const gt3Total = gt3.lanjut + gt3.cancel + gt3.bukan + gt3.noStatus;
-
-            const grandTotal = lt3Total + gt3Total;
-
-            return [
-              item.witelName,
-              lt3.lanjut,
-              lt3.cancel,
-              lt3.bukan,
-              lt3.noStatus,
-              lt3Total,
-              gt3.lanjut,
-              gt3.cancel,
-              gt3.bukan,
-              gt3.noStatus,
-              gt3Total,
-              grandTotal,
-            ];
-          }),
-        ];
-
-        const res = await fetch(`${API_URL}/export_to_sheet`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            data: formattedData,
-            sheetName: "In Progress Report",
-          }),
-        });
-
-        const result = await res.json();
-
-        if (res.ok) {
-          alert("Exported to Google Sheet ✅");
-        } else {
-          throw new Error(result.error || "Export failed");
-        }
-      } catch (err) {
-        alert(`❌ Export failed: ${err.message}`);
-        console.error("Export error:", err);
-      } finally {
-        setExporting(false);
-      }
-
-      return;
-    }
-
-    // Regular export for Excel / CSV
     const exportData = customData
       ? customData
       : data.data?.flatMap((entry) => {
@@ -269,11 +163,11 @@ export default function ReportPage({ API_URL }) {
       saveAs(blob, `${customSheetName}.xlsx`);
     } else if (type === "CSV") {
       const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
-      const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob([csvOutput], {
+        type: "text/csv;charset=utf-8;",
+      });
       saveAs(blob, `${customSheetName}.csv`);
     }
-
-    console.log("✅ Exported as", type, "->", customSheetName);
   };
 
   return (
@@ -341,9 +235,7 @@ export default function ReportPage({ API_URL }) {
         </div>
         <div className="table-wrapper">
           <ReportTable
-            reportTableData={
-              selectedSubtypes == "IN PROCESS" ? inProcessData : data
-            }
+            reportTableData={data}
             selectedCategory={selectedCategory}
             selectedPeriod={selectedPeriod}
             orderSubtypes={selectedSubtypes}
@@ -384,9 +276,7 @@ export default function ReportPage({ API_URL }) {
         <div className="table-wrapper">
           <SelectedTable
             selectedCell={selectedCell}
-            data={
-              selectedSubtypes == "IN PROCESS" ? inProcessData.data : data.data
-            }
+            data={data.data}
             selectedCategory={selectedCategory}
             API_URL={API_URL}
           />
