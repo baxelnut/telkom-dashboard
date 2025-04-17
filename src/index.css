@@ -208,10 +208,10 @@ button:focus-visible {
 
   p,
   a {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   blockquote {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
