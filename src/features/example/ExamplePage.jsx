@@ -10,6 +10,7 @@ export default function ExamplePage({ API_URL }) {
   const [hello, setHello] = useState(null);
   const [statusData, setStatusData] = useState([]);
   const [exporting, setExporting] = useState(false);
+  const [sheetData, setSheetData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +103,20 @@ export default function ExamplePage({ API_URL }) {
     }
   };
 
+  useEffect(() => {
+    const fetchSheet = async () => {
+      const res = await fetch(
+        "https://docs.google.com/spreadsheets/d/1mHhmNJ-_lohq-Mh_5vR9aij4kCcnMkD_BsS3ZKKTwh8/gviz/tq?tqx=out:json&gid=1106012349"
+      );
+      const text = await res.text();
+      const json = JSON.parse(text.substring(47).slice(0, -2));
+      const rows = json.table.rows.map((r) => r.c.map((cell) => cell?.v || ""));
+      setSheetData(rows);
+    };
+
+    fetchSheet();
+  }, []);
+
   return (
     <div className="example-container">
       <h1>ExamplePage</h1>
@@ -127,6 +142,29 @@ export default function ExamplePage({ API_URL }) {
             <Error message={error} />
           ) : (
             <pre>{JSON.stringify(hello, null, 2)}</pre>
+          )}
+        </div>
+      </div>
+
+      <div className="example-items">
+        <h6>trynna fetch sheet from "https://docs.google.com/spreadsheets/d/1mHhmNJ-_lohq-Mh_5vR9aij4kCcnMkD_BsS3ZKKTwh8/gviz/tq?tqx=out:json&gid=1106012349"</h6>
+        <div className="example-content">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <Error message={error} />
+          ) : (
+            <table>
+              <tbody>
+                {sheetData.map((row, idx) => (
+                  <tr key={idx}>
+                    {row.map((cell, i) => (
+                      <td key={i}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </div>
