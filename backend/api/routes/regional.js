@@ -18,7 +18,7 @@ router.get("/progress_status", getReg3Status);
 router.get("/report/order_sub_type", getReg3ProgressOst);
 router.patch("/:id", updateReg3Data);
 
-router.patch("/sheet/:id", updateSheet);
+router.patch("/sheet/:id", updateSheet); // i think the problem here
 router.get("/inject_uuid", injectUUID);
 
 export default router;
