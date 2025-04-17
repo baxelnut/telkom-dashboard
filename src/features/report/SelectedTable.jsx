@@ -27,6 +27,7 @@ export default function SelectedTable({
   }
 
   const [selectedActions, setSelectedActions] = useState({});
+  const [notes, setNotes] = useState({});
   const { extractedIds, witelName, subType, kategoriUmur } = selectedCell;
 
   const foundItem = data.find(
@@ -49,7 +50,7 @@ export default function SelectedTable({
   const filteredItems = items.filter(
     (item) =>
       extractedIds.includes(item.id) &&
-      (selectedCategory === "ALL" || item.order_subtype === selectedCategory)
+      (selectedCategory === "ALL" || item["ORDER_SUBTYPE"] === selectedCategory)
   );
 
   if (filteredItems.length === 0) {
@@ -61,7 +62,7 @@ export default function SelectedTable({
   }
 
   const hasInProgress = filteredItems.some(
-    (item) => item.kategori === "IN PROCESS"
+    (item) => item["KATEGORI"] === "IN PROCESS"
   );
 
   return (
@@ -75,6 +76,11 @@ export default function SelectedTable({
                   <h6>Action</h6>
                 </th>
               )}
+              {hasInProgress && (
+                <th style={{ textAlign: "center" }}>
+                  <h6>Notes</h6>
+                </th>
+              )}
               {Object.keys(filteredItems[0]).map((key) => (
                 <th key={key}>
                   <h6>{key}</h6>
@@ -84,7 +90,7 @@ export default function SelectedTable({
           </thead>
           <tbody>
             {filteredItems.map((item, rowIndex) => {
-              const isInProgress = item.kategori === "IN PROCESS";
+              const isInProgress = item["KATEGORI"] === "IN PROCESS";
 
               return (
                 <tr key={rowIndex}>
@@ -92,31 +98,29 @@ export default function SelectedTable({
                     <td>
                       {isInProgress && (
                         <Dropdown
-                          key={item.id}
+                          key={item.UUID}
                           options={actionOptions}
                           value={
-                            selectedActions[item.id] ??
-                            item.in_process_status ??
-                            " "
+                            selectedActions[item.UUID] ?? item["STATUS"] ?? " "
                           }
                           onChange={async (e) => {
                             const newValue = e.target.value;
 
                             setSelectedActions((prev) => ({
                               ...prev,
-                              [item.id]: newValue,
+                              [item.UUID]: newValue,
                             }));
 
                             try {
                               const res = await fetch(
-                                `${API_URL}/regional_3/${item.id}`,
+                                `${API_URL}/regional_3/sheet/${item.UUID}`,
                                 {
                                   method: "PATCH",
                                   headers: {
                                     "Content-Type": "application/json",
                                   },
                                   body: JSON.stringify({
-                                    in_process_status: newValue,
+                                    STATUS: newValue,
                                   }),
                                 }
                               );
@@ -125,16 +129,56 @@ export default function SelectedTable({
                                 throw new Error("Failed to update status");
                               }
                             } catch (err) {
-                              console.error(
-                                "Error updating in_process_status:",
-                                err
-                              );
+                              console.error("Error updating status:", err);
                             }
                           }}
                         />
                       )}
                     </td>
                   )}
+                  {hasInProgress && (
+                    <td className="notes-container">
+                      <textarea
+                        className="notes"
+                        value={notes[item.UUID] ?? item["NOTES"] ?? " "}
+                        onChange={async (e) => {
+                          const updatedNotes = e.target.value;
+
+                          setNotes((prev) => ({
+                            ...prev,
+                            [item.UUID]: updatedNotes,
+                          }));
+
+                          try {
+                            const res = await fetch(
+                              `${API_URL}/regional_3/sheet/${item.UUID}`,
+                              {
+                                method: "PATCH",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                  NOTES:
+                                    updatedNotes.trim() === " " ||
+                                    updatedNotes.trim() === null
+                                      ? null
+                                      : updatedNotes,
+                                }),
+                              }
+                            );
+
+                            if (!res.ok) {
+                              throw new Error("Failed to update notes");
+                            }
+                          } catch (err) {
+                            console.error("Error updating notes:", err);
+                          }
+                        }}
+                        rows={1}
+                      />
+                    </td>
+                  )}
+
                   {Object.keys(item).map((key) => (
                     <td key={key}>
                       <p>
