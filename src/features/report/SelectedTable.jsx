@@ -113,7 +113,7 @@ export default function SelectedTable({
 
                             try {
                               const res = await fetch(
-                                `${API_URL}/regional_3/sheet/${item.UUID}`,
+                                `${API_URL}/regional_3/sheet/${item.UUID}`,  
                                 {
                                   method: "PATCH",
                                   headers: {
