@@ -1,103 +1,59 @@
-import { google } from "googleapis";
+import { sheetsClient, auth } from "../services/googleSheetsService.js";
+import { getColumnLetter } from "../utils/columnUtils.js";
 import { v4 as uuidv4 } from "uuid";
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SPREADSHEET_GID = process.env.SPREADSHEET_GID;
-const FORMATTED_SHEET_NAME = process.env.FORMATTED_SHEET_NAME;
-
-const auth = new google.auth.GoogleAuth({
-  keyFile: process.env.GOOGLE_KEY_FILE,
-  scopes: [process.env.GOOGLE_SCOPES],
-});
-
-const namingConvention = {
-  AO: ["New Install"],
-  SO: ["Suspend"],
-  DO: ["Disconnect"],
-  MO: [
-    "Modify",
-    "Modify BA",
-    "Modify Price",
-    "Renewal Agreement",
-    "Modify Termin",
-  ],
-  RO: ["Resume"],
-};
+const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME } = process.env;
 
 export const injectUUID = async (req, res) => {
   try {
     const { defaultNote = "" } = req.body;
-
     const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
-    const response = await fetch(sheetURL);
-    const text = await response.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
 
-    const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
-    const finalHeaders = [...cols, "UUID", "STATUS", "NOTES"];
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+    const finalHeaders = [...headers, "UUID", "STATUS", "NOTES"];
 
     const formattedRows = json.table.rows.map((row) => {
       const values = row.c.map((cell) => cell?.v || "");
-      values.push(uuidv4());
-      values.push("");
-      values.push(defaultNote);
-      return values;
+      return [...values, uuidv4(), "", defaultNote];
     });
 
-    const client = await auth.getClient();
-    const sheets = google.sheets({ version: "v4", auth: client });
-
-    await sheets.spreadsheets.values.update({
+    await sheetsClient.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
       range: `${FORMATTED_SHEET_NAME}!A1`,
       valueInputOption: "RAW",
-      requestBody: {
-        values: [finalHeaders, ...formattedRows],
-      },
+      requestBody: { values: [finalHeaders, ...formattedRows] },
     });
 
-    console.log("✅ Sheet updated successfully with UUID, STATUS, NOTES.");
+    console.log("✅ Sheet updated with UUIDs.");
     res.json({
-      message: "Formatted sheet updated with UUID, STATUS, and NOTES.",
+      message: "Sheet updated with UUID, STATUS, NOTES.",
       totalRows: formattedRows.length,
     });
   } catch (err) {
-    console.error("❌ Failed to process sheet:", err);
+    console.error("❌ injectUUID failed:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
-function getColumnLetter(index) {
-  let letter = "";
-  while (index >= 0) {
-    letter = String.fromCharCode((index % 26) + 65) + letter;
-    index = Math.floor(index / 26) - 1;
-  }
-  return letter;
-}
-
 export const updateSheet = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const { STATUS, NOTES } = req.body;
 
-    if (!STATUS && !NOTES) {
-      return res
-        .status(400)
-        .json({ message: "Missing STATUS or NOTES in request body" });
+    if (!STATUS && NOTES === undefined) {
+      return res.status(400).json({ message: "STATUS or NOTES required." });
     }
 
-    const sheets = google.sheets({ version: "v4", auth });
-
-    const readRes = await sheets.spreadsheets.values.get({
+    const readRes = await sheetsClient.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: FORMATTED_SHEET_NAME,
     });
 
     const rows = readRes.data.values;
-    if (!rows || rows.length === 0) {
-      throw new Error("No data found in the sheet");
-    }
+    if (!rows || rows.length === 0) throw new Error("Sheet is empty");
 
     const headers = rows[0];
     const uuidIndex = headers.indexOf("UUID");
@@ -105,12 +61,8 @@ export const updateSheet = async (req, res) => {
     const notesIndex = headers.indexOf("NOTES");
 
     const rowIndex = rows.findIndex((row) => row[uuidIndex] === id);
-
-    if (rowIndex === -1) {
-      return res
-        .status(404)
-        .json({ message: "Row with specified UUID not found" });
-    }
+    if (rowIndex === -1)
+      return res.status(404).json({ message: "UUID not found" });
 
     const updates = [];
 
@@ -134,20 +86,18 @@ export const updateSheet = async (req, res) => {
 
     await Promise.all(
       updates.map((update) =>
-        sheets.spreadsheets.values.update({
+        sheetsClient.spreadsheets.values.update({
           spreadsheetId: SPREADSHEET_ID,
           range: update.range,
           valueInputOption: "RAW",
-          requestBody: {
-            values: update.values,
-          },
+          requestBody: { values: update.values },
         })
       )
     );
 
-    res.status(200).json({ message: "Sheet updated successfully" });
+    res.json({ message: "✅ Sheet updated successfully." });
   } catch (err) {
-    console.error("Error updating Google Sheets:", err);
+    console.error("❌ updateSheet error:", err);
     res.status(500).json({ error: err.message });
   }
 };
