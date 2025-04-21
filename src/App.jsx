@@ -117,7 +117,7 @@ function AppContent() {
               path="/report"
               element={
                 <ProtectedRoute>
-                  <ReportPage API_URL={API_URL} />
+                  <ReportPage API_URL={API_URL} userEmail={user?.email} />
                 </ProtectedRoute>
               }
             />
