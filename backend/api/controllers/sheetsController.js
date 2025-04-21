@@ -4,6 +4,7 @@ dotenv.config();
 import { sheetsClient, auth } from "../services/googleSheetsService.js";
 import { getColumnLetter } from "../utils/columnUtils.js";
 import { v4 as uuidv4 } from "uuid";
+import { fetchFormattedReportData } from "./regional3Controller.js";
 
 const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME } = process.env;
 
@@ -125,5 +126,47 @@ export const updateSheet = async (req, res) => {
   } catch (err) {
     console.error("❌ updateSheet error:", err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+export const processStatus = async (req, res) => {
+  try {
+    const data = await fetchFormattedReportData();
+
+    const resultMap = {};
+
+    data.forEach((entry) => {
+      const witel = entry["BILL_WITEL"];
+
+      if (!resultMap[witel]) {
+        resultMap[witel] = {
+          bill_witel: witel,
+          lanjut: 0,
+          cancel: 0,
+          bukan_order_reg: 0,
+          no_status: 0,
+        };
+      }
+
+      switch (entry["STATUS"]) {
+        case "Lanjut":
+          resultMap[witel].lanjut++;
+          break;
+        case "Cancel":
+          resultMap[witel].cancel++;
+          break;
+        case "Bukan Order Reg":
+          resultMap[witel].bukan_order_reg++;
+          break;
+        default:
+          resultMap[witel].no_status++;
+          break;
+      }
+    });
+
+    res.status(200).json({ data: Object.values(resultMap) });
+  } catch (err) {
+    console.error("processStatus error:", err);
+    res.status(500).json({ error: "Something went wrong." });
   }
 };
