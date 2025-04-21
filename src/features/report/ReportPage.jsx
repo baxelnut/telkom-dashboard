@@ -63,7 +63,7 @@ export default function ReportPage({ API_URL, userEmail }) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
-  const [exporting, setExporting] = useState(false);
+  // const [exporting, setExporting] = useState(false);
   const [selectedSubtypes, setSelectedSubtypes] = useState(() => {
     const saved = localStorage.getItem("selectedSubtypes");
     return saved
@@ -72,6 +72,9 @@ export default function ReportPage({ API_URL, userEmail }) {
           ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
         );
   });
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refetch = () => setRefreshKey((k) => k + 1);
 
   useEffect(() => {
     localStorage.setItem("selectedSubtypes", JSON.stringify(selectedSubtypes));
@@ -97,9 +100,9 @@ export default function ReportPage({ API_URL, userEmail }) {
 
     fetchData();
 
-    const interval = setInterval(fetchData, 10000); // refresh every 10s
-    return () => clearInterval(interval); // cleanup
-  }, []);
+    // const interval = setInterval(fetchData, 10000); // refresh every 10s
+    // return () => clearInterval(interval); // cleanup
+  }, [refreshKey]);
 
   const handleCellSelection = (cellData) => {
     setSelectedCell(cellData);
@@ -282,6 +285,7 @@ export default function ReportPage({ API_URL, userEmail }) {
             selectedCategory={selectedCategory}
             API_URL={API_URL}
             userEmail={userEmail}
+            onUpdateSuccess={refetch}
           />
         </div>
       </div>
