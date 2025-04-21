@@ -52,7 +52,7 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
     };
 
     fetchData();
-  }, [API_URL]);
+  }, []);
 
   const formatValue = (value) => {
     const suffixes = ["", "K", "M", "B"];
