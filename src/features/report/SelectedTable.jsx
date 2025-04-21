@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./SelectedTable.css";
 import Dropdown from "../../components/utils/Dropdown";
+import Error from "../../components/utils/Error";
 
 const actionOptions = [" ", "Lanjut", "Cancel", "Bukan Order Reg"].map(
   (value) => ({
@@ -17,13 +18,10 @@ export default function SelectedTable({
   data,
   selectedCategory,
   API_URL,
+  userEmail,
 }) {
   if (!selectedCell) {
-    return (
-      <div>
-        <p>No data available for selection.</p>
-      </div>
-    );
+    return <Error />;
   }
 
   const [selectedActions, setSelectedActions] = useState({});
@@ -65,12 +63,25 @@ export default function SelectedTable({
     (item) => item["KATEGORI"] === "IN PROCESS"
   );
 
+  const generateLog = (email) => {
+    const now = new Date().toLocaleString("id-ID", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+    return `Last edited: ${now} by ${email}`;
+  };
+
   return (
     <div className="selected-table">
       <div className="table-scroll">
         <table>
           <thead>
             <tr>
+              {hasInProgress && (
+                <th style={{ textAlign: "center" }}>
+                  <h6>Log</h6>
+                </th>
+              )}
               {hasInProgress && (
                 <th style={{ textAlign: "center" }}>
                   <h6>Action</h6>
@@ -94,6 +105,11 @@ export default function SelectedTable({
 
               return (
                 <tr key={rowIndex}>
+                  {item.LOG !== undefined && (
+                    <td>
+                      <p>{item.LOG || " "}</p>
+                    </td>
+                  )}
                   {hasInProgress && (
                     <td>
                       {isInProgress && (
@@ -111,9 +127,11 @@ export default function SelectedTable({
                               [item.UUID]: newValue,
                             }));
 
+                            const log = generateLog(userEmail);
+
                             try {
                               const res = await fetch(
-                                `${API_URL}/regional_3/sheet/${item.UUID}`,  
+                                `${API_URL}/regional_3/sheet/${item.UUID}`,
                                 {
                                   method: "PATCH",
                                   headers: {
@@ -121,6 +139,7 @@ export default function SelectedTable({
                                   },
                                   body: JSON.stringify({
                                     STATUS: newValue,
+                                    LOG: log,
                                   }),
                                 }
                               );
@@ -149,6 +168,8 @@ export default function SelectedTable({
                             [item.UUID]: updatedNotes,
                           }));
 
+                          const log = generateLog(userEmail);
+
                           try {
                             const res = await fetch(
                               `${API_URL}/regional_3/sheet/${item.UUID}`,
@@ -159,10 +180,10 @@ export default function SelectedTable({
                                 },
                                 body: JSON.stringify({
                                   NOTES:
-                                    updatedNotes.trim() === " " ||
-                                    updatedNotes.trim() === null
+                                    updatedNotes.trim() === ""
                                       ? null
                                       : updatedNotes,
+                                  LOG: log,
                                 }),
                               }
                             );
