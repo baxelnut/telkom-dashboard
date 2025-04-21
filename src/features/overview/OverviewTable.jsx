@@ -34,7 +34,7 @@ export default function OverviewTable({ API_URL }) {
 
     try {
       const response = await fetch(
-        `${API_URL}/regional_3?page=${page}&limit=${limit}`
+        `${API_URL}/aosodomoro/sheets?page=${page}&limit=${limit}`
       );
 
       if (!response.ok) {
@@ -46,7 +46,7 @@ export default function OverviewTable({ API_URL }) {
       const result = await response.json();
       setData(result.data);
 
-      setTotalRows(result.total ?? result.data.length ?? 0);
+      setTotalRows(result.totalProcessedData ?? result.data.length ?? 0);
     } catch (err) {
       console.error("API Error:", err);
       res.status(500).json({
