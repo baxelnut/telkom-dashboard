@@ -6,7 +6,8 @@ import { getColumnLetter } from "../utils/columnUtils.js";
 import { v4 as uuidv4 } from "uuid";
 import { fetchFormattedReportData } from "./regional3Controller.js";
 
-const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME } = process.env;
+const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME, FORMATTED_GID } =
+  process.env;
 
 export const injectUUID = async (req, res) => {
   try {
@@ -168,5 +169,38 @@ export const processStatus = async (req, res) => {
   } catch (err) {
     console.error("processStatus error:", err);
     res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
+export const getAosodomoroSheet = async (req, res) => {
+  try {
+    const { page = 1, limit = 100 } = req.query;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + parseInt(limit);
+
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+
+    const formattedData = json.table.rows.map((row) => {
+      const values = row.c.map((cell) => cell?.v ?? "");
+      return headers.reduce((obj, key, index) => {
+        obj[key] = values[index];
+        return obj;
+      }, {});
+    });
+
+    const total = formattedData.length;
+    const paginatedData = formattedData.slice(startIndex, endIndex);
+
+    res.json({
+      data: paginatedData,
+      totalProcessedData: total,
+    });
+  } catch (err) {
+    console.error("🔥 Spreadsheet Fetch Error:", err);
+    res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
