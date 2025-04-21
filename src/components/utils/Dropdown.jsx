@@ -1,14 +1,27 @@
 import React from "react";
 import "./Dropdown.css";
 
-export default function Dropdown({ options, value, onChange }) {
+export default function Dropdown({ options = [], value = "", onChange }) {
   return (
-    <select value={value} onChange={onChange} className="dropdown">
-      {options.map((option, index) => (
-        <option key={index} value={option.value}>
+    <select
+      className="dropdown"
+      value={value}
+      onChange={onChange}
+      style={{ fontWeight: isEmpty(value) ? 500 : 600 }}
+    >
+      {options.map((option) => (
+        <option
+          key={option.value}
+          value={option.value}
+          style={{ fontWeight: isEmpty(option.value) ? 500 : 600 }}
+        >
           {option.label}
         </option>
       ))}
     </select>
   );
+}
+
+function isEmpty(val) {
+  return val === "" || val === " ";
 }
