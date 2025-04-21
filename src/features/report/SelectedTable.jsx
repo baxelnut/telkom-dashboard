@@ -3,12 +3,11 @@ import "./SelectedTable.css";
 import Dropdown from "../../components/utils/Dropdown";
 import Error from "../../components/utils/Error";
 
-const actionOptions = [" ", "Lanjut", "Cancel", "Bukan Order Reg"].map(
-  (value) => ({
-    value,
-    label: value,
-  })
-);
+const actionOptions = ["Lanjut", "Cancel", "Bukan Order Reg"].map((value) => ({
+  value,
+  label: value,
+}));
+actionOptions.unshift({ value: " ", label: "— Select Action —" });
 
 const formatCurrency = (value) =>
   value ? `Rp${value.toLocaleString("id-ID")}` : "Rp0";
@@ -19,6 +18,7 @@ export default function SelectedTable({
   selectedCategory,
   API_URL,
   userEmail,
+  onUpdateSuccess,
 }) {
   if (!selectedCell) {
     return <Error />;
@@ -147,6 +147,8 @@ export default function SelectedTable({
                               if (!res.ok) {
                                 throw new Error("Failed to update status");
                               }
+
+                              onUpdateSuccess?.();
                             } catch (err) {
                               console.error("Error updating status:", err);
                             }
@@ -191,6 +193,8 @@ export default function SelectedTable({
                             if (!res.ok) {
                               throw new Error("Failed to update notes");
                             }
+
+                            onUpdateSuccess?.();
                           } catch (err) {
                             console.error("Error updating notes:", err);
                           }
