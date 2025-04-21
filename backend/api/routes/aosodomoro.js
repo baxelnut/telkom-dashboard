@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getAllAosodomoro, 
+  getAllAosodomoro,
   getReg3OrderSubtype,
   getReg3SubSegmen,
   getReg3Segmen,
@@ -8,6 +8,7 @@ import {
   getReg3Kategori,
   // getReg3Progress,
 } from "../controllers/aosodomoroController.js";
+import { getAosodomoroSheet } from "../controllers/sheetsController.js";
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get("/reg_3_segmen", getReg3Segmen);
 router.get("/aosodomoro_reg_3_segmen", getAosodomoroSegmen);
 router.get("/reg_3_kategori", getReg3Kategori);
 // router.get("/reg_3_progress", getReg3Progress);
+router.get("/sheets", getAosodomoroSheet);
 
 export default router;
