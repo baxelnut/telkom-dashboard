@@ -1,8 +1,18 @@
-import supabase from "../services/supabaseService.js"; 
+import supabase from "../services/supabaseService.js";
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SPREADSHEET_GID = process.env.SPREADSHEET_GID;
 const FORMATTED_GID = process.env.FORMATTED_GID;
+
+const BIG_5_REGIONS = [
+  "BALI",
+  "MALANG",
+  "NUSA TENGGARA",
+  "SIDOARJO",
+  "SURAMADU",
+];
+
+const isBig5Region = (region) => BIG_5_REGIONS.includes(region.toUpperCase());
 
 export const getAllRegional3Data = async (req, res) => {
   try {
@@ -58,13 +68,11 @@ const namingConvention = {
 };
 
 const processData = (data) => {
-  const big5Witel = ["MALANG", "SIDOARJO", "NUSA TENGGARA", "BALI", "SURAMADU"];
-
   const groupedByWitel = groupBy(data, "BILL_WITEL");
 
   return Object.keys(groupedByWitel)
     .map((witelName) => {
-      if (!big5Witel.includes(witelName)) {
+      if (!isBig5Region(witelName)) {
         return null;
       }
 
@@ -165,8 +173,6 @@ const processKategoriData = (witelData, kategori) => {
 // Get `status` based `bill_witel`
 export const getReg3Status = async (req, res) => {
   try {
-    const BIG5 = ["BALI", "MALANG", "NUSA TENGGARA", "SIDOARJO", "SURAMADU"];
-
     const { data, error } = await supabase
       .from("regional_3_in_process")
       .select("id, bill_witel, in_process_status")
@@ -177,11 +183,10 @@ export const getReg3Status = async (req, res) => {
     const grouped = {};
 
     data.forEach((row) => {
-      const witel = row.bill_witel?.trim().toUpperCase();
-      if (!BIG5.includes(witel)) return;
+      const witel = row.bill_witel?.trim();
+      if (!isBig5Region(witel)) return;
 
       const rawStatus = row.in_process_status?.trim() || "No Status";
-
       let key;
       if (rawStatus === "Lanjut") key = "lanjut";
       else if (rawStatus === "Cancel") key = "cancel";
@@ -233,37 +238,40 @@ export const getReg3Status = async (req, res) => {
 //   }
 // };
 
+export const fetchFormattedReportData = async () => {
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+
+  const response = await fetch(sheetURL);
+  const text = await response.text();
+  const json = JSON.parse(text.substring(47).slice(0, -2));
+
+  const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
+
+  const rows = json.table.rows.map((row) => {
+    const obj = {};
+    row.c.forEach((cell, index) => {
+      obj[cols[index]] = cell?.v || null;
+    });
+    return obj;
+  });
+
+  const filteredRows = rows.filter((row) => isBig5Region(row["BILL_WITEL"]));
+
+  return filteredRows;
+};
+
 export const getReg3ReportData = async (req, res) => {
   try {
-    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
-
-    const response = await fetch(sheetURL);
-    const text = await response.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-
-    const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
-
-    const rows = json.table.rows.map((row) => {
-      const obj = {};
-      row.c.forEach((cell, index) => {
-        obj[cols[index]] = cell?.v || null;
-      });
-
-      return obj;
-    });
-
-    const processedData = processData(rows);
-
-    // console.log("Total raw data: ", rows.length);
-    // console.log("Total processed data: ", processedData.length);
+    const rawData = await fetchFormattedReportData();
+    const processedData = processData(rawData);
 
     res.json({
       data: processedData,
-      totalRawData: rows.length,
+      totalRawData: rawData.length,
       totalProcessedData: processedData.length,
     });
   } catch (err) {
-    console.error("Failed to fetch sheet:", err);
+    console.error("🔥 Failed to fetch sheet:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
@@ -292,37 +300,36 @@ export const getReg3ReportData = async (req, res) => {
 //   }
 // };
 
+export const fetchInProcessData = async () => {
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
+
+  const response = await fetch(sheetURL);
+  const text = await response.text();
+  const json = JSON.parse(text.substring(47).slice(0, -2));
+
+  const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
+  const rows = json.table.rows.map((row) => {
+    const obj = {};
+    row.c.forEach((cell, index) => {
+      obj[cols[index]] = cell?.v || null;
+    });
+    return obj;
+  });
+
+  const normalize = (str) => str?.replace(/\s+/g, " ").trim().toUpperCase();
+  const inProcessRows = rows.filter(
+    (row) => normalize(row["KATEGORI"]) === "IN PROCESS"
+  );
+
+  return inProcessRows;
+};
+
 export const getReg3InProcessData = async (req, res) => {
   try {
-    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
-
-    const response = await fetch(sheetURL);
-    const text = await response.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
- 
-    const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
- 
-    const rows = json.table.rows.map((row) => {
-      const obj = {};
-      row.c.forEach((cell, index) => {
-        obj[cols[index]] = cell?.v || null;
-      });
-      return obj;
-    });
- 
-    const normalize = (str) => str?.replace(/\s+/g, " ").trim().toUpperCase();
- 
-    const inProcessRows = rows.filter(
-      (row) => normalize(row["KATEGORI"]) === "IN PROCESS"
-    );
-
-  
-    const processedData = processData(inProcessRows);
-
+    const inProcessData = await fetchInProcessData();
     res.json({
-      data: processedData,
-      totalRawData: rows.length,
-      totalProcessedData: processedData.length,
+      data: inProcessData,
+      totalRawData: inProcessData.length,
     });
   } catch (err) {
     console.error("🔥 Failed to fetch sheet:", err.message);
