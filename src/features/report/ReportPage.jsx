@@ -55,7 +55,7 @@ const headers = [
   "KATEGORI_UMUR2",
 ];
 
-export default function ReportPage({ API_URL }) {
+export default function ReportPage({ API_URL, userEmail }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -85,7 +85,6 @@ export default function ReportPage({ API_URL }) {
       try {
         const response = await fetch(`${API_URL}/regional_3/report`);
         if (!response.ok) throw new Error("❌ API call failed");
-
         const result = await response.json();
         setData(result);
       } catch (err) {
@@ -97,6 +96,9 @@ export default function ReportPage({ API_URL }) {
     };
 
     fetchData();
+
+    const interval = setInterval(fetchData, 10000); // refresh every 10s
+    return () => clearInterval(interval); // cleanup
   }, []);
 
   const handleCellSelection = (cellData) => {
@@ -279,6 +281,7 @@ export default function ReportPage({ API_URL }) {
             data={data.data}
             selectedCategory={selectedCategory}
             API_URL={API_URL}
+            userEmail={userEmail}
           />
         </div>
       </div>
