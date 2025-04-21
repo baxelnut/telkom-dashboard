@@ -7,7 +7,11 @@ import {
   getReg3InProcessData,
   getReg3ProgressOst,
 } from "../controllers/regional3Controller.js";
-import { injectUUID, updateSheet } from "../controllers/sheetsController.js";
+import {
+  injectUUID,
+  processStatus,
+  updateSheet,
+} from "../controllers/sheetsController.js";
 
 const router = express.Router();
 
@@ -18,7 +22,10 @@ router.get("/progress_status", getReg3Status);
 router.get("/report/order_sub_type", getReg3ProgressOst);
 router.patch("/:id", updateReg3Data);
 
-router.patch("/sheet/:id", updateSheet); // error on produciton. fix later.
+router.patch("/sheets/:id", updateSheet);
+router.get("/sheets/process_status", processStatus);
+
+// warning! not dynamically programmed
 router.get("/inject_uuid/beware/reset_format_aosodomoro_sheet", injectUUID);
 
 export default router;
