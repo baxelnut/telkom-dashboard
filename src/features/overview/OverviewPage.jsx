@@ -24,7 +24,7 @@ export default function OverviewPage({ API_URL }) {
       try {
         const [statusResponse, sessionResponse] = await Promise.all([
           fetch(`${API_URL}/regional_3/sheets/process_status`),
-          fetch(`${API_URL}/aosodomoro/reg_3_subtypes`),
+          fetch(`${API_URL}/regional_3/sheets/order_subtype`),
         ]);
 
         if (!statusResponse.ok) throw new Error("Failed to fetch status data");
@@ -60,8 +60,8 @@ export default function OverviewPage({ API_URL }) {
                 )}
               </div>
             ))
-          : statusData.map((item, index) => (
-              <OverViewStatus key={index} overviewStatus={item} />
+          : statusData.map((statusItem, index) => (
+              <OverViewStatus key={index} overviewStatus={statusItem} />
             ))}
       </div>
 
