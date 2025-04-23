@@ -123,7 +123,29 @@ export default function UserProfile({ user, toggleDropdown }) {
           </button>
         )}
 
-        <button className="change-pw-btn">
+        <button
+          className="change-pw-btn"
+          onClick={() => {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user || !user.email) {
+              alert("No email found. Cannot send reset link.");
+              return;
+            }
+
+            import("firebase/auth").then(({ sendPasswordResetEmail }) => {
+              sendPasswordResetEmail(auth, user.email)
+                .then(() => {
+                  alert("✅ Password reset email sent!");
+                })
+                .catch((err) => {
+                  console.error("🔥 Failed to send reset email:", err);
+                  alert("Error: " + err.message);
+                });
+            });
+          }}
+        >
           <p>Change password</p>
         </button>
 
