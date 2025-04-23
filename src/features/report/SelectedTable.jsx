@@ -3,14 +3,14 @@ import "./SelectedTable.css";
 import Dropdown from "../../components/utils/Dropdown";
 import Error from "../../components/utils/Error";
 
-const actionOptions = ["Lanjut", "Cancel", "Bukan Order Reg"].map((value) => ({
-  value,
-  label: value,
+const actionOptions = ["Lanjut", "Cancel", "Bukan Order Reg"].map((v) => ({
+  value: v,
+  label: v,
 }));
 actionOptions.unshift({ value: " ", label: "— Select Action —" });
 
-const formatCurrency = (value) =>
-  value ? `Rp${value.toLocaleString("id-ID")}` : "Rp0";
+const formatCurrency = (val) =>
+  val ? `Rp${val.toLocaleString("id-ID")}` : "Rp0";
 
 export default function SelectedTable({
   selectedCell,
@@ -20,57 +20,50 @@ export default function SelectedTable({
   userEmail,
   onUpdateSuccess,
 }) {
-  if (!selectedCell) {
-    return <Error />;
-  }
+  if (!selectedCell) return <Error />;
 
   const [selectedActions, setSelectedActions] = useState({});
   const [notes, setNotes] = useState({});
-  const { extractedIds, witelName, subType, kategoriUmur } = selectedCell;
 
-  const foundItem = data.find(
-    (item) =>
-      item.witelName === witelName &&
-      item[subType] &&
-      item[subType][`${kategoriUmur}Items`]
-  );
+  const { witelName, kategoriUmur, isTotal, extractedIds, subTypes, subType } =
+    selectedCell;
 
-  if (!foundItem) {
-    return (
-      <div>
-        <p>No matching data found.</p>
-      </div>
-    );
+  const witelEntry = data.find((d) => d.witelName === witelName);
+  if (!witelEntry) return <p>No matching data found.</p>;
+
+  const bucketKeys = isTotal
+    ? ["<3blnItems", ">3blnItems"]
+    : [`${kategoriUmur}Items`];
+
+  let items = [];
+  if (isTotal) {
+    subTypes.forEach((st) => {
+      bucketKeys.forEach((bk) => {
+        items.push(...(witelEntry[st]?.[bk] || []));
+      });
+    });
+  } else {
+    items = witelEntry[subType]?.[bucketKeys[0]] || [];
   }
 
-  const items = foundItem[subType][`${kategoriUmur}Items`] || [];
-
   const filteredItems = items.filter(
-    (item) =>
-      extractedIds.includes(item.id) &&
-      (selectedCategory === "ALL" || item["ORDER_SUBTYPE"] === selectedCategory)
+    (itm) =>
+      extractedIds.includes(itm.id) &&
+      (selectedCategory === "ALL" || itm.ORDER_SUBTYPE === selectedCategory)
   );
 
   if (filteredItems.length === 0) {
-    return (
-      <div>
-        <p>No matching data found.</p>
-      </div>
-    );
+    return <p>No matching data found.</p>;
   }
 
   const hasInProgress = filteredItems.some(
-    (item) => item["KATEGORI"] === "IN PROCESS"
+    (itm) => itm.KATEGORI === "IN PROCESS"
   );
 
   const generateLog = (email) => {
-    const currentDate = new Date();
-
-    const date = currentDate.toLocaleDateString("id-ID");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const time = `${hours}:${minutes}`;
-
+    const now = new Date();
+    const date = now.toLocaleDateString("id-ID");
+    const time = now.toTimeString().slice(0, 5);
     return `Last edited: ${date} ${time} by ${email}`;
   };
 
@@ -81,140 +74,108 @@ export default function SelectedTable({
           <thead>
             <tr>
               {hasInProgress && (
-                <th style={{ textAlign: "center" }}>
+                <th>
                   <h6>Log</h6>
                 </th>
               )}
               {hasInProgress && (
-                <th style={{ textAlign: "center" }}>
+                <th>
                   <h6>Action</h6>
                 </th>
               )}
               {hasInProgress && (
-                <th style={{ textAlign: "center" }}>
+                <th>
                   <h6>Notes</h6>
                 </th>
               )}
-              {Object.keys(filteredItems[0]).map((key) => (
-                <th key={key}>
-                  <h6>{key}</h6>
+              {Object.keys(filteredItems[0]).map((col) => (
+                <th key={col}>
+                  <h6>{col}</h6>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {filteredItems.map((item, rowIndex) => {
-              const isInProgress = item["KATEGORI"] === "IN PROCESS";
-
+            {filteredItems.map((itm, idx) => {
+              const inProg = itm.KATEGORI === "IN PROCESS";
               return (
-                <tr key={rowIndex}>
-                  {item.LOG !== undefined && (
-                    <td>
-                      <p>{item.LOG || " "}</p>
-                    </td>
-                  )}
+                <tr key={idx}>
                   {hasInProgress && (
                     <td>
-                      {isInProgress && (
+                      <p>{itm.LOG || ""}</p>
+                    </td>
+                  )}
+
+                  {hasInProgress && (
+                    <td>
+                      {inProg && (
                         <Dropdown
-                          key={item.UUID}
+                          key={itm.UUID}
                           options={actionOptions}
-                          value={
-                            selectedActions[item.UUID] ?? item["STATUS"] ?? " "
-                          }
+                          value={selectedActions[itm.UUID] ?? itm.STATUS ?? ""}
                           onChange={async (e) => {
-                            const newValue = e.target.value;
-
-                            setSelectedActions((prev) => ({
-                              ...prev,
-                              [item.UUID]: newValue,
+                            const val = e.target.value;
+                            setSelectedActions((p) => ({
+                              ...p,
+                              [itm.UUID]: val,
                             }));
-
                             const log = generateLog(userEmail);
-
-                            try {
-                              const res = await fetch(
-                                `${API_URL}/regional_3/sheets/${item.UUID}`,
-                                {
-                                  method: "PATCH",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
-                                  body: JSON.stringify({
-                                    STATUS: newValue,
-                                    LOG: log,
-                                  }),
-                                }
-                              );
-
-                              if (!res.ok) {
-                                throw new Error("Failed to update status");
+                            await fetch(
+                              `${API_URL}/regional_3/sheets/${itm.UUID}`,
+                              {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ STATUS: val, LOG: log }),
                               }
-
-                              onUpdateSuccess?.();
-                            } catch (err) {
-                              console.error("Error updating status:", err);
-                            }
+                            )
+                              .then((res) => {
+                                if (!res.ok) throw new Error("Failed");
+                                onUpdateSuccess();
+                              })
+                              .catch(console.error);
                           }}
                         />
                       )}
                     </td>
                   )}
+
                   {hasInProgress && (
-                    <td className="notes-container">
+                    <td>
                       <textarea
                         className="notes"
-                        value={notes[item.UUID] ?? item["NOTES"] ?? " "}
+                        value={notes[itm.UUID] ?? itm.NOTES ?? ""}
                         onChange={async (e) => {
-                          const updatedNotes = e.target.value;
-
-                          setNotes((prev) => ({
-                            ...prev,
-                            [item.UUID]: updatedNotes,
-                          }));
-
+                          const txt = e.target.value;
+                          setNotes((p) => ({ ...p, [itm.UUID]: txt }));
                           const log = generateLog(userEmail);
-
-                          try {
-                            const res = await fetch(
-                              `${API_URL}/regional_3/sheets/${item.UUID}`,
-                              {
-                                method: "PATCH",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                  NOTES:
-                                    updatedNotes.trim() === ""
-                                      ? null
-                                      : updatedNotes,
-                                  LOG: log,
-                                }),
-                              }
-                            );
-
-                            if (!res.ok) {
-                              throw new Error("Failed to update notes");
+                          await fetch(
+                            `${API_URL}/regional_3/sheets/${itm.UUID}`,
+                            {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                NOTES: txt.trim() || null,
+                                LOG: log,
+                              }),
                             }
-
-                            onUpdateSuccess?.();
-                          } catch (err) {
-                            console.error("Error updating notes:", err);
-                          }
+                          )
+                            .then((res) => {
+                              if (!res.ok) throw new Error("Failed");
+                              onUpdateSuccess();
+                            })
+                            .catch(console.error);
                         }}
                         rows={1}
                       />
                     </td>
                   )}
 
-                  {Object.keys(item).map((key) => (
-                    <td key={key}>
+                  {Object.keys(itm).map((col) => (
+                    <td key={col}>
                       <p>
-                        {key === "revenue"
-                          ? formatCurrency(item[key])
-                          : item[key] !== null
-                          ? item[key].toString()
-                          : "-"}
+                        {col === "REVENUE"
+                          ? formatCurrency(itm[col])
+                          : itm[col] ?? "-"}
                       </p>
                     </td>
                   ))}

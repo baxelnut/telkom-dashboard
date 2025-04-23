@@ -21,26 +21,29 @@ export default function ReportTable({
     return (
       <p>No data to be displayed. Please choose at least one order subtype.</p>
     );
-
   const [selectedCell, setSelectedCell] = useState(null);
+
   const handleCellClick = (cellData) => {
+    if (cellData.isTotal) {
+      setSelectedCell(cellData);
+      onCellSelect(cellData);
+      return;
+    }
+
     const { witelName, selectedCellId } = cellData;
     const [mainCategory, subCategory] = selectedCellId.split("-");
-
     const entry = reportTableData.data.find(
-      (item) => item['witelName'] === witelName
+      (item) => item.witelName === witelName
     );
     if (!entry || !entry[mainCategory]) {
       return;
     }
-
     const categoryKey = subCategory.includes("<3bln")
       ? "<3blnItems"
       : ">3blnItems";
     const extractedIds =
       entry[mainCategory]?.[categoryKey]?.map((i) => i.id) || [];
     const extractedCategory = selectedCategory;
-
     const updatedCellData = { ...cellData, extractedIds, extractedCategory };
 
     setSelectedCell(updatedCellData);
@@ -71,17 +74,57 @@ export default function ReportTable({
     return { totalCount, totalRevenue };
   };
 
-  const renderCells = (entry, umurKey) => {
-    const umurKeys =
-      umurKey === "both"
-        ? ["<3blnItems", ">3blnItems"]
-        : [`${umurKey}3blnItems`];
-    const { totalCount, totalRevenue } = processData(entry, umurKeys);
+  const renderWitelTotalCells = (entry, umurKey) => {
+    let rawItems = [];
+    if (umurKey === "both") {
+      orderSubtypes.forEach((sub) => {
+        rawItems.push(...(entry[sub]?.["<3blnItems"] || []));
+        rawItems.push(...(entry[sub]?.[">3blnItems"] || []));
+      });
+    } else {
+      const key = `${umurKey}3blnItems`;
+      orderSubtypes.forEach((sub) => {
+        rawItems.push(...(entry[sub]?.[key] || []));
+      });
+    }
+
+    const allFilteredItems = rawItems.filter(
+      (item) =>
+        selectedCategory === "ALL" || selectedCategory === item.ORDER_SUBTYPE2
+    );
+
+    const count = allFilteredItems.length;
+    const revenue = allFilteredItems.reduce(
+      (sum, i) => sum + (i.REVENUE || 0),
+      0
+    );
+    const formattedRevenue = formatCurrency(revenue);
+    const isDisabled = count === 0;
+
+    const cellData = {
+      witelName: entry.witelName,
+      subTypes: orderSubtypes,
+      kategoriUmur: `${umurKey}3bln`,
+      selectedCellId: `TOTAL-${entry.witelName}-${umurKey}3bln`,
+      isTotal: true,
+      extractedIds: allFilteredItems.map((i) => i.id),
+    };
+
+    const isSelected =
+      selectedCell?.witelName === entry.witelName &&
+      selectedCell?.kategoriUmur === cellData.kategoriUmur &&
+      selectedCell?.isTotal;
 
     return (
-      <td className="unresponsive">
-        <h6>{totalCount}</h6>
-        <p>{totalCount == 0 ? null : formatCurrency(totalRevenue)}</p>
+      <td
+        key={`total-${umurKey}`}
+        className={`${isDisabled ? "disabled-cell" : ""} ${
+          isSelected ? "selected-cell" : ""
+        }`}
+        onClick={() => !isDisabled && handleCellClick(cellData)}
+      >
+        <h6>{count}</h6>
+        <p>{count === 0 ? null : formattedRevenue}</p>
       </td>
     );
   };
@@ -109,6 +152,7 @@ export default function ReportTable({
         witelName: entry.witelName,
         subType: subtype,
         kategoriUmur: `${umurKey}3bln`,
+        isTotal: false,
         selectedCellId: `${subtype}-kategori_umur_${umurKey}3bln`,
       };
 
@@ -233,10 +277,10 @@ export default function ReportTable({
                   <h6>{entry?.witelName}</h6>
                 </td>
                 {renderRowCells(entry, "<")}
-                {renderCells(entry, "<")}
+                {renderWitelTotalCells(entry, "<")}
                 {renderRowCells(entry, ">")}
-                {renderCells(entry, ">")}
-                {renderCells(entry, "both")}
+                {renderWitelTotalCells(entry, ">")}
+                {renderWitelTotalCells(entry, "both")}
               </tr>
             ))}
 
