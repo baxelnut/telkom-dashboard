@@ -22,9 +22,7 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/aosodomoro/aosodomoro_reg_3_segmen`
-        );
+        const response = await fetch(`${API_URL}/regional_3/sheets/segmen`);
         const result = await response.json();
         setData(result.data);
         setLoading(false);
@@ -66,10 +64,7 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
           <Error message={error} />
         ) : (
           <>
-            <ResponsiveContainer
-              width="100%"
-              height={320}
-            >
+            <ResponsiveContainer width="100%" height={320}>
               <BarChart
                 data={chartData.sort((a, b) => a.quantity - b.quantity)}
               >
