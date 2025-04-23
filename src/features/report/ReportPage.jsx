@@ -24,37 +24,6 @@ const orderSubtypes = [
   "READY TO BILL",
 ];
 
-const headers = [
-  "NIPNAS",
-  "STANDARD_NAME",
-  "ORDER_ID",
-  "ORDER_SUBTYPE",
-  "ORDER_SUBTYPE2",
-  "LI_SID",
-  "SID",
-  "SEGMEN",
-  "SUB_SEGMEN",
-  "CUSTACCNTNAME",
-  "BILL_REGION",
-  "BILL_WITEL",
-  "LI_PRODUCT_NAME",
-  "IS_NONCONN",
-  "LI_BILLDATE",
-  "LI_MILESTONE",
-  "KATEGORI",
-  "LI_STATUS",
-  "LI_STATUS_DATE",
-  "LI_FULFILLMENT_STATUS",
-  "REVENUE",
-  "LI_CREATED_DATE",
-  "ORDER_CREATEDBY_NAME",
-  "ACTION_CD",
-  "KATEGORI_UMUR",
-  "UMUR_ORDER",
-  "PIC",
-  "KATEGORI_UMUR2",
-];
-
 export default function ReportPage({ API_URL, userEmail }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
