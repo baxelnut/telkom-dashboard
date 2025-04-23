@@ -26,7 +26,7 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
 
       try {
         const response = await fetch(
-          `${API_URL}/regional_3/report/order_sub_type`
+          `${API_URL}/regional_3/sheets/order_subtype_rev`
         );
 
         if (!response.ok) {
