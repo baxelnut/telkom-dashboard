@@ -1,8 +1,7 @@
 import supabase from "../services/supabaseService.js";
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SPREADSHEET_GID = process.env.SPREADSHEET_GID;
-const FORMATTED_GID = process.env.FORMATTED_GID;
+const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME, FORMATTED_GID } =
+  process.env;
 
 const BIG_5_REGIONS = [
   "BALI",
@@ -301,7 +300,7 @@ export const getReg3ReportData = async (req, res) => {
 // };
 
 export const fetchInProcessData = async () => {
-  const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
 
   const response = await fetch(sheetURL);
   const text = await response.text();
