@@ -20,7 +20,9 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/aosodomoro/reg_3_kategori`);
+        const response = await fetch(
+          `${API_URL}/regional_3/sheets/kategori_simplified`
+        );
         const result = await response.json();
         setData(result.data || []);
       } catch (error) {
@@ -155,7 +157,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
           fill="#999"
           fontSize={12}
         >
-          {`(Rate ${(percent * 100).toFixed(2)}%)`}
+          {`(${(percent * 100).toFixed(2)}%)`}
         </text>
       </g>
     );
