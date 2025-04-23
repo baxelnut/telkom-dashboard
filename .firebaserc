@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "basil-telkom-dashboard"
-  }
+    "default": "basil-telkom-dashboard",
+    "telkom-dashboard": "basil-telkom-dashboard"
+  },
+  "targets": {},
+  "etags": {}
 }
