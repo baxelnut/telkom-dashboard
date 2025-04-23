@@ -64,11 +64,14 @@ export default function SelectedTable({
   );
 
   const generateLog = (email) => {
-    const now = new Date().toLocaleString("id-ID", {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-    return `Last edited: ${now} by ${email}`;
+    const currentDate = new Date();
+
+    const date = currentDate.toLocaleDateString("id-ID");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const time = `${hours}:${minutes}`;
+
+    return `Last edited: ${date} ${time} by ${email}`;
   };
 
   return (
