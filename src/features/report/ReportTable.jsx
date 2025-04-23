@@ -9,7 +9,6 @@ const formatCurrency = (value) =>
 export default function ReportTable({
   reportTableData,
   selectedCategory,
-  selectedPeriod,
   orderSubtypes,
   loading,
   error,
@@ -17,216 +16,152 @@ export default function ReportTable({
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error />;
-  if (!orderSubtypes || orderSubtypes.length === 0)
-    return (
-      <p>No data to be displayed. Please choose at least one order subtype.</p>
-    );
+  if (!orderSubtypes.length)
+    return <p>Please select at least one order subtype.</p>;
+
   const [selectedCell, setSelectedCell] = useState(null);
 
   const handleCellClick = (cellData) => {
-    if (cellData.isTotal) {
-      setSelectedCell(cellData);
-      onCellSelect(cellData);
-      return;
-    }
-
-    const { witelName, selectedCellId } = cellData;
-    const [mainCategory, subCategory] = selectedCellId.split("-");
-    const entry = reportTableData.data.find(
-      (item) => item.witelName === witelName
-    );
-    if (!entry || !entry[mainCategory]) {
-      return;
-    }
-    const categoryKey = subCategory.includes("<3bln")
-      ? "<3blnItems"
-      : ">3blnItems";
-    const extractedIds =
-      entry[mainCategory]?.[categoryKey]?.map((i) => i.id) || [];
-    const extractedCategory = selectedCategory;
-    const updatedCellData = { ...cellData, extractedIds, extractedCategory };
-
-    setSelectedCell(updatedCellData);
-    onCellSelect(updatedCellData);
+    setSelectedCell(cellData);
+    onCellSelect(cellData);
   };
 
-  const processData = (entry, umurKeys) => {
-    let totalCount = 0;
-    let totalRevenue = 0;
-
-    umurKeys.forEach((umurKey) => {
-      orderSubtypes.forEach((subtype) => {
-        const items = entry?.[subtype]?.[umurKey] || [];
-        const filteredItems = items.filter(
-          (item) =>
-            selectedCategory === "ALL" ||
-            selectedCategory === item["ORDER_SUBTYPE2"]
-        );
-
-        totalCount += filteredItems.length;
-        totalRevenue += filteredItems.reduce(
-          (sum, item) => sum + (item["REVENUE"] || 0),
-          0
-        );
-      });
-    });
-
-    return { totalCount, totalRevenue };
-  };
-
-  const renderWitelTotalCells = (entry, umurKey) => {
-    let rawItems = [];
-    if (umurKey === "both") {
-      orderSubtypes.forEach((sub) => {
-        rawItems.push(...(entry[sub]?.["<3blnItems"] || []));
-        rawItems.push(...(entry[sub]?.[">3blnItems"] || []));
-      });
-    } else {
-      const key = `${umurKey}3blnItems`;
-      orderSubtypes.forEach((sub) => {
-        rawItems.push(...(entry[sub]?.[key] || []));
-      });
-    }
-
-    const allFilteredItems = rawItems.filter(
-      (item) =>
-        selectedCategory === "ALL" || selectedCategory === item.ORDER_SUBTYPE2
-    );
-
-    const count = allFilteredItems.length;
-    const revenue = allFilteredItems.reduce(
-      (sum, i) => sum + (i.REVENUE || 0),
-      0
-    );
-    const formattedRevenue = formatCurrency(revenue);
-    const isDisabled = count === 0;
-
-    const cellData = {
-      witelName: entry.witelName,
-      subTypes: orderSubtypes,
-      kategoriUmur: `${umurKey}3bln`,
-      selectedCellId: `TOTAL-${entry.witelName}-${umurKey}3bln`,
-      isTotal: true,
-      extractedIds: allFilteredItems.map((i) => i.id),
-    };
-
-    const isSelected =
-      selectedCell?.witelName === entry.witelName &&
-      selectedCell?.kategoriUmur === cellData.kategoriUmur &&
-      selectedCell?.isTotal;
-
-    return (
-      <td
-        key={`total-${umurKey}`}
-        className={`${isDisabled ? "disabled-cell" : ""} ${
-          isSelected ? "selected-cell" : ""
-        }`}
-        onClick={() => !isDisabled && handleCellClick(cellData)}
-      >
-        <h6>{count}</h6>
-        <p>{count === 0 ? null : formattedRevenue}</p>
-      </td>
-    );
-  };
-
-  const renderRowCells = (entry, umurKey) => {
-    return orderSubtypes.map((subtype, idx) => {
-      const key = `${umurKey}3blnItems`;
-      const filteredItems = entry?.[subtype]?.[key]?.filter(
-        (item) =>
-          selectedCategory === "ALL" ||
-          selectedCategory === item["ORDER_SUBTYPE2"]
+  const renderRowCells = (entry, umurKey) =>
+    orderSubtypes.map((subtype) => {
+      const bucket = `${umurKey}3blnItems`;
+      const allItems = entry[subtype]?.[bucket] || [];
+      const filtered = allItems.filter(
+        (i) =>
+          selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
       );
+      const count = filtered.length;
+      const revenue = filtered.reduce((sum, i) => sum + (i.REVENUE || 0), 0);
 
-      const count = filteredItems?.length || 0;
-      const revenue = filteredItems?.reduce(
-        (total, item) => total + (item["REVENUE"] || 0),
-        0
-      );
-      const formattedRevenue = formatCurrency(revenue);
-      const orderSubtypeList =
-        filteredItems?.map((item) => item["ORDER_SUBTYPE2"]).join(", ") || null;
-
-      const isDisabled = count === 0;
       const cellData = {
         witelName: entry.witelName,
         subType: subtype,
         kategoriUmur: `${umurKey}3bln`,
         isTotal: false,
-        selectedCellId: `${subtype}-kategori_umur_${umurKey}3bln`,
+        extractedIds: filtered.map((i) => i.id),
       };
-
-      const isSelected =
-        selectedCell &&
-        selectedCell.witelName === entry.witelName &&
-        selectedCell.subType === cellData.subType &&
-        selectedCell.kategoriUmur === cellData.kategoriUmur;
 
       return (
         <td
-          key={idx}
-          className={`${isDisabled ? "disabled-cell" : ""} ${
-            isSelected ? "selected-cell" : ""
-          }`}
-          onClick={() => !isDisabled && handleCellClick(cellData)}
+          key={`${entry.witelName}-${subtype}-${umurKey}`}
+          className={count === 0 ? "disabled-cell" : ""}
+          onClick={() => count > 0 && handleCellClick(cellData)}
         >
-          <h6>{orderSubtypeList ? count : 0}</h6>
-          <p>{count == 0 ? null : formattedRevenue}</p>
+          <h6>{count}</h6>
+          <p>{count > 0 && formatCurrency(revenue)}</p>
         </td>
       );
     });
-  };
 
-  const renderReportCells = (umurKey) => {
-    return orderSubtypes.map((grandItem, grandIndex) => {
-      const { totalCount, totalRevenue } = reportTableData["data"].reduce(
-        (acc, data) => {
-          const key = `${umurKey}3blnItems`;
-          const items = data[grandItem]?.[key] || [];
-          const filteredItems = items.filter(
-            (item) =>
-              selectedCategory === "ALL" ||
-              selectedCategory === item["ORDER_SUBTYPE2"]
-          );
-
-          acc.totalCount += filteredItems.length;
-          acc.totalRevenue += filteredItems.reduce(
-            (sum, item) => sum + (item["REVENUE"] || 0),
-            0
-          );
-          return acc;
-        },
-        { totalCount: 0, totalRevenue: 0 }
-      );
-
-      return (
-        <td key={grandIndex} className="unresponsive">
-          <h6>{totalCount}</h6>
-          <p>{totalCount == 0 ? null : formatCurrency(totalRevenue)}</p>
-        </td>
-      );
-    });
-  };
-
-  const renderGrandTotals = (umurKey) => {
-    const keysToCheck =
+  const renderWitelTotalCells = (entry, umurKey) => {
+    const bucketNames =
       umurKey === "both"
         ? ["<3blnItems", ">3blnItems"]
         : [`${umurKey}3blnItems`];
-    const { totalCount, totalRevenue } = reportTableData["data"].reduce(
-      (acc, data) => {
-        const result = processData(data, keysToCheck);
-        acc.totalCount += result.totalCount;
-        acc.totalRevenue += result.totalRevenue;
-        return acc;
-      },
-      { totalCount: 0, totalRevenue: 0 }
+
+    let allItems = [];
+    orderSubtypes.forEach((st) =>
+      bucketNames.forEach((bk) => allItems.push(...(entry[st]?.[bk] || [])))
     );
 
+    const filtered = allItems.filter(
+      (i) => selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+    );
+    const count = filtered.length;
+    const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+
+    const cellData = {
+      witelName: entry.witelName,
+      subType: null,
+      subTypes: orderSubtypes,
+      kategoriUmur: `${umurKey}3bln`,
+      isTotal: true,
+      extractedIds: filtered.map((i) => i.id),
+    };
+
     return (
-      <td className="unresponsive">
-        <h6>{totalCount}</h6>
-        <p>{totalCount == 0 ? null : formatCurrency(totalRevenue)}</p>
+      <td
+        key={`total-${entry.witelName}-${umurKey}`}
+        className={count === 0 ? "disabled-cell" : ""}
+        onClick={() => count > 0 && handleCellClick(cellData)}
+      >
+        <h6>{count}</h6>
+        <p>{count > 0 && formatCurrency(revenue)}</p>
+      </td>
+    );
+  };
+
+  const renderReportCells = (umurKey) =>
+    orderSubtypes.map((subtype) => {
+      const bucket = `${umurKey}3blnItems`;
+      const raw = reportTableData.data.flatMap(
+        (entry) => entry[subtype]?.[bucket] || []
+      );
+      const filtered = raw.filter(
+        (i) =>
+          selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+      );
+      const count = filtered.length;
+      const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+
+      const cellData = {
+        witelName: "ALL",
+        subType: subtype,
+        kategoriUmur: `${umurKey}3bln`,
+        isTotal: true,
+        extractedIds: filtered.map((i) => i.id),
+      };
+
+      return (
+        <td
+          key={`grand-${subtype}-${umurKey}`}
+          className="unresponsive"
+          onClick={() => count > 0 && handleCellClick(cellData)}
+        >
+          <h6>{count}</h6>
+          <p>{count > 0 && formatCurrency(revenue)}</p>
+        </td>
+      );
+    });
+
+  const renderGrandTotals = (umurKey) => {
+    const bucketNames =
+      umurKey === "both"
+        ? ["<3blnItems", ">3blnItems"]
+        : [`${umurKey}3blnItems`];
+
+    const raw = reportTableData.data.flatMap((entry) =>
+      orderSubtypes.flatMap((st) =>
+        bucketNames.flatMap((bk) => entry[st]?.[bk] || [])
+      )
+    );
+    const filtered = raw.filter(
+      (i) => selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+    );
+    const count = filtered.length;
+    const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+
+    const cellData = {
+      witelName: "ALL",
+      subType: null,
+      subTypes: orderSubtypes,
+      kategoriUmur: `${umurKey}3bln`,
+      isTotal: true,
+      extractedIds: filtered.map((i) => i.id),
+    };
+
+    return (
+      <td
+        key={`grand-total-${umurKey}`}
+        className="unresponsive"
+        onClick={() => count > 0 && handleCellClick(cellData)}
+      >
+        <h6>{count}</h6>
+        <p>{count > 0 && formatCurrency(revenue)}</p>
       </td>
     );
   };
@@ -250,31 +185,30 @@ export default function ReportTable({
                 <h6>&gt;3 BLN</h6>
               </th>
               <th rowSpan="2">
-                <h6>&gt;3 BLN Total</h6>
+                &gt;<h6>3 BLN Total</h6>
               </th>
               <th rowSpan="2">
                 <h6>Grand Total</h6>
               </th>
             </tr>
             <tr>
-              {orderSubtypes.map((label, index) => (
-                <th key={index}>
-                  <h6>{label}</h6>
+              {orderSubtypes.map((st) => (
+                <th key={`h1-${st}`}>
+                  <h6>{st}</h6>
                 </th>
               ))}
-              {orderSubtypes.map((label, index) => (
-                <th key={index}>
-                  <h6>{label}</h6>
+              {orderSubtypes.map((st) => (
+                <th key={`h2-${st}`}>
+                  <h6>{st}</h6>
                 </th>
               ))}
             </tr>
           </thead>
-
           <tbody>
-            {reportTableData["data"].map((entry, index) => (
-              <tr key={index}>
+            {reportTableData.data.map((entry) => (
+              <tr key={entry.witelName}>
                 <td className="unresponsive">
-                  <h6>{entry?.witelName}</h6>
+                  <h6>{entry.witelName}</h6>
                 </td>
                 {renderRowCells(entry, "<")}
                 {renderWitelTotalCells(entry, "<")}
@@ -283,7 +217,6 @@ export default function ReportTable({
                 {renderWitelTotalCells(entry, "both")}
               </tr>
             ))}
-
             <tr className="grand-total-row">
               <td className="grand-total-title">
                 <h6>GRAND TOTAL</h6>

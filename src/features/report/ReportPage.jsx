@@ -240,11 +240,29 @@ export default function ReportPage({ API_URL, userEmail }) {
         </div>
 
         <div className="title-container">
-          <h5>{selectedCell?.witelName}</h5>
+          <h5>
+            {selectedCell?.witelName === "ALL" ||
+            selectedCell?.witelName === null ||
+            selectedCell?.witelName === ""
+              ? "All Witel"
+              : selectedCell?.witelName}
+          </h5>
           <h6>→</h6>
-          <h5>{selectedCell?.kategoriUmur}</h5>
+          <h5>
+            {selectedCell?.kategoriUmur === "both3bln" ||
+            selectedCell?.kategoriUmur === null ||
+            selectedCell?.kategoriUmur === ""
+              ? "All Kategori Umur"
+              : selectedCell?.kategoriUmur}
+          </h5>
           <h6>→</h6>
-          <h5>{selectedCell?.subType}</h5>
+          <h5>
+            {selectedCell?.subType === "ALL" ||
+            selectedCell?.subType === null ||
+            selectedCell?.subType === ""
+              ? "All Subtype"
+              : selectedCell?.subType}
+          </h5>
         </div>
 
         <div className="table-wrapper">

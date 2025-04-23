@@ -9,8 +9,7 @@ const actionOptions = ["Lanjut", "Cancel", "Bukan Order Reg"].map((v) => ({
 }));
 actionOptions.unshift({ value: " ", label: "— Select Action —" });
 
-const formatCurrency = (val) =>
-  val ? `Rp${val.toLocaleString("id-ID")}` : "Rp0";
+const formatCurrency = (v) => (v ? `Rp${v.toLocaleString("id-ID")}` : "Rp0");
 
 export default function SelectedTable({
   selectedCell,
@@ -21,50 +20,62 @@ export default function SelectedTable({
   onUpdateSuccess,
 }) {
   if (!selectedCell) return <Error />;
-
-  const [selectedActions, setSelectedActions] = useState({});
-  const [notes, setNotes] = useState({});
-
-  const { witelName, kategoriUmur, isTotal, extractedIds, subTypes, subType } =
+  const { witelName, kategoriUmur, isTotal, extractedIds, subType, subTypes } =
     selectedCell;
 
-  const witelEntry = data.find((d) => d.witelName === witelName);
-  if (!witelEntry) return <p>No matching data found.</p>;
+  const [actions, setActions] = useState({});
+  const [notes, setNotes] = useState({});
 
-  const bucketKeys = isTotal
-    ? ["<3blnItems", ">3blnItems"]
-    : [`${kategoriUmur}Items`];
+  const bucketKeys = (() => {
+    if (witelName === "ALL" && isTotal && subType == null) {
+      return ["<3blnItems", ">3blnItems"];
+    }
+
+    return [`${kategoriUmur}Items`];
+  })();
 
   let items = [];
-  if (isTotal) {
-    subTypes.forEach((st) => {
-      bucketKeys.forEach((bk) => {
-        items.push(...(witelEntry[st]?.[bk] || []));
-      });
-    });
+
+  if (witelName === "ALL") {
+    if (subType) {
+      data.forEach((ent) =>
+        bucketKeys.forEach((bk) => items.push(...(ent[subType]?.[bk] || [])))
+      );
+    } else {
+      data.forEach((ent) =>
+        subTypes.forEach((st) =>
+          bucketKeys.forEach((bk) => items.push(...(ent[st]?.[bk] || [])))
+        )
+      );
+    }
   } else {
-    items = witelEntry[subType]?.[bucketKeys[0]] || [];
+    const ent = data.find((d) => d.witelName === witelName);
+    if (!ent) return <p>No data for {witelName}</p>;
+
+    if (isTotal) {
+      subTypes.forEach((st) =>
+        bucketKeys.forEach((bk) => items.push(...(ent[st]?.[bk] || [])))
+      );
+    } else {
+      items = ent[subType]?.[bucketKeys[0]] || [];
+    }
   }
 
-  const filteredItems = items.filter(
-    (itm) =>
-      extractedIds.includes(itm.id) &&
-      (selectedCategory === "ALL" || itm.ORDER_SUBTYPE === selectedCategory)
+  const filtered = items.filter(
+    (i) =>
+      extractedIds.includes(i.id) &&
+      (selectedCategory === "ALL" || i.ORDER_SUBTYPE === selectedCategory)
   );
 
-  if (filteredItems.length === 0) {
-    return <p>No matching data found.</p>;
-  }
+  if (!filtered.length) return <p>No matching data found.</p>;
 
-  const hasInProgress = filteredItems.some(
-    (itm) => itm.KATEGORI === "IN PROCESS"
-  );
+  const hasInProgress = filtered.some((i) => i.KATEGORI === "IN PROCESS");
 
-  const generateLog = (email) => {
-    const now = new Date();
-    const date = now.toLocaleDateString("id-ID");
-    const time = now.toTimeString().slice(0, 5);
-    return `Last edited: ${date} ${time} by ${email}`;
+  const logLine = (email) => {
+    const d = new Date();
+    return `Last edited: ${d.toLocaleDateString("id-ID")} ${d
+      .toTimeString()
+      .slice(0, 5)} by ${email}`;
   };
 
   return (
@@ -75,11 +86,6 @@ export default function SelectedTable({
             <tr>
               {hasInProgress && (
                 <th>
-                  <h6>Log</h6>
-                </th>
-              )}
-              {hasInProgress && (
-                <th>
                   <h6>Action</h6>
                 </th>
               )}
@@ -88,38 +94,34 @@ export default function SelectedTable({
                   <h6>Notes</h6>
                 </th>
               )}
-              {Object.keys(filteredItems[0]).map((col) => (
-                <th key={col}>
-                  <h6>{col}</h6>
+              {Object.keys(filtered[0]).map((c) => (
+                <th key={c}>
+                  <h6>{c}</h6>
                 </th>
               ))}
+              {hasInProgress && (
+                <th>
+                  <h6>Log</h6>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
-            {filteredItems.map((itm, idx) => {
+            {filtered.map((itm, idx) => {
               const inProg = itm.KATEGORI === "IN PROCESS";
               return (
                 <tr key={idx}>
-                  {hasInProgress && (
-                    <td>
-                      <p>{itm.LOG || ""}</p>
-                    </td>
-                  )}
-
                   {hasInProgress && (
                     <td>
                       {inProg && (
                         <Dropdown
                           key={itm.UUID}
                           options={actionOptions}
-                          value={selectedActions[itm.UUID] ?? itm.STATUS ?? ""}
+                          value={actions[itm.UUID] ?? itm.STATUS ?? ""}
                           onChange={async (e) => {
                             const val = e.target.value;
-                            setSelectedActions((p) => ({
-                              ...p,
-                              [itm.UUID]: val,
-                            }));
-                            const log = generateLog(userEmail);
+                            setActions((p) => ({ ...p, [itm.UUID]: val }));
+                            const log = logLine(userEmail);
                             await fetch(
                               `${API_URL}/regional_3/sheets/${itm.UUID}`,
                               {
@@ -127,18 +129,14 @@ export default function SelectedTable({
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({ STATUS: val, LOG: log }),
                               }
-                            )
-                              .then((res) => {
-                                if (!res.ok) throw new Error("Failed");
-                                onUpdateSuccess();
-                              })
-                              .catch(console.error);
+                            ).then((res) =>
+                              res.ok ? onUpdateSuccess() : Promise.reject()
+                            );
                           }}
                         />
                       )}
                     </td>
                   )}
-
                   {hasInProgress && (
                     <td>
                       <textarea
@@ -147,7 +145,7 @@ export default function SelectedTable({
                         onChange={async (e) => {
                           const txt = e.target.value;
                           setNotes((p) => ({ ...p, [itm.UUID]: txt }));
-                          const log = generateLog(userEmail);
+                          const log = logLine(userEmail);
                           await fetch(
                             `${API_URL}/regional_3/sheets/${itm.UUID}`,
                             {
@@ -158,27 +156,20 @@ export default function SelectedTable({
                                 LOG: log,
                               }),
                             }
-                          )
-                            .then((res) => {
-                              if (!res.ok) throw new Error("Failed");
-                              onUpdateSuccess();
-                            })
-                            .catch(console.error);
+                          ).then((res) =>
+                            res.ok ? onUpdateSuccess() : Promise.reject()
+                          );
                         }}
                         rows={1}
                       />
                     </td>
                   )}
-
-                  {Object.keys(itm).map((col) => (
-                    <td key={col}>
-                      <p>
-                        {col === "REVENUE"
-                          ? formatCurrency(itm[col])
-                          : itm[col] ?? "-"}
-                      </p>
+                  {Object.keys(itm).map((c) => (
+                    <td key={c}>
+                      {c === "REVENUE" ? formatCurrency(itm[c]) : itm[c] ?? "-"}
                     </td>
                   ))}
+                  {hasInProgress && <td>{itm.LOG || ""}</td>}
                 </tr>
               );
             })}
