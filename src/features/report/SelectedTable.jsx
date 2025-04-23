@@ -101,7 +101,7 @@ export default function SelectedTable({
               ))}
               {hasInProgress && (
                 <th>
-                  <h6>Log</h6>
+                  <h6>LOG</h6>
                 </th>
               )}
             </tr>
