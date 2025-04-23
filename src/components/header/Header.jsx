@@ -13,8 +13,6 @@ export default function Header({
     setShowDropdown((prev) => !prev);
   };
 
-  console.log(user.imageUrl);
-
   return (
     <div className="header-container">
       <div className="title">
