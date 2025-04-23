@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import Dropdown from "../../components/utils/Dropdown";
 
-const colorSet = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#640D5F"];
+const colorSet = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#640D5F"];
 
 export default function OverViewRadar({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
@@ -24,7 +24,9 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/aosodomoro/reg_3_segmen`);
+        const response = await fetch(
+          `${API_URL}/regional_3/sheets/segmen_simplified`
+        );
         const result = await response.json();
         setData(result.data || []);
       } catch (error) {
@@ -39,7 +41,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
 
   const segmenFields = useMemo(() => {
     if (data.length === 0) return [];
-    return Object.keys(data[0]).filter((key) => key !== "witel_name");
+    return Object.keys(data[0]).filter((key) => key !== "bill_witel");
   }, [data]);
 
   const fullMarks = useMemo(() => {
@@ -50,22 +52,26 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
   }, [data, segmenFields]);
 
   const generateChartData = useMemo(() => {
-    return segmenFields.map((field) => ({
-      subject: field
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase()),
-      fullMark: fullMarks[field],
-      ...data.reduce((acc, item) => {
-        acc[item.witel_name] = item[field] || 0;
-        return acc;
-      }, {}),
-    }));
+    return segmenFields
+      .map((field) => ({
+        subject: field
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase()),
+        fullMark: fullMarks[field],
+        ...data.reduce((acc, item) => {
+          // Ensure zero values are explicitly included
+          const value = item[field] || 0;
+          acc[item.bill_witel] = value;
+          return acc;
+        }, {}),
+      }))
+      .filter((item) => Object.keys(item).length > 1);
   }, [data, segmenFields, fullMarks]);
 
   const witelOptions = useMemo(
     () => [
       { value: "ALL", label: "ALL" },
-      ...[...new Set(data.map((item) => item.witel_name))].map((witel) => ({
+      ...[...new Set(data.map((item) => item.bill_witel))].map((witel) => ({
         value: witel,
         label: witel,
       })),
@@ -77,7 +83,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     () =>
       selectedWitel === "ALL"
         ? data
-        : data.filter((item) => item.witel_name === selectedWitel),
+        : data.filter((item) => item.bill_witel === selectedWitel),
     [selectedWitel, data]
   );
 
@@ -118,9 +124,9 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 {filteredData.map((item, index) => (
                   <Radar
-                    key={item.witel_name}
-                    name={item.witel_name}
-                    dataKey={item.witel_name}
+                    key={item.bill_witel}
+                    name={item.bill_witel}
+                    dataKey={item.bill_witel}
                     stroke={colorSet[index % colorSet.length]}
                     fill={colorSet[index % colorSet.length]}
                     fillOpacity={0.3}
