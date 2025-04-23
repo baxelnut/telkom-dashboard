@@ -11,6 +11,11 @@ import {
   injectUUID,
   processStatus,
   updateSheet,
+  getOrderSubtypeRev,
+  getSheetSegmen,
+  getSheetOrderType,
+  getSheetOrderSimplified,
+  getSheetKategoriSimplified,
 } from "../controllers/sheetsController.js";
 
 const router = express.Router();
@@ -24,6 +29,11 @@ router.patch("/:id", updateReg3Data);
 
 router.patch("/sheets/:id", updateSheet);
 router.get("/sheets/process_status", processStatus);
+router.get("/sheets/order_subtype_rev", getOrderSubtypeRev);
+router.get("/sheets/segmen", getSheetSegmen);
+router.get("/sheets/segmen_simplified", getSheetOrderSimplified);
+router.get("/sheets/kategori_simplified", getSheetKategoriSimplified);
+router.get("/sheets/order_subtype", getSheetOrderType);
 
 // warning! not dynamically programmed
 router.get("/inject_uuid/beware/reset_format_aosodomoro_sheet", injectUUID);
