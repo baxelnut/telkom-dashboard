@@ -1,5 +1,4 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import "./Header.css";
 import UserProfile from "./UserProfile";
 
@@ -10,11 +9,11 @@ export default function Header({
   showDropdown,
   setShowDropdown,
 }) {
-  const location = useLocation();
-
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
+
+  console.log(user.imageUrl);
 
   return (
     <div className="header-container">
@@ -27,8 +26,10 @@ export default function Header({
           className="picture"
           src={user.imageUrl ?? "/images/default_profile.png"}
           onClick={toggleDropdown}
+          referrerPolicy="no-referrer"
         />
-        <p className="name">{user.name ?? user.email ?? "Error: no email"}</p>
+
+        <p className="name">{user.name ?? user.email ?? "No email? :("}</p>
 
         <svg
           xmlns="http://www.w3.org/2000/svg"

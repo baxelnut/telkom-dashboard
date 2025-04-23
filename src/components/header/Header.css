@@ -13,8 +13,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 20%;
   gap: 1rem;
+  width: 18%;
 }
 
 .profile .picture {
@@ -28,9 +28,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;
   padding-block: 4px;
   height: fit-content;
+  width: fit-content;
 }
 
 .profile .chevron-down {
@@ -48,6 +48,7 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  flex: 1;
 }
 
 .header-container .logo {
