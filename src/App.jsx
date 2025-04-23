@@ -14,9 +14,9 @@ import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
 import OverviewPage from "./features/overview/OverviewPage";
-import PerformancePage from "./features/performance/PerformancePage";
+// import PerformancePage from "./features/performance/PerformancePage";
 import ReportPage from "./features/report/ReportPage";
-import ExamplePage from "./features/example/ExamplePage";
+// import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 import LoginPage from "./features/LoginPage";
 
@@ -26,9 +26,9 @@ const DEV_API_URL = import.meta.env.VITE_DEV_API;
 const pageConfig = {
   "/": { title: "Overview" },
   "/overview": { title: "Overview" },
-  "/performance": { title: "Performance" },
+  // "/performance": { title: "Performance" },
   "/report": { title: "Report" },
-  "/example": { title: "Example" },
+  // "/example": { title: "Example" },
 };
 
 function AppContent() {
@@ -120,22 +120,22 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/performance"
               element={
                 <ProtectedRoute>
                   <PerformancePage API_URL={API_URL} />
                 </ProtectedRoute>
               }
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/example"
               element={
                 <ProtectedRoute>
                   <ExamplePage API_URL={DEV_API_URL} />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>

@@ -38,13 +38,13 @@ const menuItems = [
   { id: "overview", label: "Overview", icon: icons.grid, path: "/overview" },
   { id: "report", label: "Report", icon: icons.clipboard, path: "/report" },
   // { id: "report2", label: "Report2", icon: icons.clipboard, path: "/report2" },
-  {
-    id: "performance",
-    label: "Performance",
-    icon: icons.barChart,
-    path: "/performance",
-  },
-  { id: "example", label: "Example", icon: icons.tornado, path: "/example" },
+  // {
+  //   id: "performance",
+  //   label: "Performance",
+  //   icon: icons.barChart,
+  //   path: "/performance",
+  // },
+  // { id: "example", label: "Example", icon: icons.tornado, path: "/example" },
 ];
 
 export default function SideBar() {
