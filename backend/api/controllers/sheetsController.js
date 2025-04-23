@@ -134,9 +134,13 @@ export const processStatus = async (req, res) => {
   try {
     const data = await fetchFormattedReportData();
 
+    const filteredData = data.filter(
+      (entry) => entry["KATEGORI"] === "IN PROCESS"
+    );
+
     const resultMap = {};
 
-    data.forEach((entry) => {
+    filteredData.forEach((entry) => {
       const witel = entry["BILL_WITEL"];
 
       if (!resultMap[witel]) {
@@ -172,7 +176,7 @@ export const processStatus = async (req, res) => {
   }
 };
 
-export const getAosodomoroSheet = async (req, res) => {
+export const getSheet = async (req, res) => {
   try {
     const { page = 1, limit = 100 } = req.query;
     const startIndex = (page - 1) * limit;
@@ -201,6 +205,288 @@ export const getAosodomoroSheet = async (req, res) => {
     });
   } catch (err) {
     console.error("🔥 Spreadsheet Fetch Error:", err);
+    res.status(500).json({ error: err.message || "Unknown sheet error" });
+  }
+};
+
+export const getOrderSubtypeRev = async (req, res) => {
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+
+  try {
+    const response = await fetch(sheetURL);
+    const text = await response.text();
+
+    const jsonText = text.substring(47).slice(0, -2);
+    const sheetData = JSON.parse(jsonText);
+
+    const cols = sheetData.table.cols.map((col) => col.label);
+    const rows = sheetData.table.rows;
+
+    const resultMap = {};
+
+    rows.forEach((row) => {
+      const rowData = {};
+      row.c.forEach((cell, index) => {
+        rowData[cols[index]] = cell?.v ?? null;
+      });
+
+      const witel = rowData["BILL_WITEL"];
+
+      if (!witel || witel.trim() === "") return;
+
+      const subtypeRaw = rowData["ORDER_SUBTYPE"];
+      const subtype = subtypeRaw?.toLowerCase().replace(/\s+/g, "_");
+      const revenue = parseFloat(rowData["REVENUE"]) || 0;
+
+      if (!resultMap[witel]) {
+        resultMap[witel] = {
+          bill_witel: witel,
+          new_install: 0,
+          modify: 0,
+          suspend: 0,
+          disconnect: 0,
+          upgrade: 0,
+          downgrade: 0,
+          other: 0,
+        };
+      }
+
+      if (resultMap[witel][subtype] !== undefined) {
+        resultMap[witel][subtype] += revenue;
+      } else {
+        resultMap[witel]["other"] += revenue;
+      }
+    });
+
+    res.status(200).json({ data: Object.values(resultMap) });
+  } catch (error) {
+    console.error("getOrderSubtypeRev error:", error);
+    res.status(500).json({ error: "Failed to fetch order subtype data." });
+  }
+};
+
+export const getSheetSegmen = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+    const formattedData = json.table.rows.map((row) => {
+      const values = row.c.map((cell) => cell?.v ?? "");
+      return headers.reduce((obj, key, index) => {
+        obj[key] = values[index];
+        return obj;
+      }, {});
+    });
+
+    const grouped = {};
+    for (const row of formattedData) {
+      const billWitel = row["bill_witel"] || row["BILL_WITEL"];
+      const subSegmen = row["segmen"] || row["SEGMEN"];
+      if (!billWitel || !subSegmen) continue;
+
+      const key = `${billWitel}||${subSegmen}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          bill_witel: billWitel,
+          segmen: subSegmen,
+          quantity: 0,
+        };
+      }
+      grouped[key].quantity += 1;
+    }
+
+    const result = Object.values(grouped);
+    res.json({ data: result });
+  } catch (err) {
+    console.error("🔥 Spreadsheet Fetch Error:", err);
+    res.status(500).json({ error: err.message || "Unknown sheet error" });
+  }
+};
+
+export const getSheetOrderType = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+    const formattedData = json.table.rows.map((row) => {
+      const values = row.c.map((cell) => cell?.v ?? "");
+      return headers.reduce((obj, key, index) => {
+        obj[key] = values[index];
+        return obj;
+      }, {});
+    });
+
+    const actionMap = {};
+
+    for (const row of formattedData) {
+      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const subtypeRaw = row["order_subtype"] || row["ORDER_SUBTYPE"];
+      const subtype = subtypeRaw.toLowerCase();
+
+      if (!witel || !subtype) continue;
+
+      if (!actionMap[witel]) {
+        actionMap[witel] = {
+          bill_witel: witel,
+          disconnect: 0,
+          suspend: 0,
+          renewal_agreement: 0,
+          modify: 0,
+          resume: 0,
+          modify_price: 0,
+          modify_ba: 0,
+          modify_termin: 0,
+        };
+      }
+
+      const target = actionMap[witel];
+
+      if (subtype.includes("disconnect")) target.disconnect += 1;
+      else if (subtype.includes("suspend")) target.suspend += 1;
+      else if (subtype.includes("resume")) target.resume += 1;
+      else if (subtype.includes("renewal")) target.renewal_agreement += 1;
+      else if (subtype.includes("modify")) target.modify += 1;
+    }
+
+    res.json({ data: Object.values(actionMap) });
+  } catch (err) {
+    console.error("🔥 Sheet Parse Error:", err);
+    res.status(500).json({ error: err.message || "Unknown sheet error" });
+  }
+};
+
+export const getSheetOrderSimplified = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+
+    const formattedData = json.table.rows.map((row) => {
+      const values = row.c.map((cell) => cell?.v ?? "");
+      return headers.reduce((obj, key, index) => {
+        obj[key] = values[index];
+        return obj;
+      }, {});
+    });
+
+    const actionMap = formattedData.reduce((acc, row) => {
+      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const segmenRaw = row["segmen"] || row["SEGMEN"];
+      const segmen = segmenRaw ? segmenRaw.trim().toLowerCase() : "";
+
+      if (!witel || !segmen) return acc;
+
+      if (!acc[witel]) {
+        acc[witel] = {
+          bill_witel: witel,
+          state_owned_enterprise_service: 0,
+          government: 0,
+          regional: 0,
+          private_service: 0,
+          enterprise: 0,
+        };
+      }
+
+      const target = acc[witel];
+
+      switch (segmen) {
+        case "government":
+          target.government += 1;
+          break;
+        case "state-owned enterprise service":
+          target.state_owned_enterprise_service += 1;
+          break;
+        case "private service":
+          target.private_service += 1;
+          break;
+        case "regional":
+          target.regional += 1;
+          break;
+        case "enterprise":
+          target.enterprise += 1;
+          break;
+        default:
+          console.log(`Unknown segmen type: ${segmen}`);
+      }
+
+      return acc;
+    }, {});
+
+    res.json({ data: Object.values(actionMap) });
+  } catch (err) {
+    console.error("🔥 Sheet Parse Error:", err);
+    res.status(500).json({ error: err.message || "Unknown sheet error" });
+  }
+};
+
+export const getSheetKategoriSimplified = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
+
+    const formattedData = json.table.rows.map((row) => {
+      const values = row.c.map((cell) => cell?.v ?? "");
+      return headers.reduce((obj, key, index) => {
+        obj[key] = values[index];
+        return obj;
+      }, {});
+    });
+
+    const actionMap = formattedData.reduce((acc, row) => {
+      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const kategoriRaw = row["kategori"] || row["KATEGORI"];
+      const kategori = kategoriRaw ? kategoriRaw.trim().toLowerCase() : "";
+
+      if (!witel || !kategori) return acc;
+
+      if (!acc[witel]) {
+        acc[witel] = {
+          bill_witel: witel,
+          billing_completed: 0,
+          in_process: 0,
+          prov_complete: 0,
+          provide_order: 0,
+          ready_to_bill: 0,
+        };
+      }
+
+      const target = acc[witel];
+
+      switch (kategori) {
+        case "billing completed":
+          target.billing_completed += 1;
+          break;
+        case "in process":
+          target.in_process += 1;
+          break;
+        case "prov. complete":
+          target.prov_complete += 1;
+          break;
+        case "provide order":
+          target.provide_order += 1;
+          break; 
+        case "ready to bill":
+          target.ready_to_bill += 1;
+          break;
+        default:
+          console.log(`Unknown kategori type: ${kategori}`);
+      }
+
+      return acc;
+    }, {});
+
+    res.json({ data: Object.values(actionMap) });
+  } catch (err) {
+    console.error("🔥 Sheet Parse Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
