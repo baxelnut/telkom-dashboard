@@ -41,8 +41,7 @@ function AppContent() {
 
   const isNotFound = !(
     pageConfig[pathname] ||
-    pathname === "/" ||
-    pathname !== "/login"
+    (pathname === "/" && pathname === "/login")
   );
 
   const handleMobileMenuClick = () => {
