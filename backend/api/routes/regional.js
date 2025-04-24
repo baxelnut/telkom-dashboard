@@ -36,6 +36,6 @@ router.get("/sheets/kategori_simplified", getSheetKategoriSimplified);
 router.get("/sheets/order_subtype", getSheetOrderType);
 
 // warning! not dynamically programmed
-router.get("/inject_uuid/beware/reset_format_aosodomoro_sheet", injectUUID);
+// router.get("/inject_uuid/beware/reset_format_aosodomoro_sheet", injectUUID);
 
 export default router;
