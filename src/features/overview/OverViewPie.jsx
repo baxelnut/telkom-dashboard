@@ -5,7 +5,7 @@ import Error from "../../components/utils/Error";
 import Dropdown from "../../components/utils/Dropdown";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
-const colorSet = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#640D5F"];
+const colorSet = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#7C4585"];
 
 export default function OverViewPie({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);

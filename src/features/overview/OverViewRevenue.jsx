@@ -52,7 +52,7 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
     };
 
     fetchData();
-  }, []);
+  }, [API_URL]);
 
   const formatValue = (value) => {
     const suffixes = ["", "K", "M", "B"];
@@ -109,19 +109,27 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={chartData.sort((a, b) => b.revenue - a.revenue)}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12, fill: "var(--text)" }}
+                />
                 <YAxis
-                  tick={{ fontSize: 12 }}
                   orientation="right"
                   tickFormatter={formatValue}
+                  tick={{ fontSize: 12, fill: "var(--text)" }}
                 />
                 <Tooltip
                   formatter={(value) => formatValue(value)}
                   labelStyle={{ fontWeight: "bold" }}
-                  contentStyle={{ fontSize: "14px" }}
+                  contentStyle={{
+                    fontSize: "14px",
+                    backgroundColor: "var(--surface)",
+                    padding: "14px",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                  }}
                 />
-                <Tooltip />
-                <Bar dataKey="revenue" fill="#e76705" />
+                <Bar dataKey="revenue" fill="var(--secondary)" />
               </BarChart>
             </ResponsiveContainer>
 

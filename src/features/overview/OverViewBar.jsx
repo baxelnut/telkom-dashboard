@@ -69,9 +69,24 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
                 data={chartData.sort((a, b) => a.quantity - b.quantity)}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} orientation="right" />
-                <Tooltip />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12, fill: "var(--text)" }}
+                />
+                <YAxis
+                  tick={{ fontSize: 12, fill: "var(--text)" }}
+                  orientation="right"
+                />
+                <Tooltip
+                  labelStyle={{ fontWeight: "bold" }}
+                  contentStyle={{
+                    fontSize: "14px",
+                    backgroundColor: "var(--surface)",
+                    padding: "14px",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                  }}
+                />
                 <Bar dataKey="quantity" fill="#e76705" />
               </BarChart>
             </ResponsiveContainer>

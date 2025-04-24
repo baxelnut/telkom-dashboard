@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import Dropdown from "../../components/utils/Dropdown";
 
-const colorSet = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#640D5F"];
+const colorSet = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#7C4585"];
 
 export default function OverViewRadar({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
@@ -39,6 +39,17 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     fetchData();
   }, []);
 
+  const generateColorMap = useMemo(() => {
+    const colorMap = {};
+    const uniqueWitels = [...new Set(data.map((item) => item.bill_witel))];
+
+    uniqueWitels.forEach((witel, index) => {
+      colorMap[witel] = colorSet[index % colorSet.length];
+    });
+
+    return colorMap;
+  }, [data]);
+
   const segmenFields = useMemo(() => {
     if (data.length === 0) return [];
     return Object.keys(data[0]).filter((key) => key !== "bill_witel");
@@ -59,7 +70,6 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
           .replace(/\b\w/g, (c) => c.toUpperCase()),
         fullMark: fullMarks[field],
         ...data.reduce((acc, item) => {
-          // Ensure zero values are explicitly included
           const value = item[field] || 0;
           acc[item.bill_witel] = value;
           return acc;
@@ -122,13 +132,13 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
                   domain={[0, Math.max(...Object.values(fullMarks))]}
                 />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                {filteredData.map((item, index) => (
+                {filteredData.map((item) => (
                   <Radar
                     key={item.bill_witel}
                     name={item.bill_witel}
                     dataKey={item.bill_witel}
-                    stroke={colorSet[index % colorSet.length]}
-                    fill={colorSet[index % colorSet.length]}
+                    stroke={generateColorMap[item.bill_witel]} // Dynamic color per witel
+                    fill={generateColorMap[item.bill_witel]} // Dynamic color per witel
                     fillOpacity={0.3}
                   />
                 ))}

@@ -9,7 +9,7 @@ import TableScroll from "../../components/table/TableScroll";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-const rowPerPageOptions = [10, 20, 50, 100, 200, 500, 1000].map((value) => ({
+const rowPerPageOptions = [10, 20, 50, 100, 200, 500].map((value) => ({
   value,
   label: `Show ${value} rows`,
 }));
@@ -115,11 +115,16 @@ export default function OverviewTable({ API_URL }) {
         </div>
 
         <div className="filter-container">
-          <p className="label">Export as:</p>
+          <button
+            className="label"
+            onClick={() => handleExport(selectedExport)}
+          >
+            <p>Export as</p>
+          </button>
           <Dropdown
             options={exportOptions}
             value={selectedExport}
-            onChange={(e) => handleExport(e.target.value)}
+            onChange={(e) => setSelectedExport(e.target.value)}
           />
         </div>
       </div>

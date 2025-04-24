@@ -2,12 +2,17 @@ import React from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import "./OverViewStatus.css";
 
-const STATUS_COLORS = {
-  lanjut: "#e76705",
-  cancel: "#312a68",
-  bukan_order_reg: "#14A44D",
-  no_status: "#B4B4B3",
+const getStatusColorsFromCSS = () => {
+  const styles = getComputedStyle(document.documentElement);
+  return {
+    lanjut: styles.getPropertyValue("--success"),
+    cancel: styles.getPropertyValue("--error"),
+    bukan_order_reg: styles.getPropertyValue("--secondary"),
+    no_status: styles.getPropertyValue("--text-variant"),
+  };
 };
+
+const STATUS_COLORS = getStatusColorsFromCSS();
 
 export default function OverViewStatus({ overviewStatus }) {
   const statuses = Object.entries(STATUS_COLORS);
