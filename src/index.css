@@ -53,6 +53,22 @@ body {
   font-family: var(--body);
 }
 
+body.dark {
+  --primary: #207391;
+  --primary-variant: #3199b0;
+  --surface: #272932;
+  --bg: #000000;
+  --text: #ffffff;
+  --text-variant: #7a7a7a;
+
+  --primary-rgb: 32, 115, 145;
+  --primary-variant-rgb: 49, 153, 176;
+  --surface-rgb: 39, 41, 50;
+  --bg-rgb: 0, 0, 0;
+  --text-rgb: 255, 255, 255;
+  --text-variant-rgb: 122, 122, 122;
+}
+
 * {
   margin: 0;
   padding: 0;
