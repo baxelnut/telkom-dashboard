@@ -47,7 +47,7 @@ const menuItems = [
   // { id: "example", label: "Example", icon: icons.tornado, path: "/example" },
 ];
 
-export default function SideBar() {
+export default function SideBar({ isDarkMode }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,7 +67,11 @@ export default function SideBar() {
 
   return (
     <div className="sidebar-container">
-      <img className="logo" src="/TLK_BIG.svg" alt="logo" />
+      <img
+        className="logo"
+        src={isDarkMode ? "/TLK_BIG_REVERSE.svg" : "/TLK_BIG.svg"}
+        alt="logo"
+      />
       <div className="menu">
         {menuItems.map((item) => (
           <div
