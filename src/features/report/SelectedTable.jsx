@@ -99,11 +99,6 @@ export default function SelectedTable({
                   <h6>{c}</h6>
                 </th>
               ))}
-              {hasInProgress && (
-                <th>
-                  <h6>LOG</h6>
-                </th>
-              )}
             </tr>
           </thead>
           <tbody>
@@ -169,7 +164,6 @@ export default function SelectedTable({
                       {c === "REVENUE" ? formatCurrency(itm[c]) : itm[c] ?? "-"}
                     </td>
                   ))}
-                  {hasInProgress && <td>{itm.LOG || ""}</td>}
                 </tr>
               );
             })}
