@@ -35,11 +35,20 @@
     transform 0.2s ease-in-out;
 }
 
+body.dark .report-table .table-scroll td:hover,
+body.dark .report-table .table-scroll td:hover p {
+  color: var(--text);
+}
+
+body.dark .report-table .table-scroll td p {
+  color: rgb(var(--text-rgb), 0.7);
+}
+
 .report-table .table-scroll th:hover,
 .grand-total-row .unresponsive:hover,
 .grand-total-title:hover,
 .unresponsive:hover p {
-  background-color: var(--primary)  !important;
+  background-color: var(--primary);
   transform: scale(1.02);
   transition: background-color 0.3s ease, color 0.3s ease,
     transform 0.2s ease-in-out;
@@ -88,10 +97,26 @@
   background-color: var(--primary-variant);
 }
 
+body.dark .grand-total-row .unresponsive,
+body.dark .grand-total-title {
+  background-color: var(--primary);
+}
+
 .grand-total-row .unresponsive p,
 .grand-total-row .unresponsive,
 .grand-total-title {
   color: var(--surface) !important;
+}
+
+body.dark .grand-total-row .unresponsive p,
+body.dark .grand-total-row .unresponsive,
+body.dark .grand-total-title {
+  color: var(--text) !important;
+}
+
+body.dark .grand-total-row .unresponsive:hover,
+body.dark .report-table .grand-total-row td:hover p {
+  background-color: var(--primary-variant);
 }
 
 @media screen and (max-width: 768px) {

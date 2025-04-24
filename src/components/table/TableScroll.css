@@ -26,6 +26,10 @@ th {
 }
 
 body.dark th {
+  background-color: var(--primary);
+}
+
+body.dark th {
   color: var(--text);
 }
 
