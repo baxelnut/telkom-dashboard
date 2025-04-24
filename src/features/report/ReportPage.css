@@ -26,6 +26,7 @@
   border-radius: 8px;
   gap: 0.5rem;
   padding: 0.5rem;
+  padding-block: 1rem;
 }
 
 .period-container .label {
@@ -45,6 +46,7 @@
 
 .category-filter {
   justify-content: space-between;
+  align-items: center;
 }
 
 .report-table-container .title-container,

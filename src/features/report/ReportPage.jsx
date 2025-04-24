@@ -7,10 +7,10 @@ import SelectedTable from "./SelectedTable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-const periodOptions = [
-  "ALL",
-  ...[1, 3, 6, 12, 24].map((n) => `${n} months`),
-].map((value) => ({ value, label: value }));
+// const periodOptions = [
+//   "ALL",
+//   ...[1, 3, 6, 12, 24].map((n) => `${n} months`),
+// ].map((value) => ({ value, label: value }));
 
 const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
   (value) => ({ value, label: value })
@@ -28,7 +28,7 @@ export default function ReportPage({ API_URL, userEmail }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState("ALL");
+  // const [selectedPeriod, setSelectedPeriod] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
@@ -150,14 +150,14 @@ export default function ReportPage({ API_URL, userEmail }) {
         className="period-container"
         style={{ display: selectedCell ? "none" : "flex" }}
       >
-        <div className="period-filter">
+        {/* <div className="period-filter">
           <Dropdown
             options={periodOptions}
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           />
           <p className="label">{`within ${selectedPeriod} period`}</p>
-        </div>
+        </div> */}
         <div className="period-filter" style={{ flex: 1 }}>
           <p className="subtype-label">Subtype:</p>
           <div className="subtype-filter-container">
@@ -190,7 +190,7 @@ export default function ReportPage({ API_URL, userEmail }) {
 
         <div className="category-filter">
           <div className="filter-container">
-            <p className="label">Filtery by:</p>
+            <p className="label">Filter:</p>
             <Dropdown
               options={categoryOptions}
               value={selectedCategory}
@@ -199,11 +199,16 @@ export default function ReportPage({ API_URL, userEmail }) {
           </div>
 
           <div className="filter-container">
-            <p className="label">Export as:</p>
+            <button
+              className="label"
+              onClick={() => handleExport(selectedExport)}
+            >
+              <p>Export as</p>
+            </button>
             <Dropdown
               options={getExportOptions()}
               value={selectedExport}
-              onChange={(e) => handleExport(e.target.value)}
+              onChange={(e) => setSelectedExport(e.target.value)}
             />
           </div>
         </div>
@@ -211,7 +216,7 @@ export default function ReportPage({ API_URL, userEmail }) {
           <ReportTable
             reportTableData={data}
             selectedCategory={selectedCategory}
-            selectedPeriod={selectedPeriod}
+            // selectedPeriod={selectedPeriod}
             orderSubtypes={selectedSubtypes}
             loading={loading}
             error={error}
@@ -230,11 +235,16 @@ export default function ReportPage({ API_URL, userEmail }) {
           </button>
 
           <div className="filter-container">
-            <p className="label">Export as:</p>
+            <button
+              className="label"
+              onClick={() => handleExport(selectedExport)}
+            >
+              <p>Export as</p>
+            </button>
             <Dropdown
               options={getExportOptions()}
               value={selectedExport}
-              onChange={(e) => handleExport(e.target.value)}
+              onChange={(e) => setSelectedExport(e.target.value)}
             />
           </div>
         </div>
