@@ -64,7 +64,7 @@ export default function SelectedTable({
   const filtered = items.filter(
     (i) =>
       extractedIds.includes(i.id) &&
-      (selectedCategory === "ALL" || i.ORDER_SUBTYPE === selectedCategory)
+      (selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory)
   );
 
   if (!filtered.length) return <p>No matching data found.</p>;
