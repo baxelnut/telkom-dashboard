@@ -15,7 +15,7 @@ export default function ReportTable({
   onCellSelect,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
-  if (error) return <Error />;
+  if (error) return <Error message={error} />;
   if (!orderSubtypes.length)
     return <p>Please select at least one order subtype.</p>;
 

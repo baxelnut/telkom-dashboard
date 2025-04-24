@@ -86,12 +86,12 @@ export default function SelectedTable({
             <tr>
               {hasInProgress && (
                 <th>
-                  <h6>Action</h6>
+                  <h6>ACTION</h6>
                 </th>
               )}
               {hasInProgress && (
                 <th>
-                  <h6>Notes</h6>
+                  <h6>NOTES</h6>
                 </th>
               )}
               {Object.keys(filtered[0]).map((c) => (
@@ -134,29 +134,31 @@ export default function SelectedTable({
                   )}
                   {hasInProgress && (
                     <td>
-                      <textarea
-                        className="notes"
-                        value={notes[itm.UUID] ?? itm.NOTES ?? ""}
-                        onChange={async (e) => {
-                          const txt = e.target.value;
-                          setNotes((p) => ({ ...p, [itm.UUID]: txt }));
-                          const log = logLine(userEmail);
-                          await fetch(
-                            `${API_URL}/regional_3/sheets/${itm.UUID}`,
-                            {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                NOTES: txt.trim() || null,
-                                LOG: log,
-                              }),
-                            }
-                          ).then((res) =>
-                            res.ok ? onUpdateSuccess() : Promise.reject()
-                          );
-                        }}
-                        rows={1}
-                      />
+                      {inProg && (
+                        <textarea
+                          className="notes"
+                          value={notes[itm.UUID] ?? itm.NOTES ?? ""}
+                          onChange={async (e) => {
+                            const txt = e.target.value;
+                            setNotes((p) => ({ ...p, [itm.UUID]: txt }));
+                            const log = logLine(userEmail);
+                            await fetch(
+                              `${API_URL}/regional_3/sheets/${itm.UUID}`,
+                              {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  NOTES: txt.trim() || null,
+                                  LOG: log,
+                                }),
+                              }
+                            ).then((res) =>
+                              res.ok ? onUpdateSuccess() : Promise.reject()
+                            );
+                          }}
+                          rows={1}
+                        />
+                      )}
                     </td>
                   )}
                   {Object.keys(itm).map((c) => (
