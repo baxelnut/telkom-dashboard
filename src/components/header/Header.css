@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  width: 18%;
+  width: 20%;
 }
 
 .profile .picture {
@@ -55,6 +55,12 @@
   display: none;
 }
 
+.toggle-mode { 
+  display: flex;
+  align-items: center;
+  max-width: 20px;
+}
+
 @media screen and (max-width: 768px) {
   .header-container {
     height: 40px;
@@ -80,8 +86,14 @@
     display: flex;
     padding: 0;
     margin: 0;
-    max-height: 30px;
+    max-height: 20px;
     aspect-ratio: 1;
     margin-left: 10px;
   }
+
+  .toggle-mode {  
+    max-width: 16px;
+    margin-right: 8px;
+  }
+  
 }
