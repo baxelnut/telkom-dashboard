@@ -108,7 +108,9 @@ h6 {
   font-size: 16px;
 }
 
-p {
+p,
+select,
+option {
   font-family: var(--body);
   font-size: 14px;
   font-weight: 400;
@@ -223,11 +225,13 @@ button:focus-visible {
   }
 
   p,
-  a {
-    font-size: 10px;
+  a,
+  select,
+  option {
+    font-size: 12px;
   }
 
   blockquote {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
