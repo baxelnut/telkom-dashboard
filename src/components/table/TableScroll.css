@@ -25,6 +25,10 @@ th {
   font-family: var(--heading);
 }
 
+body.dark th {
+  color: var(--text);
+}
+
 td p {
   max-width: 200px;
   overflow: hidden;
