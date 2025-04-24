@@ -36,6 +36,11 @@ function AppContent() {
   const pathname = location.pathname;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const theme = localStorage.getItem("theme");
+    return theme === "dark";
+  });
+
   const sidebarRef = useRef(null);
   const { user } = useAuth();
 
@@ -47,6 +52,12 @@ function AppContent() {
   const handleMobileMenuClick = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", isDarkMode);
+    document.body.classList.toggle("light-mode", !isDarkMode);
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -81,7 +92,7 @@ function AppContent() {
           ref={sidebarRef}
           className={`sidebar ${isSidebarOpen ? "active" : ""}`}
         >
-          <SideBar />
+          <SideBar isDarkMode={isDarkMode} />
         </div>
       )}
 
@@ -98,6 +109,8 @@ function AppContent() {
               onMenuClick={handleMobileMenuClick}
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
             />
           )}
         </div>
