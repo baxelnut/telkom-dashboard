@@ -148,7 +148,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-container">
-      <img className="logo" src="/TLK_BIG.svg" alt="logo" />
+      <img className="logo" src="/TLK_BIG.svg" />
       <div className="login-card">
         <div className="login-header">
           <h3>{greeting}</h3>

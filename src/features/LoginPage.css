@@ -159,6 +159,14 @@ input::placeholder {
   font-weight: 400;
 }
 
+.login-container .logo {
+  content: url("/TLK_BIG.svg");
+}
+
+body.dark .login-container .logo {
+  content: url("/TLK_BIG_REVERSE.svg");
+}
+
 @media screen and (max-width: 768px) {
   .login-card {
     background-color: var(--surface);
@@ -176,7 +184,11 @@ input::placeholder {
   .login-container .logo {
     max-width: fit-content;
     width: 100%;
-    content: url("/TLK_BIG.svg");
-    margin-bottom: 2rem;
+    content: url("/TLK.svg");
+    margin-bottom: 1rem;
+  }
+
+  body.dark .login-container .logo {
+    content: url("/TLK_REVERSE.svg");
   }
 }
