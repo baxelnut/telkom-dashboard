@@ -46,7 +46,7 @@ export default function ActionPage({ API_URL, userEmail }) {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/regional_3/report`);
+        const response = await fetch(`${API_URL}/regional_3/sheets/po`);
         if (!response.ok) throw new Error("❌ API call failed");
         const result = await response.json();
         setData(result);
@@ -135,27 +135,6 @@ export default function ActionPage({ API_URL, userEmail }) {
   return (
     <div className="action-container">
       <div
-        className="period-container"
-        style={{ display: selectedCell ? "none" : "flex" }}
-      >
-        <div className="period-filter" style={{ flex: 1 }}>
-          <p className="subtype-label">Subtype:</p>
-          <div className="subtype-filter-container">
-            {orderSubtypes.map((subtype) => (
-              <label key={subtype} className="subtype-filter">
-                <input
-                  type="checkbox"
-                  checked={selectedSubtypes.includes(subtype)}
-                  onChange={() => handleCheckboxChange(subtype)}
-                />
-                <p>{subtype}</p>
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div
         className="action-table-container"
         style={{ display: selectedCell ? "none" : "flex" }}
       >
@@ -195,7 +174,7 @@ export default function ActionPage({ API_URL, userEmail }) {
 
         <div className="table-wrapper">
           <ActionTable
-            reportTableData={data}
+            actionTabledata={data}
             selectedCategory={selectedCategory}
             orderSubtypes={selectedSubtypes}
             loading={loading}
