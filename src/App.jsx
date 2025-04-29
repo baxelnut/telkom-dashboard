@@ -139,7 +139,7 @@ function AppContent() {
               path="/action"
               element={
                 <ProtectedRoute>
-                  <ActionPage API_URL={API_URL} userEmail={user?.email} />
+                  <ActionPage API_URL={DEV_API_URL} userEmail={user?.email} />
                 </ProtectedRoute>
               }
             />
