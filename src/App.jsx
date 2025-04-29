@@ -19,6 +19,7 @@ import ReportPage from "./features/report/ReportPage";
 // import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 import LoginPage from "./features/LoginPage";
+import ActionPage from "./features/action/ActionPage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
@@ -29,6 +30,7 @@ const pageConfig = {
   // "/performance": { title: "Performance" },
   "/report": { title: "Report" },
   // "/example": { title: "Example" },
+  "/action": { title: "Action" },
 };
 
 function AppContent() {
@@ -130,6 +132,14 @@ function AppContent() {
               element={
                 <ProtectedRoute>
                   <ReportPage API_URL={API_URL} userEmail={user?.email} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/action"
+              element={
+                <ProtectedRoute>
+                  <ActionPage API_URL={API_URL} userEmail={user?.email} />
                 </ProtectedRoute>
               }
             />
