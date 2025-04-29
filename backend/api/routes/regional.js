@@ -16,6 +16,7 @@ import {
   getSheetOrderType,
   getSheetOrderSimplified,
   getSheetKategoriSimplified,
+  getPO,
 } from "../controllers/sheetsController.js";
 
 const router = express.Router();
@@ -34,6 +35,8 @@ router.get("/sheets/segmen", getSheetSegmen);
 router.get("/sheets/segmen_simplified", getSheetOrderSimplified);
 router.get("/sheets/kategori_simplified", getSheetKategoriSimplified);
 router.get("/sheets/order_subtype", getSheetOrderType);
+
+router.get("/sheets/po", getPO);
 
 // warning! not dynamically programmed
 // router.get("/inject_uuid/beware/reset_format_aosodomoro_sheet", injectUUID);
