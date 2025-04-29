@@ -6,8 +6,13 @@ import { getColumnLetter } from "../utils/columnUtils.js";
 import { v4 as uuidv4 } from "uuid";
 import { fetchFormattedReportData } from "./regional3Controller.js";
 
-const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME, FORMATTED_GID } =
-  process.env;
+const {
+  SPREADSHEET_ID,
+  SPREADSHEET_GID,
+  FORMATTED_SHEET_NAME,
+  FORMATTED_GID,
+  PO_GID,
+} = process.env;
 
 export const injectUUID = async (req, res) => {
   try {
@@ -473,7 +478,7 @@ export const getSheetKategoriSimplified = async (req, res) => {
           break;
         case "provide order":
           target.provide_order += 1;
-          break; 
+          break;
         case "ready to bill":
           target.ready_to_bill += 1;
           break;
@@ -488,5 +493,36 @@ export const getSheetKategoriSimplified = async (req, res) => {
   } catch (err) {
     console.error("🔥 Sheet Parse Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
+  }
+};
+
+export const getPO = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${PO_GID}`;
+    const raw = await fetch(sheetURL).then((res) => res.text());
+
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headerRow = json.table.rows[0].c.map((cell) => cell?.v || "");
+
+    const dataRows = json.table.rows.slice(1);
+
+    const data = dataRows
+      .map((row) => {
+        if (!row?.c) return null;
+        const obj = {};
+        headerRow.forEach((header, idx) => {
+          const cell = row.c[idx];
+          obj[header] = cell?.v || "";
+        });
+
+        return Object.values(obj).every((v) => v === "") ? null : obj;
+      })
+      .filter(Boolean);
+
+    res.status(200).json({ data });
+  } catch (err) {
+    console.error("❌ getPO failed:", err);
+    res.status(500).json({ error: err.message });
   }
 };
