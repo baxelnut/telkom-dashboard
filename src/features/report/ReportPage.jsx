@@ -7,18 +7,12 @@ import SelectedTable from "./SelectedTable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-// const periodOptions = [
-//   "ALL",
-//   ...[1, 3, 6, 12, 24].map((n) => `${n} months`),
-// ].map((value) => ({ value, label: value }));
-
 const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
   (value) => ({ value, label: value })
 );
 
 const orderSubtypes = [
   "PROV. COMPLETE",
-  "BILLING COMPLETED",
   "PROVIDE ORDER",
   "IN PROCESS",
   "READY TO BILL",
@@ -28,11 +22,9 @@ export default function ReportPage({ API_URL, userEmail }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [selectedPeriod, setSelectedPeriod] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
-  // const [exporting, setExporting] = useState(false);
   const [selectedSubtypes, setSelectedSubtypes] = useState(() => {
     const saved = localStorage.getItem("selectedSubtypes");
     return saved
@@ -68,9 +60,6 @@ export default function ReportPage({ API_URL, userEmail }) {
     };
 
     fetchData();
-
-    // const interval = setInterval(fetchData, 10000); // refresh every 10s
-    // return () => clearInterval(interval); // cleanup
   }, [refreshKey]);
 
   const handleCellSelection = (cellData) => {
@@ -150,14 +139,6 @@ export default function ReportPage({ API_URL, userEmail }) {
         className="period-container"
         style={{ display: selectedCell ? "none" : "flex" }}
       >
-        {/* <div className="period-filter">
-          <Dropdown
-            options={periodOptions}
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-          />
-          <p className="label">{`within ${selectedPeriod} period`}</p>
-        </div> */}
         <div className="period-filter" style={{ flex: 1 }}>
           <p className="subtype-label">Subtype:</p>
           <div className="subtype-filter-container">
@@ -216,7 +197,6 @@ export default function ReportPage({ API_URL, userEmail }) {
           <ReportTable
             reportTableData={data}
             selectedCategory={selectedCategory}
-            // selectedPeriod={selectedPeriod}
             orderSubtypes={selectedSubtypes}
             loading={loading}
             error={error}
