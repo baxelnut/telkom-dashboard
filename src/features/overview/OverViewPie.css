@@ -27,15 +27,16 @@
   border-radius: 50%;
   border: 1px solid #ccc;
   cursor: "pointer";
+  display: inline-block !important;
 }
 
-.category-container {
+.witel-container {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.pie-desc {
+.checkbox-container {
   display: flex;
   flex-direction: column;
   gap: 4px;
