@@ -47,7 +47,7 @@
 }
 
 .sign-out-btn {
-  background-color: var(--error);
+  background-color: var(--error) !important;
 }
 
 .user-info {
