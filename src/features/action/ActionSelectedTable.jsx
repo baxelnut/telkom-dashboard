@@ -69,16 +69,22 @@ export default function ActionSelectedTable({
         <table>
           <thead>
             <tr>
-              <th>ACTION</th>
-              <th>NOTES</th>
+              <th>
+                <h6>ACTION</h6>
+              </th>
+              <th>
+                <h6>NOTES</h6>
+              </th>
               {headers.map((header, i) => (
-                <th key={i}>{header}</th>
+                <th key={i}>
+                  <h6>{header}</h6>
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {inProcessItems.map((row, rowIndex) => {
-              const currentStatus = actions[row.UUID] ?? row.STATUS ?? null;
+              const currentStatus = actions[row.UUID] ?? row.STATUS ?? "";
               return (
                 <tr
                   key={rowIndex}
@@ -153,9 +159,11 @@ export default function ActionSelectedTable({
                   </td>
                   {headers.map((header, i) => (
                     <td key={i}>
-                      {header === "REVENUE"
-                        ? formatCurrency(row[header])
-                        : row[header] ?? "-"}
+                      <h6>
+                        {header === "REVENUE"
+                          ? formatCurrency(row[header])
+                          : row[header] ?? "-"}
+                      </h6>
                     </td>
                   ))}
                 </tr>
