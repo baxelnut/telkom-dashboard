@@ -12,7 +12,7 @@ export default function Header({
   isDarkMode,
   setIsDarkMode,
 }) {
-  const toggleDropdown = () => {
+  const showProfile = () => {
     setShowDropdown((prev) => !prev);
   };
 
@@ -46,18 +46,20 @@ export default function Header({
         <img
           className="picture"
           src={user.imageUrl ?? "/images/default_profile.png"}
-          onClick={toggleDropdown}
+          onClick={showProfile}
           referrerPolicy="no-referrer"
         />
 
-        <p className="name">{user.name ?? user.email ?? "..."}</p>
+        <p className="name" onClick={showProfile}>
+          {user.name ?? user.email ?? "..."}
+        </p>
 
         <svg
           className="chevron-down"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
           viewBox="0 0 16 16"
-          onClick={toggleDropdown}
+          onClick={showProfile}
           style={{ cursor: "pointer" }}
         >
           <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
@@ -75,9 +77,7 @@ export default function Header({
           <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
         </svg>
 
-        {showDropdown && (
-          <UserProfile user={user} toggleDropdown={toggleDropdown} />
-        )}
+        {showDropdown && <UserProfile user={user} showProfile={showProfile} />}
       </div>
     </div>
   );
