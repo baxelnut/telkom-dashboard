@@ -22,6 +22,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   border: 1px solid var(--text-variant);
+  cursor: pointer;
 }
 
 .profile .name {
@@ -31,6 +32,7 @@
   padding-block: 4px;
   height: fit-content;
   width: fit-content;
+  cursor: pointer;
 }
 
 .profile .chevron-down {
@@ -55,7 +57,7 @@
   display: none;
 }
 
-.toggle-mode { 
+.toggle-mode {
   display: flex;
   align-items: center;
   max-width: 20px;
@@ -91,9 +93,8 @@
     margin-left: 10px;
   }
 
-  .toggle-mode {  
+  .toggle-mode {
     max-width: 16px;
     margin-right: 8px;
   }
-  
 }
