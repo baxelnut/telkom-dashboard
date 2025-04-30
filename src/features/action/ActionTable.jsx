@@ -57,23 +57,42 @@ export default function ActionTable({
       <table>
         <thead>
           <tr>
-            <th rowSpan="2">PO_NAME</th>
-            <th rowSpan="2">WITEL</th>
-            <th colSpan={STATUSES.length + 1}>&lt;3bln</th>
-            <th colSpan={STATUSES.length + 1}>&gt;3bln</th>
-            <th rowSpan="2">GRAND TOTAL</th>
+            <th rowSpan="2">
+              <h6>PO</h6>
+            </th>
+            <th rowSpan="2">
+              <h6>WITEL</h6>
+            </th>
+            <th colSpan={STATUSES.length + 1}>
+              <h6>&lt;3 BLN</h6>
+            </th>
+            <th colSpan={STATUSES.length + 1}>
+              <h6>&gt;3 BLN</h6>
+            </th>
+            <th rowSpan="2">
+              <h6>GRAND TOTAL</h6>
+            </th>
           </tr>
           <tr>
             {STATUSES.map((s) => (
-              <th key={`u-${s}`}>{s}</th>
+              <th key={`u-${s}`}>
+                <h6>{s}</h6>
+              </th>
             ))}
-            <th>TOTAL</th>
+            <th>
+              <h6>Total</h6>
+            </th>
             {STATUSES.map((s) => (
-              <th key={`o-${s}`}>{s}</th>
+              <th key={`o-${s}`}>
+                <h6>{s}</h6>
+              </th>
             ))}
-            <th>TOTAL</th>
+            <th>
+              <h6>Total</h6>
+            </th>
           </tr>
         </thead>
+
         <tbody>
           {dataArray.map((row, idx) => {
             const under = bucketCounts(row.items || [], "<");
@@ -83,7 +102,7 @@ export default function ActionTable({
               <tr
                 key={idx}
                 className="action-table-row"
-                onClick={() => onRowClick(row.BILL_WITEL)}
+                onClick={() => onRowClick(row.BILL_WITEL, row.WITEL)}
               >
                 <td>
                   <p>{row.PO_NAME}</p>
