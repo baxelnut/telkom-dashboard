@@ -3,7 +3,7 @@ import "./ActionTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const STATUSES = ["Lanjut", "Cancel", "Bukan Order Reg"];
+const STATUSES = ["Lanjut", "Cancel", "Bukan Order Reg", "No Status"];
 
 export default function ActionTable({
   actionTabledata,
@@ -14,36 +14,41 @@ export default function ActionTable({
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error message={error} />;
 
-  const [selectedWitel, setSelectedWitel] = useState(null);
-  const dataArray = actionTabledata?.data ?? [];
+  const dataArray = actionTabledata.data || [];
 
-  const handleRowClick = (witelName) => {
-    setSelectedWitel(witelName);
-    if (onRowClick) onRowClick(witelName);
-  };
+  const bucketCounts = (items, bucket) => {
+    const counts = {
+      Lanjut: 0,
+      Cancel: 0,
+      "Bukan Order Reg": 0,
+      "No Status": 0,
+    };
 
-  const bucketCounts = (row, bucket) => {
-    const isUnder = bucket === "<";
-    const arr = row.items || [];
-    let counts = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
-
-    console.log("Processing row:", row);
-    console.log("Items in this row:", arr);
-
-    arr.forEach((item) => {
-      console.log("Processing item:", item);
-
-      if (
-        (isUnder && item.ageInMonths < 3) ||
-        (!isUnder && item.ageInMonths >= 3)
-      ) {
-        const status = item.STATUS;
-        console.log("Item status:", status);
-
-        if (counts[status] !== undefined) counts[status]++;
+    items.forEach((it) => {
+      if (it._bucket === bucket && it.KATEGORI === "IN PROCESS") {
+        const raw = (it.STATUS || "").trim();
+        if (!raw) {
+          counts["No Status"]++;
+        } else {
+          const key = {
+            lanjut: "Lanjut",
+            cancel: "Cancel",
+            "bukan order reg": "Bukan Order Reg",
+          }[raw.toLowerCase()];
+          if (key) {
+            counts[key]++;
+          } else {
+            counts["No Status"]++;
+          }
+        }
       }
     });
-    counts.TOTAL = counts.Lanjut + counts.Cancel + counts["Bukan Order Reg"];
+
+    counts.TOTAL =
+      counts.Lanjut +
+      counts.Cancel +
+      counts["Bukan Order Reg"] +
+      counts["No Status"];
     return counts;
   };
 
@@ -54,42 +59,63 @@ export default function ActionTable({
           <tr>
             <th rowSpan="2">PO_NAME</th>
             <th rowSpan="2">WITEL</th>
-            <th colSpan={4}>&lt;3bln</th>
-            <th colSpan={4}>&gt;3bln</th>
+            <th colSpan={STATUSES.length + 1}>&lt;3bln</th>
+            <th colSpan={STATUSES.length + 1}>&gt;3bln</th>
+            <th rowSpan="2">GRAND TOTAL</th>
           </tr>
           <tr>
             {STATUSES.map((s) => (
               <th key={`u-${s}`}>{s}</th>
             ))}
-            <th key="u-total">TOTAL</th>
+            <th>TOTAL</th>
             {STATUSES.map((s) => (
               <th key={`o-${s}`}>{s}</th>
             ))}
-            <th key="o-total">TOTAL</th>
+            <th>TOTAL</th>
           </tr>
         </thead>
         <tbody>
           {dataArray.map((row, idx) => {
-            const under = bucketCounts(row, "<");
-            const over = bucketCounts(row, ">");
+            const under = bucketCounts(row.items || [], "<");
+            const over = bucketCounts(row.items || [], ">");
+
             return (
               <tr
                 key={idx}
                 className="action-table-row"
-                onClick={() => handleRowClick(row.BILL_WITEL)}
+                onClick={() => onRowClick(row.BILL_WITEL)}
               >
-                <td>{row.PO_NAME}</td>
-                <td>{row.WITEL}</td>
+                <td>
+                  <p>{row.PO_NAME}</p>
+                </td>
+
+                <td>
+                  <p>{row.WITEL}</p>
+                </td>
 
                 {STATUSES.map((s) => (
-                  <td key={`u-${idx}-${s}`}>{under[s]}</td>
+                  <td key={`u-${idx}-${s}`} className="u-cell">
+                    <p>{under[s]} </p>
+                  </td>
                 ))}
-                <td key={`u-${idx}-total`}>{under.TOTAL}</td>
+
+                <td className="tot-cell">
+                  <h6>{under.TOTAL}</h6>
+                </td>
 
                 {STATUSES.map((s) => (
-                  <td key={`o-${idx}-${s}`}>{over[s]}</td>
+                  <td key={`o-${idx}-${s}`} className="o-cell">
+                    <p>{over[s]}</p>
+                  </td>
                 ))}
-                <td key={`o-${idx}-total`}>{over.TOTAL}</td>
+
+                <td className="tot-cell">
+                  <h6>{over.TOTAL}</h6>
+                </td>
+
+                <td className="tot-cell grand-total-cell">
+                  <h6>{under.TOTAL + over.TOTAL}</h6>
+                </td>
               </tr>
             );
           })}
