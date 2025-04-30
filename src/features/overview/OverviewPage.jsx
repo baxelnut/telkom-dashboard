@@ -97,8 +97,8 @@ export default function OverviewPage({ API_URL }) {
             API_URL={API_URL}
           />
           <OverViewPie
-            title="Category Pie Chart"
-            subtitle="Showing data for category per witel"
+            title="Witel Pie Chart"
+            subtitle="Showing data for witel per category"
             API_URL={API_URL}
           />
         </div>
