@@ -5,9 +5,9 @@ import Error from "../../components/utils/Error";
 
 export default function ActionTable({
   actionTabledata,
+  onRowClick,
   loading,
   error,
-  onRowClick,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error message={error} />;
