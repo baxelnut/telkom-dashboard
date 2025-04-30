@@ -503,7 +503,11 @@ export const getPO = async (req, res) => {
 
     const json = JSON.parse(raw.substring(47).slice(0, -2));
 
-    const headerRow = json.table.rows[0].c.map((cell) => cell?.v || "");
+    const rawHeaders = json.table.rows[0].c;
+    const headerRow = rawHeaders
+      .map((cell) => cell?.v?.toString().trim())
+      .map((header, idx) => ({ header, idx }))
+      .filter(({ header }) => header);
 
     const dataRows = json.table.rows.slice(1);
 
@@ -511,7 +515,7 @@ export const getPO = async (req, res) => {
       .map((row) => {
         if (!row?.c) return null;
         const obj = {};
-        headerRow.forEach((header, idx) => {
+        headerRow.forEach(({ header, idx }) => {
           const cell = row.c[idx];
           obj[header] = cell?.v || "";
         });
