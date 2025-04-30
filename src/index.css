@@ -158,7 +158,8 @@ body.dark button {
   background-color: var(--primary);
 }
 
-button:hover {
+button:hover,
+body.dark button:hover {
   background-color: var(--secondary);
   font-weight: 600;
 }
