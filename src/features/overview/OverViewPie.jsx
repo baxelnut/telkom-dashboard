@@ -13,9 +13,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   const [error, setError] = useState(null);
   const [selectedWitel, setSelectedWitel] = useState("ALL");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [excludedCategories, setExcludedCategories] = useState([
-    "Billing Completed",
-  ]);
+  const [excludedCategories, setExcludedCategories] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +44,8 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
     [data]
   );
 
-  const filteredData = useMemo(
-    () =>
+  const filteredData = useMemo(() => {
+    const result =
       selectedWitel === "ALL"
         ? data.reduce((acc, item) => {
             Object.keys(item).forEach((key) => {
@@ -57,9 +55,12 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
             });
             return acc;
           }, {})
-        : data.find((item) => item.bill_witel === selectedWitel) || {},
-    [selectedWitel, data]
-  );
+        : data.find((item) => item.bill_witel === selectedWitel) || {};
+
+    delete result.billing_completed;
+
+    return result;
+  }, [selectedWitel, data]);
 
   const pieData = useMemo(
     () =>
