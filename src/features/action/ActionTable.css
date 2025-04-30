@@ -13,6 +13,17 @@
   cursor: pointer;
 }
 
+.action-table .action-table-row td * {
+  pointer-events: none;
+}
+
 body.dark .action-table-row:hover {
   color: var(--text);
+}
+
+.action-table thead *,
+.u-cell,
+.o-cell,
+.tot-cell {
+  text-align: center;
 }
