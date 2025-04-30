@@ -115,7 +115,7 @@ export default function SelectedTable({
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                 >
-                  {hasInProgress && (
+                  {/* {hasInProgress && (
                     <td>
                       {inProg && (
                         <Dropdown
@@ -169,7 +169,26 @@ export default function SelectedTable({
                         />
                       )}
                     </td>
+                  )} */}
+
+                  {hasInProgress && (
+                    <td>
+                      {inProg && (
+                        <p className="unresponsive">
+                          {actions[itm.UUID] ?? itm.STATUS ?? "No status"}
+                        </p>
+                      )}
+                    </td>
                   )}
+
+                  {hasInProgress && (
+                    <td>
+                      {inProg && (
+                        <span>{actions[itm.UUID] ?? itm.NOTES ?? "-"}</span>
+                      )}
+                    </td>
+                  )}
+
                   {Object.keys(itm).map((c) => (
                     <td key={c}>
                       {c === "REVENUE" ? formatCurrency(itm[c]) : itm[c] ?? "-"}
