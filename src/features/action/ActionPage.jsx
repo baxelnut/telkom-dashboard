@@ -11,7 +11,7 @@ export default function ActionPage({ API_URL, userEmail }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [selectedWitel, setSelectedWitel] = useState(null);
+  const [selectedWitel, setSelectedWitel] = useState([null, null]);
   const [witelOptions, setWitelOptions] = useState([
     { value: "ALL", label: "ALL" },
   ]);
@@ -95,7 +95,7 @@ export default function ActionPage({ API_URL, userEmail }) {
   }, [API_URL]);
 
   const refresh = () => {
-    setSelectedWitel(null);
+    setSelectedWitel([null, null]);
     setLoading(true);
 
     window.location.reload();
@@ -105,7 +105,7 @@ export default function ActionPage({ API_URL, userEmail }) {
     <div className="action-container">
       <div className="action-table-container">
         <div className="filter-container">
-          {!selectedWitel ? (
+          {!selectedWitel?.billWitel ? (
             <>
               <p>Select Witel:</p>
               <Dropdown
@@ -123,11 +123,17 @@ export default function ActionPage({ API_URL, userEmail }) {
           )}
         </div>
 
+        {selectedWitel?.witel && (
+          <div className="title-container">
+            <h5>{selectedWitel.witel}</h5>
+          </div>
+        )}
+
         <div
           className="table-wrapper"
           style={{ minHeight: loading ? "300px" : "fit-content" }}
         >
-          {!selectedWitel ? (
+          {!selectedWitel?.billWitel ? (
             <ActionTable
               actionTabledata={{
                 data:
@@ -137,12 +143,14 @@ export default function ActionPage({ API_URL, userEmail }) {
               }}
               loading={loading}
               error={error}
-              onRowClick={(w) => setSelectedWitel(w)}
+              onRowClick={(billWitel, witel) =>
+                setSelectedWitel({ billWitel, witel })
+              }
             />
           ) : (
             <ActionSelectedTable
               reportData={reportData}
-              selectedWitel={selectedWitel}
+              selectedWitel={selectedWitel?.billWitel}
               API_URL={API_URL}
               userEmail={userEmail}
               onUpdateSuccess={refresh}
