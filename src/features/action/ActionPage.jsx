@@ -25,9 +25,7 @@ export default function ActionPage({ API_URL, userEmail }) {
           fetch(`${API_URL}/regional_3/sheets/po`),
           fetch(`${API_URL}/regional_3/report`),
         ]);
-
-        if (!poRes.ok || !reportRes.ok)
-          throw new Error("❌ One of the API calls failed");
+        if (!poRes.ok || !reportRes.ok) throw new Error("API failed");
 
         const poJson = await poRes.json();
         const reportJson = await reportRes.json();
@@ -40,168 +38,114 @@ export default function ActionPage({ API_URL, userEmail }) {
         ];
         setWitelOptions([
           { value: "ALL", label: "ALL" },
-          ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),
+          ...uniqueWitels.map((w) => ({ value: w, label: w })),
         ]);
 
-        const processedData = poJson.data.map((poItem) => {
-          const witel = poItem.BILL_WITEL;
-          const reportEntry = reportJson.data.find(
-            (r) => r.witelName === witel
-          );
+        const processed = poJson.data.map((poItem) => {
+          const reportEntry =
+            reportJson.data.find((r) => r.witelName === poItem.BILL_WITEL)?.[
+              "IN PROCESS"
+            ] || {};
 
-          let totalInProcess = 0;
-          const actionCounts = {
-            LANJUT: 0,
-            CANCEL: 0,
-            "BUKAN ORDER REG": 0,
-          };
+          const under3 = (reportEntry["<3blnItems"] || []).map((i) => ({
+            ...i,
+            _bucket: "<",
+          }));
+          const over3 = (reportEntry[">3blnItems"] || []).map((i) => ({
+            ...i,
+            _bucket: ">",
+          }));
+          const items = [...under3, ...over3];
 
-          if (reportEntry) {
-            const under3 = reportEntry["<3blnItems"] || [];
-            const over3 = reportEntry[">3blnItems"] || [];
-
-            [...under3, ...over3].forEach((item) => {
-              if (item.KATEGORI === "IN PROCESS") {
-                totalInProcess++;
-                const status = (item.STATUS || "").toUpperCase();
-                if (actionCounts[status] !== undefined) actionCounts[status]++;
-              }
-            });
-          }
+          const counts = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
+          items.forEach((it) => {
+            if (it.KATEGORI === "IN PROCESS") {
+              const raw = (it.STATUS || "").trim().toLowerCase();
+              const map = {
+                lanjut: "Lanjut",
+                cancel: "Cancel",
+                "bukan order reg": "Bukan Order Reg",
+              };
+              const norm = map[raw];
+              if (norm) counts[norm]++;
+            }
+          });
+          const total =
+            counts.Lanjut + counts.Cancel + counts["Bukan Order Reg"];
 
           return {
             ...poItem,
-            ["LANJUT"]: actionCounts["LANJUT"],
-            ["CANCEL"]: actionCounts["CANCEL"],
-            ["BUKAN ORDER REG"]: actionCounts["BUKAN ORDER REG"],
-            ["TOTAL_IN_PROCESS"]: totalInProcess,
+            items,
+            Lanjut: counts.Lanjut,
+            Cancel: counts.Cancel,
+            "Bukan Order Reg": counts["Bukan Order Reg"],
+            Total: total,
           };
         });
 
-        setEnrichedData(processedData);
+        setEnrichedData(processed);
       } catch (err) {
-        console.error("🚨 Fetch Error:", err);
-        setError(err.message || "Something went wrong");
+        console.error(err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  }, [API_URL]);
 
-  const handleActionUpdate = async () => {
+  const refresh = () => {
+    setSelectedWitel(null);
     setLoading(true);
-    try {
-      const [poRes, reportRes] = await Promise.all([
-        fetch(`${API_URL}/regional_3/sheets/po`),
-        fetch(`${API_URL}/regional_3/report`),
-      ]);
-      if (!poRes.ok || !reportRes.ok)
-        throw new Error("❌ One of the API calls failed");
 
-      const poJson = await poRes.json();
-      const reportJson = await reportRes.json();
-
-      setPoData(poJson.data);
-      setReportData(reportJson.data);
-
-      const processedData = poJson.data.map((poItem) => {
-        const witel = poItem.BILL_WITEL;
-        const reportEntry = reportJson.data.find((r) => r.witelName === witel);
-
-        let totalInProcess = 0;
-        const actionCounts = { LANJUT: 0, CANCEL: 0, "BUKAN ORDER REG": 0 };
-
-        if (reportEntry) {
-          for (const [subType, subObj] of Object.entries(reportEntry)) {
-            if (subType === "witelName") continue;
-
-            const under3 = subObj["<3blnItems"] || [];
-            const over3 = subObj[">3blnItems"] || [];
-
-            [...under3, ...over3].forEach((item) => {
-              if (item.KATEGORI === "IN PROCESS") {
-                totalInProcess++;
-                const status = (item.STATUS || "").toUpperCase();
-                if (actionCounts[status] !== undefined) actionCounts[status]++;
-              }
-            });
-          }
-        }
-
-        return {
-          ...poItem,
-          TOTAL_IN_PROCESS: totalInProcess,
-          LANJUT: actionCounts.LANJUT,
-          CANCEL: actionCounts.CANCEL,
-          "BUKAN ORDER REG": actionCounts["BUKAN ORDER REG"],
-        };
-      });
-
-      setEnrichedData(processedData);
-    } catch (err) {
-      console.error("🚨 Fetch Error:", err);
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    window.location.reload();
   };
 
   return (
     <div className="action-container">
       <div className="action-table-container">
-        <div className="title-container">
-          <div className="filter-container">
-            {selectedWitel == null ? (
-              <>
-                <p>Select witel:</p>
-                <Dropdown
-                  options={witelOptions}
-                  value={selectedCategory}
-                  onChange={(e) => {
-                    setSelectedCategory(e.target.value);
-                    setSelectedWitel(null);
-                  }}
-                />
-              </>
-            ) : (
-              <button onClick={() => setSelectedWitel(null)}>
-                <p>← View full table</p>
-              </button>
-            )}
-          </div>
+        <div className="filter-container">
+          {!selectedWitel ? (
+            <>
+              <p>Select Witel:</p>
+              <Dropdown
+                options={witelOptions}
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                }}
+              />
+            </>
+          ) : (
+            <button onClick={() => setSelectedWitel(null)}>
+              <p>← View full table</p>
+            </button>
+          )}
         </div>
 
         <div
           className="table-wrapper"
-          style={{ minHeight: loading || error ? "300px" : "fit-content" }}
+          style={{ minHeight: loading ? "300px" : "fit-content" }}
         >
-          {!selectedWitel && (
+          {!selectedWitel ? (
             <ActionTable
               actionTabledata={{
                 data:
                   selectedCategory === "ALL"
                     ? enrichedData
-                    : enrichedData.filter(
-                        (row) => row.WITEL === selectedCategory
-                      ),
+                    : enrichedData.filter((r) => r.WITEL === selectedCategory),
               }}
-              onRowClick={(witelName) => setSelectedWitel(witelName)}
               loading={loading}
               error={error}
+              onRowClick={(w) => setSelectedWitel(w)}
             />
-          )}
-
-          {selectedWitel && (
+          ) : (
             <ActionSelectedTable
               reportData={reportData}
               selectedWitel={selectedWitel}
               API_URL={API_URL}
               userEmail={userEmail}
-              onUpdateSuccess={handleActionUpdate}
-              loading={loading}
-              error={error}
+              onUpdateSuccess={refresh}
             />
           )}
         </div>
