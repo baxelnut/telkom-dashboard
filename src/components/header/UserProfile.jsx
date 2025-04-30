@@ -3,7 +3,7 @@ import "./UserProfile.css";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export default function UserProfile({ user, toggleDropdown }) {
+export default function UserProfile({ user, showProfile }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({
     name: user.name || "",
@@ -62,9 +62,9 @@ export default function UserProfile({ user, toggleDropdown }) {
 
   return (
     <>
-      <div className="dropdown-overlay" onClick={toggleDropdown}></div>
+      <div className="dropdown-overlay" onClick={showProfile}></div>
       <div className="dropdown-user">
-        <div className="close-btn" onClick={toggleDropdown}>
+        <div className="close-btn" onClick={showProfile}>
           <h6>✕</h6>
         </div>
 
