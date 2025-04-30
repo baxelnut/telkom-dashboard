@@ -40,10 +40,7 @@ export default function ActionPage({ API_URL, userEmail }) {
         ];
         setWitelOptions([
           { value: "ALL", label: "ALL" },
-          ...uniqueWitels.map((witel) => ({
-            value: witel,
-            label: witel,
-          })),
+          ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),
         ]);
 
         const processedData = poJson.data.map((poItem) => {
@@ -70,9 +67,8 @@ export default function ActionPage({ API_URL, userEmail }) {
                 if (item.KATEGORI === "IN PROCESS") {
                   totalInProcess++;
                   const status = (item.STATUS || "").toUpperCase();
-                  if (actionCounts[status] !== undefined) {
+                  if (actionCounts[status] !== undefined)
                     actionCounts[status]++;
-                  }
                 }
               });
             }
@@ -80,10 +76,10 @@ export default function ActionPage({ API_URL, userEmail }) {
 
           return {
             ...poItem,
-            TOTAL_IN_PROCESS: totalInProcess,
-            LANJUT: actionCounts.LANJUT,
-            CANCEL: actionCounts.CANCEL,
-            "BUKAN ORDER REG": actionCounts["BUKAN ORDER REG"],
+            ["LANJUT"]: actionCounts["LANJUT"],
+            ["CANCEL"]: actionCounts["CANCEL"],
+            ["BUKAN ORDER REG"]: actionCounts["BUKAN ORDER REG"],
+            ["TOTAL"]: totalInProcess,
           };
         });
 
@@ -98,7 +94,65 @@ export default function ActionPage({ API_URL, userEmail }) {
 
     fetchData();
   }, []);
- 
+
+  const handleActionUpdate = async () => {
+    setLoading(true);
+    try {
+      const [poRes, reportRes] = await Promise.all([
+        fetch(`${API_URL}/regional_3/sheets/po`),
+        fetch(`${API_URL}/regional_3/report`),
+      ]);
+      if (!poRes.ok || !reportRes.ok)
+        throw new Error("❌ One of the API calls failed");
+
+      const poJson = await poRes.json();
+      const reportJson = await reportRes.json();
+
+      setPoData(poJson.data);
+      setReportData(reportJson.data);
+
+      const processedData = poJson.data.map((poItem) => {
+        const witel = poItem.BILL_WITEL;
+        const reportEntry = reportJson.data.find((r) => r.witelName === witel);
+
+        let totalInProcess = 0;
+        const actionCounts = { LANJUT: 0, CANCEL: 0, "BUKAN ORDER REG": 0 };
+
+        if (reportEntry) {
+          for (const [subType, subObj] of Object.entries(reportEntry)) {
+            if (subType === "witelName") continue;
+
+            const under3 = subObj["<3blnItems"] || [];
+            const over3 = subObj[">3blnItems"] || [];
+
+            [...under3, ...over3].forEach((item) => {
+              if (item.KATEGORI === "IN PROCESS") {
+                totalInProcess++;
+                const status = (item.STATUS || "").toUpperCase();
+                if (actionCounts[status] !== undefined) actionCounts[status]++;
+              }
+            });
+          }
+        }
+
+        return {
+          ...poItem,
+          TOTAL_IN_PROCESS: totalInProcess,
+          LANJUT: actionCounts.LANJUT,
+          CANCEL: actionCounts.CANCEL,
+          "BUKAN ORDER REG": actionCounts["BUKAN ORDER REG"],
+        };
+      });
+
+      setEnrichedData(processedData);
+    } catch (err) {
+      console.error("🚨 Fetch Error:", err);
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="action-container">
       <div className="action-table-container">
@@ -117,11 +171,9 @@ export default function ActionPage({ API_URL, userEmail }) {
                 />
               </>
             ) : (
-              <>
-                <button onClick={() => setSelectedWitel(null)}>
-                  <p>← View full table</p>
-                </button>
-              </>
+              <button onClick={() => setSelectedWitel(null)}>
+                <p>← View full table</p>
+              </button>
             )}
           </div>
         </div>
@@ -140,9 +192,9 @@ export default function ActionPage({ API_URL, userEmail }) {
                         (row) => row.WITEL === selectedCategory
                       ),
               }}
+              onRowClick={(witelName) => setSelectedWitel(witelName)}
               loading={loading}
               error={error}
-              onRowClick={(witelName) => setSelectedWitel(witelName)}
             />
           )}
 
@@ -150,6 +202,11 @@ export default function ActionPage({ API_URL, userEmail }) {
             <ActionSelectedTable
               reportData={reportData}
               selectedWitel={selectedWitel}
+              API_URL={API_URL}
+              userEmail={userEmail}
+              onUpdateSuccess={handleActionUpdate}
+              loading={loading}
+              error={error}
             />
           )}
         </div>
