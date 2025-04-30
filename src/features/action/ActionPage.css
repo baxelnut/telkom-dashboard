@@ -2,10 +2,6 @@
   padding: 1rem;
 }
 
-.action-container .table-wrapper {
-  min-height: 375px;
-}
-
 .action-table-container {
   border-radius: 8px;
   background-color: var(--surface);
