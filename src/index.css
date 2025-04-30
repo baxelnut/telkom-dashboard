@@ -154,6 +154,10 @@ button {
   margin: 0.5rem;
 }
 
+body.dark button {
+  background-color: var(--primary);
+}
+
 button:hover {
   background-color: var(--secondary);
   font-weight: 600;
