@@ -57,21 +57,16 @@ export default function ActionPage({ API_URL, userEmail }) {
           };
 
           if (reportEntry) {
-            for (const [subType, subObj] of Object.entries(reportEntry)) {
-              if (subType === "witelName") continue;
+            const under3 = reportEntry["<3blnItems"] || [];
+            const over3 = reportEntry[">3blnItems"] || [];
 
-              const under3 = subObj["<3blnItems"] || [];
-              const over3 = subObj[">3blnItems"] || [];
-
-              [...under3, ...over3].forEach((item) => {
-                if (item.KATEGORI === "IN PROCESS") {
-                  totalInProcess++;
-                  const status = (item.STATUS || "").toUpperCase();
-                  if (actionCounts[status] !== undefined)
-                    actionCounts[status]++;
-                }
-              });
-            }
+            [...under3, ...over3].forEach((item) => {
+              if (item.KATEGORI === "IN PROCESS") {
+                totalInProcess++;
+                const status = (item.STATUS || "").toUpperCase();
+                if (actionCounts[status] !== undefined) actionCounts[status]++;
+              }
+            });
           }
 
           return {
@@ -79,7 +74,7 @@ export default function ActionPage({ API_URL, userEmail }) {
             ["LANJUT"]: actionCounts["LANJUT"],
             ["CANCEL"]: actionCounts["CANCEL"],
             ["BUKAN ORDER REG"]: actionCounts["BUKAN ORDER REG"],
-            ["TOTAL"]: totalInProcess,
+            ["TOTAL_IN_PROCESS"]: totalInProcess,
           };
         });
 
