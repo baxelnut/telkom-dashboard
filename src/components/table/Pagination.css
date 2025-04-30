@@ -33,6 +33,10 @@
   font-size: 14px;
 }
 
+body.dark .pagination .page-link {
+  color: var(--text);
+}
+
 .pagination .page-item:hover {
   background-color: var(--primary);
 }
@@ -46,6 +50,10 @@
   background: var(--bg);
   color: var(--text);
   pointer-events: none;
+}
+
+body.dark .pagination .active .page-link {
+  background: var(--primary);
 }
 
 .pagination .active {
