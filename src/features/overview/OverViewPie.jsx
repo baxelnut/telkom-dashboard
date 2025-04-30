@@ -11,7 +11,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("in_process");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [activeIndex, setActiveIndex] = useState(0);
   const [excludedWitels, setExcludedWitels] = useState([]);
 
@@ -35,6 +35,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
 
   const categoryOptions = useMemo(
     () => [
+      { value: "all", label: "ALL" },
       { value: "in_process", label: "In Process" },
       { value: "prov_complete", label: "Prov Complete" },
       { value: "provide_order", label: "Provide Order" },
@@ -59,12 +60,25 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   }, [data, excludedWitels]);
 
   const pieData = useMemo(() => {
+    if (selectedCategory === "all") {
+      return filteredData.map((item, index) => ({
+        name: item.bill_witel,
+        value: Object.keys(item).reduce((acc, key) => {
+          if (categoryOptions.some((cat) => cat.value === key)) {
+            acc += item[key];
+          }
+          return acc;
+        }, 0),
+        fill: colorSet[index % colorSet.length],
+      }));
+    }
+
     return filteredData.map((item, index) => ({
       name: item.bill_witel,
       value: item[selectedCategory],
       fill: colorSet[index % colorSet.length],
     }));
-  }, [filteredData, selectedCategory]);
+  }, [filteredData, selectedCategory, categoryOptions]);
 
   const renderActiveShape = (props) => {
     const RADIAN = Math.PI / 180;
@@ -197,35 +211,42 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
             </ResponsiveContainer>
 
             <div className="checkbox-container">
-              {witelOptions.map((option) => {
-                const isExcluded = excludedWitels.includes(option.value);
-                return (
-                  <p key={option.value} className="witel-container">
-                    <input
-                      className="checkbox"
-                      type="checkbox"
-                      checked={!isExcluded}
-                      onChange={() => {
-                        setExcludedWitels((prev) =>
-                          isExcluded
-                            ? prev.filter((name) => name !== option.value)
-                            : [...prev, option.value]
-                        );
-                      }}
-                    />
-                    {option.label}
-                    <div className="category-quantities">
-                      <strong style={{ display: isExcluded ? "none" : "flex" }}>
-                        →{" "}
-                        {getWitelCategoryQuantity(
-                          option.value,
-                          selectedCategory
-                        )}
-                      </strong>
-                    </div>
-                  </p>
-                );
-              })}
+              {witelOptions
+                .filter((option) => option.value !== "ALL")
+                .map((option) => {
+                  const isExcluded = excludedWitels.includes(option.value);
+                  return (
+                    <p key={option.value} className="witel-container">
+                      <input
+                        className="checkbox"
+                        type="checkbox"
+                        checked={!isExcluded}
+                        onChange={() => {
+                          setExcludedWitels((prev) =>
+                            isExcluded
+                              ? prev.filter((name) => name !== option.value)
+                              : [...prev, option.value]
+                          );
+                        }}
+                      />
+                      {option.label}
+                      <div className="category-quantities">
+                        <strong
+                          style={{ display: isExcluded ? "none" : "flex" }}
+                        >
+                          →{" "}
+                          {selectedCategory === "all"
+                            ? pieData.find((item) => item.name === option.value)
+                                ?.value
+                            : getWitelCategoryQuantity(
+                                option.value,
+                                selectedCategory
+                              )}
+                        </strong>
+                      </div>
+                    </p>
+                  );
+                })}
             </div>
           </>
         )}
