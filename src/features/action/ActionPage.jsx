@@ -4,17 +4,24 @@ import Dropdown from "../../components/utils/Dropdown";
 import ActionTable from "./ActionTable";
 import ActionSelectedTable from "./ActionSelectedTable";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 export default function ActionPage({ API_URL, userEmail }) {
   const [poData, setPoData] = useState([]);
   const [reportData, setReportData] = useState([]);
   const [enrichedData, setEnrichedData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+
   const [selectedWitel, setSelectedWitel] = useState([null, null]);
+
   const [witelOptions, setWitelOptions] = useState([
     { value: "ALL", label: "ALL" },
   ]);
+  const [selectedExport, setSelectedExport] = useState("Excel");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,25 +40,25 @@ export default function ActionPage({ API_URL, userEmail }) {
         setPoData(poJson.data);
         setReportData(reportJson.data);
 
-        const uniqueWitels = [
-          ...new Set(poJson.data.map((row) => row.WITEL).filter(Boolean)),
-        ];
+        const uniqueW = Array.from(
+          new Set(poJson.data.map((r) => r.WITEL).filter(Boolean))
+        );
         setWitelOptions([
           { value: "ALL", label: "ALL" },
-          ...uniqueWitels.map((w) => ({ value: w, label: w })),
+          ...uniqueW.map((w) => ({ value: w, label: w })),
         ]);
 
         const processed = poJson.data.map((poItem) => {
-          const reportEntry =
+          const entry =
             reportJson.data.find((r) => r.witelName === poItem.BILL_WITEL)?.[
               "IN PROCESS"
             ] || {};
 
-          const under3 = (reportEntry["<3blnItems"] || []).map((i) => ({
+          const under3 = (entry["<3blnItems"] || []).map((i) => ({
             ...i,
             _bucket: "<",
           }));
-          const over3 = (reportEntry[">3blnItems"] || []).map((i) => ({
+          const over3 = (entry[">3blnItems"] || []).map((i) => ({
             ...i,
             _bucket: ">",
           }));
@@ -92,40 +99,111 @@ export default function ActionPage({ API_URL, userEmail }) {
       }
     };
     fetchData();
-  }, [API_URL]);
+  }, []);
 
   const refresh = () => {
     setSelectedWitel([null, null]);
-    setLoading(true);
-
     window.location.reload();
+  };
+
+  const getExportOptions = () =>
+    ["Excel", "CSV"].map((v) => ({ value: v, label: v }));
+
+  const handleExport = async () => {
+    const type = selectedExport;
+
+    const [bill, wName] = selectedWitel;
+    const dataToExport = (
+      bill ? enrichedData.filter((r) => r.BILL_WITEL === bill) : enrichedData
+    ).map((row) => ({
+      PO_EMAIL: Array.isArray(row.PO_EMAIL)
+        ? row.PO_EMAIL.join(", ")
+        : row.PO_EMAIL,
+      PO_NAME: Array.isArray(row.PO_NAME)
+        ? row.PO_NAME.join(", ")
+        : row.PO_NAME,
+      WITEL: row.WITEL,
+      BILL_WITEL: row.BILL_WITEL,
+      items: row.items.map((it) => ({
+        bucket: it._bucket === "<" ? "<3bln" : ">3bln",
+        STATUS: it.STATUS,
+        ...it,
+      })),
+    }));
+
+    const flattenedData = dataToExport.flatMap((row) =>
+      row.items.map((it) => ({
+        PO_EMAIL: row.PO_EMAIL,
+        PO_NAME: row.PO_NAME,
+        WITEL: row.WITEL,
+        BILL_WITEL: row.BILL_WITEL,
+        bucket: it.bucket,
+        STATUS: it.STATUS,
+        ...it,
+      }))
+    );
+
+    if (!flattenedData.length) {
+      alert("No data to export");
+      return;
+    }
+
+    const sheet = XLSX.utils.json_to_sheet(flattenedData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, sheet, "Export");
+    if (type === "Excel") {
+      const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      saveAs(
+        new Blob([buf], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }),
+        `Action Export.xlsx`
+      );
+    } else {
+      const csv = XLSX.utils.sheet_to_csv(sheet);
+      saveAs(
+        new Blob([csv], { type: "text/csv;charset=utf-8;" }),
+        `Action Export.csv`
+      );
+    }
   };
 
   return (
     <div className="action-container">
       <div className="action-table-container">
         <div className="filter-container">
-          {!selectedWitel?.billWitel ? (
+          {!selectedWitel[0] ? (
             <>
               <p>Select Witel:</p>
               <Dropdown
                 options={witelOptions}
                 value={selectedCategory}
-                onChange={(e) => {
-                  setSelectedCategory(e.target.value);
-                }}
+                onChange={(e) => setSelectedCategory(e.target.value)}
               />
             </>
           ) : (
-            <button onClick={() => setSelectedWitel(null)}>
-              <p>← View full table</p>
-            </button>
+            <div className="category-filter">
+              <button onClick={() => setSelectedWitel([null, null])}>
+                ← View full table
+              </button>
+
+              <div className="filter-container">
+                <button className="label" onClick={handleExport}>
+                  <p>Export as</p>
+                </button>
+                <Dropdown
+                  options={getExportOptions()}
+                  value={selectedExport}
+                  onChange={(e) => setSelectedExport(e.target.value)}
+                />
+              </div>
+            </div>
           )}
         </div>
 
-        {selectedWitel?.witel && (
+        {selectedWitel[1] && (
           <div className="title-container">
-            <h5>{selectedWitel.witel}</h5>
+            <h5>{selectedWitel[1]}</h5>
           </div>
         )}
 
@@ -133,7 +211,7 @@ export default function ActionPage({ API_URL, userEmail }) {
           className="table-wrapper"
           style={{ minHeight: loading ? "300px" : "fit-content" }}
         >
-          {!selectedWitel?.billWitel ? (
+          {!selectedWitel[0] ? (
             <ActionTable
               actionTabledata={{
                 data:
@@ -143,14 +221,14 @@ export default function ActionPage({ API_URL, userEmail }) {
               }}
               loading={loading}
               error={error}
-              onRowClick={(billWitel, witel) =>
-                setSelectedWitel({ billWitel, witel })
+              onRowClick={(billWitel, witelName) =>
+                setSelectedWitel([billWitel, witelName])
               }
             />
           ) : (
             <ActionSelectedTable
               reportData={reportData}
-              selectedWitel={selectedWitel?.billWitel}
+              selectedWitel={selectedWitel[0]}
               API_URL={API_URL}
               userEmail={userEmail}
               onUpdateSuccess={refresh}

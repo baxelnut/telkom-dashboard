@@ -24,6 +24,10 @@
   margin-bottom: 1rem;
 }
 
+.action-container .category-filter {
+  width: 100%;
+}
+
 @media screen and (max-width: 768px) {
   .action-container {
     padding: 0.5rem;
