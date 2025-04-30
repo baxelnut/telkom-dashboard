@@ -133,26 +133,17 @@ const processKategoriData = (witelData, kategori) => {
     // console.log("Raw Revenue:", rawRevenue);
     // console.log("Parsed Revenue:", revenue);
 
-    const orderSubtype = item["ORDER_SUBTYPE"];
-
     if (currentKategori === kategori) {
-      const newOrderSubtype =
-        Object.keys(namingConvention).find((key) =>
-          namingConvention[key].includes(orderSubtype)
-        ) || orderSubtype;
-
       if (kategoriUmur === "< 3 BLN") {
         kategoriCounts["<3bln"] += 1;
         revenueCounts["<3bln"] += revenue;
         items["<3bln"].push({
-          normalized_order_subtype: newOrderSubtype,
           ...item,
         });
       } else if (kategoriUmur === "> 3 BLN") {
         kategoriCounts[">3bln"] += 1;
         revenueCounts[">3bln"] += revenue;
         items[">3bln"].push({
-          normalized_order_subtype: newOrderSubtype,
           ...item,
         });
       }
