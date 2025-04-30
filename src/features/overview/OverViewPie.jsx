@@ -11,9 +11,9 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedWitel, setSelectedWitel] = useState("ALL");
+  const [selectedCategory, setSelectedCategory] = useState("in_process");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [excludedCategories, setExcludedCategories] = useState([]);
+  const [excludedWitels, setExcludedWitels] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +33,16 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
     fetchData();
   }, []);
 
+  const categoryOptions = useMemo(
+    () => [
+      { value: "in_process", label: "In Process" },
+      { value: "prov_complete", label: "Prov Complete" },
+      { value: "provide_order", label: "Provide Order" },
+      { value: "ready_to_bill", label: "Ready to Bill" },
+    ],
+    []
+  );
+
   const witelOptions = useMemo(
     () => [
       { value: "ALL", label: "ALL" },
@@ -45,40 +55,16 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   );
 
   const filteredData = useMemo(() => {
-    const result =
-      selectedWitel === "ALL"
-        ? data.reduce((acc, item) => {
-            Object.keys(item).forEach((key) => {
-              if (key !== "bill_witel") {
-                acc[key] = (acc[key] || 0) + item[key];
-              }
-            });
-            return acc;
-          }, {})
-        : data.find((item) => item.bill_witel === selectedWitel) || {};
+    return data.filter((item) => !excludedWitels.includes(item.bill_witel));
+  }, [data, excludedWitels]);
 
-    delete result.billing_completed;
-
-    return result;
-  }, [selectedWitel, data]);
-
-  const pieData = useMemo(
-    () =>
-      Object.keys(filteredData)
-        .filter(
-          (key) =>
-            key !== "bill_witel" &&
-            !excludedCategories.includes(
-              key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-            )
-        )
-        .map((key, index) => ({
-          name: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-          value: filteredData[key],
-          fill: colorSet[index % colorSet.length],
-        })),
-    [filteredData, excludedCategories]
-  );
+  const pieData = useMemo(() => {
+    return filteredData.map((item, index) => ({
+      name: item.bill_witel,
+      value: item[selectedCategory],
+      fill: colorSet[index % colorSet.length],
+    }));
+  }, [filteredData, selectedCategory]);
 
   const renderActiveShape = (props) => {
     const RADIAN = Math.PI / 180;
@@ -164,11 +150,21 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
     );
   };
 
+  const getWitelCategoryQuantity = (witel, category) => {
+    const witelData = data.find((item) => item.bill_witel === witel);
+
+    if (witelData) {
+      return witelData[category] || 0;
+    }
+
+    return 0;
+  };
+
   return (
     <div className="overview-pie-container">
       <div className="overview-pie-title">
         <h4>{title}</h4>
-        <p>{`${subtitle} ${selectedWitel}`}</p>
+        <p>{subtitle}</p>
       </div>
 
       <div className="overview-pie-content">
@@ -179,9 +175,9 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
         ) : (
           <>
             <Dropdown
-              options={witelOptions}
-              value={selectedWitel}
-              onChange={(e) => setSelectedWitel(e.target.value)}
+              options={categoryOptions}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
             />
 
             <ResponsiveContainer width="100%" height={280}>
@@ -200,38 +196,36 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
               </PieChart>
             </ResponsiveContainer>
 
-            <div className="pie-desc">
-              {Object.keys(filteredData)
-                .filter((key) => key !== "bill_witel")
-                .map((key, index) => {
-                  const categoryName = key
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c) => c.toUpperCase());
-                  const isExcluded = excludedCategories.includes(categoryName);
-
-                  return (
-                    <p key={categoryName} className="category-container">
-                      <input
-                        className="checkbox"
-                        type="checkbox"
-                        checked={!isExcluded}
-                        onChange={() => {
-                          setExcludedCategories((prev) =>
-                            isExcluded
-                              ? prev.filter((name) => name !== categoryName)
-                              : [...prev, categoryName]
-                          );
-                        }}
-                      />
-
-                      {categoryName}
-
+            <div className="checkbox-container">
+              {witelOptions.map((option) => {
+                const isExcluded = excludedWitels.includes(option.value);
+                return (
+                  <p key={option.value} className="witel-container">
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      checked={!isExcluded}
+                      onChange={() => {
+                        setExcludedWitels((prev) =>
+                          isExcluded
+                            ? prev.filter((name) => name !== option.value)
+                            : [...prev, option.value]
+                        );
+                      }}
+                    />
+                    {option.label}
+                    <div className="category-quantities">
                       <strong style={{ display: isExcluded ? "none" : "flex" }}>
-                        → {filteredData[key]}
+                        →{" "}
+                        {getWitelCategoryQuantity(
+                          option.value,
+                          selectedCategory
+                        )}
                       </strong>
-                    </p>
-                  );
-                })}
+                    </div>
+                  </p>
+                );
+              })}
             </div>
           </>
         )}
