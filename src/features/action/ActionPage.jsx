@@ -184,7 +184,7 @@ export default function ActionPage({ API_URL, userEmail }) {
           ) : (
             <div className="category-filter">
               <button onClick={() => setSelectedWitel([null, null])}>
-                ← View full table
+                <p>← View full table</p>
               </button>
 
               <div className="filter-container">
