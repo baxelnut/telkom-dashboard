@@ -8,7 +8,7 @@ export default function TableScroll({ data, currentPage, rowsPerPage }) {
         <thead>
           <tr>
             <th>
-              <h6>No.</h6>
+              <h6> </h6> {/* Empty header for row numbers */}
             </th>
             {Object.keys(data[0] || {}).map((key) => (
               <th key={key}>
