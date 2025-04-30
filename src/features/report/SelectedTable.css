@@ -11,7 +11,7 @@
   height: auto;
 }
 
-.notes { 
+.notes {
   background-color: var(--surface);
   color: var(--text);
   border: solid 1px var(--text-variant);
@@ -19,7 +19,7 @@
   overflow: hidden;
   line-height: 1.5;
   max-height: 3.5em;
-  padding: 5px; 
+  padding: 5px;
 }
 
 .notes:focus {
@@ -30,4 +30,16 @@
 .notes {
   height: auto;
   min-height: 2.5rem;
+}
+
+.tr-status-lanjut {
+  background-color: rgb(var(--success-rgb), 0.5);
+}
+
+.tr-status-cancel {
+  background-color: rgb(var(--error-rgb), 0.5);
+}
+
+.tr-status-bukan-order-reg {
+  background-color: rgb(var(--secondary-rgb), 0.5);
 }

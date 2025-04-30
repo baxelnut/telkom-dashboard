@@ -105,7 +105,16 @@ export default function SelectedTable({
             {filtered.map((itm, idx) => {
               const inProg = itm.KATEGORI === "IN PROCESS";
               return (
-                <tr key={idx}>
+                <tr
+                  key={idx}
+                  className={`tr-status-${(
+                    actions[itm.UUID] ??
+                    itm.STATUS ??
+                    "no_status"
+                  )
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
+                >
                   {hasInProgress && (
                     <td>
                       {inProg && (
