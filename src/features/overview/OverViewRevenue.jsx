@@ -15,7 +15,7 @@ import Dropdown from "../../components/utils/Dropdown";
 
 export default function OverViewRevenue({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
-  const [selectedWitel, setSelectedWitel] = useState("BALI");
+  const [selectedWitel, setSelectedWitel] = useState("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -71,22 +71,35 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
   };
 
   const chartData = useMemo(() => {
-    const current = Array.isArray(data)
-      ? data.find((item) => item.bill_witel === selectedWitel)
-      : null;
-    if (!current) return [];
+    if (!Array.isArray(data) || data.length === 0) return [];
 
-    return Object.entries(current)
-      .filter(([key]) => key !== "bill_witel")
-      .map(([key, value]) => ({
-        name: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-        revenue: Number(value),
-      }));
+    let aggregated = {};
+
+    if (selectedWitel === "ALL") {
+      data.forEach((item) => {
+        Object.entries(item).forEach(([key, value]) => {
+          if (key === "bill_witel") return;
+          aggregated[key] = (aggregated[key] || 0) + Number(value);
+        });
+      });
+    } else {
+      const current = data.find((item) => item.bill_witel === selectedWitel);
+      if (!current) return [];
+      aggregated = { ...current };
+      delete aggregated.bill_witel;
+    }
+
+    return Object.entries(aggregated).map(([key, value]) => ({
+      name: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      revenue: Number(value),
+    }));
   }, [data, selectedWitel]);
 
-  const witelOptions = Array.from(
-    new Set(data.map((item) => item.bill_witel))
-  ).map((witel) => ({ value: witel, label: witel }));
+  const uniqueWitels = Array.from(new Set(data.map((item) => item.bill_witel)));
+  const witelOptions = [
+    { value: "ALL", label: "ALL" },
+    ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),
+  ];
 
   const handleChange = (e) => {
     setSelectedWitel(e.target.value);
