@@ -310,7 +310,7 @@ export const getSheetSegmen = async (req, res) => {
   }
 };
 
-export const getSheetOrderType = async (req, res) => {
+export const getSheetOrderType2 = async (req, res) => {
   try {
     const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
     const raw = await fetch(sheetURL).then((res) => res.text());
@@ -329,32 +329,29 @@ export const getSheetOrderType = async (req, res) => {
 
     for (const row of formattedData) {
       const witel = row["bill_witel"] || row["BILL_WITEL"];
-      const subtypeRaw = row["order_subtype"] || row["ORDER_SUBTYPE"];
-      const subtype = subtypeRaw.toLowerCase();
+      const subtype2Raw = row["order_subtype2"] || row["ORDER_SUBTYPE2"];
+      const subtype2 = subtype2Raw?.toLowerCase().trim();
 
-      if (!witel || !subtype) continue;
+      if (!witel || !subtype2) continue;
 
       if (!actionMap[witel]) {
         actionMap[witel] = {
           bill_witel: witel,
-          disconnect: 0,
-          suspend: 0,
-          renewal_agreement: 0,
-          modify: 0,
-          resume: 0,
-          modify_price: 0,
-          modify_ba: 0,
-          modify_termin: 0,
+          ao: 0,
+          so: 0,
+          do: 0,
+          mo: 0,
+          ro: 0,
         };
       }
 
       const target = actionMap[witel];
 
-      if (subtype.includes("disconnect")) target.disconnect += 1;
-      else if (subtype.includes("suspend")) target.suspend += 1;
-      else if (subtype.includes("resume")) target.resume += 1;
-      else if (subtype.includes("renewal")) target.renewal_agreement += 1;
-      else if (subtype.includes("modify")) target.modify += 1;
+      if (subtype2.includes("ao")) target.ao += 1;
+      else if (subtype2.includes("so")) target.so += 1;
+      else if (subtype2.includes("do")) target.do += 1;
+      else if (subtype2.includes("mo")) target.mo += 1;
+      else if (subtype2.includes("ro")) target.ro += 1;
     }
 
     res.json({ data: Object.values(actionMap) });
@@ -363,6 +360,7 @@ export const getSheetOrderType = async (req, res) => {
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
+
 
 export const getSheetOrderSimplified = async (req, res) => {
   try {

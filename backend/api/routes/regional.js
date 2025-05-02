@@ -13,7 +13,7 @@ import {
   updateSheet,
   getOrderSubtypeRev,
   getSheetSegmen,
-  getSheetOrderType,
+  getSheetOrderType2,
   getSheetOrderSimplified,
   getSheetKategoriSimplified,
   getPO,
@@ -34,7 +34,7 @@ router.get("/sheets/order_subtype_rev", getOrderSubtypeRev);
 router.get("/sheets/segmen", getSheetSegmen);
 router.get("/sheets/segmen_simplified", getSheetOrderSimplified);
 router.get("/sheets/kategori_simplified", getSheetKategoriSimplified);
-router.get("/sheets/order_subtype", getSheetOrderType);
+router.get("/sheets/order_subtype2", getSheetOrderType2);
 
 router.get("/sheets/po", getPO);
 
