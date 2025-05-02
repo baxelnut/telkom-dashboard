@@ -16,6 +16,8 @@
   min-height: 360px;
   border-radius: 8px;
   margin-top: 1rem;
+  /* justify-content: space-between; */
+  height: 100%;
 }
 
 .overview-bar-title {
@@ -36,6 +38,30 @@
   border: solid 1px var(--text-variant);  
 } */
 
+.overview-bar-container .filters-container {
+  display: flex;
+  align-items: center; 
+  gap: 1rem;
+  width: 100%;
+}
+
+.overview-bar-container .dropdown-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.recharts-default-legend {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1;
+  width: 80%;
+  height: fit-content;  
+}
+
 @media screen and (max-width: 768px) {
   .overview-bar-container {
     padding: 0.5rem;
@@ -47,5 +73,9 @@
 
   .overview-bar-title {
     gap: 0.5rem;
+  }
+
+  .recharts-default-legend {
+    font-size: 12px !important; 
   }
 }
