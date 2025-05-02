@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./ActionPage.css";
 import Dropdown from "../../components/utils/Dropdown";
 import ActionTable from "./ActionTable";
@@ -98,9 +98,14 @@ export default function ActionPage({ API_URL, userEmail }) {
     fetchData();
   }, []);
 
-  const refresh = () => {
-    setSelectedWitel([null, null, null]);
-    window.location.reload();
+  const debounceTimer = useRef(null);
+
+  const debounceRefresh = () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setSelectedWitel([null, null, null]);
+      window.location.reload();
+    }, 5000); // delay 5s
   };
 
   const getExportOptions = () =>
@@ -249,7 +254,7 @@ export default function ActionPage({ API_URL, userEmail }) {
               selectedWitel={selectedWitel}
               API_URL={API_URL}
               userEmail={userEmail}
-              onUpdateSuccess={refresh}
+              onUpdateSuccess={debounceRefresh}
             />
           )}
         </div>
