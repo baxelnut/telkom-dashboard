@@ -216,7 +216,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
                 .map((option) => {
                   const isExcluded = excludedWitels.includes(option.value);
                   return (
-                    <p key={option.value} className="witel-container">
+                    <div key={option.value} className="witel-container">
                       <input
                         className="checkbox"
                         type="checkbox"
@@ -229,7 +229,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
                           );
                         }}
                       />
-                      {option.label}
+                      <p>{option.label}</p>
                       <div className="category-quantities">
                         <strong
                           style={{ display: isExcluded ? "none" : "flex" }}
@@ -244,7 +244,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
                               )}
                         </strong>
                       </div>
-                    </p>
+                    </div>
                   );
                 })}
             </div>

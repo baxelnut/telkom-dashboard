@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./OverviewPage.css";
 import OverViewStatus from "./OverViewStatus";
 import OverViewRevenue from "./OverViewRevenue";
@@ -15,6 +16,7 @@ export default function OverviewPage({ API_URL }) {
   const [sessionData, setSessionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFilteredData = async () => {
@@ -61,7 +63,11 @@ export default function OverviewPage({ API_URL }) {
               </div>
             ))
           : statusData.map((statusItem, index) => (
-              <OverViewStatus key={index} overviewStatus={statusItem} />
+              <OverViewStatus
+                key={index}
+                overviewStatus={statusItem}
+                onClick={() => navigate("/report")}
+              />
             ))}
       </div>
 

@@ -14,7 +14,7 @@ const getStatusColorsFromCSS = () => {
 
 const STATUS_COLORS = getStatusColorsFromCSS();
 
-export default function OverViewStatus({ overviewStatus }) {
+export default function OverViewStatus({ overviewStatus, onClick }) {
   const statuses = Object.entries(STATUS_COLORS);
 
   const pieData = statuses
@@ -29,7 +29,7 @@ export default function OverViewStatus({ overviewStatus }) {
   const total = pieData.reduce((acc, cur) => acc + cur.value, 0);
 
   return (
-    <div className="overview-pie">
+    <div className="overview-pie" onClick={onClick}>
       <h5>{overviewStatus["bill_witel"] || "Unknown"}</h5>
 
       <PieChart width={200} height={220}>
