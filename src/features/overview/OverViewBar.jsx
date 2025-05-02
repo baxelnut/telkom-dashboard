@@ -13,9 +13,31 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { fullName, quantity } = payload[0].payload;
+    return (
+      <div
+        style={{
+          backgroundColor: "var(--surface)",
+          padding: "14px",
+          borderRadius: "6px",
+          fontWeight: "bold",
+          fontSize: "14px",
+        }}
+      >
+        <p style={{ margin: 0 }}>{fullName}</p>
+        <p style={{ margin: 0 }}>Quantity: {quantity}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 export default function OverViewBar({ title, subtitle, API_URL }) {
   const [data, setData] = useState([]);
-  const [selectedWitel, setSelectedWitel] = useState("BALI");
+  const [selectedWitel, setSelectedWitel] = useState("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,16 +57,40 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
     fetchData();
   }, []);
 
-  const filteredData = data.filter((item) => item.bill_witel === selectedWitel);
+  const segmenLabelMap = {
+    "State-Owned Enterprise Service": "SOES",
+    // add more mappings if needed
+  };
 
-  const chartData = filteredData.map((item) => ({
-    name: item.segmen,
-    quantity: item.quantity,
-  }));
+  const chartData = (() => {
+    if (!Array.isArray(data)) return [];
 
-  const witelOptions = Array.from(
-    new Set(data.map((item) => item.bill_witel))
-  ).map((witel) => ({ value: witel, label: witel }));
+    const filtered =
+      selectedWitel === "ALL"
+        ? data
+        : data.filter((item) => item.bill_witel === selectedWitel);
+
+    const aggregated = {};
+
+    filtered.forEach((item) => {
+      if (!aggregated[item.segmen]) {
+        aggregated[item.segmen] = 0;
+      }
+      aggregated[item.segmen] += Number(item.quantity);
+    });
+
+    return Object.entries(aggregated).map(([segmen, quantity]) => ({
+      name: segmenLabelMap[segmen] || segmen,
+      fullName: segmen,
+      quantity,
+    }));
+  })();
+
+  const uniqueWitels = Array.from(new Set(data.map((item) => item.bill_witel)));
+  const witelOptions = [
+    { value: "ALL", label: "ALL" },
+    ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),
+  ];
 
   const handleChange = (e) => {
     setSelectedWitel(e.target.value);
@@ -78,6 +124,10 @@ export default function OverViewBar({ title, subtitle, API_URL }) {
                   orientation="right"
                 />
                 <Tooltip
+                  labelFormatter={(value, payload) => {
+                    const fullName = payload?.[0]?.payload?.fullName;
+                    return fullName || value;
+                  }}
                   labelStyle={{ fontWeight: "bold" }}
                   contentStyle={{
                     fontSize: "14px",

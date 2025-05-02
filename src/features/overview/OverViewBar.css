@@ -25,6 +25,17 @@
   gap: 1rem;
 }
 
+/* .custom-tooltip {
+  background-color: var(--surface);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0px 4px 8px rgba(var(--text-rgb), 0.5);
+  border: solid 1px var(--text-variant);  
+} */
+
 @media screen and (max-width: 768px) {
   .overview-bar-container {
     padding: 0.5rem;
