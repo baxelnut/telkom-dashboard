@@ -210,7 +210,7 @@ export default function ReportPage({ API_URL, userEmail }) {
         style={{ display: selectedCell ? "flex" : "none" }}
       >
         <div className="back-button-container">
-          <button onClick={() => setSelectedCell(null)}>
+          <button className="view-full" onClick={() => setSelectedCell(null)}>
             <p>← View full table</p>
           </button>
 
