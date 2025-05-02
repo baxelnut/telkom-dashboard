@@ -72,6 +72,22 @@
   gap: 5px;
 }
 
+.custom-tooltip {
+  background-color: var(--surface);
+  padding: 14px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: solid 2px var(--text-variant);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tooltip-label,
+.tooltip-value {
+  color: var(--text);
+}
+
 @media screen and (max-width: 768px) {
   .overview-pie {
     width: calc(100% - 2rem);
