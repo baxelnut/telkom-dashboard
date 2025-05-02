@@ -7,7 +7,6 @@
   background-color: var(--surface);
   padding: 1rem;
   text-align: start;
-  gap: 1rem;
 }
 
 .overtime-title {
@@ -76,6 +75,30 @@
   gap: 4px;
 }
 
+.overtime-container .filters-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+  width: 100%;
+}
+
+.overtime-container .dropdown-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.summary-container {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
 @media screen and (max-width: 768px) {
   .overtime-container,
   .overtime-title {
@@ -100,5 +123,13 @@
     flex-direction: column;
     gap: 4px;
     align-items: start;
+  }
+
+  .filters-container {
+    flex-direction: column;
+  }
+
+  .dropdown-filter {
+    width: 100%;
   }
 }
