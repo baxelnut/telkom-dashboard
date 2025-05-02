@@ -193,7 +193,6 @@ export default function ReportTable({
               </th>
               <th rowSpan="2">
                 <h6>GRAND TOTAL</h6>
-                {/* this one still returning no data */}
               </th>
             </tr>
             <tr>
@@ -225,7 +224,6 @@ export default function ReportTable({
             <tr className="grand-total-row">
               <td className="grand-total-title">
                 <h6>GRAND TOTAL</h6>
-                {/* this one already functioning properly */}
               </td>
               {renderReportCells("<")}
               {renderGrandTotals("<")}
