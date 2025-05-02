@@ -310,6 +310,116 @@ export const getSheetSegmen = async (req, res) => {
   }
 };
 
+export const getSegmenSubtype2 = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((r) => r.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col, i) =>
+      (col.label || `col_${i}`)
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+    );
+    const formatted = json.table.rows.map((row) => {
+      const vals = row.c.map((cell) => (cell?.v ?? "").toString().trim());
+      return headers.reduce((obj, key, i) => {
+        obj[key] = vals[i];
+        return obj;
+      }, {});
+    });
+
+    const grouped = {};
+    formatted.forEach((r) => {
+      const witel = r.bill_witel;
+      const type2 = r.order_subtype2;
+      const segmen = r.segmen;
+      if (!witel || !type2 || !segmen) return;
+
+      const key = `${witel}||${type2}||${segmen}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          bill_witel: witel,
+          subType2: type2,
+          segmen,
+          quantity: 0,
+        };
+      }
+      grouped[key].quantity += 1;
+    });
+
+    const result = Object.values(grouped);
+    if (result.length === 0) {
+      return res.status(404).json({ error: "No data found." });
+    }
+    return res.json({ data: result });
+  } catch (err) {
+    console.error("🔥 Spreadsheet Fetch Error:", err);
+    return res.status(500).json({ error: err.message || "Unknown error" });
+  }
+};
+
+export const getSegmenSubtype2Rev = async (req, res) => {
+  try {
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
+    const raw = await fetch(sheetURL).then((r) => r.text());
+    const json = JSON.parse(raw.substring(47).slice(0, -2));
+
+    const headers = json.table.cols.map((col, i) =>
+      (col.label || `col_${i}`)
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+    );
+
+    const formatted = json.table.rows.map((row) => {
+      const vals = row.c.map((cell) => (cell?.v ?? "").toString().trim());
+      return headers.reduce((obj, key, i) => {
+        obj[key] = vals[i];
+        return obj;
+      }, {});
+    });
+
+    const grouped = {};
+
+    formatted.forEach((r) => {
+      const witel = r.bill_witel;
+      const type2 = r.order_subtype2;
+      const segmen = r.segmen;
+      const revenue = parseFloat(r.revenue) || 0;
+
+      if (!witel || !type2 || !segmen) return;
+
+      const key = `${witel}||${type2}||${segmen}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          bill_witel: witel,
+          subType2: type2,
+          segmen,
+          quantity: 0,
+          revenue: 0,
+        };
+      }
+
+      grouped[key].quantity += 1;
+      grouped[key].revenue += revenue;
+    });
+
+    const result = Object.values(grouped);
+    if (result.length === 0) {
+      return res.status(404).json({ error: "No data found." });
+    }
+
+    return res.json({ data: result });
+  } catch (err) {
+    console.error("🔥 Spreadsheet Fetch Error:", err);
+    return res.status(500).json({ error: err.message || "Unknown error" });
+  }
+};
+
 export const getSheetOrderType2 = async (req, res) => {
   try {
     const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${FORMATTED_GID}`;
@@ -360,7 +470,6 @@ export const getSheetOrderType2 = async (req, res) => {
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
-
 
 export const getSheetOrderSimplified = async (req, res) => {
   try {

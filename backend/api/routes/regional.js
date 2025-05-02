@@ -17,6 +17,8 @@ import {
   getSheetOrderSimplified,
   getSheetKategoriSimplified,
   getPO,
+  getSegmenSubtype2,
+  getSegmenSubtype2Rev,
 } from "../controllers/sheetsController.js";
 
 const router = express.Router();
@@ -32,6 +34,8 @@ router.patch("/sheets/:id", updateSheet);
 router.get("/sheets/process_status", processStatus);
 router.get("/sheets/order_subtype_rev", getOrderSubtypeRev);
 router.get("/sheets/segmen", getSheetSegmen);
+router.get("/sheets/segmen/subtype2", getSegmenSubtype2);
+router.get("/sheets/segmen/subtype2/rev", getSegmenSubtype2Rev);
 router.get("/sheets/segmen_simplified", getSheetOrderSimplified);
 router.get("/sheets/kategori_simplified", getSheetKategoriSimplified);
 router.get("/sheets/order_subtype2", getSheetOrderType2);
