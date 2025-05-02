@@ -42,7 +42,7 @@ export default function ReportTable({
         subType: subtype,
         kategoriUmur: `${umurKey}3bln`,
         isTotal: false,
-        extractedIds: filtered.map((i) => i.id),
+        extractedIds: filtered.map((i) => i.UUID),
       };
 
       return (
@@ -65,12 +65,16 @@ export default function ReportTable({
 
     let allItems = [];
     orderSubtypes.forEach((st) =>
-      bucketNames.forEach((bk) => allItems.push(...(entry[st]?.[bk] || [])))
+      bucketNames.forEach((bk) => {
+        const data = entry[st]?.[bk];
+        if (data) allItems.push(...data);
+      })
     );
 
     const filtered = allItems.filter(
       (i) => selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
     );
+
     const count = filtered.length;
     const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
 
@@ -78,9 +82,9 @@ export default function ReportTable({
       witelName: entry.witelName,
       subType: null,
       subTypes: orderSubtypes,
-      kategoriUmur: `${umurKey}3bln`,
+      kategoriUmur: umurKey === "both" ? "both3bln" : `${umurKey}3bln`,
       isTotal: true,
-      extractedIds: filtered.map((i) => i.id),
+      extractedIds: filtered.map((i) => i.UUID),
     };
 
     return (
@@ -113,7 +117,7 @@ export default function ReportTable({
         subType: subtype,
         kategoriUmur: `${umurKey}3bln`,
         isTotal: true,
-        extractedIds: filtered.map((i) => i.id),
+        extractedIds: filtered.map((i) => i.UUID),
       };
 
       return (
@@ -151,7 +155,7 @@ export default function ReportTable({
       subTypes: orderSubtypes,
       kategoriUmur: `${umurKey}3bln`,
       isTotal: true,
-      extractedIds: filtered.map((i) => i.id),
+      extractedIds: filtered.map((i) => i.UUID),
     };
 
     return (
@@ -188,7 +192,8 @@ export default function ReportTable({
                 &gt;<h6>3 BLN Total</h6>
               </th>
               <th rowSpan="2">
-                <h6>Grand Total</h6>
+                <h6>GRAND TOTAL</h6>
+                {/* this one still returning no data */}
               </th>
             </tr>
             <tr>
@@ -220,6 +225,7 @@ export default function ReportTable({
             <tr className="grand-total-row">
               <td className="grand-total-title">
                 <h6>GRAND TOTAL</h6>
+                {/* this one already functioning properly */}
               </td>
               {renderReportCells("<")}
               {renderGrandTotals("<")}
