@@ -101,7 +101,9 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     <div className="overtime-radar-container">
       <div className="overview-radar-title">
         <h4>{title}</h4>
-        <p>{`${subtitle} ${selectedWitel}`}</p>
+        <p>
+          {subtitle} <strong>{selectedWitel}</strong>.
+        </p>
       </div>
 
       <div className="overview-radar-content">
