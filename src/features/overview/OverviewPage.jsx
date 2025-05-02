@@ -72,17 +72,8 @@ export default function OverviewPage({ API_URL }) {
       </div>
 
       <div className="session-chart-container">
-        <OverViewRevenue
-          title="Revenue by Order Sub-type"
-          subtitle="Showing data for revenue by order sub-type per witel in"
-          API_URL={API_URL}
-        />
-
-        <OverViewBar
-          title="Segmen Bar Chart"
-          subtitle="Showing data for segmen in"
-          API_URL={API_URL}
-        />
+        <OverViewRevenue title="Revenue by Order Sub-type" API_URL={API_URL} />
+        <OverViewBar title="Amount by Order Sub-type" API_URL={API_URL} />
       </div>
 
       <div className="analysis-container">
@@ -99,12 +90,12 @@ export default function OverviewPage({ API_URL }) {
         <div>
           <OverViewRadar
             title="Segmen Radar Chart"
-            subtitle="Showing data for segmen in"
+            subtitle="Showing data for segmen per witel in"
             API_URL={API_URL}
           />
           <OverViewPie
             title="Witel Pie Chart"
-            subtitle="Showing data for witel per category"
+            subtitle="Showing category of witel"
             API_URL={API_URL}
           />
         </div>
