@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./ActionTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
@@ -10,13 +10,12 @@ export default function ActionTable({
   onRowClick,
   loading,
   error,
+  selectedWitel,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error message={error} />;
 
-  const dataArray = actionTabledata.data || [];
-
-  const bucketCounts = (items, bucket) => {
+  const bucketCounts = (items, bucket, selectedPic) => {
     const counts = {
       Lanjut: 0,
       Cancel: 0,
@@ -25,7 +24,11 @@ export default function ActionTable({
     };
 
     items.forEach((it) => {
-      if (it._bucket === bucket && it.KATEGORI === "IN PROCESS") {
+      if (
+        it._bucket === bucket &&
+        it.KATEGORI === "IN PROCESS" &&
+        it.PIC === selectedPic
+      ) {
         const raw = (it.STATUS || "").trim();
         if (!raw) {
           counts["No Status"]++;
@@ -51,6 +54,8 @@ export default function ActionTable({
       counts["No Status"];
     return counts;
   };
+
+  const dataArray = actionTabledata.data || [];
 
   return (
     <div className="action-table">
@@ -95,14 +100,16 @@ export default function ActionTable({
 
         <tbody>
           {dataArray.map((row, idx) => {
-            const under = bucketCounts(row.items || [], "<");
-            const over = bucketCounts(row.items || [], ">");
+            const under = bucketCounts(row.items || [], "<", row.PO_NAME);
+            const over = bucketCounts(row.items || [], ">", row.PO_NAME);
 
             return (
               <tr
                 key={idx}
                 className="action-table-row"
-                onClick={() => onRowClick(row.BILL_WITEL, row.WITEL)}
+                onClick={() =>
+                  onRowClick(row.BILL_WITEL, row.WITEL, row.PO_NAME)
+                }
               >
                 <td>
                   <p>{row.PO_NAME}</p>
