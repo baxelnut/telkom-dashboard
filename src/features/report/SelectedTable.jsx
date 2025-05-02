@@ -30,7 +30,9 @@ export default function SelectedTable({
     if (witelName === "ALL" && isTotal && subType == null) {
       return ["<3blnItems", ">3blnItems"];
     }
-
+    if (isTotal && kategoriUmur === "both3bln") {
+      return ["<3blnItems", ">3blnItems"];
+    }
     return [`${kategoriUmur}Items`];
   })();
 
@@ -63,7 +65,7 @@ export default function SelectedTable({
 
   const filtered = items.filter(
     (i) =>
-      extractedIds.includes(i.id) &&
+      extractedIds.includes(i.UUID) &&
       (selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory)
   );
 
@@ -71,12 +73,12 @@ export default function SelectedTable({
 
   const hasInProgress = filtered.some((i) => i.KATEGORI === "IN PROCESS");
 
-  const logLine = (email) => {
-    const d = new Date();
-    return `Last edited: ${d.toLocaleDateString("id-ID")} ${d
-      .toTimeString()
-      .slice(0, 5)} by ${email}`;
-  };
+  // const logLine = (email) => {
+  //   const d = new Date();
+  //   return `Last edited: ${d.toLocaleDateString("id-ID")} ${d
+  //     .toTimeString()
+  //     .slice(0, 5)} by ${email}`;
+  // };
 
   return (
     <div className="selected-table">
@@ -84,6 +86,9 @@ export default function SelectedTable({
         <table>
           <thead>
             <tr>
+              <th>
+                <h6> </h6> {/* for numbering */}
+              </th>
               {hasInProgress && (
                 <th>
                   <h6>ACTION</h6>
@@ -115,6 +120,8 @@ export default function SelectedTable({
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                 >
+                  <td>{idx + 1}</td>
+
                   {/* {hasInProgress && (
                     <td>
                       {inProg && (
