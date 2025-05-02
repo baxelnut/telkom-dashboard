@@ -13,11 +13,8 @@ export default function ActionPage({ API_URL, userEmail }) {
   const [enrichedData, setEnrichedData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-
-  const [selectedWitel, setSelectedWitel] = useState([null, null]);
-
+  const [selectedWitel, setSelectedWitel] = useState([null, null, null]);
   const [witelOptions, setWitelOptions] = useState([
     { value: "ALL", label: "ALL" },
   ]);
@@ -102,7 +99,7 @@ export default function ActionPage({ API_URL, userEmail }) {
   }, []);
 
   const refresh = () => {
-    setSelectedWitel([null, null]);
+    setSelectedWitel([null, null, null]);
     window.location.reload();
   };
 
@@ -173,17 +170,20 @@ export default function ActionPage({ API_URL, userEmail }) {
       <div className="action-table-container">
         <div className="filter-container">
           {!selectedWitel[0] ? (
-            <>
+            <div className="select-witel">
               <p>Select Witel:</p>
               <Dropdown
                 options={witelOptions}
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               />
-            </>
+            </div>
           ) : (
             <div className="category-filter">
-              <button onClick={() => setSelectedWitel([null, null])}>
+              <button
+                className="view-full"
+                onClick={() => setSelectedWitel([null, null])}
+              >
                 <p>← View full table</p>
               </button>
 
@@ -203,7 +203,9 @@ export default function ActionPage({ API_URL, userEmail }) {
 
         {selectedWitel[1] && (
           <div className="title-container">
-            <h5>{selectedWitel[1]}</h5>
+            <h5>
+              {selectedWitel[1]} → {selectedWitel[2]}
+            </h5>
           </div>
         )}
 
@@ -221,14 +223,30 @@ export default function ActionPage({ API_URL, userEmail }) {
               }}
               loading={loading}
               error={error}
-              onRowClick={(billWitel, witelName) =>
-                setSelectedWitel([billWitel, witelName])
-              }
+              selectedWitel={selectedWitel}
+              onRowClick={(billWitel, witelName, poName) => {
+                setSelectedWitel([billWitel, witelName, poName]);
+              }}
             />
           ) : (
             <ActionSelectedTable
-              reportData={reportData}
-              selectedWitel={selectedWitel[0]}
+              reportData={reportData
+                .filter((entry) => entry.witelName === selectedWitel[0])
+                .map((entry) => {
+                  const inProc = entry["IN PROCESS"] || {};
+                  const allItems = [
+                    ...(inProc["<3blnItems"] || []),
+                    ...(inProc[">3blnItems"] || []),
+                  ];
+                  const itemsForPoi = allItems.filter(
+                    (item) => item.PIC === selectedWitel[2]
+                  );
+                  return {
+                    ...entry,
+                    items: itemsForPoi,
+                  };
+                })}
+              selectedWitel={selectedWitel}
               API_URL={API_URL}
               userEmail={userEmail}
               onUpdateSuccess={refresh}
