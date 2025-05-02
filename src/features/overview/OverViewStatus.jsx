@@ -14,6 +14,33 @@ const getStatusColorsFromCSS = () => {
 
 const STATUS_COLORS = getStatusColorsFromCSS();
 
+const CustomTooltip = ({ active, payload, total }) => {
+  if (!active || !payload?.length || !total) return null;
+
+  const { name, value } = payload[0];
+
+  const statusKey = Object.keys(STATUS_COLORS).find((key) => {
+    const displayName = key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    return displayName === name;
+  });
+
+  const statusColor = STATUS_COLORS[statusKey] || "var(--text-variant)";
+  const percent = ((value / total) * 100).toFixed(1);
+
+  return (
+    <div className="custom-tooltip">
+      <p className="tooltip-label">{name}</p>
+      <p>→</p>
+      <h6
+        className="tooltip-value"
+        style={{ color: statusColor }}
+      >{`${percent}%`}</h6>
+    </div>
+  );
+};
+
 export default function OverViewStatus({ overviewStatus, onClick }) {
   const statuses = Object.entries(STATUS_COLORS);
 
@@ -39,10 +66,7 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
           ))}
         </Pie>
         <Tooltip
-          formatter={(value, name, props) => {
-            const percent = ((value / total) * 100).toFixed(1);
-            return [`${percent}%`, name];
-          }}
+          content={(props) => <CustomTooltip {...props} total={total} />}
         />
       </PieChart>
 
@@ -54,7 +78,9 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
               className="o-pie-dec"
               style={{ color: item.color }}
             >
-              <p>{item.name}</p>
+              <p>
+                {item.name} ({`${((item.value / total) * 100).toFixed(1)}%`})
+              </p>
               <p>{item.value}</p>
             </div>
           );
