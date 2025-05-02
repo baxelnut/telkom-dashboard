@@ -26,7 +26,7 @@ export default function OverviewPage({ API_URL }) {
       try {
         const [statusResponse, sessionResponse] = await Promise.all([
           fetch(`${API_URL}/regional_3/sheets/process_status`),
-          fetch(`${API_URL}/regional_3/sheets/order_subtype`),
+          fetch(`${API_URL}/regional_3/sheets/order_subtype2`),
         ]);
 
         if (!statusResponse.ok) throw new Error("Failed to fetch status data");
@@ -89,7 +89,7 @@ export default function OverviewPage({ API_URL }) {
         <div>
           <OverViewSession
             title="Session by Sub-type"
-            subtitle="Showing data for top order sub-type."
+            subtitle="Showing data for order sub-type (AOSODOMORO)."
             overviewSession={sessionData}
             loading={loading}
             error={error}
