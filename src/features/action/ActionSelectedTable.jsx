@@ -30,7 +30,7 @@ export default function ActionSelectedTable({
 
   useEffect(() => {
     const selected = reportData.find(
-      (item) => item.witelName === selectedWitel
+      (item) => item.witelName === selectedWitel[0]
     );
     if (!selected) return;
 
@@ -42,9 +42,17 @@ export default function ActionSelectedTable({
         const under3bln = bucket["<3blnItems"] || [];
         const over3bln = bucket[">3blnItems"] || [];
 
-        const combined = [...under3bln, ...over3bln].filter(
-          (item) => item.KATEGORI === "IN PROCESS"
-        );
+        const combined = [...under3bln, ...over3bln].filter((item) => {
+          const pic = item.PIC?.trim()?.toLowerCase();
+          const selectedPic = selectedWitel[2]?.trim()?.toLowerCase();
+
+          if (item.KATEGORI === "IN PROCESS" && pic === selectedPic) {
+            return true;
+          }
+
+          return false;
+        });
+
         result.push(...combined);
       }
       return result;
@@ -70,6 +78,9 @@ export default function ActionSelectedTable({
           <thead>
             <tr>
               <th>
+                <h6> </h6> {/* for numbering */}
+              </th>
+              <th>
                 <h6>ACTION</h6>
               </th>
               <th>
@@ -92,6 +103,8 @@ export default function ActionSelectedTable({
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                 >
+                  <td>{rowIndex + 1}</td>
+
                   <td>
                     <Dropdown
                       key={`dropdown-${row.UUID}`}
@@ -159,11 +172,11 @@ export default function ActionSelectedTable({
                   </td>
                   {headers.map((header, i) => (
                     <td key={i}>
-                      <h6>
+                      <p className="unresponsive">
                         {header === "REVENUE"
                           ? formatCurrency(row[header])
                           : row[header] ?? "-"}
-                      </h6>
+                      </p>
                     </td>
                   ))}
                 </tr>
