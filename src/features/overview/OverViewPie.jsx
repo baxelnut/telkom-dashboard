@@ -178,7 +178,10 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
     <div className="overview-pie-container">
       <div className="overview-pie-title">
         <h4>{title}</h4>
-        <p>{subtitle}</p>
+        <p>
+          {subtitle}{" "}
+          <strong>{selectedCategory.replace(/_/g, " ").toUpperCase()}</strong>.
+        </p>
       </div>
 
       <div className="overview-pie-content">
