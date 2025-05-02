@@ -10,14 +10,27 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Legend,
+  ReferenceLine,
 } from "recharts";
 import Dropdown from "../../components/utils/Dropdown";
 
-export default function OverViewRevenue({ title, subtitle, API_URL }) {
+export default function OverViewRevenue({ title, API_URL }) {
   const [data, setData] = useState([]);
   const [selectedWitel, setSelectedWitel] = useState("ALL");
+  const [selectedSegmen, setSelectedSegmen] = useState("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const customOrder = ["AO", "SO", "DO", "MO", "RO"];
+
+  const colorsBySegmen = {
+    Government: "#FDB827",
+    "Private Service": "#C70A80",
+    "State-Owned Enterprise Service": "#54B435",
+    Regional: "#247881",
+    DEFAULT: "var(--secondary)",
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,7 +39,7 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
 
       try {
         const response = await fetch(
-          `${API_URL}/regional_3/sheets/order_subtype_rev`
+          `${API_URL}/regional_3/sheets/segmen/subtype2/rev`
         );
 
         if (!response.ok) {
@@ -52,13 +65,13 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
     };
 
     fetchData();
-  }, [API_URL]);
+  }, []);
 
   const formatValue = (value) => {
     const suffixes = ["", "K", "M", "B"];
     let index = 0;
+    const isNegative = value < 0;
     value = Math.abs(Number(value));
-
     if (isNaN(value)) return "0";
 
     while (value >= 1000 && index < suffixes.length - 1) {
@@ -67,33 +80,43 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
     }
 
     const formattedValue = `${value.toFixed(1)}${suffixes[index]}`;
-    return value < 0 ? `-${formattedValue}` : formattedValue;
+    return isNegative ? `-${formattedValue}` : formattedValue;
   };
 
   const chartData = useMemo(() => {
     if (!Array.isArray(data) || data.length === 0) return [];
 
-    let aggregated = {};
+    const filtered = data.filter((item) => {
+      return (
+        (selectedWitel === "ALL" || item.bill_witel === selectedWitel) &&
+        (selectedSegmen === "ALL" || item.segmen === selectedSegmen)
+      );
+    });
 
-    if (selectedWitel === "ALL") {
-      data.forEach((item) => {
-        Object.entries(item).forEach(([key, value]) => {
-          if (key === "bill_witel") return;
-          aggregated[key] = (aggregated[key] || 0) + Number(value);
+    const segmens = Array.from(new Set(filtered.map((d) => d.segmen)));
+
+    const resultMap = {};
+    filtered.forEach((item) => {
+      const key = item.subType2;
+      if (!resultMap[key]) {
+        resultMap[key] = { name: key };
+        segmens.forEach((seg) => {
+          resultMap[key][seg] = 0;
         });
-      });
-    } else {
-      const current = data.find((item) => item.bill_witel === selectedWitel);
-      if (!current) return [];
-      aggregated = { ...current };
-      delete aggregated.bill_witel;
-    }
+      }
 
-    return Object.entries(aggregated).map(([key, value]) => ({
-      name: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-      revenue: Number(value),
-    }));
-  }, [data, selectedWitel]);
+      const segmen = item.segmen || "DEFAULT";
+      const revenue = Number(item.revenue) || 0;
+
+      resultMap[key][segmen] += key === "DO" ? -revenue : revenue;
+    });
+
+    return Object.values(resultMap).sort((a, b) => {
+      const idxA = customOrder.indexOf(a.name);
+      const idxB = customOrder.indexOf(b.name);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
+  }, [data, selectedWitel, selectedSegmen]);
 
   const uniqueWitels = Array.from(new Set(data.map((item) => item.bill_witel)));
   const witelOptions = [
@@ -101,15 +124,47 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
     ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),
   ];
 
-  const handleChange = (e) => {
-    setSelectedWitel(e.target.value);
-  };
+  const uniqueSegmens = Array.from(new Set(data.map((item) => item.segmen)));
+
+  const segmenOptions = [
+    { value: "ALL", label: "ALL" },
+    ...Array.from(new Set(data.map((d) => d.segmen))).map((seg) => ({
+      value: seg,
+      label: seg,
+    })),
+  ];
+
+  const summaryStats = useMemo(() => {
+    const totalRevenue = chartData.reduce((sum, item) => {
+      const segmenKeys = Object.keys(item).filter((k) => k !== "name");
+      const itemTotal = segmenKeys.reduce(
+        (acc, key) => acc + (item[key] || 0),
+        0
+      );
+      return sum + itemTotal;
+    }, 0);
+
+    const topCategories = [...chartData]
+      .map((item) => ({
+        name: item.name,
+        value: Object.keys(item)
+          .filter((k) => k !== "name")
+          .reduce((acc, key) => acc + (item[key] || 0), 0),
+      }))
+      .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+      .slice(0, 2);
+
+    return {
+      totalRevenue,
+      count: chartData.length,
+      topCategories,
+    };
+  }, [chartData]);
 
   return (
-    <div className="overview-bar-container">
+    <div className="overtime-container">
       <div className="overview-bar-title">
         <h4>{title}</h4>
-        <p>{`${subtitle} ${selectedWitel}`}</p>
       </div>
 
       <div className="overview-bar-content">
@@ -119,8 +174,27 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
           <Error message={error} />
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={chartData.sort((a, b) => b.revenue - a.revenue)}>
+            <div className="filters-container">
+              <div className="dropdown-filter">
+                <p>Select witel:</p>
+                <Dropdown
+                  options={witelOptions}
+                  value={selectedWitel}
+                  onChange={(e) => setSelectedWitel(e.target.value)}
+                />
+              </div>
+              <div className="dropdown-filter">
+                <p>Select segmen:</p>
+                <Dropdown
+                  options={segmenOptions}
+                  value={selectedSegmen}
+                  onChange={(e) => setSelectedSegmen(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <ResponsiveContainer width="100%" height={310}>
+              <BarChart data={chartData} stackOffset="sign">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="name"
@@ -130,6 +204,8 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
                   orientation="right"
                   tickFormatter={formatValue}
                   tick={{ fontSize: 12, fill: "var(--text)" }}
+                  domain={[-"auto", "auto"]}
+                  minTickGap={10}
                 />
                 <Tooltip
                   formatter={(value) => formatValue(value)}
@@ -142,15 +218,56 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
                     fontWeight: "bold",
                   }}
                 />
-                <Bar dataKey="revenue" fill="var(--secondary)" />
+                <Legend layout="horizontal" verticalAlign="top" align="left" />
+                <ReferenceLine y={0} stroke="#000" />
+
+                {selectedSegmen === "ALL" ? (
+                  uniqueSegmens.map((seg) => (
+                    <Bar
+                      key={seg}
+                      dataKey={seg}
+                      stackId="a"
+                      fill={colorsBySegmen[seg] || colorsBySegmen.DEFAULT}
+                    />
+                  ))
+                ) : (
+                  <Bar
+                    dataKey={selectedSegmen}
+                    stackId="a"
+                    fill={
+                      colorsBySegmen[selectedSegmen] || colorsBySegmen.DEFAULT
+                    }
+                  />
+                )}
               </BarChart>
             </ResponsiveContainer>
 
-            <Dropdown
-              options={witelOptions}
-              value={selectedWitel}
-              onChange={handleChange}
-            />
+            <p style={{ paddingTop: "0.5rem" }}>
+              Showing revenue for <strong>{selectedSegmen}</strong> segmen in{" "}
+              <strong>{selectedWitel}</strong> witel.
+            </p>
+
+            <div className="summary-container">
+              <h6>Summary: </h6>
+              <p>
+                <strong>{summaryStats.count}</strong> revenue categories
+                analyzed totaling{" "}
+                <strong>{`IDR ${formatValue(
+                  summaryStats.totalRevenue
+                )}.`}</strong>{" "}
+                {summaryStats.topCategories.length > 0 && (
+                  <>
+                    {"Top contributors: "}
+                    <strong>
+                      {summaryStats.topCategories
+                        .map((t) => t.name)
+                        .join(" & ")}
+                    </strong>
+                    .
+                  </>
+                )}
+              </p>
+            </div>
           </>
         )}
       </div>
