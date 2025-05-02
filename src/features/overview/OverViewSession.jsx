@@ -10,16 +10,7 @@ export default function OverViewSession({
   loading,
   error,
 }) {
-  const keys = [
-    "disconnect",
-    "suspend",
-    "renewal_agreement",
-    "modify",
-    "resume",
-    "modify_price",
-    "modify_ba",
-    "modify_termin",
-  ];
+  const keys = ["ao", "so", "do", "mo", "ro"];
 
   const aggregateData = () => {
     return overviewSession.reduce((aggregated, customer) => {
@@ -61,10 +52,13 @@ export default function OverViewSession({
             <div className="widget" key={index}>
               <div className="head">
                 <h6 className="title">
-                  {/* Convert snake_case to Capitalize Each Word */}
-                  {display.displayName
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (char) => char.toUpperCase())}
+                  {keys.includes(
+                    display.displayName.toLowerCase()
+                  )
+                    ? display.displayName.toUpperCase()
+                    : display.displayName
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
                 </h6>
                 <p>{display.sessions}</p>
                 <h6>• {display.percentage}%</h6>
