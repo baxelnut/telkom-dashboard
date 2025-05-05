@@ -35,13 +35,17 @@ export default function ReportTable({
     onCellSelect(cellData);
   };
 
-  const renderRowCells = (entry, umurKey) =>
+  const renderRowCells = (entry, umurKey, orderSubtype2) =>
     orderSubtypes.map((subtype) => {
       const bucket = `${umurKey}3blnItems`;
       const allItems = entry[subtype]?.[bucket] || [];
+
       const filtered = allItems.filter(
-        (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
+        (i) =>
+          (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
+          (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
       );
+
       const count = filtered.length;
       const revenue = filtered.reduce(
         (sum, i) => sum + normalizeRevenue(i || 0),
@@ -68,7 +72,7 @@ export default function ReportTable({
       );
     });
 
-  const renderWitelTotalCells = (entry, umurKey) => {
+  const renderWitelTotalCells = (entry, umurKey, orderSubtype2) => {
     const bucketNames =
       umurKey === "both"
         ? ["<3blnItems", ">3blnItems"]
@@ -83,7 +87,9 @@ export default function ReportTable({
     );
 
     const filtered = allItems.filter(
-      (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
+      (i) =>
+        (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
+        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
     );
 
     const count = filtered.length;
@@ -113,15 +119,19 @@ export default function ReportTable({
     );
   };
 
-  const renderReportCells = (umurKey) =>
+  const renderReportCells = (umurKey, orderSubtype2) =>
     orderSubtypes.map((subtype) => {
       const bucket = `${umurKey}3blnItems`;
       const raw = reportTableData.data.flatMap(
         (entry) => entry[subtype]?.[bucket] || []
       );
+
       const filtered = raw.filter(
-        (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
+        (i) =>
+          (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
+          (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
       );
+
       const count = filtered.length;
       const revenue = filtered.reduce(
         (sum, i) => sum + normalizeRevenue(i || 0),
@@ -148,7 +158,7 @@ export default function ReportTable({
       );
     });
 
-  const renderGrandTotals = (umurKey) => {
+  const renderGrandTotals = (umurKey, orderSubtype2) => {
     const bucketNames =
       umurKey === "both"
         ? ["<3blnItems", ">3blnItems"]
@@ -159,9 +169,13 @@ export default function ReportTable({
         bucketNames.flatMap((bk) => entry[st]?.[bk] || [])
       )
     );
+
     const filtered = raw.filter(
-      (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
+      (i) =>
+        (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
+        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
     );
+
     const count = filtered.length;
     const revenue = filtered.reduce(
       (sum, i) => sum + normalizeRevenue(i || 0),
@@ -202,13 +216,13 @@ export default function ReportTable({
                 <h6>&lt;3 BLN</h6>
               </th>
               <th rowSpan="2">
-                &lt;<h6>3 BLN Total</h6>
+                <h6>&lt;3 BLN Total</h6>
               </th>
               <th colSpan={orderSubtypes.length}>
                 <h6>&gt;3 BLN</h6>
               </th>
               <th rowSpan="2">
-                &gt;<h6>3 BLN Total</h6>
+                <h6>&gt;3 BLN Total</h6>
               </th>
               <th rowSpan="2">
                 <h6>GRAND TOTAL</h6>
@@ -228,27 +242,43 @@ export default function ReportTable({
             </tr>
           </thead>
           <tbody>
-            {reportTableData.data.map((entry) => (
-              <tr key={entry.witelName}>
-                <td className="unresponsive">
-                  <h6>{entry.witelName}</h6>
-                </td>
-                {renderRowCells(entry, "<")}
-                {renderWitelTotalCells(entry, "<")}
-                {renderRowCells(entry, ">")}
-                {renderWitelTotalCells(entry, ">")}
-                {renderWitelTotalCells(entry, "both")}
-              </tr>
+            {["AO", "SO", "DO", "MO", "RO"].map((orderType) => (
+              <React.Fragment key={orderType}>
+                <tr className="aosodomorow-row">
+                  <td>
+                    <h6>{orderType}</h6>
+                  </td>
+                  {renderReportCells("<", orderType)}
+                  {renderGrandTotals("<", orderType)}
+                  {renderReportCells(">", orderType)}
+                  {renderGrandTotals(">", orderType)}
+                  {renderGrandTotals("both", orderType)}
+                </tr>
+
+                {reportTableData.data.map((entry) => (
+                  <tr key={entry.witelName}>
+                    <td className="unresponsive">
+                      <h6>{entry.witelName}</h6>
+                    </td>
+                    {renderRowCells(entry, "<", orderType)}
+                    {renderWitelTotalCells(entry, "<", orderType)}
+                    {renderRowCells(entry, ">", orderType)}
+                    {renderWitelTotalCells(entry, ">", orderType)}
+                    {renderWitelTotalCells(entry, "both", orderType)}
+                  </tr>
+                ))}
+              </React.Fragment>
             ))}
+
             <tr className="grand-total-row">
               <td className="grand-total-title">
                 <h6>GRAND TOTAL</h6>
               </td>
-              {renderReportCells("<")}
-              {renderGrandTotals("<")}
-              {renderReportCells(">")}
-              {renderGrandTotals(">")}
-              {renderGrandTotals("both")}
+              {renderReportCells("<", "ALL")}
+              {renderGrandTotals("<", "ALL")}
+              {renderReportCells(">", "ALL")}
+              {renderGrandTotals(">", "ALL")}
+              {renderGrandTotals("both", "ALL")}
             </tr>
           </tbody>
         </table>
