@@ -3,6 +3,22 @@ import "./ActionTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
+const getStatusColorsFromCSS = () => {
+  const styles = getComputedStyle(document.documentElement);
+
+  const getRGBA = (cssVarName) =>
+    `rgba(${styles.getPropertyValue(`${cssVarName}-rgb`).trim()}, 0.5)`;
+
+  return {
+    Lanjut: getRGBA("--success"),
+    Cancel: getRGBA("--error"),
+    "Bukan Order Reg": getRGBA("--secondary"),
+    "No Status": null,
+  };
+};
+
+const STATUS_COLORS = getStatusColorsFromCSS();
+
 const STATUSES = ["Lanjut", "Cancel", "Bukan Order Reg", "No Status"];
 
 export default function ActionTable({
@@ -80,18 +96,33 @@ export default function ActionTable({
           </tr>
           <tr>
             {STATUSES.map((s) => (
-              <th key={`u-${s}`}>
+              <td
+                key={`u-${s}`}
+                className="u-cell"
+                style={{
+                  backgroundColor: STATUS_COLORS[s] || "transparent",
+                  // color: "#ffffff",
+                }}
+              >
                 <h6>{s}</h6>
-              </th>
+              </td>
             ))}
             <th>
               <h6>Total</h6>
             </th>
             {STATUSES.map((s) => (
-              <th key={`o-${s}`}>
+              <td
+                key={`o-${s}`}
+                className="o-cell"
+                style={{
+                  backgroundColor: STATUS_COLORS[s] || "transparent",
+                  // color: "#ffffff",
+                }}
+              >
                 <h6>{s}</h6>
-              </th>
+              </td>
             ))}
+
             <th>
               <h6>Total</h6>
             </th>
