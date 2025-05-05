@@ -1,8 +1,15 @@
 {
   "projects": {
-    "default": "basil-telkom-dashboard",
-    "telkom-dashboard": "basil-telkom-dashboard"
+    "default": "basil-telkom-dashboard"
   },
-  "targets": {},
+  "targets": {
+    "basil-telkom-dashboard": {
+      "hosting": {
+        "rso2": [
+          "rso2-telkom-dashboard"
+        ]
+      }
+    }
+  },
   "etags": {}
 }
