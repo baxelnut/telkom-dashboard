@@ -14,10 +14,10 @@ const formatCurrency = (v) => (v ? `Rp${v.toLocaleString("id-ID")}` : "Rp0");
 export default function SelectedTable({
   selectedCell,
   data,
-  selectedCategory,
-  API_URL,
-  userEmail,
-  onUpdateSuccess,
+  selectedSegmen,
+  // API_URL,
+  // userEmail,
+  // onUpdateSuccess,
 }) {
   if (!selectedCell) return <Error />;
   const { witelName, kategoriUmur, isTotal, extractedIds, subType, subTypes } =
@@ -66,7 +66,7 @@ export default function SelectedTable({
   const filtered = items.filter(
     (i) =>
       extractedIds.includes(i.UUID) &&
-      (selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory)
+      (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen)
   );
 
   if (!filtered.length) return <p>No matching data found.</p>;
