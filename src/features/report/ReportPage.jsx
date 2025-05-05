@@ -165,7 +165,7 @@ export default function ReportPage({ API_URL, userEmail }) {
         style={{ display: selectedCell ? "none" : "flex" }}
       >
         <div className="title-container">
-          <h5>Report for {selectedSegmen}</h5>
+          <h5>Report for {selectedSegmen == "ALL" ? "All Segmen" : selectedSegmen}</h5>
 
           <div>
             <p>Total raw data: {data.totalRawData ?? " ..."} rows</p>
