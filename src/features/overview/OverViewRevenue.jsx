@@ -108,7 +108,8 @@ export default function OverViewRevenue({ title, API_URL }) {
       const segmen = item.segmen || "DEFAULT";
       const revenue = Number(item.revenue) || 0;
 
-      resultMap[key][segmen] += key === "DO" ? -revenue : revenue;
+      resultMap[key][segmen] +=
+        key === "DO" || key === "SO" ? -revenue : revenue;
     });
 
     return Object.values(resultMap).sort((a, b) => {
