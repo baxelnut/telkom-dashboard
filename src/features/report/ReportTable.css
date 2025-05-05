@@ -54,7 +54,7 @@ body.dark .report-table .table-scroll td p {
     transform 0.2s ease-in-out;
 }
 
-.unresponsive:not(.grand-total-row td),
+.unresponsive:not(.grand-total-row td, .aosodomorow-row td),
 .grand-total-title:hover {
   pointer-events: none;
 }
@@ -117,6 +117,19 @@ body.dark .grand-total-title {
 body.dark .grand-total-row .unresponsive:hover,
 body.dark .report-table .grand-total-row td:hover p {
   background-color: var(--primary-variant);
+}
+
+.aosodomorow-row {
+  background-color: var(--secondary);
+}
+
+.aosodomorow-row td:hover {
+  background-color: var(--primary) !important;
+}
+
+.aosodomorow-row * {
+  color: #ffffff !important;
+  background-color: transparent !important;
 }
 
 @media screen and (max-width: 768px) {
