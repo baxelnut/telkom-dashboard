@@ -7,10 +7,6 @@ import SelectedTable from "./SelectedTable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
-const categoryOptions = ["ALL", ..."AO SO DO MO RO".split(" ")].map(
-  (value) => ({ value, label: value })
-);
-
 const orderSubtypes = [
   "PROV. COMPLETE",
   "PROVIDE ORDER",
@@ -18,11 +14,19 @@ const orderSubtypes = [
   "READY TO BILL",
 ];
 
+const segmenOptions = [
+  "ALL",
+  "Regional",
+  "Private Service",
+  "State-Owned Enterprise Service",
+  "Government",
+].map((value) => ({ value, label: value }));
+
 export default function ReportPage({ API_URL, userEmail }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedSegmen, setSelectedSegmen] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
   const [selectedSubtypes, setSelectedSubtypes] = useState(() => {
@@ -161,7 +165,7 @@ export default function ReportPage({ API_URL, userEmail }) {
         style={{ display: selectedCell ? "none" : "flex" }}
       >
         <div className="title-container">
-          <h5>{`Report for ${selectedCategory}`}</h5>
+          <h5>Report for {selectedSegmen}</h5>
 
           <div>
             <p>Total raw data: {data.totalRawData ?? " ..."} rows</p>
@@ -171,11 +175,11 @@ export default function ReportPage({ API_URL, userEmail }) {
 
         <div className="category-filter">
           <div className="filter-container">
-            <p className="label">Filter:</p>
+            <p className="label">Segmen:</p>
             <Dropdown
-              options={categoryOptions}
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              options={segmenOptions}
+              value={selectedSegmen}
+              onChange={(e) => setSelectedSegmen(e.target.value)}
             />
           </div>
 
@@ -196,7 +200,7 @@ export default function ReportPage({ API_URL, userEmail }) {
         <div className="table-wrapper">
           <ReportTable
             reportTableData={data}
-            selectedCategory={selectedCategory}
+            selectedSegmen={selectedSegmen}
             orderSubtypes={selectedSubtypes}
             loading={loading}
             error={error}
@@ -259,10 +263,10 @@ export default function ReportPage({ API_URL, userEmail }) {
           <SelectedTable
             selectedCell={selectedCell}
             data={data.data}
-            selectedCategory={selectedCategory}
-            API_URL={API_URL}
-            userEmail={userEmail}
-            onUpdateSuccess={refetch}
+            selectedSegmen={selectedSegmen}
+            // API_URL={API_URL}
+            // userEmail={userEmail}
+            // onUpdateSuccess={refetch}
           />
         </div>
       </div>
