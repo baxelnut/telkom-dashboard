@@ -3,12 +3,21 @@ import "./ReportTable.css";
 import Loading from "../../components/utils/Loading";
 import Error from "../../components/utils/Error";
 
-const formatCurrency = (value) =>
-  value ? `Rp${value.toLocaleString("id-ID")}` : "Rp0";
+const formatCurrency = (value) => {
+  if (!value || isNaN(value)) return "Rp0";
+
+  const absValue = Math.abs(value).toLocaleString("id-ID");
+  return value < 0 ? `-Rp${absValue}` : `Rp${absValue}`;
+};
+
+const normalizeRevenue = (i) => {
+  if (!i || typeof i !== "object") return 0;
+  return ["SO", "DO"].includes(i.ORDER_SUBTYPE2) ? -i.REVENUE : i.REVENUE;
+};
 
 export default function ReportTable({
   reportTableData,
-  selectedCategory,
+  selectedSegmen,
   orderSubtypes,
   loading,
   error,
@@ -31,11 +40,13 @@ export default function ReportTable({
       const bucket = `${umurKey}3blnItems`;
       const allItems = entry[subtype]?.[bucket] || [];
       const filtered = allItems.filter(
-        (i) =>
-          selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+        (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
       );
       const count = filtered.length;
-      const revenue = filtered.reduce((sum, i) => sum + (i.REVENUE || 0), 0);
+      const revenue = filtered.reduce(
+        (sum, i) => sum + normalizeRevenue(i || 0),
+        0
+      );
 
       const cellData = {
         witelName: entry.witelName,
@@ -72,11 +83,14 @@ export default function ReportTable({
     );
 
     const filtered = allItems.filter(
-      (i) => selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+      (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
     );
 
     const count = filtered.length;
-    const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+    const revenue = filtered.reduce(
+      (sum, i) => sum + normalizeRevenue(i || 0),
+      0
+    );
 
     const cellData = {
       witelName: entry.witelName,
@@ -106,11 +120,13 @@ export default function ReportTable({
         (entry) => entry[subtype]?.[bucket] || []
       );
       const filtered = raw.filter(
-        (i) =>
-          selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+        (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
       );
       const count = filtered.length;
-      const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+      const revenue = filtered.reduce(
+        (sum, i) => sum + normalizeRevenue(i || 0),
+        0
+      );
 
       const cellData = {
         witelName: "ALL",
@@ -144,10 +160,13 @@ export default function ReportTable({
       )
     );
     const filtered = raw.filter(
-      (i) => selectedCategory === "ALL" || i.ORDER_SUBTYPE2 === selectedCategory
+      (i) => selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen
     );
     const count = filtered.length;
-    const revenue = filtered.reduce((s, i) => s + (i.REVENUE || 0), 0);
+    const revenue = filtered.reduce(
+      (sum, i) => sum + normalizeRevenue(i || 0),
+      0
+    );
 
     const cellData = {
       witelName: "ALL",
