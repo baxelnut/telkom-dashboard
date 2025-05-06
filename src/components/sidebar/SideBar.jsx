@@ -41,19 +41,22 @@ const icons = {
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: icons.grid, path: "/overview" },
-  { id: "report", label: "Report", icon: icons.clipboard, path: "/report" },
   {
-    id: "action",
-    label: "Action Based",
-    icon: icons.click,
-    path: "/action",
+    id: "report",
+    label: "Report",
+    icon: icons.clipboard,
+    path: "/report",
+    children: [
+      { id: "aosodomoro", label: "AOSODOMORO", path: "/report/aosodomoro" },
+      { id: "galaksi", label: "GALAKSI", path: "/report/galaksi" },
+    ],
   },
+  { id: "action", label: "Action Based", icon: icons.click, path: "/action" },
 ];
 
 export default function SideBar({ isDarkMode }) {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [selected, setSelected] = useState(() => {
     const currentPath = location.pathname;
     const activeMenu = menuItems.find((item) => item.path === currentPath);
@@ -61,12 +64,15 @@ export default function SideBar({ isDarkMode }) {
   });
 
   useEffect(() => {
-    const currentPath = location.pathname;
-    const activeMenu = menuItems.find((item) => item.path === currentPath);
-    if (activeMenu) {
-      setSelected(activeMenu.id);
-    }
+    const all = [
+      ...menuItems,
+      ...menuItems.find((i) => i.id === "report").children,
+    ];
+    const active = all.find((item) => item.path === location.pathname);
+    setSelected(active ? active.id : "overview");
   }, [location.pathname]);
+
+  const isReportOpen = ["report", "aosodomoro", "galaksi"].includes(selected);
 
   return (
     <div className="sidebar-container">
@@ -77,19 +83,40 @@ export default function SideBar({ isDarkMode }) {
       />
       <div className="menu">
         {menuItems.map((item) => (
-          <div
-            key={item.id}
-            className={`menu-selection ${
-              selected === item.id ? "selected" : ""
-            }`}
-            onClick={() => {
-              setSelected(item.id);
-              navigate(item.path);
-            }}
-          >
-            <div className="icon">{item.icon}</div>
-            <p className="label">{item.label}</p>
-          </div>
+          <React.Fragment key={item.id}>
+            <div
+              className={`menu-selection ${
+                selected === item.id ? "selected" : ""
+              }`}
+              onClick={() => {
+                setSelected(item.id);
+                navigate(item.path);
+              }}
+            >
+              <div className="icon">{item.icon}</div>
+              <p className="label">{item.label}</p>
+            </div>
+
+            {/* Sub-menu: only for Report, when open */}
+            {item.children && isReportOpen && (
+              <div className={`submenu ${isReportOpen ? "open" : ""}`}>
+                {item.children.map((child) => (
+                  <div
+                    key={child.id}
+                    className={`menu-selection sub ${
+                      selected === child.id ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      setSelected(child.id);
+                      navigate(child.path);
+                    }}
+                  >
+                    <p className="label">{child.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
     </div>
