@@ -26,7 +26,6 @@ export default function ActionTable({
   onRowClick,
   loading,
   error,
-  selectedWitel,
 }) {
   if (loading) return <Loading backgroundColor="transparent" />;
   if (error) return <Error message={error} />;
@@ -135,42 +134,119 @@ export default function ActionTable({
             const over = bucketCounts(row.items || [], ">", row.PO_NAME);
 
             return (
-              <tr
-                key={idx}
-                className="action-table-row"
-                onClick={() =>
-                  onRowClick(row.BILL_WITEL, row.WITEL, row.PO_NAME)
-                }
-              >
-                <td>
+              <tr key={idx} className="action-table-row">
+                <td
+                  onClick={() =>
+                    onRowClick(
+                      row.BILL_WITEL,
+                      row.WITEL,
+                      row.PO_NAME,
+                      "ALL PERIOD",
+                      "ALL STATUS"
+                    )
+                  }
+                >
                   <p>{row.PO_NAME}</p>
                 </td>
 
-                <td>
+                <td
+                  onClick={() =>
+                    onRowClick(
+                      row.BILL_WITEL,
+                      row.WITEL,
+                      "ALL PO",
+                      "ALL PERIOD",
+                      "ALL STATUS"
+                    )
+                  }
+                >
                   <p>{row.WITEL}</p>
                 </td>
 
                 {STATUSES.map((s) => (
-                  <td key={`u-${idx}-${s}`} className="u-cell">
-                    <p>{under[s]} </p>
+                  <td
+                    key={`u-${idx}-${s}`}
+                    className={under[s] === 0 ? "unresponsive" : "u-cell"}
+                    onClick={() =>
+                      onRowClick(
+                        row.BILL_WITEL,
+                        row.WITEL,
+                        row.PO_NAME,
+                        "<3",
+                        s
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    <p>{under[s]}</p>
                   </td>
                 ))}
 
-                <td className="tot-cell">
+                <td
+                  className={under.TOTAL === 0 ? "unresponsive" : "tot-cell"}
+                  onClick={() =>
+                    onRowClick(
+                      row.BILL_WITEL,
+                      row.WITEL,
+                      row.PO_NAME,
+                      "<3",
+                      "ALL STATUS"
+                    )
+                  }
+                >
                   <h6>{under.TOTAL}</h6>
                 </td>
 
                 {STATUSES.map((s) => (
-                  <td key={`o-${idx}-${s}`} className="o-cell">
+                  <td
+                    key={`o-${idx}-${s}`}
+                    className={over[s] === 0 ? "unresponsive" : "o-cell"}
+                    onClick={() =>
+                      onRowClick(
+                        row.BILL_WITEL,
+                        row.WITEL,
+                        row.PO_NAME,
+                        ">3",
+                        s
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
                     <p>{over[s]}</p>
                   </td>
                 ))}
 
-                <td className="tot-cell">
+                <td
+                  className={over.TOTAL === 0 ? "unresponsive" : "tot-cell"}
+                  onClick={() =>
+                    onRowClick(
+                      row.BILL_WITEL,
+                      row.WITEL,
+                      row.PO_NAME,
+                      ">3",
+                      "ALL STATUS"
+                    )
+                  }
+                >
                   <h6>{over.TOTAL}</h6>
                 </td>
 
-                <td className="tot-cell grand-total-cell">
+                <td
+                  className={
+                    under.TOTAL + over.TOTAL === 0
+                      ? "unresponsive"
+                      : "tot-cell grand-total-cell"
+                  }
+                  onClick={() =>
+                    onRowClick(
+                      row.BILL_WITEL,
+                      row.WITEL,
+                      row.PO_NAME,
+                      "ALL PERIOD",
+                      "ALL STATUS"
+                    )
+                  }
+                >
                   <h6>{under.TOTAL + over.TOTAL}</h6>
                 </td>
               </tr>
