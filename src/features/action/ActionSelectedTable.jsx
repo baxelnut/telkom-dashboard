@@ -14,7 +14,6 @@ const formatCurrency = (v) => (v ? `Rp${v.toLocaleString("id-ID")}` : "Rp0");
 
 export default function ActionSelectedTable({
   reportData,
-  selectedWitel,
   API_URL,
   userEmail,
   onUpdateSuccess,
@@ -26,43 +25,14 @@ export default function ActionSelectedTable({
 
   const [actions, setActions] = useState({});
   const [notes, setNotes] = useState({});
-  const [inProcessItems, setInProcessItems] = useState([]);
+  const [inProcessItems, setItems] = useState([]);
 
   useEffect(() => {
-    const selected = reportData.find(
-      (item) => item.witelName === selectedWitel[0]
-    );
-    if (!selected) return;
+    const all = reportData.flatMap((entry) => entry.items || []);
+    setItems(all);
+  }, [reportData]);
 
-    const getInProcessItems = () => {
-      let result = [];
-      for (const [subType, bucket] of Object.entries(selected)) {
-        if (subType === "witelName") continue;
-
-        const under3bln = bucket["<3blnItems"] || [];
-        const over3bln = bucket[">3blnItems"] || [];
-
-        const combined = [...under3bln, ...over3bln].filter((item) => {
-          const pic = item.PIC?.trim()?.toLowerCase();
-          const selectedPic = selectedWitel[2]?.trim()?.toLowerCase();
-
-          if (item.KATEGORI === "IN PROCESS" && pic === selectedPic) {
-            return true;
-          }
-
-          return false;
-        });
-
-        result.push(...combined);
-      }
-      return result;
-    };
-
-    setInProcessItems(getInProcessItems());
-  }, [selectedWitel, reportData]);
-
-  const headers =
-    inProcessItems.length > 0 ? Object.keys(inProcessItems[0]) : [];
+  const headers = inProcessItems.length ? Object.keys(inProcessItems[0]) : [];
 
   const logLine = (email) => {
     const d = new Date();
@@ -77,105 +47,92 @@ export default function ActionSelectedTable({
         <table>
           <thead>
             <tr>
-              <th>
-                <h6> </h6> {/* for numbering */}
-              </th>
+              <th />
               <th>
                 <h6>ACTION</h6>
               </th>
               <th>
                 <h6>NOTES</h6>
               </th>
-              {headers.map((header, i) => (
+              {headers.map((h, i) => (
                 <th key={i}>
-                  <h6>{header}</h6>
+                  <h6>{h}</h6>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {inProcessItems.map((row, rowIndex) => {
-              const currentStatus = actions[row.UUID] ?? row.STATUS ?? "";
+            {inProcessItems.map((row, idx) => {
+              const uuid = row.UUID;
+              const currentStatus = actions[uuid] ?? row.STATUS ?? "";
+
               return (
                 <tr
-                  key={rowIndex}
+                  key={uuid}
                   className={`tr-status-${(currentStatus || "no_status")
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                 >
-                  <td>{rowIndex + 1}</td>
+                  <td>{idx + 1}</td>
 
+                  {/* ACTION dropdown */}
                   <td>
                     <Dropdown
-                      key={`dropdown-${row.UUID}`}
                       options={actionOptions}
                       value={currentStatus}
                       onChange={async (e) => {
                         const val = e.target.value;
-                        const newStatus =
-                          val === "null" || val === "" ? null : val;
-
-                        setActions((prev) => ({
-                          ...prev,
-                          [row.UUID]: newStatus,
-                        }));
-
+                        const newStatus = val ? val : null;
+                        setActions((p) => ({ ...p, [uuid]: newStatus }));
                         const log = logLine(userEmail);
-                        try {
-                          const res = await fetch(
-                            `${API_URL}/regional_3/sheets/${row.UUID}`,
-                            {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                STATUS: newStatus,
-                                LOG: log,
-                              }),
-                            }
-                          );
-                          if (!res.ok) throw new Error("Update failed");
-                          onUpdateSuccess?.();
-                        } catch (err) {
-                          console.error("❌ Failed to update STATUS:", err);
-                        }
+                        await fetch(`${API_URL}/regional_3/sheets/${uuid}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ STATUS: newStatus, LOG: log }),
+                        })
+                          .then((res) => {
+                            if (!res.ok) throw new Error("Update failed");
+                            onUpdateSuccess();
+                          })
+                          .catch(console.error);
                       }}
                     />
                   </td>
+
+                  {/* NOTES textarea */}
                   <td>
                     <textarea
                       className="notes"
-                      value={notes[row.UUID] ?? row.NOTES ?? ""}
+                      value={notes[uuid] ?? row.NOTES ?? ""}
+                      rows={1}
                       onChange={async (e) => {
                         const val = e.target.value;
-                        setNotes((prev) => ({ ...prev, [row.UUID]: val }));
+                        setNotes((p) => ({ ...p, [uuid]: val }));
                         const log = logLine(userEmail);
-                        try {
-                          const res = await fetch(
-                            `${API_URL}/regional_3/sheets/${row.UUID}`,
-                            {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                NOTES: val.trim() || null,
-                                LOG: log,
-                              }),
-                            }
-                          );
-                          if (!res.ok) throw new Error("Notes update failed");
-                          onUpdateSuccess?.();
-                        } catch (err) {
-                          console.error("❌ Failed to update NOTES:", err);
-                        }
+                        await fetch(`${API_URL}/regional_3/sheets/${uuid}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            NOTES: val.trim() || null,
+                            LOG: log,
+                          }),
+                        })
+                          .then((res) => {
+                            if (!res.ok) throw new Error("Notes update failed");
+                            onUpdateSuccess();
+                          })
+                          .catch(console.error);
                       }}
-                      rows={1}
                     />
                   </td>
-                  {headers.map((header, i) => (
+
+                  {/* all other columns */}
+                  {headers.map((h, i) => (
                     <td key={i}>
                       <p className="unresponsive">
-                        {header === "REVENUE"
-                          ? formatCurrency(row[header])
-                          : row[header] ?? "-"}
+                        {h === "REVENUE"
+                          ? formatCurrency(row[h])
+                          : row[h] ?? "-"}
                       </p>
                     </td>
                   ))}
