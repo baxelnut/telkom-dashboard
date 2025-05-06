@@ -16,7 +16,7 @@ import PageNotFound from "./features/PageNotFound";
 import OverviewPage from "./features/overview/OverviewPage";
 // import PerformancePage from "./features/performance/PerformancePage";
 import ReportPage from "./features/report/ReportPage";
-// import ExamplePage from "./features/example/ExamplePage";
+import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 import LoginPage from "./features/LoginPage";
 import ActionPage from "./features/action/ActionPage";
@@ -28,7 +28,8 @@ const pageConfig = {
   "/": { title: "Overview" },
   "/overview": { title: "Overview" },
   // "/performance": { title: "Performance" },
-  "/report": { title: "Report" },
+  "/report/aosodomoro": { title: "Report AOSODOMORO" },
+  "/report/galaksi": { title: "Report GALAKSI" },
   // "/example": { title: "Example" },
   "/action": { title: "Action Table" },
 };
@@ -89,6 +90,7 @@ function AppContent() {
       {isSidebarOpen && (
         <div className="overlay" onClick={() => setIsSidebarOpen(false)}></div>
       )}
+
       {!isNotFound && !showDropdown && (
         <div
           ref={sidebarRef}
@@ -127,14 +129,29 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/report"
-              element={
-                <ProtectedRoute>
-                  <ReportPage API_URL={API_URL} userEmail={user?.email} />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/report">
+              <Route
+                index
+                element={<Navigate to="/report/aosodomoro" replace />}
+              />
+              <Route
+                path="aosodomoro"
+                element={
+                  <ProtectedRoute>
+                    <ReportPage API_URL={API_URL} userEmail={user?.email} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="galaksi"
+                element={
+                  <ProtectedRoute>
+                    <ExamplePage API_URL={DEV_API_URL} />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
             <Route
               path="/action"
               element={
