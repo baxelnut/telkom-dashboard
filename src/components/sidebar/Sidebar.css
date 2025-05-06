@@ -86,6 +86,21 @@ body.dark .menu-selection .label {
   font-size: 16px;
 }
 
+.submenu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+  margin-left: 25%;
+}
+
+.submenu .label {
+  margin-left: 8%;
+}
+
+.submenu.open {
+  max-height: 500px;
+}
+
 @media screen and (max-width: 1200px) {
   .sidebar {
     max-width: 60%;
