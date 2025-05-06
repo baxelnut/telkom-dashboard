@@ -4,10 +4,10 @@
   overflow: auto;
 }
 
-.action-table-row:hover {
+.action-table-row td:hover {
   background-color: var(--secondary);
-  color: var(--surface);
-  transform: scale(1.01);
+  color: #ffffff;
+  transform: scale(1.1);
   transition: background-color 0.3s ease, color 0.3s ease,
     transform 0.2s ease-in-out;
   cursor: pointer;
@@ -26,4 +26,10 @@ body.dark .action-table-row:hover {
 .o-cell,
 .tot-cell {
   text-align: center;
+}
+
+.action-table .unresponsive {
+  text-align: center;
+  color: var(--text);
+  opacity: 0.5;
 }
