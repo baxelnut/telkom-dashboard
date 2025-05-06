@@ -14,7 +14,13 @@ export default function ActionPage({ API_URL, userEmail }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [selectedWitel, setSelectedWitel] = useState([null, null, null]);
+  const [selectedWitel, setSelectedWitel] = useState([
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
   const [witelOptions, setWitelOptions] = useState([
     { value: "ALL", label: "ALL" },
   ]);
@@ -105,7 +111,7 @@ export default function ActionPage({ API_URL, userEmail }) {
     debounceTimer.current = setTimeout(() => {
       setSelectedWitel([null, null, null]);
       window.location.reload();
-    }, 5000); // delay 5s
+    }, 5000);
   };
 
   const getExportOptions = () =>
@@ -170,6 +176,48 @@ export default function ActionPage({ API_URL, userEmail }) {
     }
   };
 
+  const [selectedBillWitel, selectedWitelName, selectedPoName, period, status] =
+    selectedWitel;
+
+  const filteredReportData = reportData
+    .filter((entry) => {
+      if (!selectedBillWitel || selectedWitelName === "ALL") return true;
+      return entry.witelName === selectedBillWitel;
+    })
+    .map((entry) => {
+      const inProc = entry["IN PROCESS"] || {};
+
+      let items =
+        period === "<3"
+          ? inProc["<3blnItems"] || []
+          : period === ">3"
+          ? inProc[">3blnItems"] || []
+          : [...(inProc["<3blnItems"] || []), ...(inProc[">3blnItems"] || [])];
+
+      if (selectedPoName && selectedPoName !== "ALL PO") {
+        items = items.filter((it) => it.PIC === selectedPoName);
+      }
+
+      if (status && status !== "ALL STATUS") {
+        if (status === "No Status") {
+          items = items.filter(
+            (it) => !it.STATUS || it.STATUS.toString().trim() === ""
+          );
+        } else {
+          items = items.filter((it) => (it.STATUS || "").trim() === status);
+        }
+      }
+
+      if (items.length === 0) return null;
+
+      return {
+        witelName: entry.witelName,
+
+        items,
+      };
+    })
+    .filter((e) => e);
+
   return (
     <div className="action-container">
       <div className="action-table-container">
@@ -228,29 +276,19 @@ export default function ActionPage({ API_URL, userEmail }) {
               }}
               loading={loading}
               error={error}
-              selectedWitel={selectedWitel}
-              onRowClick={(billWitel, witelName, poName) => {
-                setSelectedWitel([billWitel, witelName, poName]);
+              onRowClick={(billWitel, witelName, poName, period, status) => {
+                setSelectedWitel([
+                  billWitel,
+                  witelName,
+                  poName,
+                  period,
+                  status,
+                ]);
               }}
             />
           ) : (
             <ActionSelectedTable
-              reportData={reportData
-                .filter((entry) => entry.witelName === selectedWitel[0])
-                .map((entry) => {
-                  const inProc = entry["IN PROCESS"] || {};
-                  const allItems = [
-                    ...(inProc["<3blnItems"] || []),
-                    ...(inProc[">3blnItems"] || []),
-                  ];
-                  const itemsForPoi = allItems.filter(
-                    (item) => item.PIC === selectedWitel[2]
-                  );
-                  return {
-                    ...entry,
-                    items: itemsForPoi,
-                  };
-                })}
+              reportData={filteredReportData}
               selectedWitel={selectedWitel}
               API_URL={API_URL}
               userEmail={userEmail}
