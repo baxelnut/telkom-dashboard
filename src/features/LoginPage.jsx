@@ -97,27 +97,30 @@ export default function LoginPage() {
           setErrorMsg("Please verify your email before logging in.");
           return;
         }
-
-        // navigate("/overview");
       }
     } catch (err) {
-      console.error(`${isSignup ? "Signup" : "Login"} error:`, err.message);
       switch (err.code) {
         case "auth/email-already-in-use":
-          setErrorMsg("Email already in use.");
+          setErrorMsg("Email already registered. Try logging in.");
           break;
         case "auth/invalid-email":
           setErrorMsg("Invalid email format.");
           break;
         case "auth/user-not-found":
+          setErrorMsg("No account found with that email.");
+          break;
         case "auth/wrong-password":
-          setErrorMsg("Wrong email or password.");
+        case "auth/invalid-credential":
+          setErrorMsg("Incorrect email or password.");
           break;
         case "auth/weak-password":
-          setErrorMsg("Password should be at least 6 characters.");
+          setErrorMsg("Password must be at least 6 characters.");
+          break;
+        case "auth/too-many-requests":
+          setErrorMsg("Too many attempts. Try again later.");
           break;
         default:
-          setErrorMsg("Authentication failed. Please try again.");
+          setErrorMsg(err.message || "Something went wrong. Try again.");
       }
     }
   };
@@ -154,7 +157,6 @@ export default function LoginPage() {
           <h3>{greeting}</h3>
           <p>{isSignup ? "Create your account" : "Please login to continue"}</p>
         </div>
-
         <div className="email-field">
           <input
             type="email"
@@ -163,7 +165,6 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
         <div className="password-field">
           <input
             type={showPassword ? "text" : "password"}
@@ -204,7 +205,10 @@ export default function LoginPage() {
         </div>
 
         <div className="helper-container">
-          <div className="remember-me">
+          <div
+            className="remember-me"
+            style={{ display: errorMsg ? "none" : "flex" }}
+          >
             <input
               className="checkbox"
               type="checkbox"
@@ -214,6 +218,7 @@ export default function LoginPage() {
 
             <p>Remember me</p>
           </div>
+
           {!isSignup && (
             <a
               href="#"
@@ -221,24 +226,37 @@ export default function LoginPage() {
                 e.preventDefault();
                 handleForgotPassword();
               }}
+              style={{
+                width: errorMsg ? "100%" : "fit-content",
+                textAlign: "end",
+              }}
             >
               Forgot Password?
             </a>
           )}
         </div>
-
-        {errorMsg && <p className="error-msg">{errorMsg}</p>}
-
+        {errorMsg && (
+          <div className="error-msg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+            </svg>
+            <p>{errorMsg}</p>
+          </div>
+        )}
         <button onClick={handleEmailAuth}>
           <p>{isSignup ? "Sign up" : "Sign in"}</p>
         </button>
-
         <div className="divider">
           <div className="line"></div>
           <p>or</p>
           <div className="line"></div>
         </div>
-
         <button className="sign-in-google" onClick={handleGoogleLogin}>
           <img
             className="g-logo"
@@ -247,7 +265,6 @@ export default function LoginPage() {
           />
           <p>Login with Google</p>
         </button>
-
         <div className="sign-up">
           <p>
             {isSignup ? "Already have an account?" : "Don't have an account?"}
