@@ -6,7 +6,7 @@ export const getAllAosodomoro = async (req, res) => {
     const start = (page - 1) * limit;
     const end = start + parseInt(limit) - 1;
 
-    console.log("📦 Fetching AOSODOMORO data from", start, "to", end);
+    // console.log("📦 Fetching AOSODOMORO data from", start, "to", end);
 
     const { data, error } = await supabase
       .from("aosodomoro")
