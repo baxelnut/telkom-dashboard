@@ -103,7 +103,7 @@ export default function SideBar({ isDarkMode }) {
                 {item.children.map((child) => (
                   <div
                     key={child.id}
-                    className={`menu-selection sub ${
+                    className={`menu-selection ${
                       selected === child.id ? "selected" : ""
                     }`}
                     onClick={() => {
@@ -111,6 +111,7 @@ export default function SideBar({ isDarkMode }) {
                       navigate(child.path);
                     }}
                   >
+                    <div className="icon"></div>
                     <p className="label">{child.label}</p>
                   </div>
                 ))}
