@@ -4,6 +4,7 @@ import aosodomoroRoutes from "./routes/aosodomoro.js";
 import regional3Routes from "./routes/regional.js";
 import helloExample from "./example/hello.js";
 import exportToSheet from "./routes/exportToSheet.js";
+import galaksi from "./routes/galaksi.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.use("/api/aosodomoro", aosodomoroRoutes);
 app.use("/api/regional_3", regional3Routes);
 
 app.use("/api/export_to_sheet", exportToSheet);
+app.use("/api/galaksi", galaksi);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
