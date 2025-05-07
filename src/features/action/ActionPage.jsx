@@ -27,82 +27,88 @@ export default function ActionPage({ API_URL, userEmail }) {
   const [selectedExport, setSelectedExport] = useState("Excel");
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [poRes, reportRes] = await Promise.all([
-          fetch(`${API_URL}/regional_3/sheets/po`),
-          fetch(`${API_URL}/regional_3/report`),
-        ]);
-        if (!poRes.ok || !reportRes.ok) throw new Error("API failed");
-
-        const poJson = await poRes.json();
-        const reportJson = await reportRes.json();
-
-        setPoData(poJson.data);
-        setReportData(reportJson.data);
-
-        const uniqueW = Array.from(
-          new Set(poJson.data.map((r) => r.WITEL).filter(Boolean))
-        );
-        setWitelOptions([
-          { value: "ALL", label: "ALL" },
-          ...uniqueW.map((w) => ({ value: w, label: w })),
-        ]);
-
-        const processed = poJson.data.map((poItem) => {
-          const entry =
-            reportJson.data.find((r) => r.witelName === poItem.BILL_WITEL)?.[
-              "IN PROCESS"
-            ] || {};
-
-          const under3 = (entry["<3blnItems"] || []).map((i) => ({
-            ...i,
-            _bucket: "<",
-          }));
-          const over3 = (entry[">3blnItems"] || []).map((i) => ({
-            ...i,
-            _bucket: ">",
-          }));
-          const items = [...under3, ...over3];
-
-          const counts = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
-          items.forEach((it) => {
-            if (it.KATEGORI === "IN PROCESS") {
-              const raw = (it.STATUS || "").trim().toLowerCase();
-              const map = {
-                lanjut: "Lanjut",
-                cancel: "Cancel",
-                "bukan order reg": "Bukan Order Reg",
-              };
-              const norm = map[raw];
-              if (norm) counts[norm]++;
-            }
-          });
-          const total =
-            counts.Lanjut + counts.Cancel + counts["Bukan Order Reg"];
-
-          return {
-            ...poItem,
-            items,
-            Lanjut: counts.Lanjut,
-            Cancel: counts.Cancel,
-            "Bukan Order Reg": counts["Bukan Order Reg"],
-            Total: total,
-          };
-        });
-
-        setEnrichedData(processed);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, []);
+  }, [API_URL]);
+
+  const handleViewFull = async () => {
+    setSelectedWitel([null, null, null, null, null]);
+    await fetchData();
+    console.log("refecting....");
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [poRes, reportRes] = await Promise.all([
+        fetch(`${API_URL}/regional_3/sheets/po`),
+        fetch(`${API_URL}/regional_3/report`),
+      ]);
+      if (!poRes.ok || !reportRes.ok) throw new Error("API failed");
+
+      const poJson = await poRes.json();
+      const reportJson = await reportRes.json();
+
+      setPoData(poJson.data);
+      setReportData(reportJson.data);
+
+      const uniqueW = Array.from(
+        new Set(poJson.data.map((r) => r.WITEL).filter(Boolean))
+      );
+      setWitelOptions([
+        { value: "ALL", label: "ALL" },
+        ...uniqueW.map((w) => ({ value: w, label: w })),
+      ]);
+
+      const processed = poJson.data.map((poItem) => {
+        const entry =
+          reportJson.data.find((r) => r.witelName === poItem.BILL_WITEL)?.[
+            "IN PROCESS"
+          ] || {};
+
+        const under3 = (entry["<3blnItems"] || []).map((i) => ({
+          ...i,
+          _bucket: "<",
+        }));
+        const over3 = (entry[">3blnItems"] || []).map((i) => ({
+          ...i,
+          _bucket: ">",
+        }));
+        const items = [...under3, ...over3];
+
+        const counts = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
+        items.forEach((it) => {
+          if (it.KATEGORI === "IN PROCESS") {
+            const raw = (it.STATUS || "").trim().toLowerCase();
+            const map = {
+              lanjut: "Lanjut",
+              cancel: "Cancel",
+              "bukan order reg": "Bukan Order Reg",
+            };
+            const norm = map[raw];
+            if (norm) counts[norm]++;
+          }
+        });
+        const total = counts.Lanjut + counts.Cancel + counts["Bukan Order Reg"];
+
+        return {
+          ...poItem,
+          items,
+          Lanjut: counts.Lanjut,
+          Cancel: counts.Cancel,
+          "Bukan Order Reg": counts["Bukan Order Reg"],
+          Total: total,
+        };
+      });
+
+      setEnrichedData(processed);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const debounceTimer = useRef(null);
 
@@ -111,7 +117,7 @@ export default function ActionPage({ API_URL, userEmail }) {
     debounceTimer.current = setTimeout(() => {
       setSelectedWitel([null, null, null]);
       window.location.reload();
-    }, 5000);
+    }, 15000); // do nothing for 15s and get fetched
   };
 
   const getExportOptions = () =>
@@ -233,10 +239,7 @@ export default function ActionPage({ API_URL, userEmail }) {
             </div>
           ) : (
             <div className="category-filter">
-              <button
-                className="view-full"
-                onClick={() => setSelectedWitel([null, null])}
-              >
+              <button className="view-full" onClick={handleViewFull}>
                 <p>← View full table</p>
               </button>
 
