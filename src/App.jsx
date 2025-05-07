@@ -14,12 +14,13 @@ import Footer from "./components/footer/Footer";
 import SideBar from "./components/sidebar/SideBar";
 import PageNotFound from "./features/PageNotFound";
 import OverviewPage from "./features/overview/OverviewPage";
-// import PerformancePage from "./features/performance/PerformancePage";
 import ReportPage from "./features/report/ReportPage";
-import ExamplePage from "./features/example/ExamplePage";
 import Header from "./components/header/Header";
 import LoginPage from "./features/LoginPage";
 import ActionPage from "./features/action/ActionPage";
+import GalaksiPage from "./features/report/galaksi/GalaksiPage";
+// import PerformancePage from "./features/performance/PerformancePage";
+// import ExamplePage from "./features/example/ExamplePage";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
@@ -27,11 +28,11 @@ const DEV_API_URL = import.meta.env.VITE_DEV_API;
 const pageConfig = {
   "/": { title: "Overview" },
   "/overview": { title: "Overview" },
-  // "/performance": { title: "Performance" },
   "/report/aosodomoro": { title: "Report AOSODOMORO" },
   "/report/galaksi": { title: "Report GALAKSI" },
-  // "/example": { title: "Example" },
   "/action": { title: "Action Table" },
+  // "/performance": { title: "Performance" },
+  // "/example": { title: "Example" },
 };
 
 function AppContent() {
@@ -146,7 +147,7 @@ function AppContent() {
                 path="galaksi"
                 element={
                   <ProtectedRoute>
-                    <ExamplePage API_URL={DEV_API_URL} />
+                    <GalaksiPage API_URL={API_URL} />
                   </ProtectedRoute>
                 }
               />
