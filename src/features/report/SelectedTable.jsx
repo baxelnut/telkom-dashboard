@@ -120,7 +120,9 @@ export default function SelectedTable({
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                 >
-                  <td>{idx + 1}</td>
+                  <td>
+                    <p>{idx + 1}</p>
+                  </td>
 
                   {/* {hasInProgress && (
                     <td>
@@ -190,15 +192,17 @@ export default function SelectedTable({
 
                   {hasInProgress && (
                     <td>
-                      {inProg && (
-                        <span>{actions[itm.UUID] ?? itm.NOTES ?? "-"}</span>
-                      )}
+                      {inProg && <p>{actions[itm.UUID] ?? itm.NOTES ?? "-"}</p>}
                     </td>
                   )}
 
                   {Object.keys(itm).map((c) => (
                     <td key={c}>
-                      {c === "REVENUE" ? formatCurrency(itm[c]) : itm[c] ?? "-"}
+                      <p>
+                        {c === "REVENUE"
+                          ? formatCurrency(itm[c])
+                          : itm[c] ?? "-"}
+                      </p>
                     </td>
                   ))}
                 </tr>
