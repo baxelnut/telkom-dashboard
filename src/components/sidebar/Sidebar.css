@@ -90,15 +90,18 @@ body.dark .menu-selection .label {
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.3s ease-in-out;
-  margin-left: 25%;
-}
-
-.submenu .label {
-  margin-left: 8%;
+  margin-left: 10%;
+  width: 90%;
 }
 
 .submenu.open {
-  max-height: 500px;
+  max-height: 400px;
+}
+
+.submenu .icon {
+  width: 0px;
+  margin: 0px;
+  padding: 0px 6px;
 }
 
 @media screen and (max-width: 1200px) {
