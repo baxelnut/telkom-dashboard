@@ -6,32 +6,6 @@
   overflow-x: auto;
 }
 
-.notes-container {
-  width: 100%;
-  height: auto;
-}
-
-.notes {
-  background-color: var(--surface);
-  color: var(--text);
-  border: solid 1px var(--text-variant);
-  resize: none;
-  overflow: hidden;
-  line-height: 1.5;
-  max-height: 3.5em;
-  padding: 5px;
-}
-
-.notes:focus {
-  outline: none;
-}
-
-.notes:focus,
-.notes {
-  height: auto;
-  min-height: 2.5rem;
-}
-
 .tr-status-lanjut {
   background-color: rgb(var(--success-rgb), 0.5);
 }

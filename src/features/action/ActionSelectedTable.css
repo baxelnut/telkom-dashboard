@@ -3,3 +3,16 @@
   width: 100%;
   overflow: auto;
 }
+
+.notes {
+  background-color: var(--surface);
+  color: var(--text);
+  border: solid 1px var(--text-variant);
+  line-height: 1.25;
+  overflow-y: auto;
+  transition: height 0.2s ease;
+  min-height: 20px;
+  min-width: 200px;
+  padding: 4px;
+  width: calc(100% - 8px);
+}
