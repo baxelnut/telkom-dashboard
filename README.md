@@ -1,6 +1,8 @@
 # Telkom Dashboard
 
-Web app dashboard built for reporting and data visualization. Designed to automate report workflows and enable real-time supervision of project progress across divisions.
+Web app dashboard built for reporting and data visualization. 
+
+### 🔐 Disclaimer: For any sensitive information such as API keys or environment variables, please contact me directly.
 
 ## Tech Stack
 
