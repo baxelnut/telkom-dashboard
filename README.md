@@ -1,12 +1,73 @@
-# React + Vite
+# Telkom Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web app dashboard built for reporting and data visualization. 
 
-Currently, two official plugins are available:
+### 🔐 Disclaimer: For any sensitive information such as API keys or environment variables, please contact me directly.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend:** React.js (Vite)  
+- **Backend:** Node.js / Express, Supabase (optional)
+- **Database:** Supabase (PostgreSQL), Google Spreadsheets
+- **Deployment:** Vercel, Firebase
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Getting Started
+
+Follow these steps to set up the project locally:
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/baxelnut/telkom-dashboard.git 
+cd telkom-dashboard
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Setup
+
+Create a .env file in the root folder. Required environment variables include:
+
+```bash
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+# add other keys if needed
+```
+
+### 4. Run the App
+
+Create a .env file in the root folder. Required environment variables include:
+
+```bash
+npm run dev
+```
+
+App will be available at localhost
+
+
+## Contributing
+
+### 1. Fork the repo
+
+### 2. Create a new branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### 3. Commit your changes: 
+```bash
+git commit -m 'Add some feature'
+```
+
+### 4. Push to the branch: 
+```bash
+git push origin feature/your-feature-name
+```
+
+### 5. Create a Pull Request
