@@ -117,7 +117,7 @@ export default function ActionPage({ API_URL, userEmail }) {
     debounceTimer.current = setTimeout(() => {
       setSelectedWitel([null, null, null]);
       window.location.reload();
-    }, 15000); // do nothing for 15s and get fetched
+    }, 60000); // do nothing for 60s and get fetched
   };
 
   const getExportOptions = () =>

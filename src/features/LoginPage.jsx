@@ -28,7 +28,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
-    if (user && user.emailVerified) {
+    if (user) {
       navigate("/overview");
     }
   }, [user]);
@@ -82,10 +82,10 @@ export default function LoginPage() {
         );
         const newUser = userCredential.user;
 
-        if (!newUser.emailVerified) {
-          await sendEmailVerification(newUser);
-          setErrorMsg("Verification email sent! Please check your inbox.");
-        }
+        // if (!newUser.emailVerified) {
+        //   await sendEmailVerification(newUser);
+        //   setErrorMsg("Verification email sent! Please check your inbox.");
+        // }
       } else {
         const loginUser = await signInWithEmailAndPassword(
           auth,
@@ -93,10 +93,10 @@ export default function LoginPage() {
           password
         );
 
-        if (!loginUser.user.emailVerified) {
-          setErrorMsg("Please verify your email before logging in.");
-          return;
-        }
+        // if (!loginUser.user.emailVerified) {
+        //   setErrorMsg("Please verify your email before logging in.");
+        //   return;
+        // }
       }
     } catch (err) {
       switch (err.code) {
