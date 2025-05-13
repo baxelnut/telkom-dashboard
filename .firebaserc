@@ -1,12 +1,14 @@
 {
   "projects": {
-    "default": "basil-telkom-dashboard"
+    "default": "rso2telkomdashboard",
+    "telkom dashboard": "rso2telkomdashboard",
+    "rso2-telkom-dashboard": "rso2telkomdashboard"
   },
   "targets": {
-    "basil-telkom-dashboard": {
+    "rso2telkomdashboard": {
       "hosting": {
         "rso2": [
-          "rso2-telkom-dashboard"
+          "rso2telkomdashboard"
         ]
       }
     }
