@@ -20,7 +20,7 @@ Follow these steps to set up the project locally:
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/yourusername/telkom-dashboard.git
+git clone https://github.com/baxelnut/telkom-dashboard.git 
 cd telkom-dashboard
 ```
 
