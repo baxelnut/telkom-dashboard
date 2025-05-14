@@ -252,7 +252,7 @@ export default function LoginPage() {
         <button onClick={handleEmailAuth}>
           <p>{isSignup ? "Sign up" : "Sign in"}</p>
         </button>
-        <div className="divider">
+        {/* <div className="divider">
           <div className="line"></div>
           <p>or</p>
           <div className="line"></div>
@@ -264,7 +264,7 @@ export default function LoginPage() {
             alt="google"
           />
           <p>Login with Google</p>
-        </button>
+        </button> */}
         <div className="sign-up">
           <p>
             {isSignup ? "Already have an account?" : "Don't have an account?"}
