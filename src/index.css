@@ -214,17 +214,17 @@ button:focus-visible {
   }
 
   h6 {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   p,
   a,
   select,
   option {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   blockquote {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
