@@ -1,0 +1,33 @@
+.admin-panel {
+  padding: 1rem;
+}
+
+.panel-container,
+.verify-container {
+  border-radius: 8px;
+  background-color: var(--surface);
+  border: 0.5px solid var(--text-variant);
+  text-align: start;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.verify-container {
+  margin-bottom: 1rem;
+}
+
+.admin-panel .table-wrapper {
+  min-height: 100px;
+  height: fit-content;
+}
+
+.role-badge.user {
+  font-weight: 500 !important;
+}
+
+.panel-container td p {
+  max-width: 350px;
+  width: 100%;
+}
