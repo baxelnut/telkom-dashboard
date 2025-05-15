@@ -19,6 +19,7 @@ import Header from "./components/header/Header";
 import LoginPage from "./features/LoginPage";
 import ActionPage from "./features/action/ActionPage";
 import GalaksiPage from "./features/report/galaksi/GalaksiPage";
+import AdminPanel from "./features/admin/AdminPanel";
 // import PerformancePage from "./features/performance/PerformancePage";
 // import ExamplePage from "./features/example/ExamplePage";
 
@@ -33,6 +34,7 @@ const pageConfig = {
   "/action": { title: "Action Table" },
   // "/performance": { title: "Performance" },
   // "/example": { title: "Example" },
+  "/admin": { title: "Admin Panel" },
 };
 
 function AppContent() {
@@ -44,14 +46,13 @@ function AppContent() {
     const theme = localStorage.getItem("theme");
     return theme === "dark";
   });
-
   const sidebarRef = useRef(null);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
-  const isNotFound = !(
-    pageConfig[pathname] ||
-    (pathname === "/" && pathname === "/login")
-  );
+  const isNotFound =
+    !pageConfig[pathname] ||
+    (pathname === "/" && pathname === "/login") ||
+    (pathname === "/admin" && isAdmin != true);
 
   const handleMobileMenuClick = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -177,7 +178,23 @@ function AppContent() {
                 </ProtectedRoute>
               }
             /> */}
+            <Route
+              path="/admin"
+              element={
+                isAdmin ? (
+                  <ProtectedRoute>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                ) : (
+                  <ProtectedRoute>
+                    <PageNotFound />
+                  </ProtectedRoute>
+                )
+              }
+            />
+
             <Route path="/login" element={<LoginPage />} />
+
             <Route path="*" element={<PageNotFound />} />
           </Routes>
 
