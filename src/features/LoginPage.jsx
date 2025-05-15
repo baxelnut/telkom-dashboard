@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../services/firebase/index";
 import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  sendEmailVerification,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
@@ -14,18 +11,27 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/firebase/AuthContext";
 import "./LoginPage.css";
+import Loading from "../components/utils/Loading";
+import Error from "../components/utils/Error";
+
+const API_URL = import.meta.env.VITE_API_URL;
+const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export default function LoginPage() {
-  const auth = getAuth();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [greeting, setGreeting] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSignup, setIsSignup] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const { isAdmin, role, setRole, user, isApprovedUser } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -50,22 +56,13 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      navigate("/overview");
-    } catch (err) {
-      setErrorMsg("Google sign-in failed. Try again.");
-      console.error("Google login error:", err.message);
-    }
-  };
-
   const handleEmailAuth = async () => {
     if (!email || !password) {
       setErrorMsg("Email and password cannot be empty.");
       return;
     }
+
+    setLoading(true);
 
     try {
       const persistence = rememberMe
@@ -74,30 +71,86 @@ export default function LoginPage() {
 
       await setPersistence(auth, persistence);
 
+      let userCredential;
+
       if (isSignup) {
-        const userCredential = await createUserWithEmailAndPassword(
+        userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
-        const newUser = userCredential.user;
+        const loggedInUser = userCredential.user;
 
-        // if (!newUser.emailVerified) {
-        //   await sendEmailVerification(newUser);
-        //   setErrorMsg("Verification email sent! Please check your inbox.");
-        // }
+        const registerRes = await fetch(`${DEV_API_URL}/admin/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: loggedInUser.email,
+            firstName,
+            lastName,
+          }),
+        });
+
+        if (!registerRes.ok) {
+          throw new Error("Registration failed.");
+        } else {
+          setSuccessMsg("Please wait for admin approval.");
+          setErrorMsg("");
+          return;
+        }
       } else {
-        const loginUser = await signInWithEmailAndPassword(
+        userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
-
-        // if (!loginUser.user.emailVerified) {
-        //   setErrorMsg("Please verify your email before logging in.");
-        //   return;
-        // }
       }
+
+      const loggedInUser = userCredential.user;
+
+      const res = await fetch(`${DEV_API_URL}/admin/all-admins`);
+      if (!res.ok) throw new Error("Failed to fetch admin data.");
+
+      const json = await res.json();
+      const admins = json.data;
+
+      const matchedAdmin = admins.find(
+        (admin) => admin.email === loggedInUser.email
+      );
+
+      if (matchedAdmin && matchedAdmin.role === "admin") {
+        setRole("admin");
+      } else {
+        setRole("admin");
+      }
+
+      if (!isApprovedUser || !matchedAdmin) {
+        setErrorMsg("Access denied. Your account is pending approval.");
+        return;
+      }
+
+      const idToken = await loggedInUser.getIdToken();
+
+      const verifyRes = await fetch(`${DEV_API_URL}/auth/verify-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ email: loggedInUser.email }),
+      });
+
+      if (!verifyRes.ok) {
+        throw new Error("Access denied. User is not authorized.");
+      }
+
+      const { role } = await verifyRes.json();
+
+      setRole("admin");
+      setUser(loggedInUser);
+      navigate("/overview");
     } catch (err) {
       switch (err.code) {
         case "auth/email-already-in-use":
@@ -122,6 +175,8 @@ export default function LoginPage() {
         default:
           setErrorMsg(err.message || "Something went wrong. Try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,6 +204,8 @@ export default function LoginPage() {
     }
   };
 
+  if (loading) return <Loading />;
+
   return (
     <div className="login-container">
       <img className="logo" src="/TLK_BIG.svg" />
@@ -157,6 +214,26 @@ export default function LoginPage() {
           <h3>{greeting}</h3>
           <p>{isSignup ? "Create your account" : "Please login to continue"}</p>
         </div>
+        {isSignup && (
+          <div className="email-field">
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+        )}
+        {isSignup && (
+          <div className="email-field">
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+        )}
         <div className="email-field">
           <input
             type="email"
@@ -249,22 +326,26 @@ export default function LoginPage() {
             <p>{errorMsg}</p>
           </div>
         )}
+
+        {successMsg && (
+          <div className="success-msg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z" />
+            </svg>
+            <p>{successMsg}</p>
+          </div>
+        )}
+
         <button onClick={handleEmailAuth}>
           <p>{isSignup ? "Sign up" : "Sign in"}</p>
         </button>
-        {/* <div className="divider">
-          <div className="line"></div>
-          <p>or</p>
-          <div className="line"></div>
-        </div>
-        <button className="sign-in-google" onClick={handleGoogleLogin}>
-          <img
-            className="g-logo"
-            src="https://www.gstatic.com/marketing-cms/assets/images/d5/dc/cfe9ce8b4425b410b49b7f2dd3f3/g.webp=s96-fcrop64=1,00000000ffffffff-rw"
-            alt="google"
-          />
-          <p>Login with Google</p>
-        </button> */}
+
         <div className="sign-up">
           <p>
             {isSignup ? "Already have an account?" : "Don't have an account?"}
