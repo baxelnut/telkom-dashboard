@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./UserProfile.css";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useAuth } from "../../services/firebase/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile({ user, showProfile }) {
+  const navigate = useNavigate();
+  const { setUser, setIsAdmin } = useAuth();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({
     name: user.name || "",
@@ -151,10 +156,26 @@ export default function UserProfile({ user, showProfile }) {
 
         <button
           className="sign-out-btn"
-          onClick={() => {
-            import("firebase/auth").then(({ getAuth, signOut }) => {
-              signOut(getAuth());
-            });
+          onClick={async () => {
+            try {
+              const { getAuth, signOut } = await import("firebase/auth");
+              const auth = getAuth();
+              await signOut(auth); // Firebase logout
+
+              // Reset context state
+              setUser(null);
+              setIsAdmin(false);
+
+              // Optional: nuke localStorage to make sure
+              localStorage.removeItem("user");
+              localStorage.removeItem("isAdmin");
+
+              // Navigate to login page
+              navigate("/login");
+            } catch (err) {
+              console.error("🔥 Logout failed:", err);
+              alert("Error logging out. Try again.");
+            }
           }}
         >
           <p>Sign out</p>
