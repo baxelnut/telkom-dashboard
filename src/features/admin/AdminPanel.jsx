@@ -5,9 +5,7 @@ import Error from "../../components/utils/Error";
 import { useAuth } from "../../services/firebase/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_DEV_API;
-
-export default function AdminPanel() {
+export default function AdminPanel({ API_URL }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,46 +67,55 @@ export default function AdminPanel() {
     }
   };
 
-  if (loading) return <Loading backgroundColor="transparent" />;
-  if (error) return <Error message={error} />;
+  const approvedUsers = users.filter(
+    (u) => u.role === "admin" || u.role === "user"
+  );
+  const pendingUsers = users.filter(
+    (u) => u.role !== "admin" && u.role !== "user"
+  );
 
   return (
     <div className="admin-panel">
       <div className="verify-container">
-        <h5>Pending permission</h5>
-        <div className="table-wrapper"></div>
-      </div>
-
-      <div className="panel-container">
-        <h5>List of users</h5>
+        <h5>Pending approval</h5>
         <div className="table-wrapper">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>
-                  <h6>Role</h6>
-                </th>
-                <th>
-                  <h6>Email</h6>
-                </th>
-                <th>
-                  <h6>User ID</h6>
-                </th>
-                <th>
-                  <h6>Action</h6>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, i) => {
-                const newRole = user.role === "admin" ? "user" : "admin";
-                return (
+          {loading || error ? (
+            loading ? (
+              <Loading backgroundColor="transparent" />
+            ) : (
+              <Error message={error} />
+            )
+          ) : pendingUsers.length === 0 ? (
+            <p>No pending users.</p>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>
+                    <h6>Role</h6>
+                  </th>
+                  <th>
+                    <h6>Email</h6>
+                  </th>
+                  <th>
+                    <h6>User ID</h6>
+                  </th>
+                  <th>
+                    <h6>Action</h6>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingUsers.map((user, i) => (
                   <tr key={user.id}>
                     <td style={{ textAlign: "center" }}>{i + 1}</td>
                     <td>
-                      <h6 className={`role-badge ${user.role}`}>
-                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      <h6 className={`role-badge ${user.role || "unknown"}`}>
+                        {user.role
+                          ? user.role.charAt(0).toUpperCase() +
+                            user.role.slice(1)
+                          : "Unknown"}
                       </h6>
                     </td>
                     <td>
@@ -119,16 +126,89 @@ export default function AdminPanel() {
                     </td>
                     <td>
                       <button
-                        onClick={() => updateUserRole(user.email, newRole)}
+                        onClick={() => updateUserRole(user.email, "user")}
                       >
-                        <h6>{`Set as ${newRole}`}</h6>
+                        <h6>Approve</h6>
                       </button>
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
+      <div className="panel-container">
+        <h5>List of users</h5>
+        <div className="table-wrapper">
+          {loading || error ? (
+            loading ? (
+              <Loading backgroundColor="transparent" />
+            ) : (
+              <Error message={error} />
+            )
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>
+                    <h6>Role</h6>
+                  </th>
+                  <th>
+                    <h6>Email</h6>
+                  </th>
+                  <th>
+                    <h6>User ID</h6>
+                  </th>
+                  <th>
+                    <h6>Action</h6>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {approvedUsers.map((user, i) => {
+                  const newRole = user.role === "admin" ? "user" : "admin";
+                  return (
+                    <tr key={user.id}>
+                      <td style={{ textAlign: "center" }}>{i + 1}</td>
+                      <td>
+                        <h6 className={`role-badge ${user.role}`}>
+                          {user.role.charAt(0).toUpperCase() +
+                            user.role.slice(1)}
+                        </h6>
+                      </td>
+                      <td>
+                        <p>{user.email}</p>
+                      </td>
+                      <td>
+                        <p>{user.id}</p>
+                      </td>
+                      <td>
+                        <div className="action-btns">
+                          <button
+                            onClick={() => updateUserRole(user.email, newRole)}
+                            className="role-toggle-btn"
+                          >
+                            <h6>Set as {newRole}</h6>
+                          </button>
+                          <button
+                            onClick={() =>
+                              updateUserRole(user.email, "waiting approval")
+                            }
+                            className="revoke-btn"
+                          >
+                            <h6>Revoke access</h6>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
