@@ -10,22 +10,24 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), async (fbUser) => {
       if (!fbUser) {
         setUser(null);
         setRole(null);
-        setLoading(false);
+        setAuthLoading(false);
         return;
       }
 
       try {
+        // Force refresh the token to ensure latest backend claims
+        await fbUser.getIdToken(true);
+
+        // Re-fetch role from your backend using up-to-date token
         const res = await fetch(
-          `${DEV_API_URL}/admin/user-info?email=${encodeURIComponent(
-            fbUser.email
-          )}`
+          `${API_URL}/admin/user-info?email=${encodeURIComponent(fbUser.email)}`
         );
         const json = await res.json();
 
@@ -47,7 +49,7 @@ export function AuthProvider({ children }) {
         setUser(null);
         setRole(null);
       } finally {
-        setLoading(false);
+        setAuthLoading(false);
       }
     });
 
@@ -62,9 +64,9 @@ export function AuthProvider({ children }) {
       value={{
         user,
         setUser,
-        loading,
+        authLoading,
         role,
-        setRole,  
+        setRole,
         isAdmin,
         isApprovedUser,
       }}
