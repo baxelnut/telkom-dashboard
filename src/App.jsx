@@ -20,6 +20,7 @@ import LoginPage from "./features/LoginPage";
 import ActionPage from "./features/action/ActionPage";
 import GalaksiPage from "./features/report/galaksi/GalaksiPage";
 import AdminPanel from "./features/admin/AdminPanel";
+import Loading from "./components/utils/Loading";
 // import PerformancePage from "./features/performance/PerformancePage";
 // import ExamplePage from "./features/example/ExamplePage";
 
@@ -47,7 +48,7 @@ function AppContent() {
     return theme === "dark";
   });
   const sidebarRef = useRef(null);
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, authLoading } = useAuth();
 
   const isNotFound =
     !pageConfig[pathname] ||
@@ -86,6 +87,14 @@ function AppContent() {
       setIsSidebarOpen(false);
     }
   }, [showDropdown]);
+
+  if (authLoading) {
+    return (
+      <div className="app-container">
+        <Loading backgroundColor="transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
@@ -182,8 +191,8 @@ function AppContent() {
               path="/admin"
               element={
                 isAdmin ? (
-                  <ProtectedRoute>
-                    <AdminPanel />
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminPanel API_URL={API_URL} />
                   </ProtectedRoute>
                 ) : (
                   <ProtectedRoute>
