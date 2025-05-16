@@ -44,3 +44,6 @@ pnpm-lock.yaml
 
 # 🔥 Ignore API Data (Sensitive files)
 public/data/*
+
+# Testing junk
+safe-json-env.cjs
