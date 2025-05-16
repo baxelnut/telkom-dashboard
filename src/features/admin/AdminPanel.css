@@ -31,11 +31,6 @@
   font-weight: 500 !important;
 }
 
-.panel-container td p {
-  max-width: 250px;
-  width: 100%;
-}
-
 .revoke-btn {
   background-color: var(--error);
 }

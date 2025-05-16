@@ -121,13 +121,13 @@ export default function AdminPanel({ API_URL }) {
                           : "Unknown"}
                       </h6>
                     </td>
-                    <td>
+                    <td className="unresponsive">
                       <p>{user.fullName}</p>
                     </td>
                     <td>
                       <p>{user.email}</p>
                     </td>
-                    <td>
+                    <td className="unresponsive">
                       <p>{user.id}</p>
                     </td>
                     <td>
@@ -188,13 +188,13 @@ export default function AdminPanel({ API_URL }) {
                             user.role.slice(1)}
                         </h6>
                       </td>
-                      <td>
+                      <td className="unresponsive">
                         <p>{user.fullName}</p>
                       </td>
                       <td>
                         <p>{user.email}</p>
                       </td>
-                      <td>
+                      <td className="unresponsive">
                         <p>{user.id}</p>
                       </td>
                       <td>
