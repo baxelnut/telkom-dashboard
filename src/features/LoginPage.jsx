@@ -81,7 +81,7 @@ export default function LoginPage() {
         );
         const loggedInUser = userCredential.user;
 
-        const registerRes = await fetch(`${DEV_API_URL}/admin/register`, {
+        const registerRes = await fetch(`${API_URL}/admin/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -110,7 +110,7 @@ export default function LoginPage() {
 
       const loggedInUser = userCredential.user;
 
-      const res = await fetch(`${DEV_API_URL}/admin/all-admins`);
+      const res = await fetch(`${API_URL}/admin/all-admins`);
       if (!res.ok) throw new Error("Failed to fetch admin data.");
 
       const json = await res.json();
@@ -133,7 +133,7 @@ export default function LoginPage() {
 
       const idToken = await loggedInUser.getIdToken();
 
-      const verifyRes = await fetch(`${DEV_API_URL}/auth/verify-user`, {
+      const verifyRes = await fetch(`${API_URL}/auth/verify-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
