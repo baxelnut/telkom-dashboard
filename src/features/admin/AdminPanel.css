@@ -19,8 +19,12 @@
 }
 
 .admin-panel .table-wrapper {
-  min-height: 100px;
+  min-height: 150px;
   height: fit-content;
+}
+
+.admin-panel .table-wrapper td {
+  width: fit-content;
 }
 
 .role-badge.user {
@@ -28,6 +32,10 @@
 }
 
 .panel-container td p {
-  max-width: 350px;
+  max-width: 250px;
   width: 100%;
+}
+
+.revoke-btn {
+  background-color: var(--error);
 }
