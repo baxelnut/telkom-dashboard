@@ -10,6 +10,7 @@ export const getAllUsers = async (req, res) => {
 
     const admins = usersSnapshot.docs.map((doc) => ({
       id: doc.id,
+      fullName: doc.data().fullName,
       email: doc.data().email,
       role: doc.data().role,
     }));

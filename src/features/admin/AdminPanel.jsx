@@ -96,6 +96,9 @@ export default function AdminPanel({ API_URL }) {
                     <h6>Role</h6>
                   </th>
                   <th>
+                    <h6>Name</h6>
+                  </th>
+                  <th>
                     <h6>Email</h6>
                   </th>
                   <th>
@@ -117,6 +120,9 @@ export default function AdminPanel({ API_URL }) {
                             user.role.slice(1)
                           : "Unknown"}
                       </h6>
+                    </td>
+                    <td>
+                      <p>{user.fullName}</p>
                     </td>
                     <td>
                       <p>{user.email}</p>
@@ -157,6 +163,9 @@ export default function AdminPanel({ API_URL }) {
                     <h6>Role</h6>
                   </th>
                   <th>
+                    <h6>Name</h6>
+                  </th>
+                  <th>
                     <h6>Email</h6>
                   </th>
                   <th>
@@ -178,6 +187,9 @@ export default function AdminPanel({ API_URL }) {
                           {user.role.charAt(0).toUpperCase() +
                             user.role.slice(1)}
                         </h6>
+                      </td>
+                      <td>
+                        <p>{user.fullName}</p>
                       </td>
                       <td>
                         <p>{user.email}</p>
