@@ -43,6 +43,7 @@ export const getUserByEmail = async (req, res) => {
         id: userDoc.id,
         email: userData.email,
         role: userData.role,
+        fullName: userData.fullName,
       },
     });
   } catch (err) {
