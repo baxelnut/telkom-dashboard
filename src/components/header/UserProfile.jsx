@@ -4,6 +4,8 @@ import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../services/firebase/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import { query, collection, where, getDocs } from "firebase/firestore";
 
 export default function UserProfile({ user, showProfile }) {
   const navigate = useNavigate();
@@ -55,6 +57,23 @@ export default function UserProfile({ user, showProfile }) {
       if (editedUser.email !== currentUser.email) {
         await updateEmail(currentUser, editedUser.email);
       }
+
+      const db = getFirestore();
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("email", "==", currentUser.email));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        throw new Error("User not found in Firestore");
+      }
+
+      const userDoc = querySnapshot.docs[0];
+      const userDocRef = userDoc.ref;
+
+      await updateDoc(userDocRef, {
+        fullName: editedUser.name,
+        imageUrl: photoURL,
+      });
 
       alert("Profile updated successfully!");
       setIsEditing(false);
