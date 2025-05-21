@@ -11,6 +11,7 @@ export default function AdminPanel({ API_URL }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { user, setIsAdmin } = useAuth();
+  const [showDeclined, setShowDeclined] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -51,10 +52,6 @@ export default function AdminPanel({ API_URL }) {
         )
       );
 
-      console.log("Current logged in email:", user?.email);
-      console.log("Updated userEmail:", userEmail);
-      console.log("New role:", newRole);
-
       if (user?.email === userEmail && newRole !== "admin") {
         console.log("fuck 2");
         setIsAdmin(false);
@@ -70,14 +67,23 @@ export default function AdminPanel({ API_URL }) {
   const approvedUsers = users.filter(
     (u) => u.role === "admin" || u.role === "user"
   );
+
   const pendingUsers = users.filter(
-    (u) => u.role !== "admin" && u.role !== "user"
+    (u) => !["admin", "user", "declined"].includes(u.role)
   );
+
+  const declinedUsers = users.filter((u) => u.role === "declined");
 
   return (
     <div className="admin-panel">
       <div className="verify-container">
-        <h5>Pending approval</h5>
+        <div className="title-container">
+          <h5>{showDeclined ? "Declined Accounts" : "Pending Approval"}</h5>
+          <button onClick={() => setShowDeclined((prev) => !prev)}>
+            {showDeclined ? "Show Pending Accounts" : "Show Declined Accounts"}
+          </button>
+        </div>
+
         <div className="table-wrapper">
           {loading || error ? (
             loading ? (
@@ -85,8 +91,8 @@ export default function AdminPanel({ API_URL }) {
             ) : (
               <Error message={error} />
             )
-          ) : pendingUsers.length === 0 ? (
-            <p>No pending users.</p>
+          ) : (showDeclined ? declinedUsers : pendingUsers).length === 0 ? (
+            <p>{showDeclined ? "No declined users." : "No pending users."}</p>
           ) : (
             <table className="admin-table">
               <thead>
@@ -110,35 +116,47 @@ export default function AdminPanel({ API_URL }) {
                 </tr>
               </thead>
               <tbody>
-                {pendingUsers.map((user, i) => (
-                  <tr key={user.id}>
-                    <td style={{ textAlign: "center" }}>{i + 1}</td>
-                    <td>
-                      <h6 className={`role-badge ${user.role || "unknown"}`}>
-                        {user.role
-                          ? user.role.charAt(0).toUpperCase() +
-                            user.role.slice(1)
-                          : "Unknown"}
-                      </h6>
-                    </td>
-                    <td className="unresponsive">
-                      <p>{user.fullName}</p>
-                    </td>
-                    <td>
-                      <p>{user.email}</p>
-                    </td>
-                    <td className="unresponsive">
-                      <p>{user.id}</p>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => updateUserRole(user.email, "user")}
-                      >
-                        <h6>Approve</h6>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {(showDeclined ? declinedUsers : pendingUsers).map(
+                  (user, i) => (
+                    <tr key={user.id}>
+                      <td style={{ textAlign: "center" }}>{i + 1}</td>
+                      <td>
+                        <h6 className={`role-badge ${user.role || "unknown"}`}>
+                          {user.role
+                            ? user.role.charAt(0).toUpperCase() +
+                              user.role.slice(1)
+                            : "Unknown"}
+                        </h6>
+                      </td>
+                      <td className="unresponsive">
+                        <p>{user.fullName}</p>
+                      </td>
+                      <td>
+                        <p>{user.email}</p>
+                      </td>
+                      <td className="unresponsive">
+                        <p>{user.id}</p>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => updateUserRole(user.email, "user")}
+                        >
+                          Approve
+                        </button>
+                        {!showDeclined && (
+                          <button
+                            className="revoke-btn"
+                            onClick={() =>
+                              updateUserRole(user.email, "declined")
+                            }
+                          >
+                            Decline
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           )}
@@ -146,7 +164,7 @@ export default function AdminPanel({ API_URL }) {
       </div>
 
       <div className="panel-container">
-        <h5>List of users</h5>
+        <h5>List of Users</h5>
         <div className="table-wrapper">
           {loading || error ? (
             loading ? (
@@ -203,15 +221,15 @@ export default function AdminPanel({ API_URL }) {
                             onClick={() => updateUserRole(user.email, newRole)}
                             className="role-toggle-btn"
                           >
-                            <h6>Set as {newRole}</h6>
+                            Set as {newRole}
                           </button>
                           <button
+                            className="revoke-btn"
                             onClick={() =>
                               updateUserRole(user.email, "waiting approval")
                             }
-                            className="revoke-btn"
                           >
-                            <h6>Revoke access</h6>
+                            Revoke access
                           </button>
                         </div>
                       </td>
