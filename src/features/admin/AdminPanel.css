@@ -34,3 +34,15 @@
 .revoke-btn {
   background-color: var(--error);
 }
+
+.verify-container .title-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-container button {
+  margin: 0;
+  /* background-color: var(--secondary) !important; */
+}
