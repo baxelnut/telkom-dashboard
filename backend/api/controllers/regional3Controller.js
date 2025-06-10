@@ -67,7 +67,7 @@ const namingConvention = {
 };
 
 const processData = (data) => {
-  const groupedByWitel = groupBy(data, "BILL_WITEL");
+  const groupedByWitel = groupBy(data, "NEW_WITEL");
 
   return Object.keys(groupedByWitel)
     .map((witelName) => {
@@ -245,7 +245,7 @@ export const fetchFormattedReportData = async () => {
     return obj;
   });
 
-  const filteredRows = rows.filter((row) => isBig5Region(row["BILL_WITEL"]));
+  const filteredRows = rows.filter((row) => isBig5Region(row["NEW_WITEL"]));
 
   return filteredRows;
 };
