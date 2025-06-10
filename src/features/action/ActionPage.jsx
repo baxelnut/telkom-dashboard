@@ -33,7 +33,7 @@ export default function ActionPage({ API_URL, userEmail }) {
   const handleViewFull = async () => {
     setSelectedWitel([null, null, null, null, null]);
     await fetchData();
-    console.log("refecting....");
+    console.log("refeching....");
   };
 
   const fetchData = async () => {
@@ -62,7 +62,7 @@ export default function ActionPage({ API_URL, userEmail }) {
 
       const processed = poJson.data.map((poItem) => {
         const entry =
-          reportJson.data.find((r) => r.witelName === poItem.NEW_WITEL)?.[
+          reportJson.data.find((r) => r.witelName === poItem.WITEL)?.[
             "IN PROCESS"
           ] || {};
 
@@ -128,16 +128,15 @@ export default function ActionPage({ API_URL, userEmail }) {
 
     const [bill, wName] = selectedWitel;
     const dataToExport = (
-      bill ? enrichedData.filter((r) => r.NEW_WITEL === bill) : enrichedData
+      bill ? enrichedData.filter((r) => r.WITEL === bill) : enrichedData
     ).map((row) => ({
       PO_EMAIL: Array.isArray(row.PO_EMAIL)
         ? row.PO_EMAIL.join(", ")
         : row.PO_EMAIL,
       PO_NAME: Array.isArray(row.PO_NAME)
         ? row.PO_NAME.join(", ")
-        : row.PO_NAME,
+        : row.PO_NAME, 
       WITEL: row.WITEL,
-      NEW_WITEL: row.NEW_WITEL,
       items: row.items.map((it) => ({
         bucket: it._bucket === "<" ? "<3bln" : ">3bln",
         STATUS: it.STATUS,
@@ -148,9 +147,8 @@ export default function ActionPage({ API_URL, userEmail }) {
     const flattenedData = dataToExport.flatMap((row) =>
       row.items.map((it) => ({
         PO_EMAIL: row.PO_EMAIL,
-        PO_NAME: row.PO_NAME,
+        PO_NAME: row.PO_NAME, 
         WITEL: row.WITEL,
-        NEW_WITEL: row.NEW_WITEL,
         bucket: it.bucket,
         STATUS: it.STATUS,
         ...it,
@@ -182,13 +180,12 @@ export default function ActionPage({ API_URL, userEmail }) {
     }
   };
 
-  const [selectedBillWitel, selectedWitelName, selectedPoName, period, status] =
-    selectedWitel;
+  const [selectedWitelName, selectedPoName, period, status] = selectedWitel;
 
   const filteredReportData = reportData
     .filter((entry) => {
-      if (!selectedBillWitel || selectedWitelName === "ALL") return true;
-      return entry.witelName === selectedBillWitel;
+      if (selectedWitelName === "ALL") return true;
+      return entry.witelName === selectedWitelName;
     })
     .map((entry) => {
       const inProc = entry["IN PROCESS"] || {};
@@ -279,14 +276,8 @@ export default function ActionPage({ API_URL, userEmail }) {
               }}
               loading={loading}
               error={error}
-              onRowClick={(billWitel, witelName, poName, period, status) => {
-                setSelectedWitel([
-                  billWitel,
-                  witelName,
-                  poName,
-                  period,
-                  status,
-                ]);
+              onRowClick={(witelName, poName, period, status) => {
+                setSelectedWitel([witelName, poName, period, status]);
               }}
             />
           ) : (

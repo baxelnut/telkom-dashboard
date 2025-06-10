@@ -138,7 +138,6 @@ export default function ActionTable({
                 <td
                   onClick={() =>
                     onRowClick(
-                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       "ALL PERIOD",
@@ -151,15 +150,10 @@ export default function ActionTable({
 
                 <td
                   onClick={() =>
-                    onRowClick(
-                      row.NEW_WITEL,
-                      row.WITEL,
-                      "ALL PO",
-                      "ALL PERIOD",
-                      "ALL STATUS"
-                    )
+                    onRowClick(row.WITEL, "ALL PO", "ALL PERIOD", "ALL STATUS")
                   }
                 >
+                  {/* <p>{row.WITEL}</p> */}
                   <p>{row.WITEL}</p>
                 </td>
 
@@ -167,15 +161,7 @@ export default function ActionTable({
                   <td
                     key={`u-${idx}-${s}`}
                     className={under[s] === 0 ? "unresponsive" : "u-cell"}
-                    onClick={() =>
-                      onRowClick(
-                        row.NEW_WITEL,
-                        row.WITEL,
-                        row.PO_NAME,
-                        "<3",
-                        s
-                      )
-                    }
+                    onClick={() => onRowClick(row.WITEL, row.PO_NAME, "<3", s)}
                     style={{ cursor: "pointer" }}
                   >
                     <p>{under[s]}</p>
@@ -185,13 +171,7 @@ export default function ActionTable({
                 <td
                   className={under.TOTAL === 0 ? "unresponsive" : "tot-cell"}
                   onClick={() =>
-                    onRowClick(
-                      row.NEW_WITEL,
-                      row.WITEL,
-                      row.PO_NAME,
-                      "<3",
-                      "ALL STATUS"
-                    )
+                    onRowClick(row.WITEL, row.PO_NAME, "<3", "ALL STATUS")
                   }
                 >
                   <h6>{under.TOTAL}</h6>
@@ -201,15 +181,7 @@ export default function ActionTable({
                   <td
                     key={`o-${idx}-${s}`}
                     className={over[s] === 0 ? "unresponsive" : "o-cell"}
-                    onClick={() =>
-                      onRowClick(
-                        row.NEW_WITEL,
-                        row.WITEL,
-                        row.PO_NAME,
-                        ">3",
-                        s
-                      )
-                    }
+                    onClick={() => onRowClick(row.WITEL, row.PO_NAME, ">3", s)}
                     style={{ cursor: "pointer" }}
                   >
                     <p>{over[s]}</p>
@@ -219,13 +191,7 @@ export default function ActionTable({
                 <td
                   className={over.TOTAL === 0 ? "unresponsive" : "tot-cell"}
                   onClick={() =>
-                    onRowClick(
-                      row.NEW_WITEL,
-                      row.WITEL,
-                      row.PO_NAME,
-                      ">3",
-                      "ALL STATUS"
-                    )
+                    onRowClick(row.WITEL, row.PO_NAME, ">3", "ALL STATUS")
                   }
                 >
                   <h6>{over.TOTAL}</h6>
@@ -239,7 +205,6 @@ export default function ActionTable({
                   }
                   onClick={() =>
                     onRowClick(
-                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       "ALL PERIOD",
