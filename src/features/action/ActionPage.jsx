@@ -135,7 +135,7 @@ export default function ActionPage({ API_URL, userEmail }) {
         : row.PO_EMAIL,
       PO_NAME: Array.isArray(row.PO_NAME)
         ? row.PO_NAME.join(", ")
-        : row.PO_NAME, 
+        : row.PO_NAME,
       WITEL: row.WITEL,
       items: row.items.map((it) => ({
         bucket: it._bucket === "<" ? "<3bln" : ">3bln",
@@ -147,7 +147,7 @@ export default function ActionPage({ API_URL, userEmail }) {
     const flattenedData = dataToExport.flatMap((row) =>
       row.items.map((it) => ({
         PO_EMAIL: row.PO_EMAIL,
-        PO_NAME: row.PO_NAME, 
+        PO_NAME: row.PO_NAME,
         WITEL: row.WITEL,
         bucket: it.bucket,
         STATUS: it.STATUS,
@@ -257,7 +257,10 @@ export default function ActionPage({ API_URL, userEmail }) {
         {selectedWitel[1] && (
           <div className="title-container">
             <h5>
-              {selectedWitel[1]} → {selectedWitel[2]}
+              {selectedWitel[1]} → {selectedWitel[3]} →{" "}
+              {selectedWitel[2] === "ALL PERIOD"
+                ? selectedWitel[2]
+                : `${selectedWitel[2]} bulan`}
             </h5>
           </div>
         )}
