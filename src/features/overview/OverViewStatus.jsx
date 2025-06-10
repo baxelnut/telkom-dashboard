@@ -57,7 +57,7 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
 
   return (
     <div className="overview-pie" onClick={onClick}>
-      <h5>{overviewStatus["bill_witel"] || "Unknown"}</h5>
+      <h5>{overviewStatus["new_witel"] || "Unknown"}</h5>
 
       <PieChart width={200} height={220}>
         <Pie data={pieData} cx="50%" cy="50%" outerRadius={90} dataKey="value">

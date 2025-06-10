@@ -138,7 +138,7 @@ export default function ActionTable({
                 <td
                   onClick={() =>
                     onRowClick(
-                      row.BILL_WITEL,
+                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       "ALL PERIOD",
@@ -152,7 +152,7 @@ export default function ActionTable({
                 <td
                   onClick={() =>
                     onRowClick(
-                      row.BILL_WITEL,
+                      row.NEW_WITEL,
                       row.WITEL,
                       "ALL PO",
                       "ALL PERIOD",
@@ -169,7 +169,7 @@ export default function ActionTable({
                     className={under[s] === 0 ? "unresponsive" : "u-cell"}
                     onClick={() =>
                       onRowClick(
-                        row.BILL_WITEL,
+                        row.NEW_WITEL,
                         row.WITEL,
                         row.PO_NAME,
                         "<3",
@@ -186,7 +186,7 @@ export default function ActionTable({
                   className={under.TOTAL === 0 ? "unresponsive" : "tot-cell"}
                   onClick={() =>
                     onRowClick(
-                      row.BILL_WITEL,
+                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       "<3",
@@ -203,7 +203,7 @@ export default function ActionTable({
                     className={over[s] === 0 ? "unresponsive" : "o-cell"}
                     onClick={() =>
                       onRowClick(
-                        row.BILL_WITEL,
+                        row.NEW_WITEL,
                         row.WITEL,
                         row.PO_NAME,
                         ">3",
@@ -220,7 +220,7 @@ export default function ActionTable({
                   className={over.TOTAL === 0 ? "unresponsive" : "tot-cell"}
                   onClick={() =>
                     onRowClick(
-                      row.BILL_WITEL,
+                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       ">3",
@@ -239,7 +239,7 @@ export default function ActionTable({
                   }
                   onClick={() =>
                     onRowClick(
-                      row.BILL_WITEL,
+                      row.NEW_WITEL,
                       row.WITEL,
                       row.PO_NAME,
                       "ALL PERIOD",

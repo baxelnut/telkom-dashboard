@@ -62,7 +62,7 @@ export default function ActionPage({ API_URL, userEmail }) {
 
       const processed = poJson.data.map((poItem) => {
         const entry =
-          reportJson.data.find((r) => r.witelName === poItem.BILL_WITEL)?.[
+          reportJson.data.find((r) => r.witelName === poItem.NEW_WITEL)?.[
             "IN PROCESS"
           ] || {};
 
@@ -128,7 +128,7 @@ export default function ActionPage({ API_URL, userEmail }) {
 
     const [bill, wName] = selectedWitel;
     const dataToExport = (
-      bill ? enrichedData.filter((r) => r.BILL_WITEL === bill) : enrichedData
+      bill ? enrichedData.filter((r) => r.NEW_WITEL === bill) : enrichedData
     ).map((row) => ({
       PO_EMAIL: Array.isArray(row.PO_EMAIL)
         ? row.PO_EMAIL.join(", ")
@@ -137,7 +137,7 @@ export default function ActionPage({ API_URL, userEmail }) {
         ? row.PO_NAME.join(", ")
         : row.PO_NAME,
       WITEL: row.WITEL,
-      BILL_WITEL: row.BILL_WITEL,
+      NEW_WITEL: row.NEW_WITEL,
       items: row.items.map((it) => ({
         bucket: it._bucket === "<" ? "<3bln" : ">3bln",
         STATUS: it.STATUS,
@@ -150,7 +150,7 @@ export default function ActionPage({ API_URL, userEmail }) {
         PO_EMAIL: row.PO_EMAIL,
         PO_NAME: row.PO_NAME,
         WITEL: row.WITEL,
-        BILL_WITEL: row.BILL_WITEL,
+        NEW_WITEL: row.NEW_WITEL,
         bucket: it.bucket,
         STATUS: it.STATUS,
         ...it,

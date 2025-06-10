@@ -70,7 +70,7 @@ export default function ExamplePage({ API_URL }) {
       const formattedData = [
         ["Witel", "Lanjut", "Cancel", "Bukan Order Reg", "No Status", "Total"],
         ...statusData.map((item) => [
-          item.bill_witel,
+          item.new_witel,
           item.lanjut,
           item.cancel,
           item.bukan_order_reg,

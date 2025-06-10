@@ -84,7 +84,7 @@ export default function PerformanceSummarize({
 
             return (
               <tr key={index}>
-                <td>{item.bill_witel}</td>
+                <td>{item.new_witel}</td>
                 <td>{format(item.lanjut)}</td>
                 <td>{format(item.cancel)}</td>
                 <td>{format(item.bukan_order_reg)}</td>

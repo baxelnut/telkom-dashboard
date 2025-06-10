@@ -41,7 +41,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
 
   const generateColorMap = useMemo(() => {
     const colorMap = {};
-    const uniqueWitels = [...new Set(data.map((item) => item.bill_witel))];
+    const uniqueWitels = [...new Set(data.map((item) => item.new_witel))];
 
     uniqueWitels.forEach((witel, index) => {
       colorMap[witel] = colorSet[index % colorSet.length];
@@ -52,7 +52,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
 
   const segmenFields = useMemo(() => {
     if (data.length === 0) return [];
-    return Object.keys(data[0]).filter((key) => key !== "bill_witel");
+    return Object.keys(data[0]).filter((key) => key !== "new_witel");
   }, [data]);
 
   const fullMarks = useMemo(() => {
@@ -71,7 +71,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
         fullMark: fullMarks[field],
         ...data.reduce((acc, item) => {
           const value = item[field] || 0;
-          acc[item.bill_witel] = value;
+          acc[item.new_witel] = value;
           return acc;
         }, {}),
       }))
@@ -81,7 +81,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
   const witelOptions = useMemo(
     () => [
       { value: "ALL", label: "ALL" },
-      ...[...new Set(data.map((item) => item.bill_witel))].map((witel) => ({
+      ...[...new Set(data.map((item) => item.new_witel))].map((witel) => ({
         value: witel,
         label: witel,
       })),
@@ -93,7 +93,7 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
     () =>
       selectedWitel === "ALL"
         ? data
-        : data.filter((item) => item.bill_witel === selectedWitel),
+        : data.filter((item) => item.new_witel === selectedWitel),
     [selectedWitel, data]
   );
 
@@ -136,11 +136,11 @@ export default function OverViewRadar({ title, subtitle, API_URL }) {
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 {filteredData.map((item) => (
                   <Radar
-                    key={item.bill_witel}
-                    name={item.bill_witel}
-                    dataKey={item.bill_witel}
-                    stroke={generateColorMap[item.bill_witel]} // Dynamic color per witel
-                    fill={generateColorMap[item.bill_witel]} // Dynamic color per witel
+                    key={item.new_witel}
+                    name={item.new_witel}
+                    dataKey={item.new_witel}
+                    stroke={generateColorMap[item.new_witel]} // Dynamic color per witel
+                    fill={generateColorMap[item.new_witel]} // Dynamic color per witel
                     fillOpacity={0.3}
                   />
                 ))}

@@ -53,7 +53,7 @@ export default function OverViewBar({ title, API_URL }) {
 
     const filtered = data.filter((item) => {
       const witelMatch =
-        selectedWitel === "ALL" || item.bill_witel === selectedWitel;
+        selectedWitel === "ALL" || item.new_witel === selectedWitel;
       const segmenMatch =
         selectedSegmen === "ALL" || item.segmen === selectedSegmen;
       return witelMatch && segmenMatch;
@@ -75,7 +75,7 @@ export default function OverViewBar({ title, API_URL }) {
     });
   }, [data, selectedWitel, selectedSegmen]);
 
-  const uniqueWitels = Array.from(new Set(data.map((item) => item.bill_witel)));
+  const uniqueWitels = Array.from(new Set(data.map((item) => item.new_witel)));
   const witelOptions = [
     { value: "ALL", label: "ALL" },
     ...uniqueWitels.map((witel) => ({ value: witel, label: witel })),

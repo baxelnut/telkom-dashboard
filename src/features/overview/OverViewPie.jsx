@@ -47,7 +47,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   const witelOptions = useMemo(
     () => [
       { value: "ALL", label: "ALL" },
-      ...[...new Set(data.map((item) => item.bill_witel))].map((witel) => ({
+      ...[...new Set(data.map((item) => item.new_witel))].map((witel) => ({
         value: witel,
         label: witel,
       })),
@@ -56,13 +56,13 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   );
 
   const filteredData = useMemo(() => {
-    return data.filter((item) => !excludedWitels.includes(item.bill_witel));
+    return data.filter((item) => !excludedWitels.includes(item.new_witel));
   }, [data, excludedWitels]);
 
   const pieData = useMemo(() => {
     if (selectedCategory === "all") {
       return filteredData.map((item, index) => ({
-        name: item.bill_witel,
+        name: item.new_witel,
         value: Object.keys(item).reduce((acc, key) => {
           if (categoryOptions.some((cat) => cat.value === key)) {
             acc += item[key];
@@ -74,7 +74,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
     }
 
     return filteredData.map((item, index) => ({
-      name: item.bill_witel,
+      name: item.new_witel,
       value: item[selectedCategory],
       fill: colorSet[index % colorSet.length],
     }));
@@ -165,7 +165,7 @@ export default function OverViewPie({ title, subtitle, API_URL }) {
   };
 
   const getWitelCategoryQuantity = (witel, category) => {
-    const witelData = data.find((item) => item.bill_witel === witel);
+    const witelData = data.find((item) => item.new_witel === witel);
 
     if (witelData) {
       return witelData[category] || 0;
