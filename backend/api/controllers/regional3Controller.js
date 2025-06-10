@@ -165,7 +165,7 @@ export const getReg3Status = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("regional_3_in_process")
-      .select("id, bill_witel, in_process_status")
+      .select("id, new_witel, in_process_status") // .select("id, bill bruhhhh _witel, in_process_status")
       .order("id", { ascending: true });
 
     if (error) throw error;
@@ -173,7 +173,7 @@ export const getReg3Status = async (req, res) => {
     const grouped = {};
 
     data.forEach((row) => {
-      const witel = row.bill_witel?.trim();
+      const witel = row.new_witel?.trim(); // const witel = row.bill bruhhhh _witel?.trim();
       if (!isBig5Region(witel)) return;
 
       const rawStatus = row.in_process_status?.trim() || "No Status";
@@ -185,7 +185,7 @@ export const getReg3Status = async (req, res) => {
 
       if (!grouped[witel]) {
         grouped[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           lanjut: 0,
           cancel: 0,
           bukan_order_reg: 0,
