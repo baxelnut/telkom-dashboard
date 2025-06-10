@@ -146,11 +146,11 @@ export const processStatus = async (req, res) => {
     const resultMap = {};
 
     filteredData.forEach((entry) => {
-      const witel = entry["BILL_WITEL"];
+      const witel = entry["NEW_WITEL"];
 
       if (!resultMap[witel]) {
         resultMap[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           lanjut: 0,
           cancel: 0,
           bukan_order_reg: 0,
@@ -235,7 +235,7 @@ export const getOrderSubtypeRev = async (req, res) => {
         rowData[cols[index]] = cell?.v ?? null;
       });
 
-      const witel = rowData["BILL_WITEL"];
+      const witel = rowData["NEW_WITEL"];
 
       if (!witel || witel.trim() === "") return;
 
@@ -245,7 +245,7 @@ export const getOrderSubtypeRev = async (req, res) => {
 
       if (!resultMap[witel]) {
         resultMap[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           new_install: 0,
           modify: 0,
           suspend: 0,
@@ -287,14 +287,14 @@ export const getSheetSegmen = async (req, res) => {
 
     const grouped = {};
     for (const row of formattedData) {
-      const billWitel = row["bill_witel"] || row["BILL_WITEL"];
+      const billWitel = row["new_witel"] || row["NEW_WITEL"];
       const subSegmen = row["segmen"] || row["SEGMEN"];
       if (!billWitel || !subSegmen) continue;
 
       const key = `${billWitel}||${subSegmen}`;
       if (!grouped[key]) {
         grouped[key] = {
-          bill_witel: billWitel,
+          new_witel: billWitel,
           segmen: subSegmen,
           quantity: 0,
         };
@@ -333,7 +333,7 @@ export const getSegmenSubtype2 = async (req, res) => {
 
     const grouped = {};
     formatted.forEach((r) => {
-      const witel = r.bill_witel;
+      const witel = r.new_witel;
       const type2 = r.order_subtype2;
       const segmen = r.segmen;
       if (!witel || !type2 || !segmen) return;
@@ -341,7 +341,7 @@ export const getSegmenSubtype2 = async (req, res) => {
       const key = `${witel}||${type2}||${segmen}`;
       if (!grouped[key]) {
         grouped[key] = {
-          bill_witel: witel,
+          new_witel: witel,
           subType2: type2,
           segmen,
           quantity: 0,
@@ -386,7 +386,7 @@ export const getSegmenSubtype2Rev = async (req, res) => {
     const grouped = {};
 
     formatted.forEach((r) => {
-      const witel = r.bill_witel;
+      const witel = r.new_witel;
       const type2 = r.order_subtype2;
       const segmen = r.segmen;
       const revenue = parseFloat(r.revenue) || 0;
@@ -396,7 +396,7 @@ export const getSegmenSubtype2Rev = async (req, res) => {
       const key = `${witel}||${type2}||${segmen}`;
       if (!grouped[key]) {
         grouped[key] = {
-          bill_witel: witel,
+          new_witel: witel,
           subType2: type2,
           segmen,
           quantity: 0,
@@ -438,7 +438,7 @@ export const getSheetOrderType2 = async (req, res) => {
     const actionMap = {};
 
     for (const row of formattedData) {
-      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const witel = row["new_witel"] || row["NEW_WITEL"];
       const subtype2Raw = row["order_subtype2"] || row["ORDER_SUBTYPE2"];
       const subtype2 = subtype2Raw?.toLowerCase().trim();
 
@@ -446,7 +446,7 @@ export const getSheetOrderType2 = async (req, res) => {
 
       if (!actionMap[witel]) {
         actionMap[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           ao: 0,
           so: 0,
           do: 0,
@@ -488,7 +488,7 @@ export const getSheetOrderSimplified = async (req, res) => {
     });
 
     const actionMap = formattedData.reduce((acc, row) => {
-      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const witel = row["new_witel"] || row["NEW_WITEL"];
       const segmenRaw = row["segmen"] || row["SEGMEN"];
       const segmen = segmenRaw ? segmenRaw.trim().toLowerCase() : "";
 
@@ -496,7 +496,7 @@ export const getSheetOrderSimplified = async (req, res) => {
 
       if (!acc[witel]) {
         acc[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           state_owned_enterprise_service: 0,
           government: 0,
           regional: 0,
@@ -554,7 +554,7 @@ export const getSheetKategoriSimplified = async (req, res) => {
     });
 
     const actionMap = formattedData.reduce((acc, row) => {
-      const witel = row["bill_witel"] || row["BILL_WITEL"];
+      const witel = row["new_witel"] || row["NEW_WITEL"];
       const kategoriRaw = row["kategori"] || row["KATEGORI"];
       const kategori = kategoriRaw ? kategoriRaw.trim().toLowerCase() : "";
 
@@ -562,7 +562,7 @@ export const getSheetKategoriSimplified = async (req, res) => {
 
       if (!acc[witel]) {
         acc[witel] = {
-          bill_witel: witel,
+          new_witel: witel,
           billing_completed: 0,
           in_process: 0,
           prov_complete: 0,
