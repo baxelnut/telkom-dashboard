@@ -56,7 +56,7 @@ export default function OverViewRevenue({ title, subtitle, API_URL }) {
         month: "short",
         year: "numeric",
       });
-      const witel = item.bill_witel;
+      const witel = item.bill bruhhhh _witel;
       const revenue = parseFloat(item.revenue) || 0;
 
       revenueMap[monthYear] = revenueMap[monthYear] || {};
