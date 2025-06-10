@@ -36,7 +36,7 @@ export const getAllAosodomoro = async (req, res) => {
   }
 };
 
-// Get `order_type` based `bill_witel`
+// Get `order_type` based `bill witel`
 export const getReg3OrderSubtype = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -51,7 +51,7 @@ export const getReg3OrderSubtype = async (req, res) => {
   }
 };
 
-// Get `sub_segmen` based `bill_witel`
+// Get `sub_segmen` based `bill witel`
 export const getReg3SubSegmen = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -66,7 +66,7 @@ export const getReg3SubSegmen = async (req, res) => {
   }
 };
 
-// Get `segmen` based `bill_witel` for radar chart
+// Get `segmen` based `bill witel` for radar chart
 export const getReg3Segmen = async (req, res) => {
   try {
     const { data, error } = await supabase.from("reg_3_segmen").select("*");
@@ -79,7 +79,7 @@ export const getReg3Segmen = async (req, res) => {
   }
 };
 
-// Get `segmen` based `bill_witel` for bar chart
+// Get `segmen` based `bill witel` for bar chart
 export const getAosodomoroSegmen = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -94,7 +94,7 @@ export const getAosodomoroSegmen = async (req, res) => {
   }
 };
 
-// Get `kategori` based `bill_witel`
+// Get `kategori` based `bill witel`
 export const getReg3Kategori = async (req, res) => {
   try {
     const { data, error } = await supabase.from("reg_3_kategori").select("*");
@@ -107,7 +107,7 @@ export const getReg3Kategori = async (req, res) => {
   }
 };
 
-// Get numeric per date based `bill_witel`
+// Get numeric per date based `bill witel`
 export const getReg3Progress = async (req, res) => {
   try {
     const { data, error } = await supabase.from("reg_3_progress").select("*");

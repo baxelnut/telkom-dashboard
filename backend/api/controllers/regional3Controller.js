@@ -160,7 +160,7 @@ const processKategoriData = (witelData, kategori) => {
   };
 };
 
-// Get `status` based `bill_witel`
+// Get `status` based `bill witel`
 export const getReg3Status = async (req, res) => {
   try {
     const { data, error } = await supabase
