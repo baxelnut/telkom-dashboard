@@ -256,9 +256,13 @@ export default function ReportTable({
                 </tr>
 
                 {reportTableData.data.map((entry) => (
-                  <tr key={entry.witelName}>
+                  <tr key={entry.witelName || `WITEL_NA_${entryIndex}`}>
                     <td className="unresponsive">
-                      <h6>{entry.witelName}</h6>
+                      <h6>
+                        {!entry.witelName || entry.witelName === "null"
+                          ? "N/A"
+                          : entry.witelName}
+                      </h6>
                     </td>
                     {renderRowCells(entry, "<", orderType)}
                     {renderWitelTotalCells(entry, "<", orderType)}
