@@ -11,7 +11,14 @@ const BIG_5_REGIONS = [
   "SURAMADU",
 ];
 
-const isBig5Region = (region) => BIG_5_REGIONS.includes(region.toUpperCase());
+const isBig5Region = (region) => {
+  if (typeof region !== "string" || region.trim() === "") {
+    return "N/A";
+  }
+
+  const upperRegion = region.toUpperCase().trim();
+  return BIG_5_REGIONS.includes(upperRegion) ? upperRegion : "N/A";
+};
 
 export const getAllRegional3Data = async (req, res) => {
   try {
