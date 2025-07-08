@@ -50,7 +50,7 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
   // Safari debugging
   // useEffect(() => {
   //   const colors = getStatusColorsFromCSS();
-  //   console.log("[Yeahsum] Status colors from CSS:", colors);
+  //   console.log("[Dashboard] Status colors from CSS:", colors);
   //   setStatusColors(colors);
   // }, []);
 
