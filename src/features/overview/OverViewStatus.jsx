@@ -1,48 +1,40 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import "./OverViewStatus.css";
 
 const getStatusColorsFromCSS = () => {
   const styles = getComputedStyle(document.documentElement);
   return {
-    lanjut: styles.getPropertyValue("--success"),
-    cancel: styles.getPropertyValue("--error"),
-    bukan_order_reg: styles.getPropertyValue("--secondary"),
-    no_status: styles.getPropertyValue("--text-variant"),
+    lanjut: styles.getPropertyValue("--success").trim(),
+    cancel: styles.getPropertyValue("--error").trim(),
+    bukan_order_reg: styles.getPropertyValue("--secondary").trim(),
+    no_status: styles.getPropertyValue("--text-variant").trim(),
   };
 };
-
-const STATUS_COLORS = getStatusColorsFromCSS();
 
 const CustomTooltip = ({ active, payload, total }) => {
   if (!active || !payload?.length || !total) return null;
 
-  const { name, value } = payload[0];
-
-  const statusKey = Object.keys(STATUS_COLORS).find((key) => {
-    const displayName = key
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-    return displayName === name;
-  });
-
-  const statusColor = STATUS_COLORS[statusKey] || "var(--text-variant)";
+  const { name, value, color } = payload[0];
   const percent = ((value / total) * 100).toFixed(1);
 
   return (
     <div className="custom-tooltip">
       <p className="tooltip-label">{name}</p>
       <p>→</p>
-      <h6
-        className="tooltip-value"
-        style={{ color: statusColor }}
-      >{`${percent}%`}</h6>
+      <h6 className="tooltip-value" style={{ color }}>{`${percent}%`}</h6>
     </div>
   );
 };
 
 export default function OverViewStatus({ overviewStatus, onClick }) {
-  const statuses = Object.entries(STATUS_COLORS);
+  const [statusColors, setStatusColors] = useState({});
+
+  useEffect(() => {
+    setStatusColors(getStatusColorsFromCSS());
+  }, []);
+
+  const statuses = Object.entries(statusColors);
 
   const pieData = statuses
     .map(([key, color]) => ({
@@ -54,6 +46,13 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
     .filter((item) => item.value > 0);
 
   const total = pieData.reduce((acc, cur) => acc + cur.value, 0);
+
+  // Safari debugging
+  // useEffect(() => {
+  //   const colors = getStatusColorsFromCSS();
+  //   console.log("[Yeahsum] Status colors from CSS:", colors);
+  //   setStatusColors(colors);
+  // }, []);
 
   return (
     <div className="overview-pie" onClick={onClick}>
@@ -71,20 +70,14 @@ export default function OverViewStatus({ overviewStatus, onClick }) {
       </PieChart>
 
       <div className="o-pie-dec-container">
-        {pieData.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className="o-pie-dec"
-              style={{ color: item.color }}
-            >
-              <p>
-                {item.name} ({`${((item.value / total) * 100).toFixed(1)}%`})
-              </p>
-              <p>{item.value}</p>
-            </div>
-          );
-        })}
+        {pieData.map((item, index) => (
+          <div key={index} className="o-pie-dec" style={{ color: item.color }}>
+            <p>
+              {item.name} ({`${((item.value / total) * 100).toFixed(1)}%`})
+            </p>
+            <p>{item.value}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
