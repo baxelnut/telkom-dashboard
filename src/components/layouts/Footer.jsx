@@ -15,7 +15,7 @@ export default function Footer({ isMobileMenuOpen }) {
 
   return (
     <footer className={`footer ${isMobileMenuOpen ? "mobile-open" : ""}`}>
-      <p className="small-h">PT Telkom Indonesia, © 2025</p>
+      <p>PT Telkom Indonesia, © 2025</p>
       <p>{time.toLocaleTimeString()}</p>
     </footer>
   );

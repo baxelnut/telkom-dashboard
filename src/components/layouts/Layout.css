@@ -8,12 +8,17 @@
 .content-container {
   flex: 1;
   transition: padding 0.3s ease;
-  padding-left: 250px;
+  padding-left: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
 
   display: flex;
   flex-direction: column;
+}
+
+/* Sidebar collapsed */
+.content-container.collapsed {
+  padding-left: 0;
 }
 
 .content {
@@ -27,18 +32,13 @@
   gap: 1rem;
 }
 
-/* Sidebar collapsed */
-.content-container.collapsed {
-  padding-left: 48px;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
+/* Tablet and up */
+@media (min-width: 768px) {
   .content-container {
-    padding-left: 0 !important;
+    padding-left: 225px;
   }
 
   .content-container.collapsed {
-    padding-left: 0 !important;
+    padding-left: 48px;
   }
 }

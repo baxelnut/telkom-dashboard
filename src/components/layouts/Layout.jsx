@@ -1,14 +1,22 @@
 import { useState } from "react";
-// Style
+import { useLocation } from "react-router-dom";
 import "./Layout.css";
-// Components
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-// Custom hooks
 import { useAuth } from "../../context/AuthContext";
 
-export default function CreatorLayout({ children }) {
+const routeTitleMap = {
+  "/": "Overview",
+  "/overview": "Overview",
+  "/reports/aosodomoro": "AOSODOMORO",
+  "/reports/galaksi": "GALAKSI",
+  "/action-based": "Action-Based",
+  "/admin-panel": "Admin Panel",
+};
+
+export default function Layout({ children }) {
+  const location = useLocation();
   const { user } = useAuth();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -17,18 +25,24 @@ export default function CreatorLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleMenuClick = () => {
-    setIsMobileMenuOpen((prev) => !prev);
+    if (window.innerWidth < 768) {
+      setIsMobileMenuOpen((prev) => !prev);
+    } else {
+      setIsCollapsed((prev) => !prev);
+    }
   };
 
   return (
     <div className="layout">
       <Sidebar
+        isCollapsed={isCollapsed}
         onCollapseChange={setIsCollapsed}
+        isMobileMenuOpen={isMobileMenuOpen}
         onMobileMenuToggle={setIsMobileMenuOpen}
       />
       <div className={`content-container ${isCollapsed ? "collapsed" : ""}`}>
         <Header
-          title="Dashboard"
+          title={routeTitleMap[location.pathname]}
           user={user}
           onMenuClick={handleMenuClick}
           showDropdown={showDropdown}

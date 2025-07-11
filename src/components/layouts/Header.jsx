@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import "./Header.css";
-import UserProfile from "./UserProfile";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
+// Style
+import "./Header.css";
+// Components
+import UserProfile from "./UserProfile";
+// Data
+import { SVG_PATHS } from "../../data/utilData";
+import Icon from "../ui/icons/Icon";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export default function Header({
   title,
@@ -30,11 +34,7 @@ export default function Header({
   };
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
+    document.body.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Header({
 
         setUserDisplay((prev) => ({
           ...prev,
-          displayName: userData.fullName || prev.name,
+          displayName: userData.fullName || prev.displayName,
           email: userData.email || prev.email,
           photoURL: user.photoURL || "/images/default_profile.png",
         }));
@@ -81,37 +81,27 @@ export default function Header({
 
         <img
           className="picture"
-          src={user?.photoURL ?? "/images/default_profile.png"}
+          src={userDisplay.photoURL}
           onClick={showProfile}
           referrerPolicy="no-referrer"
         />
 
         <p className="name" onClick={showProfile}>
-          {userDisplay.name ?? userDisplay.email ?? "..."}
+          {userDisplay.displayName || userDisplay.email || "Guest"}
         </p>
 
-        <svg
+        <Icon
           className="chevron-down"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-          onClick={showProfile}
+          path={SVG_PATHS.chevronDown}
           style={{ cursor: "pointer" }}
-        >
-          <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
-        </svg>
+          onClick={showProfile}
+        />
 
-        <svg
-          className="logo"
+        <Icon
+          className="burger"
+          path={SVG_PATHS.burger}
           onClick={onMenuClick}
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
-        </svg>
+        />
 
         {showDropdown && (
           <UserProfile user={userDisplay} showProfile={showProfile} />
