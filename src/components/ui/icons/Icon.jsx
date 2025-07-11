@@ -1,5 +1,6 @@
-import "./Icon.css";
 import PropTypes from "prop-types";
+// Style
+import "./Icon.css";
 
 export default function Icon({
   path,
@@ -8,6 +9,8 @@ export default function Icon({
   fill = "var(--text)",
   className = "",
   viewBox = "0 0 16 16",
+  onClick = null,
+  style = {},
 }) {
   return (
     <svg
@@ -17,6 +20,8 @@ export default function Icon({
       height={height}
       fill={fill}
       viewBox={viewBox}
+      onClick={onClick}
+      style={style}
     >
       {typeof path === "string" ? (
         <path d={path} />

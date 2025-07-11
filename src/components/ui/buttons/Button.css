@@ -1,0 +1,103 @@
+/* Base styles for all buttons */
+.btn,
+.hollow,
+.full {
+  --btn-bg: var(--primary);
+  --btn-color: var(--surface);
+  --btn-border: transparent;
+
+  border-radius: 360px;
+  border: 1px solid var(--btn-border);
+  padding: 9px 20px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary)
+  );
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+.btn:hover,
+.hollow:hover {
+  background-size: 100% 100%;
+  transition: background-size 0.4s ease, color 0.25s ease, border 0.25s ease;
+}
+
+.btn *,
+.btn:hover *,
+.hollow:hover * {
+  color: var(--bg) !important;
+}
+
+/* Icon sizes inside buttons */
+.btn svg,
+.hollow svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Full width button */
+.full {
+  width: 100%;
+}
+
+/* Variant: .btn (default filled) */
+.btn {
+  border-color: var(--text-variant);
+}
+
+/* Variant: .hollow (transparent bg) */
+.hollow {
+  --btn-bg: transparent;
+  --btn-color: var(--text-variant);
+  --btn-border: var(--text-variant);
+  padding: 8px 19px;
+}
+
+.hollow:hover {
+  border-color: var(--primary);
+}
+
+/* Rounded variants */
+.rounded-pill {
+  border-radius: 360px;
+}
+
+.rounded-soft {
+  border-radius: 6px;
+}
+
+/* Accessibility focus styles */
+.btn button:focus,
+.btn button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Optional compact style */
+.short {
+  padding: 6px 14px !important;
+  line-height: 1;
+  max-height: 36px;
+}
+
+.short svg {
+  width: 1rem;
+  height: 1rem;
+}
