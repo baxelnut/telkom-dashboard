@@ -7,19 +7,19 @@ export default function OverviewPage() {
     <div className="overview-page">
       <div className="cards-container-grid">
         <div className="card">
-          <p>Overview Cards</p>
+          <h6>Overview Cards</h6>
         </div>
         <div className="card">
-          <p>Overview Cards</p>
+          <h6>Overview Cards</h6>
         </div>
         <div className="card">
-          <p>Overview Cards</p>
+          <h6>Overview Cards</h6>
         </div>
         <div className="card">
-          <p>Overview Cards</p>
+          <h6>Overview Cards</h6>
         </div>
         <div className="card">
-          <p>Overview Cards</p>
+          <h6>Overview Cards</h6>
         </div>
       </div>
 
