@@ -1,10 +1,11 @@
 // Style
 import "./ActionBasedPage.css";
+// Components
 
 export default function ActionBasedPage() {
   return (
     <div className="action-based-page">
-      <h6>Action Based Page</h6>
+      <div className="card action table"></div>
     </div>
   );
 }

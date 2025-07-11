@@ -1,10 +1,15 @@
 // Style
 import "./AosodomoroReportPage.css";
+// Components
 
 export default function AosodomoroReportPage() {
   return (
     <div className="report-page aosodomoro">
-      <h6>Aosodomoro Report Page</h6>
+      <div className="card aosodomoro filter"></div>
+
+      <div className="card aosodomoro table">
+        <h6>Report for ...</h6>
+      </div>
     </div>
   );
 }

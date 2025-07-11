@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 // Style
 import "./PageNotFound.css";
+// Components
 import Button from "../components/ui/buttons/Button";
 
 export default function PageNotFound() {
