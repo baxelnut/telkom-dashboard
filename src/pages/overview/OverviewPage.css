@@ -5,3 +5,12 @@
 .segmen-radar-chart {
   flex: 5;
 }
+
+.overview-by-witel {
+  text-align: center;
+}
+
+/* PLACEHOLDER */
+.overview-by-witel h6 {
+  text-transform: uppercase;
+}

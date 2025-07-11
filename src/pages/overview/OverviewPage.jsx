@@ -6,19 +6,19 @@ export default function OverviewPage() {
   return (
     <div className="overview-page">
       <div className="cards-container-grid">
-        <div className="card">
+        <div className="card overview-by-witel">
           <h6>Overview Cards</h6>
         </div>
-        <div className="card">
+        <div className="card overview-by-witel">
           <h6>Overview Cards</h6>
         </div>
-        <div className="card">
+        <div className="card overview-by-witel">
           <h6>Overview Cards</h6>
         </div>
-        <div className="card">
+        <div className="card overview-by-witel">
           <h6>Overview Cards</h6>
         </div>
-        <div className="card">
+        <div className="card overview-by-witel">
           <h6>Overview Cards</h6>
         </div>
       </div>
