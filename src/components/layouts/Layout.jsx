@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 // Style
 import "./Layout.css";
 // Components
@@ -9,17 +8,7 @@ import Sidebar from "./Sidebar";
 // Custom hooks
 import { useAuth } from "../../context/AuthContext";
 
-const routeTitleMap = {
-  "/": "Overview",
-  "/overview": "Overview",
-  "/reports/aosodomoro": "AOSODOMORO",
-  "/reports/galaksi": "GALAKSI",
-  "/action-based": "Action-Based",
-  "/admin-panel": "Admin Panel",
-};
-
-export default function Layout({ children }) {
-  const location = useLocation();
+export default function Layout({ pageTitle, children }) {
   const { user } = useAuth();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -45,7 +34,7 @@ export default function Layout({ children }) {
       />
       <div className={`content-container ${isCollapsed ? "collapsed" : ""}`}>
         <Header
-          title={routeTitleMap[location.pathname]}
+          title={pageTitle}
           user={user}
           onMenuClick={handleMenuClick}
           showDropdown={showDropdown}
@@ -53,7 +42,9 @@ export default function Layout({ children }) {
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
         />
+
         <main className="content">{children}</main>
+
         <Footer isMobileMenuOpen={isMobileMenuOpen} />
       </div>
     </div>
