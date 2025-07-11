@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  Navigate,
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 // Style
 import "./App.css";
 // Components
@@ -25,13 +30,16 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {appRoutes.map(({ path, element }) => (
+          <Route path="/" element={<Navigate to="/overview" replace />} />
+
+          {appRoutes.map(({ path, element, title }) => (
             <Route
               key={path}
               path={path}
-              element={<Layout>{element}</Layout>}
+              element={<Layout pageTitle={title}>{element}</Layout>}
             />
           ))}
+
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>
