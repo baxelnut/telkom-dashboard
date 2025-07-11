@@ -5,9 +5,10 @@
   align-items: center;
   text-align: center;
   height: 100vh;
+  gap: 1.5rem;
 }
 
-.page-not-found h5 {
-  margin-top: 20px;
-  margin-bottom: 60px;
+.page-not-found .title {
+  color: var(--primary);
+  font-size: 4rem;
 }
