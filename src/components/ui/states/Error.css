@@ -1,0 +1,37 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1000;
+  background-color: rgba(var(--error-rgb), 0.1);
+  width: 100%;
+  min-height: inherit;
+  height: 100%;
+  flex-grow: 1;
+  border-radius: inherit;
+}
+
+.error-icon {
+  font-size: 2rem;
+  animation: shake 1s ease-in-out infinite alternate;
+  filter: invert(21%) sepia(83%) saturate(6697%) hue-rotate(354deg)
+    brightness(90%) contrast(86%);
+}
+
+.error-message {
+  color: var(--error);
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+@keyframes shake {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: translateY(5px);
+  }
+}

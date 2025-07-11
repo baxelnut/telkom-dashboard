@@ -1,42 +1,49 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100vw;
+  margin: 0;
+  text-align: center; /* by default */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
+/* Global style for cards (default) */
 .card {
-  padding: 2em;
+  background-color: var(--surface);
+  border: 1px solid var(--text-variant);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  text-align: start;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
 }
 
-.read-the-docs {
-  color: #888;
+/* Fixed card grid (4-col behavior default) */
+.cards-container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1224px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 978px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .cards-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* Default hover styles (for desktop) */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-4px);
+  }
 }

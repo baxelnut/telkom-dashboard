@@ -1,0 +1,100 @@
+.header-container {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.5px solid var(--text-variant);
+  background-color: var(--surface);
+  padding-inline: 1rem;
+}
+
+.profile {
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 20%;
+}
+
+.profile .picture {
+  max-width: 35px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--text-variant);
+  cursor: pointer;
+}
+
+.profile .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-block: 4px;
+  height: fit-content;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.profile .chevron-down {
+  max-width: 24px;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.profile * {
+  font-weight: 500;
+}
+
+.header-container .title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.header-container .logo {
+  display: none;
+}
+
+.toggle-mode {
+  display: flex;
+  align-items: center;
+  max-width: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .header-container {
+    height: 40px;
+  }
+
+  .profile {
+    gap: 0.25rem;
+    width: fit-content;
+  }
+
+  .profile .picture {
+    max-width: 20px;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .profile .chevron-down,
+  .profile .name {
+    display: none;
+  }
+
+  .header-container .logo {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    max-height: 20px;
+    aspect-ratio: 1;
+    margin-left: 10px;
+  }
+
+  .toggle-mode {
+    max-width: 16px;
+    margin-right: 8px;
+  }
+}

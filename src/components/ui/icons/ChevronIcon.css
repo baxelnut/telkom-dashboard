@@ -1,0 +1,5 @@
+.chevron-icon {
+  display: inline-block;
+  transition: transform 0.2s ease, fill 0.2s ease;
+  vertical-align: middle;
+}

@@ -1,4 +1,4 @@
-# Logs
+# 🔥 Logs
 logs
 *.log
 npm-debug.log*
@@ -7,22 +7,40 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local  
-.env
-.vite
-.DS_Store
-*.log
+# 🔥 Dependencies
+node_modules/
+dist/
+dist-ssr/
 
-# Editor directories and files
-.vscode/*
+# 🔥 Build & Deployment
+.vercel/  
+# Common frontend build folder
+build/ 
+
+# 🔥 Config & Secrets
+.env
+.env.*
+firestore.rules
+.firebase
+
+# 🔥 Lockfiles (Optional)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 🔥 Editor & OS Junk
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# 🔥 Ignore API Data (Sensitive files)
+public/data/*
+
+# Testing junk
+safe-json-env.cjs

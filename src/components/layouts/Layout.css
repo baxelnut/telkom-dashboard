@@ -1,0 +1,44 @@
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+/* Default: sidebar expanded with padding */
+.content-container {
+  flex: 1;
+  transition: padding 0.3s ease;
+  padding-left: 250px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
+
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.content > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Sidebar collapsed */
+.content-container.collapsed {
+  padding-left: 48px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .content-container {
+    padding-left: 0 !important;
+  }
+
+  .content-container.collapsed {
+    padding-left: 0 !important;
+  }
+}

@@ -1,25 +1,56 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
+/* Mobile-first default */
+:root {
+  width: 100%;
+  max-width: 100vw;
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+
+  line-height: 1.5;
+  --heading: "Poppins", sans-serif;
+  --body: "Montserrat", sans-serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+
+  /* Colors */
+  --primary: #312a68;
+  --primary-variant: #45448b;
+  --secondary: #e76705;
+  --secondary-variant: #f38405;
+  --surface: #f0f3ff;
+  --bg: #d5d9e7;
+  --text: #000000;
+  --text-variant: #777777;
+  --error: #d72323;
+  --success: #5cb338;
+
+  /* RGB */
+  --primary-rgb: 49, 42, 104;
+  --primary-variant-rgb: 69, 68, 139;
+  --secondary-rgb: 231, 103, 5;
+  --secondary-variant-rgb: 243, 132, 5;
+  --surface-rgb: 240, 243, 255;
+  --bg-rgb: 213, 217, 231;
+  --text-rgb: 0, 0, 0;
+  --text-variant-rgb: 143, 143, 143;
+  --error-rgb: 215, 35, 35;
+  --success-rgb: 92, 179, 56;
+
+  /* Filters */
+  --filter-bg: invert(4%) sepia(57%) saturate(387%) hue-rotate(202deg)
+    brightness(104%) contrast(91%);
+  --filter-text: invert(93%) sepia(1%) saturate(5782%) hue-rotate(202deg)
+    brightness(106%) contrast(105%);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+html {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  position: relative;
 }
 
 body {
@@ -28,41 +59,123 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-weight: 400;
+}
+
+body.dark {
+  /* Override Colors */
+  --primary: #207391;
+  --primary-variant: #3199b0;
+  --surface: #272932;
+  --bg: #000000;
+  --text: #ffffff;
+  --text-variant: #7a7a7a;
+
+  /* Override RGB */
+  --primary-rgb: 32, 115, 145;
+  --primary-variant-rgb: 49, 153, 176;
+  --surface-rgb: 39, 41, 50;
+  --bg-rgb: 0, 0, 0;
+  --text-rgb: 255, 255, 255;
+  --text-variant-rgb: 122, 122, 122;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--text); /* default color */
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+select,
+option {
+  font-family: var(--heading);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: clamp(2.5rem, 5vw, 3rem);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+h2 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.75rem, 3.5vw, 2rem);
+}
+
+h4 {
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
+}
+
+h5 {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+}
+
+h6 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+p,
+select,
+option,
+li,
+a,
+blockquote {
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary-variant);
+  transition: color 0.2s ease;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+a:hover {
+  color: var(--secondary) !important;
+  font-weight: 500;
+}
+
+/* Custom fonts */
+.small-p {
+  font-size: clamp(0.75rem, 0.85vw, 0.85rem);
+  font-family: var(--heading);
+  text-decoration: none;
+  color: var(--text-variant);
+  font-weight: 600 !important;
+}
+
+.small-h {
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  font-family: var(--heading);
+  text-decoration: none;
+  font-weight: 600 !important;
+}
+
+::-webkit-scrollbar,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+  display: none;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
 }

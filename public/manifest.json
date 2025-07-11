@@ -1,0 +1,16 @@
+{
+  "name": "Telkom Dashboard",
+  "short_name": "Dashboard",
+  "description": "Telkom Indonesia internal dashboard for KPI and reporting",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#17171f",
+  "theme_color": "#6930c3",
+  "icons": [
+    {
+      "src": "/logos/telkom.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

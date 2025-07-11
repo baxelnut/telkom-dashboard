@@ -1,0 +1,23 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--surface);
+  padding: 1rem;
+  border-top: 1px solid var(--text-variant);
+  gap: 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  height: 40px;
+}
+
+.footer.mobile-open {
+  display: none !important;
+}
+
+/* Tablet and up*/
+@media (min-width: 768px) {
+  .footer {
+    height: 40px;
+  }
+}
