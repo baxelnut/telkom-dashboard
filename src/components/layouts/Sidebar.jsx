@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
+// Styles
 import "./Sidebar.css";
+// Components
 import ChevronIcon from "../ui/icons/ChevronIcon";
 import Icon from "../ui/icons/Icon";
+// Data
 import { SIDEBAR_MENUS } from "../../data/navData";
 
 export default function Sidebar({

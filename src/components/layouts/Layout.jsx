@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+// Style
 import "./Layout.css";
+// Components
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+// Custom hooks
 import { useAuth } from "../../context/AuthContext";
 
 const routeTitleMap = {
