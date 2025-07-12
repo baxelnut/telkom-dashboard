@@ -73,10 +73,20 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.sidebar-link:hover,
-.sidebar-link.active {
+.sidebar-link:hover {
   background-color: rgba(var(--primary-rgb), 0.25);
   font-weight: 700;
+}
+
+.sidebar-link.active {
+  background-color: var(--primary);
+  font-weight: 700;
+}
+
+.sidebar-link.active .sidebar-label,
+.sidebar-link.active svg {
+  color: var(--surface);
+  fill: var(--surface);
 }
 
 .sidebar-item.has-children .sidebar-link.active {
