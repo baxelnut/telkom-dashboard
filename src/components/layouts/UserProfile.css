@@ -23,9 +23,9 @@
   top: 50%;
   left: 50%;
 
-  background-color: var(--surface);
+  background-color: var(--card);
   color: var(--text);
-  border: 1px solid var(--text-variant);
+  border: 1px solid var(--neutral);
   box-shadow: 0 1rem 2rem rgba(var(--text-rgb), 0.25);
 
   transform: translate(-50%, -50%);

@@ -2,9 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--surface);
+  background-color: var(--card);
   padding: 1rem;
-  border-top: 1px solid var(--text-variant);
+  border-top: 1px solid var(--neutral);
   gap: 1rem;
   width: 100%;
   transition: all 0.3s ease;

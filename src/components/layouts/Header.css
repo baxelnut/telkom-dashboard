@@ -3,8 +3,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 0.5px solid var(--text-variant);
-  background-color: var(--surface);
+  border-bottom: 0.5px solid var(--neutral);
+  background-color: var(--card);
   padding-inline: 1rem;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .profile .picture {
-  border: 1px solid var(--text-variant);
+  border: 1px solid var(--neutral);
   cursor: pointer;
   max-width: 26px;
   aspect-ratio: 1;

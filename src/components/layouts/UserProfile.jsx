@@ -145,7 +145,7 @@ export default function UserProfile({ user, showProfile }) {
             iconSize={28}
             onClick={showProfile}
             textColor="var(--text)"
-            backgroundColor="var(--surface)"
+            backgroundColor="var(--card)"
             hoverBackgroundColor="var(--error)"
           />
         </div>
@@ -197,7 +197,7 @@ export default function UserProfile({ user, showProfile }) {
           text="Sign out"
           fullWidth
           backgroundColor="var(--error)"
-          hoverBackgroundColor="var(--surface)"
+          hoverBackgroundColor="var(--card)"
           hoverTextColor="var(--error)"
         />
       </div>

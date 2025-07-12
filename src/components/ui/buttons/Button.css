@@ -3,7 +3,7 @@
 .hollow,
 .full {
   --btn-bg: var(--primary);
-  --btn-color: var(--surface);
+  --btn-color: var(--card);
   --btn-border: transparent;
 
   background-color: var(--btn-bg);
@@ -72,14 +72,14 @@
 
 /* Variant: .btn (default filled) */
 .btn {
-  border-color: var(--text-variant);
+  border-color: var(--neutral);
 }
 
 /* Variant: .hollow (transparent bg) */
 .hollow {
   --btn-bg: transparent;
-  --btn-color: var(--text-variant);
-  --btn-border: var(--text-variant);
+  --btn-color: var(--neutral);
+  --btn-border: var(--neutral);
   padding: 8px 19px;
 }
 
@@ -118,7 +118,7 @@
   background-color: var(--btn-hover-bg, var(--secondary));
   color: var(--btn-hover-color, var(--bg));
   background-size: 100% 100%;
-  border-color: var(--btn-hover-border, var(--text-variant));
+  border-color: var(--btn-hover-border, var(--neutral));
 }
 
 /* Override animation only if not custom */

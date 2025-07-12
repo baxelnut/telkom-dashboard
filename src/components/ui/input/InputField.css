@@ -18,8 +18,8 @@
   box-sizing: border-box;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid var(--text-variant);
-  background-color: var(--surface);
+  border: 1px solid var(--neutral);
+  background-color: var(--card);
   color: var(--text);
   font-family: var(--heading);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -28,7 +28,7 @@
 .custom-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--text-variant);
+  box-shadow: 0 0 0 1px var(--neutral);
 }
 
 .custom-input:disabled {
@@ -54,7 +54,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--text-variant);
+  color: var(--neutral);
 
   padding: 0;
 }

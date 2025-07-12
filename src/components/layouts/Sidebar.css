@@ -14,8 +14,8 @@
   overflow: hidden;
   text-align: start;
   font-weight: 600;
-  background-color: var(--surface);
-  border-right: 1px solid var(--text-variant);
+  background-color: var(--card);
+  border-right: 1px solid var(--neutral);
   transition: width 0.3s ease, background-color 0.3s ease;
 }
 
@@ -125,8 +125,8 @@
 .sidebar-sublabel.active *,
 .sidebar-link.active .sidebar-label,
 .sidebar-link.active svg {
-  color: var(--surface);
-  fill: var(--surface);
+  color: var(--card);
+  fill: var(--card);
 }
 
 .sidebar-label-row {

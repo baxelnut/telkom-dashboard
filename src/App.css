@@ -6,8 +6,8 @@
 
 /* Global style for cards (default) */
 .card {
-  background-color: var(--surface);
-  border: 1px solid var(--text-variant);
+  background-color: var(--card);
+  border: 1px solid var(--neutral);
   border-radius: 0.5rem;
   padding: 1rem;
   text-align: start;
