@@ -1,24 +1,46 @@
 import { useState } from "react";
-import "./UserProfile.css";
-import { getAuth, updateProfile, updateEmail } from "firebase/auth";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getFirestore, doc, updateDoc } from "firebase/firestore";
-import { query, collection, where, getDocs } from "firebase/firestore";
+import {
+  getAuth,
+  updateProfile,
+  updateEmail,
+  sendPasswordResetEmail,
+  signOut,
+} from "firebase/auth";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
+// Style
+import "./UserProfile.css";
+// Components
+import Button from "../ui/buttons/Button";
+// Context
+import { useAuth } from "../../context/AuthContext";
+// Data
+import { SVG_PATHS } from "../../data/utilData";
 
 export default function UserProfile({ user, showProfile }) {
   const navigate = useNavigate();
   const { setUser, setIsAdmin } = useAuth();
-
+  const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
   const [editedUser, setEditedUser] = useState({
     name: user.name || "",
     email: user.email || "",
     imageUrl: user.imageUrl || "/images/default_profile.png",
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,11 +48,22 @@ export default function UserProfile({ user, showProfile }) {
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      setImageFile(e.target.files[0]);
-      const previewURL = URL.createObjectURL(e.target.files[0]);
-      setEditedUser((prev) => ({ ...prev, imageUrl: previewURL }));
-    }
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setEditedUser((prev) => ({
+      ...prev,
+      imageUrl: URL.createObjectURL(file),
+    }));
+  };
+
+  const uploadImageIfNeeded = async (uid) => {
+    if (!imageFile) return editedUser.imageUrl;
+
+    const storage = getStorage();
+    const ref = storageRef(storage, `profileImages/${uid}`);
+    await uploadBytes(ref, imageFile);
+    return await getDownloadURL(ref);
   };
 
   const handleSave = async () => {
@@ -40,14 +73,7 @@ export default function UserProfile({ user, showProfile }) {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("User not authenticated");
 
-      let photoURL = editedUser.imageUrl;
-
-      if (imageFile) {
-        const storage = getStorage();
-        const imageRef = ref(storage, `profileImages/${currentUser.uid}`);
-        await uploadBytes(imageRef, imageFile);
-        photoURL = await getDownloadURL(imageRef);
-      }
+      const photoURL = await uploadImageIfNeeded(currentUser.uid);
 
       await updateProfile(currentUser, {
         displayName: editedUser.name,
@@ -59,55 +85,78 @@ export default function UserProfile({ user, showProfile }) {
       }
 
       const db = getFirestore();
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("email", "==", currentUser.email));
-      const querySnapshot = await getDocs(q);
+      const userQuery = query(
+        collection(db, "users"),
+        where("email", "==", currentUser.email)
+      );
+      const snapshot = await getDocs(userQuery);
+      if (snapshot.empty) throw new Error("User not found in Firestore");
 
-      if (querySnapshot.empty) {
-        throw new Error("User not found in Firestore");
-      }
-
-      const userDoc = querySnapshot.docs[0];
-      const userDocRef = userDoc.ref;
-
-      await updateDoc(userDocRef, {
+      await updateDoc(snapshot.docs[0].ref, {
         fullName: editedUser.name,
         imageUrl: photoURL,
       });
 
-      alert("Profile updated successfully!");
+      alert("Profile updated!");
       setIsEditing(false);
     } catch (err) {
-      console.error("🔥 Failed to update profile:", err);
+      console.error("Profile update failed:", err);
+      alert("Error: " + err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (!currentUser?.email) return alert("No email found");
+
+    try {
+      await sendPasswordResetEmail(auth, currentUser.email);
+      alert("Password reset email sent!");
+    } catch (err) {
+      console.error("Password reset failed:", err);
       alert("Error: " + err.message);
     }
-    setIsSaving(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(getAuth());
+      setUser(null);
+      setIsAdmin(false);
+      localStorage.removeItem("user");
+      localStorage.removeItem("isAdmin");
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("Error logging out. Try again.");
+    }
   };
 
   return (
     <>
       <div className="dropdown-overlay" onClick={showProfile}></div>
       <div className="dropdown-user">
-        <div className="close-btn" onClick={showProfile}>
-          <h6>✕</h6>
+        <div className="close-btn-container">
+          <Button
+            iconPath={SVG_PATHS.xLarge}
+            iconSize={28}
+            onClick={showProfile}
+            textColor="var(--text)"
+            backgroundColor="var(--surface)"
+            hoverBackgroundColor="var(--error)"
+          />
         </div>
 
-        <img
-          src={editedUser.imageUrl}
-          style={{ borderRadius: "50%", width: "100px", height: "100px" }}
-          referrerPolicy="no-referrer"
-        />
+        <img src={editedUser.imageUrl} referrerPolicy="no-referrer" />
         {isEditing && (
-          <input
-            className="user-info"
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <input type="file" accept="image/*" onChange={handleFileChange} />
         )}
 
         <div className="user-section">
-          <p className="label">Username</p>
+          <p className="small-p">Username</p>
           {isEditing ? (
             <input
               className="user-info"
@@ -118,87 +167,39 @@ export default function UserProfile({ user, showProfile }) {
             />
           ) : (
             <div className="user-info">
-              <h6>{user.name ?? "Guest"}</h6>
+              <h6 className="small-h">{user?.name || "Guest"}</h6>
             </div>
           )}
         </div>
-
         <div className="user-section">
-          <p className="label">Email</p>
+          <p className="small-p">Email</p>
           <div className="user-info">
-            <h6>{user.email ?? "No email"}</h6>
+            <h6 className="small-h">{user?.email || "Unauthenticated"}</h6>
           </div>
         </div>
 
-        {isEditing ? (
-          <button
-            className="edit-profile-btn"
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            <p>{isSaving ? "Saving..." : "Save"}</p>
-          </button>
-        ) : (
-          <button
-            className="edit-profile-btn"
-            onClick={() => setIsEditing(true)}
-          >
-            <p>Edit profile</p>
-          </button>
-        )}
-
-        <button
+        <Button
+          className="edit-profile-btn"
+          onClick={isEditing ? handleSave : () => setIsEditing(true)}
+          text={isSaving ? "Saving..." : isEditing ? "Save" : "Edit profile"}
+          fullWidth
+          disabled={isSaving}
+        />
+        <Button
           className="change-pw-btn"
-          onClick={() => {
-            const auth = getAuth();
-            const user = auth.currentUser;
-
-            if (!user || !user.email) {
-              alert("No email found. Cannot send reset link.");
-              return;
-            }
-
-            import("firebase/auth").then(({ sendPasswordResetEmail }) => {
-              sendPasswordResetEmail(auth, user.email)
-                .then(() => {
-                  alert("✅ Password reset email sent!");
-                })
-                .catch((err) => {
-                  console.error("🔥 Failed to send reset email:", err);
-                  alert("Error: " + err.message);
-                });
-            });
-          }}
-        >
-          <p>Change password</p>
-        </button>
-
-        <button
+          onClick={handlePasswordReset}
+          text="Change password"
+          fullWidth
+        />
+        <Button
           className="sign-out-btn"
-          onClick={async () => {
-            try {
-              const { getAuth, signOut } = await import("firebase/auth");
-              const auth = getAuth();
-              await signOut(auth); // Firebase logout
-
-              // Reset context state
-              setUser(null);
-              setIsAdmin(false);
-
-              // Optional: nuke localStorage to make sure
-              localStorage.removeItem("user");
-              localStorage.removeItem("isAdmin");
-
-              // Navigate to login page
-              navigate("/login");
-            } catch (err) {
-              console.error("🔥 Logout failed:", err);
-              alert("Error logging out. Try again.");
-            }
-          }}
-        >
-          <p>Sign out</p>
-        </button>
+          onClick={handleLogout}
+          text="Sign out"
+          fullWidth
+          backgroundColor="var(--error)"
+          hoverBackgroundColor="var(--surface)"
+          hoverTextColor="var(--error)"
+        />
       </div>
     </>
   );
