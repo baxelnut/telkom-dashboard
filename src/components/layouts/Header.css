@@ -29,10 +29,7 @@
 .profile .name {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  padding-block: 4px;
-  height: fit-content;
-  width: fit-content;
+  text-overflow: ellipsis;   
   cursor: pointer;
 }
 

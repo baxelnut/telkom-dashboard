@@ -86,9 +86,9 @@ export default function Header({
           referrerPolicy="no-referrer"
         />
 
-        <p className="name" onClick={showProfile}>
-          {userDisplay.displayName || userDisplay.email || "Guest"}
-        </p>
+        <h6 className="small-h name" onClick={showProfile}>
+          {userDisplay.displayName || "Guest"}
+        </h6>
 
         <Icon
           className="chevron-down"
