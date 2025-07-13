@@ -1,27 +1,12 @@
 // Style
 import "./OverviewPage.css";
 // Components
+import OverviewByWitel from "../../features/overview/OverviewByWitel";
 
 export default function OverviewPage() {
   return (
     <div className="overview-page">
-      <div className="cards-container-grid">
-        <div className="card overview-by-witel">
-          <h6>Overview Cards</h6>
-        </div>
-        <div className="card overview-by-witel">
-          <h6>Overview Cards</h6>
-        </div>
-        <div className="card overview-by-witel">
-          <h6>Overview Cards</h6>
-        </div>
-        <div className="card overview-by-witel">
-          <h6>Overview Cards</h6>
-        </div>
-        <div className="card overview-by-witel">
-          <h6>Overview Cards</h6>
-        </div>
-      </div>
+      <OverviewByWitel />
 
       <div className="cards-container-row-1-1">
         <div className="card rev-by-order-sub-type">
