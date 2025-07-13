@@ -1,0 +1,19 @@
+.custom-tooltip {
+  background-color: var(--card);
+  padding: 0.75rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: solid 1px var(--neutral);
+}
+
+.tooltip-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.tooltip-item {
+  margin: 0;
+  font-weight: 600;
+  width: 100%;
+}
