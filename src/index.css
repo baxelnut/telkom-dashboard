@@ -136,7 +136,7 @@ option,
 li,
 a,
 blockquote {
-  font-size: clamp(0.9rem, 1vw, 1rem);
+  font-size: clamp(0.9rem, 0.9vw, 1rem);
 }
 
 a {
