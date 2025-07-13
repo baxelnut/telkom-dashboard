@@ -1,4 +1,7 @@
 .header-container {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   height: 40px;
   display: flex;
   align-items: center;
@@ -29,7 +32,7 @@
 .profile .name {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;   
+  text-overflow: ellipsis;
   cursor: pointer;
 }
 
