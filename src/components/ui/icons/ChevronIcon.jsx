@@ -1,4 +1,6 @@
+// Style
 import "./ChevronIcon.css";
+// Data
 import { SVG_PATHS } from "../../../data/utilData";
 
 const directionMap = {
@@ -12,7 +14,7 @@ export default function ChevronIcon({
   direction = "right",
   width = 12,
   height = 12,
-  fill = "var(--n400)",
+  fill = "var(--neutral)",
   className = "",
 }) {
   const pathKey = directionMap[direction] || "chevronRight";
