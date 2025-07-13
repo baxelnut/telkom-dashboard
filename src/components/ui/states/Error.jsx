@@ -11,7 +11,7 @@ export default function Error({ message, className = "error-container" }) {
   return (
     <div className={className}>
       <div className="error-icon">
-        <Icon path={SVG_PATHS.error} />
+        <Icon path={SVG_PATHS.error} width={22} height={22} />
       </div>
       <p className="error-message">{displayMessage}</p>
     </div>

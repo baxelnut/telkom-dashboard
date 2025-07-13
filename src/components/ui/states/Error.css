@@ -1,16 +1,17 @@
 .error-container {
   width: 100%;
-  height: fit-content;
+  height: 100%;
   flex-grow: 1;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
 
   position: relative;
   z-index: 1000;
-  background-color: rgba(var(--error-rgb), 0.25);
+  background-color: rgba(var(--error-rgb), 0.15);
   border-radius: inherit;
   padding: 0.5rem;
 }
