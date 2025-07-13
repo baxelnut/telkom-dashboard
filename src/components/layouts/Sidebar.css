@@ -1,4 +1,7 @@
 .sidebar {
+  /* constant color */
+  --light: #f0f3ff; /* to prevent dark mode override */
+
   width: 225px;
   height: 100vh;
   display: none;
@@ -125,8 +128,8 @@
 .sidebar-sublabel.active *,
 .sidebar-link.active .sidebar-label,
 .sidebar-link.active svg {
-  color: var(--card);
-  fill: var(--card);
+  color: var(--light);
+  fill: var(--light);
 }
 
 .sidebar-label-row {

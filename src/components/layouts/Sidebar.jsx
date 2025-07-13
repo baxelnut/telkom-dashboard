@@ -126,6 +126,8 @@ export default function Sidebar({
                           <ChevronIcon
                             className={`chevron ${isOpen ? "rotate-down" : ""}`}
                             direction="right"
+                            width={14}
+                            height={14}
                           />
                         </>
                       )}
@@ -156,7 +158,6 @@ export default function Sidebar({
             direction={isCollapsed ? "right" : "left"}
             width={18}
             height={18}
-            fill="var(--text)"
           />
         </div>
       )}
