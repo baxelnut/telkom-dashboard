@@ -45,6 +45,8 @@
     brightness(104%) contrast(91%);
   --filter-text: invert(93%) sepia(1%) saturate(5782%) hue-rotate(202deg)
     brightness(106%) contrast(105%);
+  --filter-error: invert(21%) sepia(83%) saturate(6697%) hue-rotate(354deg)
+    brightness(90%) contrast(86%);
 }
 
 html {
