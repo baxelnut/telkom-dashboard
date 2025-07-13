@@ -62,7 +62,7 @@ export default function Button({
   ) : arrow ? (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill={textColor || "currentColor"}
+      fill={textColor || "var(--bg)"}
       viewBox="0 0 16 16"
       width={iconSize}
       height={iconSize}
