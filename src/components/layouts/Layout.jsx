@@ -5,7 +5,7 @@ import "./Layout.css";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-// Custom hooks
+// Context
 import { useAuth } from "../../context/AuthContext";
 
 export default function Layout({ pageTitle, children }) {
