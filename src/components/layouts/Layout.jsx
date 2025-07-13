@@ -14,7 +14,6 @@ export default function Layout({ pageTitle, children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleMenuClick = () => {
     if (window.innerWidth < 768) {
@@ -39,8 +38,6 @@ export default function Layout({ pageTitle, children }) {
           onMenuClick={handleMenuClick}
           showDropdown={showDropdown}
           setShowDropdown={setShowDropdown}
-          isDarkMode={isDarkMode}
-          setIsDarkMode={setIsDarkMode}
         />
 
         <main className="content">{children}</main>

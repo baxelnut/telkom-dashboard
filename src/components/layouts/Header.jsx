@@ -5,6 +5,8 @@ import "./Header.css";
 // Components
 import Icon from "../ui/icons/Icon";
 import UserProfile from "../../features/auth/UserProfile";
+// Context
+import { useTheme } from "../../context/ThemeContext";
 // Data
 import { SVG_PATHS } from "../../data/utilData";
 
@@ -16,9 +18,9 @@ export default function Header({
   onMenuClick,
   showDropdown,
   setShowDropdown,
-  isDarkMode,
-  setIsDarkMode,
 }) {
+  const { isDarkMode, setIsDarkMode } = useTheme();
+
   const [userDisplay, setUserDisplay] = useState({
     displayName: user?.displayName || "",
     email: user?.email || "",
@@ -32,10 +34,6 @@ export default function Header({
   const toggleDarkMode = (checked) => {
     setIsDarkMode(checked);
   };
-
-  useEffect(() => {
-    document.body.classList.toggle("dark", isDarkMode);
-  }, [isDarkMode]);
 
   useEffect(() => {
     const fetchUserData = async () => {
