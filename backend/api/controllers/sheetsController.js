@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { sheetsClient, auth } from "../services/googleSheetsService.js";
+import { sheetsClient } from "../services/googleSheetsService.js";
 import { getColumnLetter } from "../utils/columnUtils.js";
-import { v4 as uuidv4 } from "uuid";
 import { fetchFormattedReportData } from "./regional3Controller.js";
 
 const {
@@ -13,40 +12,6 @@ const {
   FORMATTED_GID,
   PO_GID,
 } = process.env;
-
-export const injectUUID = async (req, res) => {
-  try {
-    const { defaultNote = "" } = req.body;
-    const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SPREADSHEET_GID}`;
-
-    const raw = await fetch(sheetURL).then((res) => res.text());
-    const json = JSON.parse(raw.substring(47).slice(0, -2));
-
-    const headers = json.table.cols.map((col) => col.label || `col_${col.id}`);
-    const finalHeaders = [...headers, "UUID", "STATUS", "NOTES", "LOG"];
-
-    const formattedRows = json.table.rows.map((row) => {
-      const values = row.c.map((cell) => cell?.v || "");
-      return [...values, uuidv4(), "", defaultNote, ""];
-    });
-
-    await sheetsClient.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${FORMATTED_SHEET_NAME}!A1`,
-      valueInputOption: "RAW",
-      requestBody: { values: [finalHeaders, ...formattedRows] },
-    });
-
-    console.log("✅ Sheet updated with UUIDs and LOG.");
-    res.json({
-      message: "Sheet updated with UUID, STATUS, NOTES, and LOG.",
-      totalRows: formattedRows.length,
-    });
-  } catch (err) {
-    console.error("❌ injectUUID failed:", err);
-    res.status(500).json({ error: err.message });
-  }
-};
 
 export const updateSheet = async (req, res) => {
   try {
