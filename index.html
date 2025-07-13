@@ -51,6 +51,9 @@
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/src/main.jsx">
+      const theme = localStorage.getItem("theme");
+      document.body.classList.add(theme === "dark" ? "dark" : "light");
+    </script>
   </body>
 </html>

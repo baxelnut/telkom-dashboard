@@ -14,8 +14,9 @@ import ScrollToTop from "./components/utils/ScrollToTop";
 import PageNotFound from "./pages/PageNotFound";
 // Layouts
 import Layout from "./components/layouts/Layout";
-// Custom hooks
+// Context
 import { useAuth } from "./context/AuthContext";
+import { useTheme } from "./context/ThemeContext";
 // Routes
 import { appRoutes } from "./routes/AppRoutes";
 import LoginPage from "./pages/auth/LoginPage";
@@ -25,9 +26,10 @@ const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export default function App() {
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isDarkMode ? "dark" : "light"}`}>
       <Router>
         <ScrollToTop />
         <Routes>
