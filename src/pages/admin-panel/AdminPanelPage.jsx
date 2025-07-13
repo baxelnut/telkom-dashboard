@@ -4,7 +4,7 @@ import "./AdminPanelPage.css";
 // Components
 import Dropdown from "../../components/ui/input/Dropdown";
 
-export default function AdminPanelPage() {
+export default function AdminPanelPage({ API_URL }) {
   return (
     <div className="admin-panel-page">
       <div className="card admin pending">

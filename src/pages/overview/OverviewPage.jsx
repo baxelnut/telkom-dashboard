@@ -1,20 +1,18 @@
 // Style
 import "./OverviewPage.css";
-// Components
+// Cards
+import AmmountBySubType from "../../features/overview/AmmountBySubType";
 import OverviewByWitel from "../../features/overview/OverviewByWitel";
+import RevBySubType from "../../features/overview/RevBySubType";
 
-export default function OverviewPage() {
+export default function OverviewPage({ API_URL }) {
   return (
     <div className="overview-page">
-      <OverviewByWitel />
-
+      <OverviewByWitel API_URL={API_URL} />
+      
       <div className="cards-container-row-1-1">
-        <div className="card rev-by-order-sub-type">
-          <h6>Revenue by Order Sub-type</h6>
-        </div>
-        <div className="card ammount-by-order-sub-type">
-          <h6>Amount by Order Sub-type</h6>
-        </div>
+        <RevBySubType API_URL={API_URL} />
+        <AmmountBySubType API_URL={API_URL} />
       </div>
 
       <div className="cards-container-row">

@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./GalaksiReportPage.css";
 // Components
 
-export default function GalaksiReportPage() {
+export default function GalaksiReportPage({ API_URL }) {
   const [time, setTime] = useState(new Date());
 
   const formattedDate = `${
