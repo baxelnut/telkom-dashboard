@@ -24,7 +24,7 @@ import {
 // Style
 import "./UserProfile.css";
 // Components
-import Button from "../ui/buttons/Button";
+import Button from "../../components/ui/buttons/Button";
 // Context
 import { useAuth } from "../../context/AuthContext";
 // Data
