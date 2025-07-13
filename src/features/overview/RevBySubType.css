@@ -1,0 +1,11 @@
+.rev-by-order-sub-type {
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+}
+
+.rev-by-order-sub-type .card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
