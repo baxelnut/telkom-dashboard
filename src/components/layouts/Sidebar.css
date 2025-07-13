@@ -62,7 +62,7 @@
 
 .sidebar-logo img {
   max-width: 90%;
-  max-height: 34px;
+  max-height: 40px;
 }
 
 .sidebar-link {
@@ -178,5 +178,9 @@
   .collapse-btn,
   .sidebar {
     display: flex;
+  }
+
+  .sidebar-logo img { 
+    max-height: 70px;
   }
 }

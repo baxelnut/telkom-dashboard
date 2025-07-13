@@ -99,7 +99,17 @@ export default function Sidebar({
       <ul className="sidebar-menu">
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo" onClick={handleNavClick}>
-            <img src="/logos/telkom.svg" alt="Telkom" />
+            <picture>
+              <source
+                media="(min-width: 768px)"
+                srcSet="/logos/telkom-big.svg"
+              />
+              <img
+                src="/logos/telkom.svg"
+                alt="Telkom Logo"
+                className="sidebar-logo-img"
+              />
+            </picture>
           </Link>
         </div>
 
