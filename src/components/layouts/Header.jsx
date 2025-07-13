@@ -3,10 +3,10 @@ import { DarkModeSwitch } from "react-toggle-dark-mode";
 // Style
 import "./Header.css";
 // Components
-import UserProfile from "./UserProfile";
+import Icon from "../ui/icons/Icon";
+import UserProfile from "../../features/auth/UserProfile";
 // Data
 import { SVG_PATHS } from "../../data/utilData";
-import Icon from "../ui/icons/Icon";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
