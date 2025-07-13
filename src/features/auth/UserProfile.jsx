@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getAuth,
   updateProfile,
   updateEmail,
   sendPasswordResetEmail,
@@ -21,6 +20,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
+import { auth } from "../../services/firebase/firebase";
 // Style
 import "./UserProfile.css";
 // Components
@@ -123,9 +123,10 @@ export default function UserProfile({ user, showProfile }) {
 
   const handleLogout = async () => {
     try {
-      await signOut(getAuth());
+      await signOut(auth);
       setUser(null);
       setIsAdmin(false);
+      localStorage.removeItem("rememberMe");
       localStorage.removeItem("user");
       localStorage.removeItem("isAdmin");
       navigate("/login");
