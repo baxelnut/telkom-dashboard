@@ -1,0 +1,11 @@
+.ammount-by-subtype {
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+}
+
+.ammount-by-subtype .card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
