@@ -1,5 +1,7 @@
-const { SPREADSHEET_ID, SPREADSHEET_GID, FORMATTED_SHEET_NAME, FORMATTED_GID } =
-  process.env;
+import dotenv from "dotenv";
+dotenv.config();
+
+const { SPREADSHEET_ID, FORMATTED_GID } = process.env;
 
 const BIG_5_REGIONS = [
   "BALI",

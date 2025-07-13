@@ -5,13 +5,8 @@ import { sheetsClient } from "../services/googleSheetsService.js";
 import { getColumnLetter } from "../utils/columnUtils.js";
 import { fetchFormattedReportData } from "./regional3Controller.js";
 
-const {
-  SPREADSHEET_ID,
-  SPREADSHEET_GID,
-  FORMATTED_SHEET_NAME,
-  FORMATTED_GID,
-  PO_GID,
-} = process.env;
+const { SPREADSHEET_ID, FORMATTED_SHEET_NAME, FORMATTED_GID, PO_GID } =
+  process.env;
 
 export const updateSheet = async (req, res) => {
   try {
@@ -93,9 +88,9 @@ export const updateSheet = async (req, res) => {
       )
     );
 
-    res.json({ message: "✅ Sheet updated successfully." });
+    res.json({ message: "Sheet updated successfully." });
   } catch (err) {
-    console.error("❌ updateSheet error:", err);
+    console.error("updateSheet error:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -598,7 +593,7 @@ export const getPO = async (req, res) => {
 
     res.status(200).json({ data });
   } catch (err) {
-    console.error("❌ getPO failed:", err);
+    console.error("getPO failed:", err);
     res.status(500).json({ error: err.message });
   }
 };
