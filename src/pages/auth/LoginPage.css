@@ -1,6 +1,4 @@
-.login-page,
-.input-field-container,
-.card.login {
+.login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,33 +12,12 @@
 }
 
 .login-page .logo {
-  width: 8%;
-}
-
-.toggle-auth-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.login-page a {
-  text-decoration: underline;
-  font-weight: 600;
-}
-
-.helper-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 20%;
 }
 
 /* Override card for login */
 .card.login {
   width: 80%;
-  cursor: default;
-  align-items: stretch !important;
 }
 
 .card.login:hover {
@@ -51,6 +28,10 @@
 @media (min-width: 768px) {
   .card.login {
     width: 80%;
+  }
+
+  .login-page .logo {
+    width: 10%;
   }
 }
 
@@ -65,5 +46,9 @@
 @media (min-width: 1025px) {
   .card.login {
     width: 40%;
+  }
+
+  .login-page .logo {
+    width: 8%;
   }
 }
