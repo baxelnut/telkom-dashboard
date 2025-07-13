@@ -12,8 +12,8 @@ app.use(express.json({ limit: "20mb" }));
 
 const PORT = process.env.PORT || 5000;
 
-app.use("/api/regional_3", regional3Routes);
-app.use("/api/export_to_sheet", exportToSheet);
+app.use("/api/regional-3", regional3Routes);
+app.use("/api/export-to-sheet", exportToSheet);
 app.use("/api/galaksi", galaksi);
 app.use("/api/admin", admin);
 
