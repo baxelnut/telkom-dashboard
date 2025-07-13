@@ -1,6 +1,55 @@
 .overview-by-witel {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.overview-by-witel h6 {
+
+.overview-by-witel .witel-name {
+  text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.graph-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.o-pie-dec-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  gap: 4px;
+  flex: 1;
+}
+
+.o-pie-dec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.status-lanjut * {
+  color: var(--success);
+}
+.status-cancel * {
+  color: var(--error);
+}
+.status-bukan_order_reg * {
+  color: var(--secondary);
+}
+.status-no_status * {
+  color: var(--neutral);
+}
+
+.overview-by-witel .custom-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
