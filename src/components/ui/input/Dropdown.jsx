@@ -2,6 +2,8 @@
 import "./Dropdown.css";
 // Components
 import Icon from "../icons/Icon";
+// Data
+import { SVG_PATHS } from "../../../data/utilData";
 
 export default function Dropdown({
   options = [],
@@ -14,13 +16,14 @@ export default function Dropdown({
   trailingIcon = null,
   backgroundColor = null,
   textColor = null,
+  chevronDown = false,
 }) {
   const classes = [
     "dropdown",
     short ? "short" : "",
     fullWidth ? "full" : "",
     rounded ? "rounded-pill" : "rounded-soft",
-    trailingIcon ? "with-icon" : "",
+    trailingIcon || chevronDown ? "with-icon" : "",
   ].join(" ");
 
   const style = {
@@ -54,9 +57,13 @@ export default function Dropdown({
         )}
       </select>
 
-      {trailingIcon && (
+      {(chevronDown || trailingIcon) && (
         <span className="dropdown-icon">
-          <Icon path={trailingIcon} width={12} height={12} />
+          <Icon
+            path={trailingIcon ?? SVG_PATHS.chevronDown}
+            width={12}
+            height={12}
+          />
         </span>
       )}
     </div>

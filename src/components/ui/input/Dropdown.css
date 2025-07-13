@@ -9,22 +9,23 @@ option {
 }
 
 .dropdown {
+  width: 100%;
+  min-width: 120px;
+  min-height: 1rem;
+
   appearance: none;
   padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: var(--card);
   color: var(--text);
-  min-height: 1rem;
-  font-weight: 400;
-  cursor: pointer;
   transition: border-color 0.2s ease-in-out;
   border: 1px solid var(--neutral);
-  width: 100%;
+  font-weight: 400;
+  cursor: pointer;
 }
 
 .dropdown.short {
-  font-size: var(--small-p) !important;
-  border-radius: 4px !important;
+  font-size: var(--small-p) !important; 
 }
 
 .dropdown.short option {
