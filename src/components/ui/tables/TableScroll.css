@@ -1,0 +1,75 @@
+.table-scroll {
+  overflow-x: auto;
+  min-height: inherit;
+}
+
+.table-scroll .small-h {
+  color: var(--card) !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+th,
+td {
+  padding: 6px;
+  font-family: var(--body);
+  text-align: start;
+  border-block: 1px solid var(--neutral);
+  border-inline-end: 1px solid var(--neutral);
+}
+
+th {
+  background-color: var(--primary-variant);
+  color: var(--card);
+  position: sticky;
+  font-family: var(--heading);
+}
+
+body.dark th {
+  background-color: var(--primary);
+}
+
+body.dark th {
+  color: var(--text);
+}
+
+td p {
+  max-width: 200px;
+  width: fit-content;
+  height: fit-content;
+
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: background-color 0.6s ease, padding 0.6s ease;
+  cursor: text;
+}
+
+td:hover p:not(.unresponsive) {
+  background-color: var(--card);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+  position: relative;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible;
+
+  padding: 4px;
+  border-radius: 4px;
+  z-index: 99;
+}
+
+.unresponsive {
+  pointer-events: none;
+}
+
+.unresponsive * {
+  width: 100%;
+  text-align: center;
+}
