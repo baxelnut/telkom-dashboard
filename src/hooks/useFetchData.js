@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
  * Custom hook to fetch data from an API endpoint
  * @param {string} url - Full API URL to fetch
  * @param {boolean} [skip=false] - Skip fetching on mount
- * @returns {object} { data, loading, error, refetch }
+ * @returns {object} { data, loading, error, refetch, raw }
  */
-
 export default function useFetchData(url, skip = false) {
   const [data, setData] = useState([]);
+  const [raw, setRaw] = useState(null); // 🌟 NEW
   const [loading, setLoading] = useState(!skip);
   const [error, setError] = useState(null);
 
@@ -26,6 +26,9 @@ export default function useFetchData(url, skip = false) {
 
       const result = await response.json();
 
+      // Set raw result to access meta fields
+      setRaw(result);
+
       if (!Array.isArray(result.data)) {
         throw new Error(
           "Invalid response: expected result.data to be an array"
@@ -34,7 +37,7 @@ export default function useFetchData(url, skip = false) {
 
       setData(result.data);
     } catch (err) {
-      console.error("oh no! useFetchData error:", err);
+      console.error("💥 useFetchData error:", err);
       setError(err.message || "Something went wrong while fetching data.");
     } finally {
       setLoading(false);
@@ -47,5 +50,11 @@ export default function useFetchData(url, skip = false) {
     }
   }, [url]);
 
-  return { data, loading, error, refetch: fetchData };
+  return {
+    data, // Array only (still safe for old components)
+    raw, // Full response object (new)
+    loading,
+    error,
+    refetch: fetchData,
+  };
 }
