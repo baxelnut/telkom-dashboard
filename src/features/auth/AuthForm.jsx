@@ -19,6 +19,8 @@ import Error from "../../components/ui/states/Error";
 import Greetings from "./Greetings";
 // Styles
 import "./AuthForm.css";
+// API URLs
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function AuthForm() {
   const navigate = useNavigate();
@@ -34,7 +36,6 @@ export default function AuthForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setRememberMe(localStorage.getItem("rememberMe") === "true");
@@ -47,28 +48,22 @@ export default function AuthForm() {
   const handleEmailAuth = async () => {
     if (!email || !password)
       return setErrorMsg("Email and password cannot be empty.");
-
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
-
     try {
       await setPersistence(
         auth,
         rememberMe ? browserLocalPersistence : browserSessionPersistence
       );
-
       let cred;
       if (isSignup) {
         cred = await createUserWithEmailAndPassword(auth, email, password);
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/admin/register`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, firstName, lastName }),
-          }
-        );
+        const res = await fetch(`${API_URL}/admin/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, firstName, lastName }),
+        });
         if (!res.ok) throw new Error("Registration failed.");
         setSuccessMsg("Please wait for admin approval.");
         localStorage.setItem("rememberMe", rememberMe ? "true" : "false");
@@ -76,35 +71,26 @@ export default function AuthForm() {
       } else {
         cred = await signInWithEmailAndPassword(auth, email, password);
       }
-
-      const adminsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/admin/all-admins`
-      );
+      const adminsRes = await fetch(`${API_URL}/admin/all-admins`);
       if (!adminsRes.ok) throw new Error("Failed to fetch admin data.");
       const { data: admins } = await adminsRes.json();
       const isAdmin = admins.some(
         (a) => a.email === cred.user.email && a.role === "admin"
       );
       setRole(isAdmin ? "admin" : "user");
-
       if (!isApprovedUser && !isAdmin) {
         throw new Error("Access denied. Your account is pending approval.");
       }
-
       const token = await cred.user.getIdToken();
-      const verifyRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/verify-user`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email: cred.user.email }),
-        }
-      );
+      const verifyRes = await fetch(`${API_URL}/auth/verify-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: cred.user.email }),
+      });
       if (!verifyRes.ok) throw new Error("Access denied. User not authorized.");
-
       setUser(cred.user);
       navigate("/overview", { replace: true });
     } catch (err) {
@@ -177,7 +163,7 @@ export default function AuthForm() {
       />
       <div className="password-field">
         <InputField
-          type={showPassword ? "text" : "password"}
+          type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
