@@ -42,8 +42,6 @@ export default function UserProfile({ user, showProfile }) {
     photoURL: user?.photoURL || "/images/default_profile.png",
   });
 
-  console.log(user.fullName);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedUser((prev) => ({ ...prev, [name]: value }));
