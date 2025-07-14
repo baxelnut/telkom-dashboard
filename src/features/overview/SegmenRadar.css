@@ -1,0 +1,4 @@
+.segmen-radar .radar-desc {
+  display: flex;
+  flex-direction: column;
+}
