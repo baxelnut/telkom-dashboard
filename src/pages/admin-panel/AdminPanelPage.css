@@ -1,0 +1,22 @@
+.card.admin.pending {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card.admin.pending,
+.card.admin.pending .table-wrapper {
+  min-height: 120px;
+}
+
+.admin.pending .heading-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin.pending .btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}

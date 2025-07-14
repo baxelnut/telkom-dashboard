@@ -37,7 +37,7 @@
 /* Default hover color for standard buttons */
 .btn:not(.custom-hover):hover *,
 .hollow:not(.custom-hover):hover * {
-  color: var(--bg) !important;
+  color: var(--text) !important;
 }
 
 /* Respect user-defined hover color in custom-hover */
@@ -71,7 +71,7 @@
 
 /* Variant: .btn (default filled) */
 .btn {
-  border-color: var(--primary-variant);
+  border-color: transparent;
 }
 .btn:hover {
   border-color: var(--secondary);
@@ -83,13 +83,14 @@
 /* Variant: .hollow (transparent bg) */
 .hollow {
   --btn-bg: transparent;
-  --btn-color: var(--neutral);
-  --btn-border: var(--neutral);
+  --btn-color: var(--text) !important;
+  --btn-border: var(--text) !important;
   padding: 8px 19px;
+  border: 1px solid var(--btn-border);
 }
 
 .hollow:hover {
-  border-color: var(--primary);
+  border-color: var(--secondary);
 }
 
 /* Rounded variants */
