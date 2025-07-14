@@ -6,6 +6,7 @@ option {
   position: relative;
   display: inline-block;
   width: auto;
+  width: fit-content;
 }
 
 .dropdown {
@@ -25,7 +26,7 @@ option {
 }
 
 .dropdown.short {
-  font-size: var(--small-p) !important; 
+  font-size: var(--small-p) !important;
 }
 
 .dropdown.short option {
