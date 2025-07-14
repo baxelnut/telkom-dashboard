@@ -29,7 +29,7 @@ export default function SessionBySubType({ API_URL }) {
   );
 
   const displayData = KEYS.map((key) => ({
-    displayName: key,
+    abbreviationName: key,
     sessions: aggregatedData[key],
     percentage: ((aggregatedData[key] / total) * 100).toFixed(2),
   }));
@@ -46,9 +46,9 @@ export default function SessionBySubType({ API_URL }) {
           <div className="bar-horizontal-chart" key={index}>
             <div className="bar-text">
               <h6 className="small-h" style={{ flex: 1 }}>
-                {KEYS.includes(item.displayName.toLowerCase())
-                  ? item.displayName.toUpperCase()
-                  : item.displayName
+                {KEYS.includes(item.abbreviationName.toLowerCase())
+                  ? item.abbreviationName.toUpperCase()
+                  : item.abbreviationName
                       .replace(/_/g, " ")
                       .replace(/\b\w/g, (char) => char.toUpperCase())}
               </h6>

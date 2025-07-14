@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   updateProfile,
@@ -37,10 +37,12 @@ export default function UserProfile({ user, showProfile }) {
   const [isEditing, setIsEditing] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [editedUser, setEditedUser] = useState({
-    name: user.name || "",
-    email: user.email || "",
-    imageUrl: user.imageUrl || "/images/default_profile.png",
+    fullName: user?.fullName || "",
+    email: user?.email || "",
+    photoURL: user?.photoURL || "/images/default_profile.png",
   });
+
+  console.log(user.fullName);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,12 +55,12 @@ export default function UserProfile({ user, showProfile }) {
     setImageFile(file);
     setEditedUser((prev) => ({
       ...prev,
-      imageUrl: URL.createObjectURL(file),
+      photoURL: URL.createObjectURL(file),
     }));
   };
 
   const uploadImageIfNeeded = async (uid) => {
-    if (!imageFile) return editedUser.imageUrl;
+    if (!imageFile) return editedUser.photoURL;
 
     const storage = getStorage();
     const ref = storageRef(storage, `profileImages/${uid}`);
@@ -76,7 +78,7 @@ export default function UserProfile({ user, showProfile }) {
       const photoURL = await uploadImageIfNeeded(currentUser.uid);
 
       await updateProfile(currentUser, {
-        displayName: editedUser.name,
+        fullName: editedUser.fullName,
         photoURL,
       });
 
@@ -93,8 +95,8 @@ export default function UserProfile({ user, showProfile }) {
       if (snapshot.empty) throw new Error("User not found in Firestore");
 
       await updateDoc(snapshot.docs[0].ref, {
-        fullName: editedUser.name,
-        imageUrl: photoURL,
+        fullName: editedUser.fullName,
+        photoURL: photoURL,
       });
 
       alert("Profile updated!");
@@ -151,7 +153,7 @@ export default function UserProfile({ user, showProfile }) {
           />
         </div>
 
-        <img src={editedUser.imageUrl} referrerPolicy="no-referrer" />
+        <img src={editedUser.photoURL} referrerPolicy="no-referrer" />
         {isEditing && (
           <input type="file" accept="image/*" onChange={handleFileChange} />
         )}
@@ -163,12 +165,12 @@ export default function UserProfile({ user, showProfile }) {
               className="user-info"
               type="text"
               name="name"
-              value={editedUser.name}
+              value={editedUser.fullName}
               onChange={handleInputChange}
             />
           ) : (
             <div className="user-info">
-              <h6 className="small-h">{user?.name || "Guest"}</h6>
+              <h6 className="small-h">{user?.fullName || "Guest"}</h6>
             </div>
           )}
         </div>

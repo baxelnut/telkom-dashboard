@@ -22,7 +22,7 @@ export default function Header({
   const { isDarkMode, setIsDarkMode } = useTheme();
 
   const [userDisplay, setUserDisplay] = useState({
-    displayName: user?.displayName || "",
+    fullName: user?.fullName || "",
     email: user?.email || "",
     photoURL: user?.photoURL || "/images/default_profile.png",
   });
@@ -48,7 +48,7 @@ export default function Header({
 
         setUserDisplay((prev) => ({
           ...prev,
-          displayName: userData.fullName || prev.displayName,
+          fullName: userData.fullName || prev.fullName,
           email: userData.email || prev.email,
           photoURL: user.photoURL || "/images/default_profile.png",
         }));
@@ -85,7 +85,7 @@ export default function Header({
         />
 
         <h6 className="small-h name" onClick={showProfile}>
-          {userDisplay.displayName || "Guest"}
+          {userDisplay.fullName || "Guest"}
         </h6>
 
         <Icon
