@@ -4,4 +4,19 @@
 
 .segmen-radar-chart {
   flex: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.segmen-radar-chart > div {
+  flex: 1;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .segmen-radar-chart {
+    flex-direction: row;
+  }
 }
