@@ -38,7 +38,7 @@ export default function Dropdown({
         className={classes}
         value={value}
         onChange={onChange}
-        style={{ color: textColor, fontWeight: isEmpty(value) ? 500 : 600 }}
+        style={{ color: textColor }}
       >
         {options.map((option) =>
           option.options ? (
@@ -68,8 +68,4 @@ export default function Dropdown({
       )}
     </div>
   );
-}
-
-function isEmpty(val) {
-  return val === "" || val === " ";
 }

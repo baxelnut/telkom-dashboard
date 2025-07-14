@@ -3,18 +3,17 @@
 .hollow,
 .full {
   --btn-bg: var(--primary-variant);
-  --btn-color: var(--card);
+  --btn-color: #f0f3ff !important;
   --btn-border: transparent;
 
   background-color: var(--btn-bg);
   color: var(--btn-color);
-  border: 1px solid var(--btn-border);
+  border: 2px solid var(--btn-border);
 
   border-radius: 360px;
   padding: 9px 20px;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
+  font-weight: 500 !important;
+  font-family: var(--heading) !important;
   cursor: pointer;
   transition: all 0.25s ease;
   width: fit-content;
@@ -46,14 +45,14 @@
   color: var(--btn-hover-color, var(--bg)) !important;
 }
 
-.btn p,
+.btn *,
 .btn svg,
-.hollow p,
+.hollow *,
 .hollow svg {
   color: var(--btn-color);
 }
 
-.custom-hover:hover p,
+.custom-hover:hover *,
 .custom-hover:hover svg {
   color: var(--btn-hover-color, var(--bg)) !important;
 }
@@ -72,7 +71,13 @@
 
 /* Variant: .btn (default filled) */
 .btn {
-  border-color: var(--neutral);
+  border-color: var(--primary-variant);
+}
+.btn:hover {
+  border-color: var(--secondary);
+}
+.btn:hover .small-h {
+  color: var(--btn-color) !important;
 }
 
 /* Variant: .hollow (transparent bg) */
@@ -126,11 +131,6 @@
 .hollow:not(.custom-hover):hover {
   background-size: 100% 100%;
   transition: background-size 0.4s ease, color 0.25s ease, border 0.25s ease;
-}
-
-.btn:not(.custom-hover):hover *,
-.hollow:not(.custom-hover):hover * {
-  color: var(--bg) !important;
 }
 
 /* Stop background animation and gradient if using custom colors */

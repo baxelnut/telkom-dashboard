@@ -4,6 +4,11 @@
   text-align: center; /* default alignment */
 }
 
+.app-container {
+  height: 100vh;
+  width: 100vw;
+}
+
 /* Global dropdown container */
 .dropdown-container {
   display: flex;

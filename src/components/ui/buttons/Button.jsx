@@ -75,7 +75,9 @@ export default function Button({
     <>
       {!iconAfter && iconComponent}
       {!isIconOnly && (
-        <p style={{ color: textColor }}>{text?.trim() || "Button"}</p>
+        <h6 className="small-h" style={{ color: textColor }}>
+          {text?.trim() || "Button"}
+        </h6>
       )}
       {iconAfter && iconComponent}
     </>

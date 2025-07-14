@@ -1,5 +1,8 @@
+select,
 option {
-  font-weight: 400;
+  font-family: var(--heading);
+  text-decoration: none;
+  font-weight: 600 !important; 
 }
 
 .dropdown-wrapper {
@@ -21,14 +24,12 @@ option {
   color: var(--text);
   transition: border-color 0.2s ease-in-out;
   border: 1px solid var(--neutral);
-  font-weight: 400;
+  font-weight: 500;
+  font-family: var(--body);
   cursor: pointer;
 }
 
-.dropdown.short {
-  font-size: var(--small-p) !important;
-}
-
+.dropdown.short,
 .dropdown.short option {
   font-size: var(--small-p) !important;
 }
