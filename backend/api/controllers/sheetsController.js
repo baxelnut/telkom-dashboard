@@ -169,7 +169,7 @@ export const getSheet = async (req, res) => {
       totalProcessedData: total,
     });
   } catch (err) {
-    console.error("🔥 Spreadsheet Fetch Error:", err);
+    console.error("Spreadsheet Fetch Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
@@ -265,7 +265,7 @@ export const getSheetSegmen = async (req, res) => {
     const result = Object.values(grouped);
     res.json({ data: result });
   } catch (err) {
-    console.error("🔥 Spreadsheet Fetch Error:", err);
+    console.error("Spreadsheet Fetch Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
@@ -316,7 +316,7 @@ export const getSegmenSubtype2 = async (req, res) => {
     }
     return res.json({ data: result });
   } catch (err) {
-    console.error("🔥 Spreadsheet Fetch Error:", err);
+    console.error("Spreadsheet Fetch Error:", err);
     return res.status(500).json({ error: err.message || "Unknown error" });
   }
 };
@@ -375,7 +375,7 @@ export const getSegmenSubtype2Rev = async (req, res) => {
 
     return res.json({ data: result });
   } catch (err) {
-    console.error("🔥 Spreadsheet Fetch Error:", err);
+    console.error("Spreadsheet Fetch Error:", err);
     return res.status(500).json({ error: err.message || "Unknown error" });
   }
 };
@@ -426,7 +426,7 @@ export const getSheetOrderType2 = async (req, res) => {
 
     res.json({ data: Object.values(actionMap) });
   } catch (err) {
-    console.error("🔥 Sheet Parse Error:", err);
+    console.error("Sheet Parse Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
@@ -492,7 +492,7 @@ export const getSheetOrderSimplified = async (req, res) => {
 
     res.json({ data: Object.values(actionMap) });
   } catch (err) {
-    console.error("🔥 Sheet Parse Error:", err);
+    console.error("Sheet Parse Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
@@ -558,7 +558,7 @@ export const getSheetKategoriSimplified = async (req, res) => {
 
     res.json({ data: Object.values(actionMap) });
   } catch (err) {
-    console.error("🔥 Sheet Parse Error:", err);
+    console.error("Sheet Parse Error:", err);
     res.status(500).json({ error: err.message || "Unknown sheet error" });
   }
 };
