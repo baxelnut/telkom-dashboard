@@ -9,13 +9,14 @@ import "./App.css";
 // Components
 import ScrollToTop from "./components/utils/ScrollToTop";
 import PageNotFound from "./pages/PageNotFound";
+import LoginPage from "./pages/auth/LoginPage";
 // Layouts
 import Layout from "./components/layouts/Layout";
 // Context
 import { useTheme } from "./context/ThemeContext";
 // Routes
 import { appRoutes } from "./routes/AppRoutes";
-import LoginPage from "./pages/auth/LoginPage";
+import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
 
 export default function App() {
   const { isDarkMode } = useTheme();
@@ -25,15 +26,30 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Navigate to="/overview" replace />} />
+          {/* Public route - redirect if already logged in */}
+          <Route
+            path="/login"
+            element={
+              <RedirectIfLoggedIn>
+                <LoginPage />
+              </RedirectIfLoggedIn>
+            }
+          />
+          {/* Redirect root */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Protected routes */}
           {appRoutes.map(({ path, element, title }) => (
             <Route
               key={path}
               path={path}
-              element={<Layout pageTitle={title}>{element}</Layout>}
+              element={
+                <ProtectedRoute>
+                  <Layout pageTitle={title}>{element}</Layout>
+                </ProtectedRoute>
+              }
             />
           ))}
+          {/* 404 */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>

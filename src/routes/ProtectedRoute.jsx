@@ -11,7 +11,7 @@ export function ProtectedRoute({ children }) {
 export function RedirectIfLoggedIn({ children }) {
   const { user } = useAuth();
   if (user === undefined) return null;
-  if (user && user.emailVerified) return <Navigate to="/onboarding" replace />;
+  if (user) return <Navigate to="/overview" replace />;
   return children;
 }
 
