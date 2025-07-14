@@ -2,7 +2,7 @@
 .btn,
 .hollow,
 .full {
-  --btn-bg: var(--primary);
+  --btn-bg: var(--primary-variant);
   --btn-color: var(--card);
   --btn-border: transparent;
 
