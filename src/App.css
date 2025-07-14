@@ -27,7 +27,7 @@
   padding: 1rem;
   text-align: left;
   overflow: hidden;
-  cursor: pointer;
+  cursor: default;
   transition: transform 0.3s ease-in-out;
   min-height: 350px;
 }
@@ -50,6 +50,20 @@
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(1, 1fr); /* mobile: 1 col */
+}
+
+/* Global table wrapper */
+.table-wrapper {
+  width: 100%;
+  min-height: 300px;
+  height: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--neutral);
+  background: rgb(var(--bg-rgb), 0.5);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Breakpoints — scale up */
@@ -80,6 +94,10 @@
   .cards-container-row,
   .cards-container-row-1-1 {
     flex-direction: row;
+  }
+
+  .table-wrapper {
+    min-height: 400px;
   }
 }
 
