@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 // Style
 import "./OverviewPage.css";
 // Cards
@@ -12,13 +13,19 @@ import SegmenRadar from "../../features/overview/SegmenRadar";
 export default function OverviewPage({ API_URL }) {
   return (
     <div className="overview-page">
-      <OverviewByWitel API_URL={API_URL} />
+      <Helmet>
+        <title>Dashboard Overview | Telkom</title>
+        <meta
+          name="description"
+          content="High-level overview of system performance, KPIs, and operational summaries across departments."
+        />
+      </Helmet>
 
+      <OverviewByWitel API_URL={API_URL} />
       <div className="cards-container-row-1-1">
         <RevBySubType API_URL={API_URL} />
         <AmmountBySubType API_URL={API_URL} />
       </div>
-
       <div className="cards-container-row">
         <SessionBySubType API_URL={API_URL} />
         <div className="card segmen-radar-chart">
@@ -26,7 +33,6 @@ export default function OverviewPage({ API_URL }) {
           <CategoryByWitel API_URL={API_URL} />
         </div>
       </div>
-
       <DataPreview API_URL={API_URL} />
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 // Style
 import "./GalaksiReportPage.css";
 // Components
@@ -17,6 +18,14 @@ export default function GalaksiReportPage({ API_URL }) {
 
   return (
     <div className="report-page galaksi">
+      <Helmet>
+        <title>GALAKSI Report | Telkom</title>
+        <meta
+          name="description"
+          content="Detailed report and metrics for GALAKSI program under Telkom Indonesia. For internal evaluation only."
+        />
+      </Helmet>
+
       <div className="card galaksi title">
         <h6>GALAKSI (GApai! kawaL! AKSI!) AOSODOMORO Non Conn</h6>
         <h6 className="small-h">{`${formattedDate} ${formattedTime}`}</h6>
