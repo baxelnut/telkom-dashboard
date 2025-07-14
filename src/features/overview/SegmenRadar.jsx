@@ -18,63 +18,59 @@ import Dropdown from "../../components/ui/input/Dropdown";
 import useFetchData from "../../hooks/useFetchData";
 
 // Helpers
-const colorSet = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#7C4585"];
+const COLORS = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#7C4585"];
+const formatSegmen = (key) =>
+  key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function SegmenRadar({ API_URL }) {
   const { data, loading, error } = useFetchData(
     `${API_URL}/regional-3/sheets/segmen-simplified`
   );
-
   const [selectedWitel, setSelectedWitel] = useState("ALL");
 
-  const generateColorMap = useMemo(() => {
-    const colorMap = {};
-    const uniqueWitels = [...new Set(data.map((item) => item.new_witel))];
+  // Extract once and reuse
+  const uniqueWitels = useMemo(
+    () => [...new Set(data.map((item) => item.new_witel))],
+    [data]
+  );
 
-    uniqueWitels.forEach((witel, index) => {
-      colorMap[witel] = colorSet[index % colorSet.length];
-    });
-
-    return colorMap;
-  }, [data]);
+  const colorMap = useMemo(() => {
+    return uniqueWitels.reduce((map, witel, i) => {
+      map[witel] = COLORS[i % COLORS.length];
+      return map;
+    }, {});
+  }, [uniqueWitels]);
 
   const segmenFields = useMemo(() => {
-    if (data.length === 0) return [];
-    return Object.keys(data[0]).filter((key) => key !== "new_witel");
+    return data[0]
+      ? Object.keys(data[0]).filter((key) => key !== "new_witel")
+      : [];
   }, [data]);
 
   const fullMarks = useMemo(() => {
     return segmenFields.reduce((acc, field) => {
-      acc[field] = Math.max(...data.map((item) => item[field] || 0), 0);
+      acc[field] = Math.max(...data.map((d) => d[field] || 0), 0);
       return acc;
     }, {});
   }, [data, segmenFields]);
 
-  const generateChartData = useMemo(() => {
-    return segmenFields
-      .map((field) => ({
-        subject: field
-          .replace(/_/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase()),
-        fullMark: fullMarks[field],
-        ...data.reduce((acc, item) => {
-          const value = item[field] || 0;
-          acc[item.new_witel] = value;
-          return acc;
-        }, {}),
-      }))
-      .filter((item) => Object.keys(item).length > 1);
+  const chartData = useMemo(() => {
+    return segmenFields.map((field) => ({
+      subject: formatSegmen(field),
+      fullMark: fullMarks[field],
+      ...data.reduce((acc, item) => {
+        acc[item.new_witel] = item[field] || 0;
+        return acc;
+      }, {}),
+    }));
   }, [data, segmenFields, fullMarks]);
 
   const witelOptions = useMemo(
-    () => [
-      { value: "ALL", label: "ALL" },
-      ...[...new Set(data.map((item) => item.new_witel))].map((witel) => ({
-        value: witel,
-        label: witel,
-      })),
-    ],
-    [data]
+    () =>
+      [{ value: "ALL", label: "ALL" }].concat(
+        uniqueWitels.map((witel) => ({ value: witel, label: witel }))
+      ),
+    [uniqueWitels]
   );
 
   const filteredData = useMemo(
@@ -106,12 +102,7 @@ export default function SegmenRadar({ API_URL }) {
             />
 
             <ResponsiveContainer width="100%" height={300}>
-              <RadarChart
-                cx="50%"
-                cy="50%"
-                outerRadius="60%"
-                data={generateChartData}
-              >
+              <RadarChart cx="50%" cy="50%" outerRadius="60%" data={chartData}>
                 <PolarGrid />
                 <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
                 <PolarRadiusAxis
@@ -134,8 +125,8 @@ export default function SegmenRadar({ API_URL }) {
                     key={item.new_witel}
                     name={item.new_witel}
                     dataKey={item.new_witel}
-                    stroke={generateColorMap[item.new_witel]} // Dynamic color per witel
-                    fill={generateColorMap[item.new_witel]} // Dynamic color per witel
+                    stroke={colorMap[item.new_witel]}
+                    fill={colorMap[item.new_witel]}
                     fillOpacity={0.3}
                   />
                 ))}
@@ -143,15 +134,12 @@ export default function SegmenRadar({ API_URL }) {
             </ResponsiveContainer>
 
             <div className="radar-desc">
-              {segmenFields.map((key) => (
-                <p key={key}>
-                  {key
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c) => c.toUpperCase())}
-                  :{" "}
+              {segmenFields.map((field) => (
+                <p key={field}>
+                  {formatSegmen(field)}:{" "}
                   <strong>
                     {filteredData.reduce(
-                      (sum, item) => sum + (item[key] || 0),
+                      (sum, item) => sum + (item[field] || 0),
                       0
                     )}
                   </strong>

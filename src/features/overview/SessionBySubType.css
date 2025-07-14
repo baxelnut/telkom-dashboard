@@ -1,0 +1,30 @@
+.card.session-by-sub-type {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-by-sub-type .card-content {
+  flex: 1;
+  margin-top: 1rem;
+  justify-content: space-evenly !important;
+}
+
+.bar-text {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.bar,
+.bar.active {
+  width: 100%;
+  height: 12px;
+  background-color: var(--bg);
+  border-radius: 12px;
+}
+
+.bar.active {
+  width: auto;
+  background-color: var(--primary-variant);
+}
