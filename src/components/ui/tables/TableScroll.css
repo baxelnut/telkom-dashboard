@@ -3,14 +3,14 @@
   min-height: inherit;
 }
 
-.table-scroll .small-h {
-  color: #f0f3ff !important;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
   white-space: nowrap;
+}
+
+th .small-h {
+  color: #f0f3ff !important;
 }
 
 th,
@@ -38,9 +38,9 @@ body.dark th {
 }
 
 td p {
-  max-width: 200px;
   width: fit-content;
   height: fit-content;
+  max-width: 200px;
 
   position: relative;
   overflow: hidden;
