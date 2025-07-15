@@ -23,7 +23,7 @@
 .aosodomoro.selected {
   position: relative;
   overflow: auto;
-  height: 100vh; 
+  height: 100vh;
 }
 
 .aosodomoro.table .title {
@@ -36,12 +36,6 @@
 
 .aosodomoro.table .title .stats {
   text-align: end;
-}
-
-.aosodomoro .filter-items {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .aosodomoro.selected .title {
@@ -61,12 +55,6 @@
 
 .aosodomoro .tr-status-bukan-order-reg {
   background-color: rgb(var(--secondary-rgb), 0.5);
-}
-
-.aosodomoro.selected .filter-container.back-btn {
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 /* Tablet and up */
