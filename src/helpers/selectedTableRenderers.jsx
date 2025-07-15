@@ -31,7 +31,7 @@ export const renderSelectedTable = ({ filtered, hasInProgress }) => {
         <tbody>
           {filtered.map((itm, idx) => {
             const inProg = itm.KATEGORI === "IN PROCESS";
-            const status = itm.STATUS ?? "no_status";
+            const status = itm.STATUS ?? "No status";
 
             return (
               <tr

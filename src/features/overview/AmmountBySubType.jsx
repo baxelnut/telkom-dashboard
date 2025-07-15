@@ -18,16 +18,8 @@ import Dropdown from "../../components/ui/input/Dropdown";
 import useFetchData from "../../hooks/useFetchData";
 import CustomTooltip from "../../components/ui/charts/CustomTooltip";
 import CardContent from "../../components/ui/cards/CardContent";
-
 // Helpers
-const CUSTOM_ORDER = ["AO", "SO", "DO", "MO", "RO"];
-const SEGMEN_COLORS = {
-  Government: "#FDB827",
-  "Private Service": "#C70A80",
-  "State-Owned Enterprise Service": "#54B435",
-  Regional: "#247881",
-  DEFAULT: "var(--secondary)",
-};
+import { CUSTOM_ORDER, SEGMEN_COLORS } from "../../helpers/overviewUtils";
 
 export default function AmmountBySubType({ API_URL }) {
   const { data, loading, error } = useFetchData(

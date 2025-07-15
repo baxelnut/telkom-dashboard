@@ -20,8 +20,13 @@
   gap: 0.5rem;
 }
 
-.aosodomoro.table .title,
-.aosodomoro.selected .back-btn-container {
+.aosodomoro.selected {
+  position: relative;
+  overflow: auto;
+  height: 100vh; 
+}
+
+.aosodomoro.table .title {
   width: 100%;
   height: fit-content;
   display: flex;
@@ -44,6 +49,24 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
+}
+
+.aosodomoro .tr-status-lanjut {
+  background-color: rgb(var(--success-rgb), 0.5);
+}
+
+.aosodomoro .tr-status-cancel {
+  background-color: rgb(var(--error-rgb), 0.5);
+}
+
+.aosodomoro .tr-status-bukan-order-reg {
+  background-color: rgb(var(--secondary-rgb), 0.5);
+}
+
+.aosodomoro.selected .filter-container.back-btn {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 /* Tablet and up */

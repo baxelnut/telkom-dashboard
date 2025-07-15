@@ -16,11 +16,8 @@ import CardContent from "../../components/ui/cards/CardContent";
 import Dropdown from "../../components/ui/input/Dropdown";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
-
 // Helpers
-const COLORS = ["#e76705", "#5cb338", "#2DAA9E", "#D91656", "#7C4585"];
-const formatSegmen = (key) =>
-  key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+import { COLORS, formatSegmen } from "../../helpers/overviewUtils";
 
 export default function SegmenRadar({ API_URL }) {
   const { data, loading, error } = useFetchData(

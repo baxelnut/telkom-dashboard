@@ -9,16 +9,9 @@ import Checkbox from "../../components/ui/input/Checkbox";
 import Dropdown from "../../components/ui/input/Dropdown";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
-
 // Helpers
-const COLORS = ["#5cb338", "#e76705", "#2DAA9E", "#D91656", "#7C4585"];
-const CATEGORY_OPTIONS = [
-  { value: "all", label: "ALL" },
-  { value: "in_process", label: "In Process" },
-  { value: "prov_complete", label: "Prov Complete" },
-  { value: "provide_order", label: "Provide Order" },
-  { value: "ready_to_bill", label: "Ready to Bill" },
-];
+import { COLORS, CATEGORY_OPTIONS } from "../../helpers/overviewUtils";
+
 // Custom Render
 const renderActiveShape = ({
   cx,

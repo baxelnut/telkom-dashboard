@@ -1,6 +1,4 @@
 import { useState } from "react";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 // Style
 import "./DataPreview.css";
 // Components
@@ -11,16 +9,9 @@ import CustomPagination from "../../components/ui/tables/CustomPagination";
 import TableScroll from "../../components/ui/tables/TableScroll";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
-
 // Helpers
-const rowPerPageOptions = [10, 20, 50, 100, 200, 500].map((val) => ({
-  value: val,
-  label: `Show ${val} rows`,
-}));
-const exportOptions = ["Excel", "CSV"].map((val) => ({
-  value: val,
-  label: val,
-}));
+import { exportData, getExportOptions } from "../../helpers/exportTableData";
+import { rowPerPageOptions } from "../../helpers/overviewUtils";
 
 export default function DataPreview({ API_URL }) {
   const [currentPage, setCurrentPage] = useState(0);
@@ -34,26 +25,8 @@ export default function DataPreview({ API_URL }) {
   const totalRows = raw?.totalProcessedData || 0;
   const pageCount = Math.ceil(totalRows / rowsPerPage);
 
-  const handleExport = async (type) => {
-    if (!data || data.length === 0) {
-      alert("No data to export");
-      return;
-    }
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
-    if (type === "Excel") {
-      const buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(blob, "Data Preview.xlsx");
-    } else if (type === "CSV") {
-      const csv = XLSX.utils.sheet_to_csv(worksheet);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      saveAs(blob, "DataPreview.csv");
-    }
-    console.log(`Exported as ${type}`);
+  const handleExport = () => {
+    exportData(selectedExport, data, "Data Preview");
   };
 
   return (
@@ -75,13 +48,9 @@ export default function DataPreview({ API_URL }) {
           />
         </div>
         <div className="export-button-container">
-          <Button
-            text="Export as"
-            onClick={() => handleExport(selectedExport)}
-            short
-          />
+          <Button text="Export as" onClick={handleExport} short />
           <Dropdown
-            options={exportOptions}
+            options={getExportOptions()}
             value={selectedExport}
             onChange={(e) => setSelectedExport(e.target.value)}
             short

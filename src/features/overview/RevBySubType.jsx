@@ -14,34 +14,17 @@ import {
 // Style
 import "./RevBySubType.css";
 // Components
+import CardContent from "../../components/ui/cards/CardContent";
 import CustomTooltip from "../../components/ui/charts/CustomTooltip";
 import Dropdown from "../../components/ui/input/Dropdown";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
-import CardContent from "../../components/ui/cards/CardContent";
-
 // Helpers
-const CUSTOM_ORDER = ["AO", "SO", "DO", "MO", "RO"];
-const SEGMEN_COLORS = {
-  Government: "#FDB827",
-  "Private Service": "#C70A80",
-  "State-Owned Enterprise Service": "#54B435",
-  Regional: "#247881",
-  DEFAULT: "var(--secondary)",
-};
-
-const formatValue = (value) => {
-  const suffixes = ["", "K", "M", "B"];
-  let idx = 0;
-  const isNeg = value < 0;
-  value = Math.abs(Number(value));
-  if (isNaN(value)) return "0";
-  while (value >= 1000 && idx < suffixes.length - 1) {
-    value /= 1000;
-    idx++;
-  }
-  return `${isNeg ? "-" : ""}${value.toFixed(1)}${suffixes[idx]}`;
-};
+import {
+  SEGMEN_COLORS,
+  CUSTOM_ORDER,
+  formatValue,
+} from "../../helpers/overviewUtils";
 
 const getUnique = (data, key) =>
   Array.from(new Set(data.map((item) => item[key]))).filter(Boolean);
