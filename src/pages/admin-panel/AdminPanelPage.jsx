@@ -4,9 +4,9 @@ import { Helmet } from "react-helmet-async";
 // Style
 import "./AdminPanelPage.css";
 // Components
-import CardContent from "../../components/ui/cards/CardContent";
 import Button from "../../components/ui/buttons/Button";
-import Dropdown from "../../components/ui/input/Dropdown";
+import CardContent from "../../components/ui/cards/CardContent";
+import RoleTable from "../../features/admin/RoleTable";
 // Context
 import { useAuth } from "../../context/AuthContext";
 // Custom hook
@@ -21,9 +21,10 @@ export default function AdminPanelPage({ API_URL }) {
     error,
     refetch,
   } = useFetchData(`${API_URL}/admin/users`);
-  const [users, setUsers] = useState([]);
-  const { user, setIsAdmin } = useAuth();
+
   const navigate = useNavigate();
+  const { user, setIsAdmin } = useAuth();
+  const [users, setUsers] = useState([]);
   const [showDeclined, setShowDeclined] = useState(false);
 
   useEffect(() => {
@@ -88,93 +89,52 @@ export default function AdminPanelPage({ API_URL }) {
             hollow
           />
         </div>
-
         <CardContent
           loading={loading}
           error={error}
           children={
             <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>
-                      <h6>Role</h6>
-                    </th>
-                    <th>
-                      <h6>Name</h6>
-                    </th>
-                    <th>
-                      <h6>Email</h6>
-                    </th>
-                    <th>
-                      <h6>User ID</h6>
-                    </th>
-                    <th>
-                      <h6>Action</h6>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(showDeclined ? declinedUsers : pendingUsers).map(
-                    (user, i) => (
-                      <tr key={user.id}>
-                        <td style={{ textAlign: "center" }}>{i + 1}</td>
-                        <td>
-                          <h6
-                            className={`role-badge ${user.role || "unknown"}`}
-                          >
-                            {user.role
-                              ? user.role.charAt(0).toUpperCase() +
-                                user.role.slice(1)
-                              : "Unknown"}
-                          </h6>
-                        </td>
-                        <td>
-                          <p>{user.fullName}</p>
-                        </td>
-                        <td>
-                          <p>{user.email}</p>
-                        </td>
-                        <td>
-                          <p>{user.id}</p>
-                        </td>
-                        <td>
-                          <div className="btn-container">
-                            <Button
-                              text="Accept"
-                              iconPath={SVG_PATHS.checkLarge}
-                              onClick={() => updateUserRole(user.email, "user")}
-                              backgroundColor="var(--success)"
-                              iconAfter
-                              short
-                            />
-                            {!showDeclined && (
-                              <Button
-                                text="Decline"
-                                iconPath={SVG_PATHS.xLarge}
-                                onClick={() =>
-                                  updateUserRole(user.email, "declined")
-                                }
-                                backgroundColor="var(--error)"
-                                iconAfter
-                                short
-                              />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+              {(showDeclined ? declinedUsers : pendingUsers).length === 0 ? (
+                <div className="empty-state">
+                  <h6 className="small-h">
+                    {showDeclined
+                      ? "No declined users found."
+                      : "No pending approvals yet."}
+                  </h6>
+                  <p className="small-p">
+                    {showDeclined
+                      ? "You’ve either accepted all or none were submitted."
+                      : "Once users sign up and request access, they’ll appear here for approval."}
+                  </p>
+                </div>
+              ) : (
+                <RoleTable
+                  users={showDeclined ? declinedUsers : pendingUsers}
+                  showDeclined={showDeclined}
+                  onRoleChange={updateUserRole}
+                  context="pending"
+                />
+              )}
             </div>
           }
         />
       </div>
 
       <div className="card admin list">
-        <h6>List of Users</h6>
+        <h6>List of users</h6>
+        <CardContent
+          loading={loading}
+          error={error}
+          children={
+            <div className="table-wrapper">
+              <RoleTable
+                users={approvedUsers}
+                onRoleChange={updateUserRole}
+                context="approved"
+              />
+            </div>
+          }
+        />
       </div>
     </div>
   );
