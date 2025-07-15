@@ -4,8 +4,6 @@ import AdminPanelPage from "../pages/admin-panel/AdminPanelPage";
 import AosodomoroReportPage from "../pages/reports/aosodomoro/AosodomoroReportPage";
 import GalaksiReportPage from "../pages/reports/galaksi/GalaksiReportPage";
 import OverviewPage from "../pages/overview/OverviewPage";
-// Routes
-import { ProtectedRoute, RedirectIfLoggedIn } from "./ProtectedRoute";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
