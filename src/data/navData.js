@@ -28,6 +28,6 @@ export const SIDEBAR_MENUS = [
   {
     label: "Admin Panel",
     path: "/admin-panel",
-    leading: SVG_PATHS.adminPerson,
+    leading: SVG_PATHS.admin,
   },
 ];
