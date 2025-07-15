@@ -65,10 +65,17 @@
   overflow-x: auto;
   border: 1px solid var(--neutral);
   background: rgb(var(--bg-rgb), 0.5);
-  border-radius: 8px;
+  border-radius: 6px;
+  display: flex;
+}
+
+/* Global plavceholder for empty container */
+.empty-state {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 /* Breakpoints — scale up */
