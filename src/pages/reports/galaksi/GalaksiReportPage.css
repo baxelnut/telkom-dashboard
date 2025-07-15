@@ -2,3 +2,9 @@
   text-align: center;
   min-height: 0;
 }
+
+.card.galaksi.table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

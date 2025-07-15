@@ -1,0 +1,25 @@
+.galaksi-table {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  pointer-events: none !important;
+}
+
+.galaksi-table p {
+  width: 100%;
+}
+
+.galaksi-table thead *,
+.galaksi-table tbody *:not(:first-child),
+.galaksi-table tfoot *:not(:first-child) {
+  text-align: center;
+}
+
+.galaksi-table tfoot * {
+  background-color: var(--primary-variant);
+  color: white !important;
+}
+
+.galaksi-table .filler {
+  background-color: black;
+}
