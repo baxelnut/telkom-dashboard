@@ -3,12 +3,12 @@
 .hollow,
 .full {
   --btn-bg: var(--primary-variant);
-  --btn-color: #f0f3ff !important;
+  --btn-color: white !important;
   --btn-border: transparent;
 
   background-color: var(--btn-bg);
   color: var(--btn-color);
-  border: 2px solid var(--btn-border);
+  border: none;
 
   border-radius: 360px;
   padding: 9px 20px;

@@ -17,19 +17,19 @@ export default function RoleTable({
         <tr>
           <th></th>
           <th>
-            <h6 className="small-h">Role</h6>
+            <h6>Role</h6>
           </th>
           <th>
-            <h6 className="small-h">Name</h6>
+            <h6>Name</h6>
           </th>
           <th>
-            <h6 className="small-h">Email</h6>
+            <h6>Email</h6>
           </th>
           <th>
-            <h6 className="small-h">User ID</h6>
+            <h6>User ID</h6>
           </th>
           <th>
-            <h6 className="small-h">Action</h6>
+            <h6>Action</h6>
           </th>
         </tr>
       </thead>
@@ -48,9 +48,7 @@ export default function RoleTable({
               <td>
                 <p
                   className={`${
-                    role === "admin" || context != "approved"
-                      ? "small-h role"
-                      : ""
+                    role === "admin" || context != "approved" ? "role" : ""
                   } unresponsive`}
                 >
                   {capitalizedRole || "Unknown"}

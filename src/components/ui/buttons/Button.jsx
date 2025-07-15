@@ -8,7 +8,8 @@ import { SVG_PATHS } from "../../../data/utilData";
 
 export default function Button({
   text = null,
-  arrow = false,
+  arrowRight = false,
+  arrowLeft = false,
   hollow = false,
   fullWidth = false,
   rounded = false,
@@ -51,6 +52,12 @@ export default function Button({
     "--btn-hover-border": hoverBorderColor,
   };
 
+  const arrowPath = arrowRight
+    ? SVG_PATHS.arrowRight
+    : arrowLeft
+    ? SVG_PATHS.arrowLeft
+    : null;
+
   const iconComponent = iconPath ? (
     <Icon
       path={iconPath}
@@ -59,7 +66,7 @@ export default function Button({
       fill={textColor || "var(--btn-color)"}
       viewBox={viewBox}
     />
-  ) : arrow ? (
+  ) : arrowPath ? (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill={textColor || "var(--bg)"}
@@ -67,7 +74,7 @@ export default function Button({
       width={iconSize}
       height={iconSize}
     >
-      <path d={SVG_PATHS.arrowRight} />
+      <path d={arrowPath} />
     </svg>
   ) : null;
 

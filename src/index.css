@@ -16,6 +16,10 @@
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 
+  /* Font sizes */
+  --small-h: clamp(0.9rem, 1vw, 1rem);
+  --small-p: clamp(0.75rem, 0.85vw, 0.85rem);
+
   /* Colors */
   --primary: #312a68;
   --primary-variant: #45448b;
@@ -72,8 +76,8 @@ body.dark {
   --primary: #207391;
   --primary-variant: #3199b0;
   --card: #272932;
-  --bg: #000000;
-  --text: #ffffff;
+  --bg: #111111;
+  --text: white;
   --neutral: #7a7a7a;
 
   /* Override RGB */
@@ -151,7 +155,7 @@ a:hover {
 
 /* Custom fonts */
 .small-p {
-  font-size: clamp(0.75rem, 0.85vw, 0.85rem);
+  font-size: var(--small-p);
   font-family: var(--heading);
   text-decoration: none;
   color: var(--neutral);
@@ -159,7 +163,7 @@ a:hover {
 }
 
 .small-h {
-  font-size: clamp(0.9rem, 1vw, 1rem);
+  font-size: var(--small-h);
   font-family: var(--heading);
   text-decoration: none;
   font-weight: 600 !important;

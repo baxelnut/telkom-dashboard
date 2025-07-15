@@ -5,8 +5,8 @@
   gap: 0.5rem;
 }
 
-.role-table .small-h.role {
-  color: var(--text) !important;
+.role-table .role {
+  font-weight: 700;
 }
 
 .role-table td p {

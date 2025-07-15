@@ -50,13 +50,6 @@
   flex: 1;
 }
 
-/* Grid layout (mobile first) */
-.cards-container-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(1, 1fr); /* mobile: 1 col */
-}
-
 /* Global table wrapper */
 .table-wrapper {
   width: 100%;
@@ -76,6 +69,16 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Grid layout (mobile first) */
+.cards-container-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, 1fr); /* mobile: 1 col */
 }
 
 /* Breakpoints — scale up */
@@ -100,7 +103,7 @@
 @media (min-width: 768px) {
   .filter-container {
     flex-direction: row;
-    justify-content: start;
+    justify-content: space-between;
   }
 
   .cards-container-row,
