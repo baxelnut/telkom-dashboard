@@ -1,4 +1,56 @@
-.report-page.aosodomoro .card.aosodomoro.filter {
+.report-page .card {
+  text-align: start;
+}
+
+.card.aosodomoro.filter {
   text-align: center;
   min-height: 0;
+}
+
+.aosodomoro.filter .subtype-filter {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.aosodomoro.table,
+.aosodomoro.selected {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.aosodomoro.table .title,
+.aosodomoro.selected .back-btn-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.aosodomoro.table .title .stats {
+  text-align: end;
+}
+
+.aosodomoro .filter-items {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.aosodomoro.selected .title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .aosodomoro.filter .subtype-filter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
