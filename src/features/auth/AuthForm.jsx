@@ -101,7 +101,10 @@ export default function AuthForm() {
         setErrorMsg("Invalid email format.");
       else if (code.includes("user-not-found"))
         setErrorMsg("No account found with that email.");
-      else if (code.includes("wrong-password"))
+      else if (
+        code.includes("wrong-password") ||
+        code.includes("invalid-credential")
+      )
         setErrorMsg("Incorrect email or password.");
       else if (code.includes("network-request-failed"))
         setErrorMsg("Please check your internet connection and try again.");
@@ -188,7 +191,11 @@ export default function AuthForm() {
       </div>
 
       {errorMsg && <Error message={errorMsg} />}
-      {successMsg && <div className="success-msg">{successMsg}</div>}
+      {successMsg && (
+        <div className="success-container">
+          <p className="success-msg">{successMsg}</p>
+        </div>
+      )}
 
       <Button
         text={isSignup ? "Sign Up" : "Login"}
