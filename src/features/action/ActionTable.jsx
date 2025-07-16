@@ -1,67 +1,38 @@
 // Style
 import "./ActionTable.css";
+// Helpers
+import {
+  STATUSES,
+  getStatusColors,
+  bucketCounts,
+} from "../../helpers/actionBasedUtils";
 
-const getStatusColorsFromCSS = () => {
-  const styles = getComputedStyle(document.documentElement);
+export default function ActionTable({ data, onRowClick }) {
+  const STATUS_COLORS = getStatusColors();
+  const rows = data.data || [];
 
-  const getRGBA = (cssVarName) =>
-    `rgba(${styles.getPropertyValue(`${cssVarName}-rgb`).trim()}, 0.5)`;
+  const cellClass = (count, base) => (count === 0 ? "unresponsive" : base);
+  const handleCellClick = (witel, po, period, status) => () =>
+    onRowClick(witel, po, period, status);
 
-  return {
-    Lanjut: getRGBA("--success"),
-    Cancel: getRGBA("--error"),
-    "Bukan Order Reg": getRGBA("--secondary"),
-    "No Status": null,
-  };
-};
+  const renderStatusHeaders = (prefix) =>
+    STATUSES.map((s) => (
+      <td key={`${prefix}-${s}`} style={{ backgroundColor: STATUS_COLORS[s] }}>
+        <h6>{s}</h6>
+      </td>
+    ));
 
-const STATUS_COLORS = getStatusColorsFromCSS();
-
-const STATUSES = ["Lanjut", "Cancel", "Bukan Order Reg", "No Status"];
-
-export default function ActionTable({ actionTabledata, onRowClick }) {
-  console.log("actionTabledata", actionTabledata);
-  const bucketCounts = (items, bucket, selectedPic) => {
-    const counts = {
-      Lanjut: 0,
-      Cancel: 0,
-      "Bukan Order Reg": 0,
-      "No Status": 0,
-    };
-
-    items.forEach((it) => {
-      if (
-        it._bucket === bucket &&
-        it.KATEGORI === "IN PROCESS" &&
-        it.PIC === selectedPic
-      ) {
-        const raw = (it.STATUS || "").trim();
-        if (!raw) {
-          counts["No Status"]++;
-        } else {
-          const key = {
-            lanjut: "Lanjut",
-            cancel: "Cancel",
-            "bukan order reg": "Bukan Order Reg",
-          }[raw.toLowerCase()];
-          if (key) {
-            counts[key]++;
-          } else {
-            counts["No Status"]++;
-          }
-        }
-      }
-    });
-
-    counts.TOTAL =
-      counts.Lanjut +
-      counts.Cancel +
-      counts["Bukan Order Reg"] +
-      counts["No Status"];
-    return counts;
-  };
-
-  const dataArray = actionTabledata.data || [];
+  const renderBucketCells = (bucket, prefix, witel, po, period) =>
+    STATUSES.map((s) => (
+      <td
+        key={`${prefix}-${s}`}
+        className={cellClass(bucket[s], `${prefix}-cell`)}
+        style={{ cursor: "pointer" }}
+        onClick={handleCellClick(witel, po, period, s)}
+      >
+        <p>{bucket[s]}</p>
+      </td>
+    ));
 
   return (
     <div className="action-table">
@@ -85,34 +56,11 @@ export default function ActionTable({ actionTabledata, onRowClick }) {
             </th>
           </tr>
           <tr>
-            {STATUSES.map((s) => (
-              <td
-                key={`u-${s}`}
-                className="u-cell"
-                style={{
-                  backgroundColor: STATUS_COLORS[s] || "transparent",
-                  // color: "#ffffff",
-                }}
-              >
-                <h6>{s}</h6>
-              </td>
-            ))}
+            {renderStatusHeaders("u")}
             <th>
               <h6>Total</h6>
             </th>
-            {STATUSES.map((s) => (
-              <td
-                key={`o-${s}`}
-                className="o-cell"
-                style={{
-                  backgroundColor: STATUS_COLORS[s] || "transparent",
-                  // color: "#ffffff",
-                }}
-              >
-                <h6>{s}</h6>
-              </td>
-            ))}
-
+            {renderStatusHeaders("o")}
             <th>
               <h6>Total</h6>
             </th>
@@ -120,90 +68,64 @@ export default function ActionTable({ actionTabledata, onRowClick }) {
         </thead>
 
         <tbody>
-          {dataArray.map((row, idx) => {
-            const under = bucketCounts(row.items || [], "<", row.PO_NAME);
-            const over = bucketCounts(row.items || [], ">", row.PO_NAME);
+          {rows.map((row, idx) => {
+            const { PO_NAME, WITEL, items = [] } = row;
+            const under = bucketCounts(items, "<", PO_NAME);
+            const over = bucketCounts(items, ">", PO_NAME);
+            const grandTotal = under.TOTAL + over.TOTAL;
 
             return (
               <tr key={idx} className="action-table-row">
                 <td
-                  onClick={() =>
-                    onRowClick(
-                      row.WITEL,
-                      row.PO_NAME,
-                      "ALL PERIOD",
-                      "ALL STATUS"
-                    )
-                  }
+                  className="po-name"
+                  onClick={handleCellClick(
+                    WITEL,
+                    PO_NAME,
+                    "ALL PERIOD",
+                    "ALL STATUS"
+                  )}
                 >
-                  <p>{row.PO_NAME}</p>
+                  <p>{PO_NAME}</p>
                 </td>
 
                 <td
-                  onClick={() =>
-                    onRowClick(row.WITEL, "ALL PO", "ALL PERIOD", "ALL STATUS")
-                  }
+                  className="witel-name"
+                  onClick={handleCellClick(
+                    WITEL,
+                    "ALL PO",
+                    "ALL PERIOD",
+                    "ALL STATUS"
+                  )}
                 >
-                  {/* <p>{row.WITEL}</p> */}
-                  <p>{row.WITEL}</p>
+                  <p>{WITEL}</p>
                 </td>
 
-                {STATUSES.map((s) => (
-                  <td
-                    key={`u-${idx}-${s}`}
-                    className={under[s] === 0 ? "unresponsive" : "u-cell"}
-                    onClick={() => onRowClick(row.WITEL, row.PO_NAME, "<3", s)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p>{under[s]}</p>
-                  </td>
-                ))}
-
+                {renderBucketCells(under, "u", WITEL, PO_NAME, "<3")}
                 <td
-                  className={under.TOTAL === 0 ? "unresponsive" : "tot-cell"}
-                  onClick={() =>
-                    onRowClick(row.WITEL, row.PO_NAME, "<3", "ALL STATUS")
-                  }
+                  className={cellClass(under.TOTAL, "tot-cell")}
+                  onClick={handleCellClick(WITEL, PO_NAME, "<3", "ALL STATUS")}
                 >
                   <h6>{under.TOTAL}</h6>
                 </td>
 
-                {STATUSES.map((s) => (
-                  <td
-                    key={`o-${idx}-${s}`}
-                    className={over[s] === 0 ? "unresponsive" : "o-cell"}
-                    onClick={() => onRowClick(row.WITEL, row.PO_NAME, ">3", s)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p>{over[s]}</p>
-                  </td>
-                ))}
-
+                {renderBucketCells(over, "o", WITEL, PO_NAME, ">3")}
                 <td
-                  className={over.TOTAL === 0 ? "unresponsive" : "tot-cell"}
-                  onClick={() =>
-                    onRowClick(row.WITEL, row.PO_NAME, ">3", "ALL STATUS")
-                  }
+                  className={cellClass(over.TOTAL, "tot-cell")}
+                  onClick={handleCellClick(WITEL, PO_NAME, ">3", "ALL STATUS")}
                 >
                   <h6>{over.TOTAL}</h6>
                 </td>
 
                 <td
-                  className={
-                    under.TOTAL + over.TOTAL === 0
-                      ? "unresponsive"
-                      : "tot-cell grand-total-cell"
-                  }
-                  onClick={() =>
-                    onRowClick(
-                      row.WITEL,
-                      row.PO_NAME,
-                      "ALL PERIOD",
-                      "ALL STATUS"
-                    )
-                  }
+                  className={cellClass(grandTotal, "tot-cell grand-total-cell")}
+                  onClick={handleCellClick(
+                    WITEL,
+                    PO_NAME,
+                    "ALL PERIOD",
+                    "ALL STATUS"
+                  )}
                 >
-                  <h6>{under.TOTAL + over.TOTAL}</h6>
+                  <h6>{grandTotal}</h6>
                 </td>
               </tr>
             );

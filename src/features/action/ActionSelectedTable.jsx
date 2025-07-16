@@ -3,14 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import "./ActionSelectedTable.css";
 // Components
 import Dropdown from "../../components/ui/input/Dropdown";
-
-const actionOptions = ["Lanjut", "Cancel", "Bukan Order Reg"].map((v) => ({
-  value: v,
-  label: v,
-}));
-actionOptions.unshift({ value: " ", label: "— Select Action —" });
-
-const formatCurrency = (v) => (v ? `Rp${v.toLocaleString("id-ID")}` : "Rp0");
+// Helpers
+import {
+  getStatusColors,
+  ACT_OPS,
+  getLogLine,
+} from "../../helpers/actionBasedUtils";
+import { formatCurrency } from "../../helpers/selectedUtils";
 
 export default function ActionSelectedTable({
   reportData,
@@ -21,33 +20,42 @@ export default function ActionSelectedTable({
   const [actions, setActions] = useState({});
   const [notes, setNotes] = useState({});
   const [inProcessItems, setItems] = useState([]);
-
-  useEffect(() => {
-    const all = reportData.flatMap((entry) => entry.items || []);
-    setItems(all);
-  }, [reportData]);
+  const textareaRefs = useRef({});
+  const STATUS_COLORS = getStatusColors();
 
   const headers = inProcessItems.length ? Object.keys(inProcessItems[0]) : [];
-
-  const logLine = (email) => {
-    const d = new Date();
-    return `Last edited: ${d.toLocaleDateString("id-ID")} ${d
-      .toTimeString()
-      .slice(0, 5)} by ${email}`;
-  };
-
-  const textareaRefs = useRef({});
+  const dropdownOptions = [
+    { value: "", label: "— Select Action —" },
+    ...ACT_OPS,
+  ];
 
   useEffect(() => {
-    inProcessItems.forEach((row) => {
-      const uuid = row.UUID;
-      const ref = textareaRefs.current[uuid];
+    setItems(reportData.flatMap((entry) => entry.items || []));
+  }, [reportData]);
+
+  useEffect(() => {
+    inProcessItems.forEach(({ UUID }) => {
+      const ref = textareaRefs.current[UUID];
       if (ref) {
         ref.style.height = "auto";
         ref.style.height = `${ref.scrollHeight}px`;
       }
     });
   }, [inProcessItems, notes]);
+
+  const patchRow = async (uuid, payload) => {
+    try {
+      const res = await fetch(`${API_URL}/regional-3/sheets/${uuid}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Update failed");
+      onUpdateSuccess();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="selected-action-table">
@@ -71,78 +79,51 @@ export default function ActionSelectedTable({
         <tbody>
           {inProcessItems.map((row, idx) => {
             const uuid = row.UUID;
-            const currentStatus = actions[uuid] ?? row.STATUS ?? "";
+            const status = actions[uuid] ?? row.STATUS ?? "";
+            const currentNote = notes[uuid] ?? row.NOTES ?? "";
 
             return (
-              <tr
-                key={uuid}
-                className={`tr-status-${(currentStatus || "no_status")
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}`}
-              >
+              <tr key={uuid} style={{ backgroundColor: STATUS_COLORS[status] }}>
                 <td>{idx + 1}</td>
 
-                {/* ACTION dropdown */}
                 <td className="action-cell">
                   <Dropdown
-                    options={actionOptions}
-                    value={currentStatus}
+                    options={dropdownOptions}
+                    value={status}
                     onChange={async (e) => {
-                      const val = e.target.value;
-                      const newStatus = val ? val : null;
-                      setActions((p) => ({ ...p, [uuid]: newStatus }));
-                      const log = logLine(userEmail);
-                      await fetch(`${API_URL}/regional-3/sheets/${uuid}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ STATUS: newStatus, LOG: log }),
-                      })
-                        .then((res) => {
-                          if (!res.ok) throw new Error("Update failed");
-                          onUpdateSuccess();
-                        })
-                        .catch(console.error);
+                      const newStatus = e.target.value || null;
+                      setActions((prev) => ({ ...prev, [uuid]: newStatus }));
+                      await patchRow(uuid, {
+                        STATUS: newStatus,
+                        LOG: getLogLine(userEmail),
+                      });
                     }}
                     chevronDown
                     fullWidth
                   />
                 </td>
 
-                {/* NOTES textarea */}
                 <td>
                   <textarea
                     ref={(el) => (textareaRefs.current[uuid] = el)}
                     className="notes"
-                    value={notes[uuid] ?? row.NOTES ?? ""}
+                    value={currentNote}
                     rows={1}
                     onChange={async (e) => {
                       const val = e.target.value;
+                      const el = e.target;
+                      el.style.height = "auto";
+                      el.style.height = `${el.scrollHeight}px`;
 
-                      const textarea = e.target;
-                      textarea.style.height = "auto";
-                      textarea.style.height = `${textarea.scrollHeight}px`;
-
-                      setNotes((p) => ({ ...p, [uuid]: val }));
-
-                      const log = logLine(userEmail);
-                      await fetch(`${API_URL}/regional-3/sheets/${uuid}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          NOTES: val.trim() || " ",
-                          LOG: log,
-                        }),
-                      })
-                        .then((res) => {
-                          if (!res.ok) throw new Error("Notes update failed");
-                          onUpdateSuccess();
-                        })
-                        .catch(console.error);
+                      setNotes((prev) => ({ ...prev, [uuid]: val }));
+                      await patchRow(uuid, {
+                        NOTES: val.trim() || " ",
+                        LOG: getLogLine(userEmail),
+                      });
                     }}
                   />
                 </td>
 
-                {/* all other columns */}
                 {headers.map((h, i) => (
                   <td key={i}>
                     <p className="unresponsive">

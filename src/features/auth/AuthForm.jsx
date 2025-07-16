@@ -103,6 +103,8 @@ export default function AuthForm() {
         setErrorMsg("No account found with that email.");
       else if (code.includes("wrong-password"))
         setErrorMsg("Incorrect email or password.");
+      else if (code.includes("network-request-failed"))
+        setErrorMsg("Please check your internet connection and try again.");
       else setErrorMsg(err.message || "Something went wrong.");
     } finally {
       setLoading(false);

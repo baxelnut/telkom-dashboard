@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import { useRef, useState, useEffect } from "react";
-// Style
+import { useRef, useState, useMemo } from "react";
+// Styles
 import "./ActionBasedPage.css";
 // Components
 import ActionTable from "../../features/action/ActionTable";
@@ -8,126 +8,56 @@ import ActionSelectedTable from "../../features/action/ActionSelectedTable";
 import Button from "../../components/ui/buttons/Button";
 import CardsContent from "../../components/ui/cards/CardContent";
 import Dropdown from "../../components/ui/input/Dropdown";
-// Context
+// Context & Hooks
 import { useAuth } from "../../context/AuthContext";
-// Custom hook
 import useMultiFetchData from "../../hooks/useMultiFetchData";
 // Helpers
-import { getExportOptions } from "../../helpers/exportTableData";
+import { getExportOptions, exportData } from "../../helpers/exportTableData";
 
 export default function ActionBasedPage({ API_URL }) {
-  const { user } = useAuth();
-  const userEmail = user?.email;
-
   const { data, loading, error, refetch } = useMultiFetchData({
     po: `${API_URL}/regional-3/sheets/po`,
     report: `${API_URL}/regional-3/report`,
   });
+  const [selected, setSelected] = useState({
+    witel: "ALL",
+    detailed: [null, null, null, null], // [witel, po, period, status]
+    exportType: "Excel",
+  });
+  const { user } = useAuth();
   const debounceTimer = useRef(null);
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [enrichedData, setEnrichedData] = useState([]);
-  const [selectedExport, setSelectedExport] = useState("Excel");
-  const [witelOptions, setWitelOptions] = useState([
-    { value: "ALL", label: "ALL" },
-  ]);
-  const [selectedWitel, setSelectedWitel] = useState([
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [witel, po, period, status] = selected.detailed;
 
-  const handleViewFull = async () => {
-    setSelectedWitel([null, null, null, null, null]);
-    console.log("Refetching...");
-    await refetch(); // re-triggers all API calls
-  };
-
-  const debounceRefresh = () => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => {
-      setSelectedWitel([null, null, null]);
-      window.location.reload();
-    }, 60000); // do nothing for 60s and get fetched
-  };
-
-  const [selectedWitelName, selectedPoName, period, status] = selectedWitel;
-  const filteredReportData = (data.report || [])
-    .filter((entry) => {
-      if (selectedWitelName === "ALL") return true;
-      return entry.witelName === selectedWitelName;
-    })
-    .map((entry) => {
-      const inProc = entry["IN PROCESS"] || {};
-      let items =
-        period === "<3"
-          ? inProc["<3blnItems"] || []
-          : period === ">3"
-          ? inProc[">3blnItems"] || []
-          : [...(inProc["<3blnItems"] || []), ...(inProc[">3blnItems"] || [])];
-
-      if (selectedPoName && selectedPoName !== "ALL PO") {
-        items = items.filter((it) => it.PIC === selectedPoName);
-      }
-
-      if (status && status !== "ALL STATUS") {
-        if (status === "No Status") {
-          items = items.filter(
-            (it) => !it.STATUS || it.STATUS.toString().trim() === ""
-          );
-        } else {
-          items = items.filter((it) => (it.STATUS || "").trim() === status);
-        }
-      }
-
-      if (items.length === 0) return null;
-      return {
-        witelName: entry.witelName,
-        items,
-      };
-    })
-    .filter((e) => e);
-
-  useEffect(() => {
-    if (!data?.po || !data?.report) return;
-
-    const uniqueWitels = [
-      ...new Set(data.po.map((r) => r.WITEL).filter(Boolean)),
-    ];
-    setWitelOptions([
+  const witelOptions = useMemo(() => {
+    if (!data?.po) return [];
+    const unique = [...new Set(data.po.map((r) => r.WITEL).filter(Boolean))];
+    return [
       { value: "ALL", label: "ALL" },
-      ...uniqueWitels.map((w) => ({ value: w, label: w })),
-    ]);
+      ...unique.map((w) => ({ value: w, label: w })),
+    ];
+  }, [data]);
 
-    const merged = data.po.map((po) => {
+  const enrichedData = useMemo(() => {
+    if (!data?.po || !data?.report) return [];
+    return data.po.map((po) => {
       const report = data.report.find((r) => r.witelName === po.WITEL);
       const inProc = report?.["IN PROCESS"] || {};
 
-      const under3 = (inProc["<3blnItems"] || []).map((i) => ({
-        ...i,
-        _bucket: "<",
-      }));
-      const over3 = (inProc[">3blnItems"] || []).map((i) => ({
-        ...i,
-        _bucket: ">",
-      }));
-
-      const items = [...under3, ...over3];
+      const items = [
+        ...(inProc["<3blnItems"] || []).map((i) => ({ ...i, _bucket: "<" })),
+        ...(inProc[">3blnItems"] || []).map((i) => ({ ...i, _bucket: ">" })),
+      ];
       const count = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
-
-      items.forEach((it) => {
-        if (it.KATEGORI !== "IN PROCESS") return;
+      items.forEach(({ STATUS, KATEGORI }) => {
+        if (KATEGORI !== "IN PROCESS") return;
         const key =
           {
             lanjut: "Lanjut",
             cancel: "Cancel",
             "bukan order reg": "Bukan Order Reg",
-          }[(it.STATUS || "").trim().toLowerCase()] || "No Status";
-
+          }[(STATUS || "").trim().toLowerCase()] || "No Status";
         if (count[key] !== undefined) count[key]++;
       });
-
       return {
         ...po,
         items,
@@ -135,68 +65,80 @@ export default function ActionBasedPage({ API_URL }) {
         Total: count.Lanjut + count.Cancel + count["Bukan Order Reg"],
       };
     });
-
-    setEnrichedData(merged);
   }, [data]);
 
-  const handleExport = async () => {
-    const type = selectedExport;
+  const filteredReport = useMemo(() => {
+    if (!data?.report) return [];
+    return data.report
+      .filter((r) => witel === "ALL" || r.witelName === witel)
+      .map((r) => {
+        let items = [];
+        const inProc = r["IN PROCESS"] || {};
+        if (period === "<3") items = inProc["<3blnItems"] || [];
+        else if (period === ">3") items = inProc[">3blnItems"] || [];
+        else
+          items = [
+            ...(inProc["<3blnItems"] || []),
+            ...(inProc[">3blnItems"] || []),
+          ];
+        if (po && po !== "ALL PO") items = items.filter((i) => i.PIC === po);
+        if (status && status !== "ALL STATUS") {
+          items = items.filter((i) =>
+            status === "No Status"
+              ? !i.STATUS || i.STATUS.trim() === ""
+              : i.STATUS?.trim() === status
+          );
+        }
+        return items.length ? { witelName: r.witelName, items } : null;
+      })
+      .filter(Boolean);
+  }, [data, selected.detailed]);
 
-    const [bill, wName] = selectedWitel;
-    const dataToExport = (
-      bill ? enrichedData.filter((r) => r.WITEL === bill) : enrichedData
-    ).map((row) => ({
-      PO_EMAIL: Array.isArray(row.PO_EMAIL)
-        ? row.PO_EMAIL.join(", ")
-        : row.PO_EMAIL,
-      PO_NAME: Array.isArray(row.PO_NAME)
-        ? row.PO_NAME.join(", ")
-        : row.PO_NAME,
-      WITEL: row.WITEL,
-      items: row.items.map((it) => ({
-        bucket: it._bucket === "<" ? "<3bln" : ">3bln",
-        STATUS: it.STATUS,
-        ...it,
-      })),
-    }));
-
-    const flattenedData = dataToExport.flatMap((row) =>
-      row.items.map((it) => ({
-        PO_EMAIL: row.PO_EMAIL,
-        PO_NAME: row.PO_NAME,
-        WITEL: row.WITEL,
-        bucket: it.bucket,
-        STATUS: it.STATUS,
-        ...it,
-      }))
-    );
-
-    if (!flattenedData.length) {
-      alert("No data to export");
-      return;
-    }
-
-    const sheet = XLSX.utils.json_to_sheet(flattenedData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, sheet, "Export");
-    if (type === "Excel") {
-      const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      saveAs(
-        new Blob([buf], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        }),
-        `Action Export.xlsx`
-      );
-    } else {
-      const csv = XLSX.utils.sheet_to_csv(sheet);
-      saveAs(
-        new Blob([csv], { type: "text/csv;charset=utf-8;" }),
-        `Action Export.csv`
-      );
-    }
+  const handleRowClick = (w, p, prd, stat) => {
+    setSelected((prev) => ({ ...prev, detailed: [w, p, prd, stat] }));
   };
 
-  console.log("selectedWitel:", selectedWitel);
+  const handleViewFull = async () => {
+    setSelected((prev) => ({ ...prev, detailed: [null, null, null, null] }));
+    await refetch();
+  };
+
+  const debounceRefresh = () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      window.location.reload();
+    }, 60000);
+  };
+
+  const handleExport = () => {
+    const [selectedWitel] = selected.detailed;
+    const rows = (
+      selectedWitel === "ALL"
+        ? enrichedData
+        : enrichedData.filter((r) => r.WITEL === selectedWitel)
+    ).map((r) => ({
+      PO_EMAIL: Array.isArray(r.PO_EMAIL) ? r.PO_EMAIL.join(", ") : r.PO_EMAIL,
+      PO_NAME: Array.isArray(r.PO_NAME) ? r.PO_NAME.join(", ") : r.PO_NAME,
+      WITEL: r.WITEL,
+      items: r.items.map((i) => ({
+        bucket: i._bucket === "<" ? "<3bln" : ">3bln",
+        STATUS: i.STATUS,
+        ...i,
+      })),
+    }));
+    const flat = rows.flatMap((r) =>
+      r.items.map((i) => ({
+        PO_EMAIL: r.PO_EMAIL,
+        PO_NAME: r.PO_NAME,
+        WITEL: r.WITEL,
+        bucket: i.bucket,
+        STATUS: i.STATUS,
+        ...i,
+      }))
+    );
+    exportData(selected.exportType, flat, "Action Export");
+  };
+
   return (
     <div className="action-based-page">
       <Helmet>
@@ -207,15 +149,23 @@ export default function ActionBasedPage({ API_URL }) {
         />
       </Helmet>
 
-      <div className="card action table">
-        {!selectedWitel[0] ? (
+      <div
+        className="card action table"
+        style={{ minHeight: loading ? "350px" : "fit-content" }}
+      >
+        {!witel ? (
           <div className="filter-container">
             <div className="filter-items">
               <p>Select witel:</p>
               <Dropdown
                 options={witelOptions}
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={selected.witel}
+                onChange={(e) =>
+                  setSelected((prev) => ({
+                    ...prev,
+                    witel: e.target.value,
+                  }))
+                }
                 short
                 chevronDown
               />
@@ -232,15 +182,16 @@ export default function ActionBasedPage({ API_URL }) {
               />
             </div>
             <div className="filter-items">
-              <Button
-                text="Export as"
-                onClick={() => handleExport(selectedExport)}
-                short
-              />
+              <Button text="Export as" onClick={handleExport} short />
               <Dropdown
                 options={getExportOptions()}
-                value={selectedExport}
-                onChange={(e) => setSelectedExport(e.target.value)}
+                value={selected.exportType}
+                onChange={(e) =>
+                  setSelected((prev) => ({
+                    ...prev,
+                    exportType: e.target.value,
+                  }))
+                }
                 short
                 chevronDown
               />
@@ -248,13 +199,11 @@ export default function ActionBasedPage({ API_URL }) {
           </div>
         )}
 
-        {selectedWitel[1] && (
+        {po && (
           <div className="title">
             <h6>
-              {selectedWitel[1]} → {selectedWitel[3]} →{" "}
-              {selectedWitel[2] === "ALL PERIOD"
-                ? selectedWitel[2]
-                : `${selectedWitel[2]} bulan`}
+              {po} → {status} →{" "}
+              {period === "ALL PERIOD" ? period : `${period} bulan`}
             </h6>
           </div>
         )}
@@ -264,26 +213,24 @@ export default function ActionBasedPage({ API_URL }) {
           error={error}
           children={
             <div className="table-wrapper">
-              {!selectedWitel[0] ? (
+              {!witel ? (
                 <ActionTable
-                  actionTabledata={{
+                  data={{
                     data:
-                      selectedCategory === "ALL"
+                      selected.witel === "ALL"
                         ? enrichedData
                         : enrichedData.filter(
-                            (r) => r.WITEL === selectedCategory
+                            (r) => r.WITEL === selected.witel
                           ),
                   }}
-                  onRowClick={(witelName, poName, period, status) => {
-                    setSelectedWitel([witelName, poName, period, status]);
-                  }}
+                  onRowClick={handleRowClick}
                 />
               ) : (
                 <ActionSelectedTable
-                  reportData={filteredReportData}
-                  selectedWitel={selectedWitel}
+                  reportData={filteredReport}
+                  selectedWitel={selected.detailed}
                   API_URL={API_URL}
-                  userEmail={userEmail}
+                  userEmail={user?.email}
                   onUpdateSuccess={debounceRefresh}
                 />
               )}

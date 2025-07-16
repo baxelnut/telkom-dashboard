@@ -97,16 +97,14 @@ export default function OverviewByWitel({ API_URL }) {
             </div>
             <div className="o-pie-dec-container">
               {pieData.map((item, i) => (
-                <div
-                  key={i}
-                  className={`o-pie-dec status-${item.key}`}
-                  style={{ color: item.color }}
-                >
-                  <p>
+                <div key={i} className="o-pie-dec">
+                  <p style={{ color: item.color }}>
                     {item.name} ({`${((item.value / total) * 100).toFixed(1)}%`}
                     )
                   </p>
-                  <p className="small-h">{item.value}</p>
+                  <p className="small-h" style={{ color: item.color }}>
+                    {item.value}
+                  </p>
                 </div>
               ))}
             </div>

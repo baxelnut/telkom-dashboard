@@ -31,22 +31,9 @@
 
 .o-pie-dec {
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
-  font-weight: 500;
-}
-
-.status-lanjut * {
-  color: var(--success);
-}
-.status-cancel * {
-  color: var(--error);
-}
-.status-bukan_order_reg * {
-  color: var(--secondary);
-}
-.status-no_status * {
-  color: var(--neutral);
+  font-weight: 500; 
 }
 
 .overview-by-witel .custom-tooltip {
