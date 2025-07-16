@@ -9,7 +9,7 @@ import {
   ACT_OPS,
   getLogLine,
 } from "../../helpers/actionBasedUtils";
-import { formatCurrency } from "../../helpers/selectedUtils";
+import { formatCurrency } from "../../helpers/formattingUtils";
 
 export default function ActionSelectedTable({
   reportData,

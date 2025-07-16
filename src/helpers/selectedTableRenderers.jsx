@@ -1,4 +1,4 @@
-import { formatCurrency } from "./selectedUtils";
+import { formatSelectedCurrency } from "./formattingUtils";
 
 export const renderSelectedTable = ({ filtered, hasInProgress }) => {
   if (!filtered.length) return <p>No matching data found.</p>;
@@ -55,7 +55,9 @@ export const renderSelectedTable = ({ filtered, hasInProgress }) => {
                 {Object.keys(itm).map((c) => (
                   <td key={c}>
                     <p>
-                      {c === "REVENUE" ? formatCurrency(itm[c]) : itm[c] ?? "-"}
+                      {c === "REVENUE"
+                        ? formatSelectedCurrency(itm[c])
+                        : itm[c] ?? "-"}
                     </p>
                   </td>
                 ))}

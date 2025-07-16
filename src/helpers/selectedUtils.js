@@ -1,6 +1,3 @@
-export const formatCurrency = (v) =>
-  v ? `Rp${v.toLocaleString("id-ID")}` : "Rp0";
-
 export const getBucketKeys = (witelName, isTotal, kategoriUmur, subType) => {
   if (witelName === "ALL" && isTotal && subType == null) {
     return ["<3blnItems", ">3blnItems"];
