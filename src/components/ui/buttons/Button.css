@@ -41,10 +41,15 @@
 }
 
 .btn *,
-.btn svg,
+.btn svg {
+  color: var(--btn-color);
+  fill: var(--btn-color);
+}
+
 .hollow *,
 .hollow svg {
-  color: var(--btn-color);
+  color: var(--text);
+  fill: var(--text);
 }
 
 .custom-hover:hover *,
@@ -77,15 +82,19 @@
 
 /* Variant: .hollow (transparent bg) */
 .hollow {
-  --btn-bg: transparent;
-  --btn-color: var(--text) !important;
-  --btn-border: var(--text) !important;
+  background-color: transparent;
+  color: var(--text) !important;
   padding: 8px 19px;
-  border: 1px solid var(--btn-border);
+  border: 1px solid var(--neutral);
 }
 
 .hollow:hover {
   border-color: var(--secondary);
+}
+
+.hollow:hover * {
+  color: white;
+  fill: white;
 }
 
 /* Rounded variants */
@@ -116,7 +125,7 @@
 }
 
 .btn:hover,
-.hollow.btn {
+.hollow:hover {
   background-size: 100% 100%;
   transition: background-size 0.4s ease, color 0.25s ease, border 0.25s ease;
 }
