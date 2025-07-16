@@ -2,11 +2,18 @@
   height: 100%;
   width: 100%;
   overflow: auto;
-  pointer-events: none !important;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .galaksi-table p {
   width: 100%;
+}
+
+.galaksi-table .table-wrapper {
+  pointer-events: none !important;
 }
 
 .galaksi-table thead *,

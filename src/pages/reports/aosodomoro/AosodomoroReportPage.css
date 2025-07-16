@@ -2,6 +2,10 @@
   text-align: start;
 }
 
+.report-page .filter-container p {
+  width: fit-content;
+}
+
 .card.aosodomoro.filter {
   text-align: center;
   min-height: 0;

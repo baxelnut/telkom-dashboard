@@ -1,11 +1,18 @@
+import { useState } from "react";
 // Components
 import AosodomoroTable from "../../../features/reports/aosodomoro/AosodomoroTable";
 import Button from "../../../components/ui/buttons/Button";
 import CardContent from "../../../components/ui/cards/CardContent";
 import Dropdown from "../../../components/ui/input/Dropdown";
+// Context
+import { useAuth } from "../../../context/AuthContext";
+// Data
+import { SVG_PATHS } from "../../../data/utilData";
 // Helpers
 import { SEGMEN_OPS } from "../../../helpers/aosodomoroUtils";
 import { getExportOptions } from "../../../helpers/exportTableData";
+import { sendTableToTelegram } from "../../../features/bot/sendTableToTelegram";
+import { formatDate } from "../../../helpers/formattingUtils";
 
 export default function AosodomoroTableCard({
   data,
@@ -18,7 +25,25 @@ export default function AosodomoroTableCard({
   onExportChange,
   onExport,
   onCellSelect,
+  API_URL,
 }) {
+  const { isAdmin } = useAuth();
+  const [status, setStatus] = useState("");
+
+  const handleSendToTelegram = () => {
+    sendTableToTelegram({
+      selector: ".aosodomoro-table",
+      apiUrl: API_URL,
+      target: "group",
+      setStatus,
+      title: "Weekly Report AOSODOMORO Non Connectivity",
+      subtext:
+        "Source: Database NCX\n\nUntuk detail data dapat diakses melalui link berikut:",
+      link: "https://rso2telkomdashboard.web.app/report/aosodomoro",
+      dateStr: formatDate(),
+    });
+  };
+
   return (
     <div className="card aosodomoro table">
       <div className="title">
@@ -57,6 +82,20 @@ export default function AosodomoroTableCard({
           />
         </div>
       </div>
+
+      {isAdmin && (
+        <div className="filter-container">
+          <p>{status}</p>
+          <Button
+            text="Announce!"
+            iconPath={SVG_PATHS.telegram}
+            onClick={handleSendToTelegram}
+            backgroundColor={"var(--success)"}
+            rounded
+            iconAfter
+          />
+        </div>
+      )}
 
       <CardContent
         loading={loading}

@@ -46,9 +46,11 @@ export default function GalaksiReportPage({ API_URL }) {
           loading={loading}
           error={error}
           children={
-            <div className="table-wrapper">
-              <GalaksiTable achData={data.ach} poData={data.po} />
-            </div>
+            <GalaksiTable
+              achData={data.ach}
+              poData={data.po}
+              API_URL={API_URL}
+            />
           }
         />
       </div>

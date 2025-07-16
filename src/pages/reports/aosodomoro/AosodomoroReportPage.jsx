@@ -67,26 +67,6 @@ export default function AosodomoroReportPage({ API_URL }) {
     await exportData(type, flatData, customSheetName);
   };
 
-  const cell = selectedCell || {};
-
-  const titleSegments = [
-    {
-      label: "All Witel",
-      value: cell.witelName,
-      fallbackCheck: (val) => !val || val === "ALL",
-    },
-    {
-      label: "All Kategori Umur",
-      value: cell.kategoriUmur,
-      fallbackCheck: (val) => !val || val === "both3bln",
-    },
-    {
-      label: "All Subtype",
-      value: cell.subType,
-      fallbackCheck: (val) => !val || val === "ALL",
-    },
-  ];
-
   return (
     <div className="report-page aosodomoro">
       <Helmet>
@@ -122,6 +102,7 @@ export default function AosodomoroReportPage({ API_URL }) {
           onExportChange={setSelectedExport}
           onExport={handleExport}
           onCellSelect={setSelectedCell}
+          API_URL={API_URL}
         />
       ) : (
         <AosodomoroSelectedCard
