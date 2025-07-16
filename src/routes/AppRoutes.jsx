@@ -34,9 +34,4 @@ export const appRoutes = [
     element: <ActionBasedPage API_URL={DEV_API_URL} />,
     title: "Action-Based",
   },
-  {
-    path: "/admin-panel",
-    element: <AdminPanelPage API_URL={DEV_API_URL} />,
-    title: "Admin Panel",
-  },
 ];

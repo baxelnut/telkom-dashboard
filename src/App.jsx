@@ -7,6 +7,7 @@ import {
 // Style
 import "./App.css";
 // Components
+import AdminPanelPage from "./pages/admin-panel/AdminPanelPage";
 import ScrollToTop from "./components/utils/ScrollToTop";
 import PageNotFound from "./pages/PageNotFound";
 import LoginPage from "./pages/auth/LoginPage";
@@ -14,11 +15,16 @@ import LoginPage from "./pages/auth/LoginPage";
 import Layout from "./components/layouts/Layout";
 // Context
 import { useTheme } from "./context/ThemeContext";
+import { useAuth } from "./context/AuthContext";
 // Routes
 import { appRoutes } from "./routes/AppRoutes";
 import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
+// API URLs
+const API_URL = import.meta.env.VITE_API_URL;
+const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export default function App() {
+  const { isAdmin } = useAuth();
   const { isDarkMode } = useTheme();
 
   return (
@@ -49,6 +55,19 @@ export default function App() {
               }
             />
           ))}
+          {/* Only admin */}
+          {isAdmin && (
+            <Route
+              path="/admin-panel"
+              element={
+                <ProtectedRoute>
+                  <Layout pageTitle="Admin Panel">
+                    <AdminPanelPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+          )}
           {/* 404 */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>

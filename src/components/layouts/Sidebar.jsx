@@ -7,6 +7,7 @@ import ChevronIcon from "../ui/icons/ChevronIcon";
 import Icon from "../ui/icons/Icon";
 // Context
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 // Data
 import { SIDEBAR_MENUS } from "../../data/navData";
 
@@ -22,6 +23,13 @@ export default function Sidebar({
   const [openLabel, setOpenLabel] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { isDarkMode } = useTheme();
+  const { isAdmin } = useAuth();
+
+  const filteredLinks = links.filter((item) => {
+    // Remove Admin Panel if not admin
+    if (item.label === "Admin Panel" && !isAdmin) return false;
+    return true;
+  });
 
   //Get Logo Based on Mode + Screen
   const getLogoSrc = useCallback(() => {
@@ -139,7 +147,7 @@ export default function Sidebar({
         </div>
 
         {/* Menu */}
-        {links.map(({ label, path, leading, children }) => {
+        {filteredLinks.map(({ label, path, leading, children }) => {
           const hasChildren = Array.isArray(children) && children.length > 0;
           const isOpen = openLabel === label;
 
