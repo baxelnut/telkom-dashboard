@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   updateProfile,
@@ -13,18 +13,18 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import {
-  getFirestore,
   collection,
   query,
   where,
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { auth } from "../../services/firebase/firebase";
+import { auth, db } from "../../services/firebase/firebase";
 // Style
 import "./UserProfile.css";
 // Components
 import Button from "../../components/ui/buttons/Button";
+import InputField from "../../components/ui/input/InputField";
 // Context
 import { useAuth } from "../../context/AuthContext";
 // Data
@@ -69,14 +69,13 @@ export default function UserProfile({ user, showProfile }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const auth = getAuth();
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("User not authenticated");
 
       const photoURL = await uploadImageIfNeeded(currentUser.uid);
 
       await updateProfile(currentUser, {
-        fullName: editedUser.fullName,
+        displayName: editedUser.fullName,
         photoURL,
       });
 
@@ -84,7 +83,6 @@ export default function UserProfile({ user, showProfile }) {
         await updateEmail(currentUser, editedUser.email);
       }
 
-      const db = getFirestore();
       const userQuery = query(
         collection(db, "users"),
         where("email", "==", currentUser.email)
@@ -108,7 +106,6 @@ export default function UserProfile({ user, showProfile }) {
   };
 
   const handlePasswordReset = async () => {
-    const auth = getAuth();
     const currentUser = auth.currentUser;
     if (!currentUser?.email) return alert("No email found");
 
@@ -153,18 +150,23 @@ export default function UserProfile({ user, showProfile }) {
 
         <img src={editedUser.photoURL} referrerPolicy="no-referrer" />
         {isEditing && (
-          <input type="file" accept="image/*" onChange={handleFileChange} />
+          <InputField
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            fullWidth
+          />
         )}
 
         <div className="user-section">
           <p className="small-p">Username</p>
           {isEditing ? (
-            <input
-              className="user-info"
+            <InputField
               type="text"
-              name="name"
+              name="fullName"
               value={editedUser.fullName}
               onChange={handleInputChange}
+              fullWidth
             />
           ) : (
             <div className="user-info">

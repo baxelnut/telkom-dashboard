@@ -3,10 +3,12 @@ import { useState } from "react";
 import "./InputField.css";
 
 export default function InputField({
+  className = "",
   type = "text",
   label = "",
   placeholder = "",
   value,
+  accept = "",
   onChange,
   name,
   obscurial,
@@ -50,7 +52,8 @@ export default function InputField({
               required={required}
               autoFocus={autoFocus}
               disabled={disabled}
-              className="custom-input"
+              className={`custom-input ${className}`}
+              accept={accept}
             />
             {isPassword && (
               <button
