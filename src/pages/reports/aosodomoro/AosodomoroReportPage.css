@@ -2,7 +2,14 @@
   text-align: start;
 }
 
-.report-page .filter-container p {
+.report-page .filter-container.announce {
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+  width: 100%;
+}
+
+.report-page .filter-container.announce p {
   width: fit-content;
 }
 

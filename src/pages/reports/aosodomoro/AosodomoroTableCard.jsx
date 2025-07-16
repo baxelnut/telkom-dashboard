@@ -84,7 +84,7 @@ export default function AosodomoroTableCard({
       </div>
 
       {isAdmin && (
-        <div className="filter-container">
+        <div className="filter-container announce">
           <p>{status}</p>
           <Button
             text="Announce!"

@@ -42,7 +42,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   return (
     <div className="galaksi-table">
       {isAdmin && (
-        <div className="filter-container">
+        <div className="filter-container announce">
           <p>{status}</p>
           <Button
             text="Announce!"
