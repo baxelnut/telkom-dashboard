@@ -4,17 +4,19 @@ import AosodomoroReportPage from "../pages/reports/aosodomoro/AosodomoroReportPa
 import GalaksiReportPage from "../pages/reports/galaksi/GalaksiReportPage";
 import OverviewPage from "../pages/overview/OverviewPage";
 // Example Page
-import ExamplePage from "../pages/ExamplePage";
+import ExamplePage from "../pages/ExamplePage";  // ===== FOR TESTING ONLY =====
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export const appRoutes = [
+  // ===== FOR TESTING ONLY =====
   {
     path: "/example",
     element: <ExamplePage API_URL={DEV_API_URL} />,
     title: "TESTING",
   },
+  // ===== FOR TESTING ONLY =====
   {
     path: "/",
     element: <OverviewPage API_URL={DEV_API_URL} />,
