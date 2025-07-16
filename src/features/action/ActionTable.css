@@ -4,6 +4,10 @@
   overflow: auto;
 }
 
+.action-table .po-name {
+  min-width: 180px;
+}
+
 .action-table p,
 .action-table-row td {
   transition: background-color 0.3s ease, color 0.3s ease,
