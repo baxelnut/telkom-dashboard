@@ -1,14 +1,20 @@
 // Pages
 import ActionBasedPage from "../pages/action-based/ActionBasedPage";
-import AdminPanelPage from "../pages/admin-panel/AdminPanelPage";
 import AosodomoroReportPage from "../pages/reports/aosodomoro/AosodomoroReportPage";
 import GalaksiReportPage from "../pages/reports/galaksi/GalaksiReportPage";
 import OverviewPage from "../pages/overview/OverviewPage";
+// Example Page
+import ExamplePage from "../pages/ExamplePage";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export const appRoutes = [
+  {
+    path: "/example",
+    element: <ExamplePage API_URL={DEV_API_URL} />,
+    title: "TESTING",
+  },
   {
     path: "/",
     element: <OverviewPage API_URL={DEV_API_URL} />,

@@ -2,9 +2,10 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 // Components
 import Loading from "../components/ui/states/Loading";
+import PageNotFound from "../pages/PageNotFound";
 
-export function ProtectedRoute({ children }) {
-  const { user, authLoading, isApprovedUser } = useAuth();
+export function ProtectedRoute({ children, adminOnly = false }) {
+  const { user, authLoading, isApprovedUser, isAdmin } = useAuth();
   if (authLoading)
     return (
       <div className="app-container">
@@ -12,6 +13,7 @@ export function ProtectedRoute({ children }) {
       </div>
     );
   if (!user || !isApprovedUser) return <Navigate to="/login" replace />;
+  if (adminOnly && !isAdmin) return <PageNotFound />;
   return children;
 }
 
