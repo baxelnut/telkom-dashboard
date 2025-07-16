@@ -56,18 +56,16 @@ export default function App() {
             />
           ))}
           {/* Only admin */}
-          {isAdmin && (
-            <Route
-              path="/admin-panel"
-              element={
-                <ProtectedRoute>
-                  <Layout pageTitle="Admin Panel">
-                    <AdminPanelPage />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-          )}
+          <Route
+            path="/admin-panel"
+            element={
+              <ProtectedRoute adminOnly>
+                <Layout pageTitle="Admin Panel">
+                  <AdminPanelPage API_URL={DEV_API_URL} />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
           {/* 404 */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>

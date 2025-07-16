@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState, useContext } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../services/firebase/firebase";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
 
 const API_URL = import.meta.env.VITE_API_URL;
 
