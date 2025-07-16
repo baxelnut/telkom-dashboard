@@ -174,12 +174,7 @@ export default function ActionBasedPage({ API_URL }) {
         ) : (
           <div className="filter-container back-btn">
             <div className="filter-items">
-              <Button
-                text="View full table"
-                onClick={handleViewFull}
-                arrowLeft
-                short
-              />
+              <Button text="Back" onClick={handleViewFull} arrowLeft short />
             </div>
             <div className="filter-items">
               <Button text="Export as" onClick={handleExport} short />

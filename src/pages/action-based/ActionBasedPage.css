@@ -17,3 +17,8 @@
   box-shadow: none !important;
   padding: 0 !important;
 }
+
+.filter-container.back-btn {
+  flex-direction: row;
+  justify-content: space-between;
+}
