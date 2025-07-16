@@ -45,11 +45,11 @@ export default function Button({
     .join(" ");
 
   const style = {
-    "--btn-bg": backgroundColor,
-    "--btn-color": textColor,
-    "--btn-hover-bg": hoverBackgroundColor,
-    "--btn-hover-color": hoverTextColor,
-    "--btn-hover-border": hoverBorderColor,
+    "--btn-bg": backgroundColor || "var(--primary-variant)",
+    "--btn-color": textColor || "white",
+    "--btn-hover-bg": hoverBackgroundColor || "var(--bg)",
+    "--btn-hover-color": hoverTextColor || "white",
+    "--btn-hover-border": hoverBorderColor || "var(--neutral)",
   };
 
   const arrowPath = arrowRight
@@ -81,11 +81,7 @@ export default function Button({
   const content = (
     <>
       {!iconAfter && iconComponent}
-      {!isIconOnly && (
-        <h6 className="small-h" style={{ color: textColor }}>
-          {text?.trim() || "Button"}
-        </h6>
-      )}
+      {!isIconOnly && <h6 className="small-h">{text?.trim() || "Button"}</h6>}
       {iconAfter && iconComponent}
     </>
   );

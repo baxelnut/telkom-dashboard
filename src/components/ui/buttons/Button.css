@@ -3,7 +3,7 @@
 .hollow,
 .full {
   --btn-bg: var(--primary-variant);
-  --btn-color: white !important;
+  --btn-color: white;
   --btn-border: transparent;
 
   background-color: var(--btn-bg);
@@ -34,14 +34,9 @@
   background-position: left center;
 }
 
-/* Default hover color for standard buttons */
-.btn:not(.custom-hover):hover *,
-.hollow:not(.custom-hover):hover * {
-  color: var(--text) !important;
-}
-
 /* Respect user-defined hover color in custom-hover */
-.custom-hover:hover * {
+.custom-hover:hover h6,
+.custom-hover:hover svg {
   color: var(--btn-hover-color, var(--bg)) !important;
 }
 
@@ -54,7 +49,7 @@
 
 .custom-hover:hover *,
 .custom-hover:hover svg {
-  color: var(--btn-hover-color, var(--bg)) !important;
+  color: var(--btn-hover-color, var(--bg));
 }
 
 /* Icon sizes inside buttons */
@@ -77,7 +72,7 @@
   border-color: var(--secondary);
 }
 .btn:hover .small-h {
-  color: var(--btn-color) !important;
+  color: var(--btn-color);
 }
 
 /* Variant: .hollow (transparent bg) */
@@ -120,26 +115,40 @@
   height: 1rem;
 }
 
-.custom-hover:hover {
-  background-color: var(--btn-hover-bg, var(--secondary));
-  color: var(--btn-hover-color, var(--bg));
-  background-size: 100% 100%;
-  border-color: var(--btn-hover-border, var(--neutral));
-}
-
-/* Override animation only if not custom */
-.btn:not(.custom-hover):hover,
-.hollow:not(.custom-hover):hover {
+.btn:hover,
+.hollow.btn {
   background-size: 100% 100%;
   transition: background-size 0.4s ease, color 0.25s ease, border 0.25s ease;
 }
 
-/* Stop background animation and gradient if using custom colors */
-.custom-hover.no-gradient {
-  background-image: none !important;
-  background-size: initial !important;
-  background-position: initial !important;
-  background-repeat: initial !important;
+.custom-hover {
+  background-image: linear-gradient(to right, var(--btn-bg), var(--btn-bg));
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+  transition: background-size 0.4s ease, color 0.25s ease, border 0.25s ease;
+}
+
+.custom-hover:hover {
+  background-image: linear-gradient(
+    to right,
+    var(--btn-hover-bg),
+    var(--btn-hover-bg)
+  );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+
+  color: var(--btn-hover-color);
+  border-color: var(--btn-hover-border, var(--neutral));
+}
+
+.custom-hover {
+  transition: all 0.3s ease;
+}
+
+.custom-hover:hover {
+  transition: all 0.4s ease;
 }
 
 .only-icon {

@@ -197,9 +197,10 @@ export default function UserProfile({ user, showProfile }) {
           onClick={handleLogout}
           text="Sign out"
           fullWidth
-          backgroundColor="var(--error)"
-          hoverBackgroundColor="var(--card)"
+          textColor="white"
           hoverTextColor="var(--error)"
+          backgroundColor="var(--error)"
+          hoverBackgroundColor="rgba(var(--card-rgb), 0.75)"
         />
       </div>
     </>
