@@ -39,7 +39,7 @@ export default function AosodomoroSelectedCard({
     <div className="card aosodomoro selected">
       <div className="filter-container back-btn">
         <div className="filter-items">
-          <Button text="View full table" onClick={onBack} arrowLeft short />
+          <Button text="Back" onClick={onBack} arrowLeft short />
         </div>
         <div className="filter-items">
           <Button

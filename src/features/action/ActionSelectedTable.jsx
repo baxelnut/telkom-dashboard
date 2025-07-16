@@ -91,7 +91,7 @@ export default function ActionSelectedTable({
                     options={dropdownOptions}
                     value={status}
                     onChange={async (e) => {
-                      const newStatus = e.target.value || null;
+                      const newStatus = e.target.value || "";
                       setActions((prev) => ({ ...prev, [uuid]: newStatus }));
                       await patchRow(uuid, {
                         STATUS: newStatus,
