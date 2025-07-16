@@ -47,14 +47,14 @@ export const updateSheet = async (req, res) => {
 
     console.log("UUID to find:", id);
 
-    if (STATUS) {
+    if (STATUS !== undefined) {
       updates.push({
         range: `${FORMATTED_SHEET_NAME}!${getColumnLetter(statusIndex)}${
           rowIndex + 1
         }`,
         values: [[STATUS]],
       });
-      console.log("Updating sheet:", FORMATTED_SHEET_NAME);
+      console.log("Updating STATUS:", STATUS);
     }
 
     if (NOTES !== undefined) {
