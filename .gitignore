@@ -44,3 +44,6 @@ public/data/*
 
 # Testing junk
 safe-json-env.cjs
+
+# ===== FOR TESTING ONLY =====
+ExamplePage.jsx
