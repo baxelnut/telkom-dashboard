@@ -1,10 +1,12 @@
-import express from "express";
-import { sendTelegramMessage } from "../utils/sendTelegramMessage.js";
-import multer from "multer";
-import FormData from "form-data";
-import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
+
+import express from "express";
+import axios from "axios";
+import multer from "multer";
+import FormData from "form-data";
+
+import { sendTelegramMessage } from "../utils/sendTelegramMessage.js";
 
 const upload = multer();
 const router = express.Router();
@@ -31,6 +33,8 @@ router.post("/photo", upload.single("photo"), async (req, res) => {
   const chat_id =
     target === "group"
       ? process.env.TELEGRAM_GROUP_CHAT_ID
+      : target === "channel"
+      ? process.env.TELEGRAM_CHANNEL_CHAT_ID
       : process.env.TELEGRAM_CHAT_ID;
 
   if (!file || !file.buffer) {

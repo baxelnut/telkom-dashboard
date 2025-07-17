@@ -198,6 +198,7 @@ export default function AuthForm() {
       )}
 
       <Button
+        id="login-btn"
         text={isSignup ? "Sign Up" : "Login"}
         onClick={handleEmailAuth}
         fullWidth

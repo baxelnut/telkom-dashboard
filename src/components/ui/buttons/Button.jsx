@@ -7,6 +7,7 @@ import Icon from "../icons/Icon";
 import { SVG_PATHS } from "../../../data/utilData";
 
 export default function Button({
+  id = null,
   text = null,
   arrowRight = false,
   arrowLeft = false,
@@ -86,12 +87,7 @@ export default function Button({
     </>
   );
 
-  const sharedProps = {
-    className: classes,
-    style,
-    onClick,
-    disabled,
-  };
+  const sharedProps = { id, className: classes, style, onClick, disabled };
 
   if (to)
     return (

@@ -1,3 +1,13 @@
+.aosodomoro-table {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .aosodomoro-table table {
   width: 100%;
   table-layout: auto;

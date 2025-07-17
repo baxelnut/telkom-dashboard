@@ -30,7 +30,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
     sendTableToTelegram({
       selector: ".galaksi-table table",
       apiUrl: API_URL,
-      target: "group",
+      target: "channel",
       setStatus,
       title: "GALAKSI PO AOSODOMORO Non Conn",
       subtext: "Zero AOSODOMORO > 3 BLN",
@@ -45,6 +45,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
         <div className="filter-container announce">
           <p>{status}</p>
           <Button
+            id="announce-galaksi"
             text="Announce!"
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}

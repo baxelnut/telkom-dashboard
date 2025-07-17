@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import cron from "node-cron";
+import { sendScheduledReports } from "./utils/sendScheduledReports.js";
 
 import aosodomoroRoutes from "./routes/aosodomoro.js";
 import regional3Routes from "./routes/regional.js";
@@ -14,14 +16,27 @@ app.use(express.json({ limit: "20mb" }));
 
 const PORT = process.env.PORT || 5000;
 
+// Routes
 app.use("/api/aosodomoro", aosodomoroRoutes);
 app.use("/api/regional-3", regional3Routes);
 app.use("/api/export-to-sheet", exportToSheet);
 app.use("/api/galaksi", galaksi);
 app.use("/api/admin", admin);
-
 app.use("/api/telegram", telegramRoutes);
 
+// Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// 🕒 Production-ready scheduler: Mon & Fri at 1 PM
+cron.schedule("0 13 * * 1,5", () => {
+  console.log("⏰ Scheduled report triggered (Mon/Fri 13:00)");
+  sendScheduledReports();
+});
+
+// Schedule the report sending job every minute (for debugging)
+// cron.schedule("* * * * *", () => {
+//   console.log("⏰ Triggering scheduled report job...");
+//   sendScheduledReports();
+// });
