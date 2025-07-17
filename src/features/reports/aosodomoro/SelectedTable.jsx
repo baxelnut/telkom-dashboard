@@ -1,7 +1,7 @@
 // Style
 import "./SelectedTable.css";
 // Helpers
-import { renderSelectedTable } from "../../../helpers/selectedTableRenderers";
+import { renderSelectedTable } from "./selectedTableRenderers";
 import {
   getBucketKeys,
   getFilteredItems,

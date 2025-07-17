@@ -1,4 +1,4 @@
-import { formatSelectedCurrency } from "./formattingUtils";
+import { formatSelectedCurrency } from "../../../helpers/formattingUtils";
 
 export const renderSelectedTable = ({ filtered, hasInProgress }) => {
   if (!filtered.length) return <p>No matching data found.</p>;

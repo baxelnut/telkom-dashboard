@@ -61,7 +61,7 @@ export default function App() {
             element={
               <ProtectedRoute adminOnly>
                 <Layout pageTitle="Admin Panel">
-                  <AdminPanelPage API_URL={DEV_API_URL} />
+                  <AdminPanelPage API_URL={API_URL} />
                 </Layout>
               </ProtectedRoute>
             }

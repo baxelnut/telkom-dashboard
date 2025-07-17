@@ -81,7 +81,7 @@ export default function Header({
           className="picture"
           src={userDisplay.photoURL}
           onClick={showProfile}
-          referrerPolicy="no-referrer"
+          alt="Profile"
         />
 
         <h6 className="small-h name" onClick={showProfile}>

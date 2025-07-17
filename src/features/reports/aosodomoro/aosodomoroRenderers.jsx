@@ -1,5 +1,5 @@
-import { normalizeRevenue } from "./aosodomoroUtils";
-import { formatCurrency } from "./formattingUtils";
+import { normalizeRevenue } from "../../../helpers/aosodomoroUtils";
+import { formatCurrency } from "../../../helpers/formattingUtils";
 
 export const renderRowCells = (
   entry,

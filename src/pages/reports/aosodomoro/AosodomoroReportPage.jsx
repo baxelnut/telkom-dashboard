@@ -77,18 +77,20 @@ export default function AosodomoroReportPage({ API_URL }) {
         />
       </Helmet>
 
-      <div className="card aosodomoro filter">
-        <div className="subtype-filter">
-          {ORDER_SUBTYPE.map((subtype) => (
-            <Checkbox
-              key={subtype}
-              label={subtype}
-              checked={selectedSubtypes.includes(subtype)}
-              onChange={() => handleCheckboxChange(subtype)}
-            />
-          ))}
+      {!selectedCell && (
+        <div className="card aosodomoro filter">
+          <div className="subtype-filter">
+            {ORDER_SUBTYPE.map((subtype) => (
+              <Checkbox
+                key={subtype}
+                label={subtype}
+                checked={selectedSubtypes.includes(subtype)}
+                onChange={() => handleCheckboxChange(subtype)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {!selectedCell ? (
         <AosodomoroTableCard

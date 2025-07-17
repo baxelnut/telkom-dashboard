@@ -1,0 +1,13 @@
+.aosodomoro.selected .table-wrapper {
+  min-height: 0;
+}
+
+.aosodomoro.selected {
+  position: relative;
+  overflow: auto;
+}
+
+.report-page.aosodomoro .aosodomoro.selected {
+  min-height: 0;
+  max-height: calc(100vh - 2.75rem - 80px); /* minus footer, header, padding */
+}

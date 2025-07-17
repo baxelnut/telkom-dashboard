@@ -42,6 +42,8 @@ export default function UserProfile({ user, showProfile }) {
     photoURL: user?.photoURL || "/images/default_profile.png",
   });
 
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedUser((prev) => ({ ...prev, [name]: value }));
@@ -148,7 +150,8 @@ export default function UserProfile({ user, showProfile }) {
           />
         </div>
 
-        <img src={editedUser.photoURL} referrerPolicy="no-referrer" />
+        <img src={editedUser.photoURL} alt="Profile" />
+        
         {isEditing && (
           <InputField
             type="file"

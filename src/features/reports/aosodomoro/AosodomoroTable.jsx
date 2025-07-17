@@ -15,7 +15,7 @@ import {
   renderWitelTotalCells,
   renderReportCells,
   renderGrandTotals,
-} from "../../../helpers/aosodomoroRenderers";
+} from "./aosodomoroRenderers";
 
 export default function AosodomoroTable({
   tableData,
