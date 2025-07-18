@@ -24,7 +24,7 @@ export default function Header({
   const [userDisplay, setUserDisplay] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
-    photoURL: user?.photoURL || "/images/default_profile.png",
+    photoURL: "/images/default_profile.png",
   });
 
   const showProfile = () => {
@@ -50,7 +50,6 @@ export default function Header({
           ...prev,
           fullName: userData.fullName || prev.fullName,
           email: userData.email || prev.email,
-          photoURL: user.photoURL || "/images/default_profile.png",
         }));
       } catch (err) {
         console.error("🔥 Failed to fetch full user data:", err);

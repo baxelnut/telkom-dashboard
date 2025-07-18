@@ -39,10 +39,8 @@ export default function UserProfile({ user, showProfile }) {
   const [editedUser, setEditedUser] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
-    photoURL: user?.photoURL || "/images/default_profile.png",
+    photoURL: "/images/default_profile.png",
   });
-
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -151,7 +149,7 @@ export default function UserProfile({ user, showProfile }) {
         </div>
 
         <img src={editedUser.photoURL} alt="Profile" />
-        
+
         {isEditing && (
           <InputField
             type="file"
