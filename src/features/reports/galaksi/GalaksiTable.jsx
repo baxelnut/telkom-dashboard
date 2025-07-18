@@ -16,7 +16,7 @@ import {
   buildTableRows,
   calculateAchievement,
   calculateGrandTotal,
-} from "../../kpi/galaksiUtils";
+} from "../../kpis/galaksiUtils";
 
 export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   const { isAdmin } = useAuth();

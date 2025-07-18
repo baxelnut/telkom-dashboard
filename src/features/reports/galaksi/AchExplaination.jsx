@@ -1,7 +1,7 @@
 // Style
 import "./AchExplaination.css";
 // KPI Utils
-import { ACH_THRESHOLDS } from "../../kpi/galaksiUtils";
+import { ACH_THRESHOLDS } from "../../kpis/galaksiUtils";
 
 export default function AchExplanation() {
   return (
