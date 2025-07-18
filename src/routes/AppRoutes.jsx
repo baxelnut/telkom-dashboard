@@ -1,13 +1,17 @@
 // Pages
 import ActionBasedPage from "../pages/action-based/ActionBasedPage";
 import AosodomoroReportPage from "../pages/reports/aosodomoro/AosodomoroReportPage";
+import CompletionRatioPage from "../pages/kpis/completion-ratio/CompletionRatioPage";
 import GalaksiReportPage from "../pages/reports/galaksi/GalaksiReportPage";
+import OverallHealthIndexPage from "../pages/kpis/health-index/OverallHealthIndexPage";
 import OverviewPage from "../pages/overview/OverviewPage";
-// Example Page
-// import ExamplePage from "../pages/ExamplePage"; // ===== FOR TESTING ONLY =====
+import SLAPage from "../pages/kpis/sla/SLAPage";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
+
+// Example Page
+// import ExamplePage from "../pages/ExamplePage"; // ===== FOR TESTING ONLY =====
 
 export const appRoutes = [
   // ===== FOR TESTING ONLY =====
@@ -27,6 +31,7 @@ export const appRoutes = [
     element: <OverviewPage API_URL={API_URL} />,
     title: "Overview",
   },
+
   {
     path: "/reports/aosodomoro",
     element: <AosodomoroReportPage API_URL={API_URL} />,
@@ -37,6 +42,23 @@ export const appRoutes = [
     element: <GalaksiReportPage API_URL={API_URL} />,
     title: "Report GALAKSI",
   },
+
+  {
+    path: "/kpis/completion-ratio",
+    element: <CompletionRatioPage API_URL={DEV_API_URL} />,
+    title: "Completion Ratio",
+  },
+  {
+    path: "/kpis/sla",
+    element: <SLAPage API_URL={DEV_API_URL} />,
+    title: "SLA",
+  },
+  {
+    path: "/kpis/health-index",
+    element: <OverallHealthIndexPage API_URL={DEV_API_URL} />,
+    title: "Health Index",
+  },
+
   {
     path: "/action-based",
     element: <ActionBasedPage API_URL={API_URL} />,
