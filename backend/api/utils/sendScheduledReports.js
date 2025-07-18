@@ -6,7 +6,7 @@ dotenv.config();
 
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
-const BASE_URL = "http://localhost:5173"; // Dev mode
+const BASE_URL = "https://rso2telkomdashboard.web.app";  
 
 export const sendScheduledReports = async () => {
   const now = new Date();
