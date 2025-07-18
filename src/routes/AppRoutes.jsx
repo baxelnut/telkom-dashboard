@@ -55,7 +55,7 @@ export const appRoutes = [
   {
     path: "/kpis/health-index",
     element: <OverallHealthIndexPage API_URL={DEV_API_URL} />,
-    title: "Health Index",
+    title: "Overall Health Index",
   },
 
   {

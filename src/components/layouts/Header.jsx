@@ -10,14 +10,13 @@ import { useTheme } from "../../context/ThemeContext";
 // Data
 import { SVG_PATHS } from "../../data/utilData";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function Header({
   title,
   user,
   onMenuClick,
   showDropdown,
   setShowDropdown,
+  API_URL,
 }) {
   const { isDarkMode, setIsDarkMode } = useTheme();
 

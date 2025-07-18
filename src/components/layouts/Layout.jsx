@@ -8,7 +8,7 @@ import Sidebar from "./Sidebar";
 // Context
 import { useAuth } from "../../context/AuthContext";
 
-export default function Layout({ pageTitle, children }) {
+export default function Layout({ pageTitle, children, API_URL }) {
   const { user } = useAuth();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -38,6 +38,7 @@ export default function Layout({ pageTitle, children }) {
           onMenuClick={handleMenuClick}
           showDropdown={showDropdown}
           setShowDropdown={setShowDropdown}
+          API_URL={API_URL}
         />
 
         <main className="content">{children}</main>

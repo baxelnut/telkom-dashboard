@@ -6,25 +6,23 @@ import {
 } from "react-router-dom";
 // Style
 import "./App.css";
+// Layouts
+import Layout from "./components/layouts/Layout";
+// Routes
+import { appRoutes } from "./routes/AppRoutes";
+import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
 // Components
 import AdminPanelPage from "./pages/admin-panel/AdminPanelPage";
 import ScrollToTop from "./components/utils/ScrollToTop";
 import PageNotFound from "./pages/PageNotFound";
 import LoginPage from "./pages/auth/LoginPage";
-// Layouts
-import Layout from "./components/layouts/Layout";
 // Context
 import { useTheme } from "./context/ThemeContext";
-import { useAuth } from "./context/AuthContext";
-// Routes
-import { appRoutes } from "./routes/AppRoutes";
-import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
 export default function App() {
-  const { isAdmin } = useAuth();
   const { isDarkMode } = useTheme();
 
   return (
@@ -50,7 +48,9 @@ export default function App() {
               path={path}
               element={
                 <ProtectedRoute>
-                  <Layout pageTitle={title}>{element}</Layout>
+                  <Layout pageTitle={title} API_URL={API_URL}>
+                    {element}
+                  </Layout>
                 </ProtectedRoute>
               }
             />
