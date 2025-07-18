@@ -41,7 +41,7 @@ export default function AosodomoroTable({
       title: "Weekly Report AOSODOMORO Non Connectivity",
       subtext:
         "Source: Database NCX\n\nUntuk detail data dapat diakses melalui link berikut:",
-      link: "https://rso2telkomdashboard.web.app/report/aosodomoro",
+      link: "https://rso2telkomdashboard.web.app/reports/aosodomoro",
       dateStr: formatDate(),
     });
   };
