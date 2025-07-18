@@ -36,38 +36,16 @@
   cursor: pointer;
 }
 
-.profile .chevron-down {
-  max-width: 24px;
-  aspect-ratio: 1;
-  cursor: pointer;
-}
-
-.profile * {
-  font-weight: 500;
-}
-
 .header-container .title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  cursor: pointer;
   flex: 1;
-}
-
-.header-container .burger {
-  display: flex;
-  padding: 0;
-  margin: 0;
-  max-height: 20px;
-  aspect-ratio: 1;
-  margin-left: 10px;
 }
 
 .toggle-mode {
   display: flex;
   align-items: center;
-  max-width: 16px;
-  margin-right: 8px;
 }
 
 .profile .chevron-down,
@@ -98,7 +76,6 @@
 
   .toggle-mode {
     max-width: 20px;
-    margin: 0;
   }
 
   .header-container .burger {
