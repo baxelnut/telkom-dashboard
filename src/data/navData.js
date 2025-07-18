@@ -21,6 +21,24 @@ export const SIDEBAR_MENUS = [
     ],
   },
   {
+    label: "KPIs",
+    leading: SVG_PATHS.speedometer,
+    children: [
+      {
+        label: "Completion Ratio",
+        path: "/kpis/completion-ratio",
+      },
+      {
+        label: "SLA",
+        path: "/kpis/sla",
+      },
+      {
+        label: "Health Index",
+        path: "/kpis/health-index",
+      },
+    ],
+  },
+  {
     label: "Action Based",
     path: "/action-based",
     leading: SVG_PATHS.handClick,
