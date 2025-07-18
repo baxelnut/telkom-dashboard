@@ -10,17 +10,16 @@ import SLAPage from "../pages/kpis/sla/SLAPage";
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
-// Example Page
-// import ExamplePage from "../pages/ExamplePage"; // ===== FOR TESTING ONLY =====
+// ===== FOR TESTING =====
+// import ExamplePage from "../pages/ExamplePage";
 
 export const appRoutes = [
-  // ===== FOR TESTING ONLY =====
+  // ===== FOR TESTING =====
   // {
   //   path: "/example",
   //   element: <ExamplePage API_URL={DEV_API_URL} />,
   //   title: "TESTING",
   // },
-  // ===== FOR TESTING ONLY =====
   {
     path: "/",
     element: <OverviewPage API_URL={API_URL} />,
@@ -62,6 +61,6 @@ export const appRoutes = [
   {
     path: "/action-based",
     element: <ActionBasedPage API_URL={API_URL} />,
-    title: "Action-Based",
+    title: "Action Based",
   },
 ];
