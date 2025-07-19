@@ -63,39 +63,22 @@ export default function AosodomoroTable({
         </div>
       )}
       <div className="table-wrapper">
-        {" "}
         <table>
           <thead>
             <tr>
-              <th rowSpan="2">
-                <h6>WITEL</h6>
-              </th>
-              <th colSpan={selectedSubtypes.length}>
-                <h6>&lt;3 BLN</h6>
-              </th>
-              <th rowSpan="2">
-                <h6>&lt;3 BLN Total</h6>
-              </th>
-              <th colSpan={selectedSubtypes.length}>
-                <h6>&gt;3 BLN</h6>
-              </th>
-              <th rowSpan="2">
-                <h6>&gt;3 BLN Total</h6>
-              </th>
-              <th rowSpan="2">
-                <h6>GRAND TOTAL</h6>
-              </th>
+              <th rowSpan="2">WITEL</th>
+              <th colSpan={selectedSubtypes.length}>&lt;3 BLN</th>
+              <th rowSpan="2">&lt;3 BLN Total</th>
+              <th colSpan={selectedSubtypes.length}>&gt;3 BLN</th>
+              <th rowSpan="2">&gt;3 BLN Total</th>
+              <th rowSpan="2"> GRAND TOTAL</th>
             </tr>
             <tr>
               {selectedSubtypes.map((st) => (
-                <th key={`h1-${st}`}>
-                  <h6>{st}</h6>
-                </th>
+                <th key={`h1-${st}`}>{st}</th>
               ))}
               {selectedSubtypes.map((st) => (
-                <th key={`h2-${st}`}>
-                  <h6>{st}</h6>
-                </th>
+                <th key={`h2-${st}`}>{st}</th>
               ))}
             </tr>
           </thead>
@@ -104,7 +87,7 @@ export default function AosodomoroTable({
               <React.Fragment key={orderType}>
                 <tr className="aosodomoro-row">
                   <td className="unresponsive">
-                    <h6>{orderType}</h6>
+                    <strong>{orderType}</strong>
                   </td>
                   {renderReportCells(
                     "<",
@@ -151,11 +134,11 @@ export default function AosodomoroTable({
                 {tableData.map((entry, index) => (
                   <tr key={entry.witelName || `WITEL_NA_${index}`}>
                     <td className="unresponsive">
-                      <h6>
+                      <strong>
                         {!entry.witelName || entry.witelName === "null"
                           ? "N/A"
                           : entry.witelName}
-                      </h6>
+                      </strong>
                     </td>
                     {renderRowCells(
                       entry,
@@ -203,7 +186,7 @@ export default function AosodomoroTable({
             ))}
             <tr className="grand-total-row">
               <td className="unresponsive">
-                <h6>GRAND TOTAL</h6>
+                <strong>GRAND TOTAL</strong>
               </td>
               {renderReportCells(
                 "<",

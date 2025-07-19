@@ -59,59 +59,45 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
         <table>
           <thead>
             <tr>
-              <th rowSpan="2">
-                <h6>Project Operation</h6>
-              </th>
-              <th colSpan={CUSTOM_ORDER.length}>
-                <h6>&gt;3 BLN</h6>
-              </th>
-              <th rowSpan="2">
-                <h6>Grand Total</h6>
-              </th>
-              <th rowSpan="2">
-                <h6>Achievement (%)</h6>
-              </th>
+              <th rowSpan="2">Project Operation</th>
+              <th colSpan={CUSTOM_ORDER.length}>&gt;3 BLN</th>
+              <th rowSpan="2">Grand Total</th>
+              <th rowSpan="2">Achievement (%)</th>
             </tr>
             <tr>
               {CUSTOM_ORDER.map((type) => (
-                <th key={type}>
-                  <h6>{type}</h6>
-                </th>
+                <th key={type}>{type}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {tableRows.map(({ name, counts }) => (
               <tr key={name}>
-                <td>
-                  <h6>{name}</h6>
+                <td className="po-name">
+                  <strong>{name}</strong>
                 </td>
                 {CUSTOM_ORDER.map((type) => (
-                  <td key={type}>
-                    <p>{counts[type]}</p>
-                  </td>
+                  <td key={type}>{counts[type]}</td>
                 ))}
+                <td>{counts.total}</td>
                 <td>
-                  <p>{counts.total}</p>
-                </td>
-                <td>
-                  <h6>{calculateAchievement(counts.total)}</h6>
+                  <strong>{calculateAchievement(counts.total)}</strong>
                 </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr>
-              <td>
-                <h6>GRAND TOTAL</h6>
+              <td className="grand-t">
+                <strong>GRAND TOTAL</strong>
               </td>
               {CUSTOM_ORDER.map((type) => (
                 <td key={type}>
-                  <h6>{grandTotal[type]}</h6>
+                  <strong>{grandTotal[type]}</strong>
                 </td>
               ))}
               <td>
-                <h6>{grandTotal.total}</h6>
+                <strong>{grandTotal.total}</strong>
               </td>
               <td className="filler"></td>
             </tr>

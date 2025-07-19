@@ -62,17 +62,11 @@ export default function ActionSelectedTable({
       <table>
         <thead>
           <tr>
-            <th />
-            <th>
-              <h6>ACTION</h6>
-            </th>
-            <th>
-              <h6>NOTES</h6>
-            </th>
+            <th>{/* Numbers */}</th>
+            <th>ACTION</th>
+            <th>NOTES</th>
             {headers.map((h, i) => (
-              <th key={i}>
-                <h6>{h}</h6>
-              </th>
+              <th key={i}>{h}</th>
             ))}
           </tr>
         </thead>
@@ -81,11 +75,9 @@ export default function ActionSelectedTable({
             const uuid = row.UUID;
             const status = actions[uuid] ?? row.STATUS ?? "";
             const currentNote = notes[uuid] ?? row.NOTES ?? "";
-
             return (
               <tr key={uuid} style={{ backgroundColor: STATUS_COLORS[status] }}>
                 <td>{idx + 1}</td>
-
                 <td className="action-cell">
                   <Dropdown
                     options={dropdownOptions}
@@ -103,7 +95,7 @@ export default function ActionSelectedTable({
                   />
                 </td>
 
-                <td>
+                <td className="action-cell">
                   <textarea
                     ref={(el) => (textareaRefs.current[uuid] = el)}
                     className="notes"
@@ -114,7 +106,6 @@ export default function ActionSelectedTable({
                       const el = e.target;
                       el.style.height = "auto";
                       el.style.height = `${el.scrollHeight}px`;
-
                       setNotes((prev) => ({ ...prev, [uuid]: val }));
                       await patchRow(uuid, {
                         NOTES: val.trim() || " ",
@@ -125,10 +116,8 @@ export default function ActionSelectedTable({
                 </td>
 
                 {headers.map((h, i) => (
-                  <td key={i}>
-                    <p className="unresponsive">
-                      {h === "REVENUE" ? formatCurrency(row[h]) : row[h] ?? "-"}
-                    </p>
+                  <td key={i} className="unresponsive">
+                    {h === "REVENUE" ? formatCurrency(row[h]) : row[h] ?? "-"}
                   </td>
                 ))}
               </tr>

@@ -13,7 +13,9 @@ import { exportData } from "../../../helpers/exportTableData";
 import { ORDER_SUBTYPE } from "../../../helpers/aosodomoroUtils";
 
 export default function AosodomoroReportPage({ API_URL }) {
-  const { data, loading, error } = useFetchData(`${API_URL}/regional-3/report`);
+  const { data, loading, error, raw } = useFetchData(
+    `${API_URL}/regional-3/report`
+  );
   const [selectedSegmen, setSelectedSegmen] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
   const [selectedCell, setSelectedCell] = useState(null);
@@ -95,6 +97,7 @@ export default function AosodomoroReportPage({ API_URL }) {
       {!selectedCell ? (
         <AosodomoroTableCard
           data={data}
+          raw={raw}
           loading={loading}
           error={error}
           selectedSegmen={selectedSegmen}

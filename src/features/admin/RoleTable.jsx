@@ -15,22 +15,12 @@ export default function RoleTable({
     <table className="role-table">
       <thead>
         <tr>
-          <th></th>
-          <th>
-            <h6>Role</h6>
-          </th>
-          <th>
-            <h6>Name</h6>
-          </th>
-          <th>
-            <h6>Email</h6>
-          </th>
-          <th>
-            <h6>User ID</h6>
-          </th>
-          <th>
-            <h6>Action</h6>
-          </th>
+          <th> {/* Numbers */}</th>
+          <th>Role</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>User ID</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -42,17 +32,13 @@ export default function RoleTable({
 
           return (
             <tr key={id}>
-              <td style={{ textAlign: "center" }}>
-                <p>{i + 1}</p>
-              </td>
-              <td>
-                <p
-                  className={`${
-                    role === "admin" || context != "approved" ? "role" : ""
-                  } unresponsive`}
-                >
-                  {capitalizedRole || "Unknown"}
-                </p>
+              <td style={{ textAlign: "center" }}>{i + 1}</td>
+              <td
+                className={`${
+                  role === "admin" || context != "approved" ? "role" : ""
+                } unresponsive`}
+              >
+                <p>{capitalizedRole || "Unknown"}</p>
               </td>
               <td>
                 <p>{fullName}</p>

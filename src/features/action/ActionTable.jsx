@@ -17,8 +17,12 @@ export default function ActionTable({ data, onRowClick }) {
 
   const renderStatusHeaders = (prefix) =>
     STATUSES.map((s) => (
-      <td key={`${prefix}-${s}`} style={{ backgroundColor: STATUS_COLORS[s] }}>
-        <h6>{s}</h6>
+      <td
+        key={`${prefix}-${s}`}
+        className="render-status"
+        style={{ backgroundColor: STATUS_COLORS[s] }}
+      >
+        <strong>{s}</strong>
       </td>
     ));
 
@@ -30,7 +34,7 @@ export default function ActionTable({ data, onRowClick }) {
         style={{ cursor: "pointer" }}
         onClick={handleCellClick(witel, po, period, s)}
       >
-        <p>{bucket[s]}</p>
+        {bucket[s]}
       </td>
     ));
 
@@ -39,31 +43,17 @@ export default function ActionTable({ data, onRowClick }) {
       <table>
         <thead>
           <tr>
-            <th rowSpan="2">
-              <h6>PO</h6>
-            </th>
-            <th rowSpan="2">
-              <h6>WITEL</h6>
-            </th>
-            <th colSpan={STATUSES.length + 1}>
-              <h6>&lt;3 BLN</h6>
-            </th>
-            <th colSpan={STATUSES.length + 1}>
-              <h6>&gt;3 BLN</h6>
-            </th>
-            <th rowSpan="2">
-              <h6>GRAND TOTAL</h6>
-            </th>
+            <th rowSpan="2">PO</th>
+            <th rowSpan="2">WITEL</th>
+            <th colSpan={STATUSES.length + 1}>&lt;3 BLN</th>
+            <th colSpan={STATUSES.length + 1}>&gt;3 BLN</th>
+            <th rowSpan="2">GRAND TOTAL</th>
           </tr>
           <tr>
             {renderStatusHeaders("u")}
-            <th>
-              <h6>Total</h6>
-            </th>
+            <th>Total</th>
             {renderStatusHeaders("o")}
-            <th>
-              <h6>Total</h6>
-            </th>
+            <th>Total</th>
           </tr>
         </thead>
 
@@ -85,7 +75,7 @@ export default function ActionTable({ data, onRowClick }) {
                     "ALL STATUS"
                   )}
                 >
-                  <p>{PO_NAME}</p>
+                  <strong>{PO_NAME}</strong>
                 </td>
 
                 <td
@@ -97,7 +87,7 @@ export default function ActionTable({ data, onRowClick }) {
                     "ALL STATUS"
                   )}
                 >
-                  <p>{WITEL}</p>
+                  {WITEL}
                 </td>
 
                 {renderBucketCells(under, "u", WITEL, PO_NAME, "<3")}
@@ -105,7 +95,7 @@ export default function ActionTable({ data, onRowClick }) {
                   className={cellClass(under.TOTAL, "tot-cell")}
                   onClick={handleCellClick(WITEL, PO_NAME, "<3", "ALL STATUS")}
                 >
-                  <h6>{under.TOTAL}</h6>
+                  <strong>{under.TOTAL}</strong>
                 </td>
 
                 {renderBucketCells(over, "o", WITEL, PO_NAME, ">3")}
@@ -113,7 +103,7 @@ export default function ActionTable({ data, onRowClick }) {
                   className={cellClass(over.TOTAL, "tot-cell")}
                   onClick={handleCellClick(WITEL, PO_NAME, ">3", "ALL STATUS")}
                 >
-                  <h6>{over.TOTAL}</h6>
+                  <strong>{over.TOTAL}</strong>
                 </td>
 
                 <td
@@ -125,7 +115,7 @@ export default function ActionTable({ data, onRowClick }) {
                     "ALL STATUS"
                   )}
                 >
-                  <h6>{grandTotal}</h6>
+                  <strong>{grandTotal}</strong>
                 </td>
               </tr>
             );

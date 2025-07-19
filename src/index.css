@@ -153,6 +153,10 @@ a:hover {
   font-weight: 500;
 }
 
+strong {
+  font-weight: 600;
+}
+
 /* Custom fonts */
 .small-p {
   font-size: var(--small-p);

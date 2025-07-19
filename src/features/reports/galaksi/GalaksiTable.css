@@ -8,15 +8,11 @@
   gap: 0.5rem;
 }
 
-.galaksi-table p {
-  width: 100%;
-}
-
 .galaksi-table .table-wrapper table {
   pointer-events: none !important;
 }
 
-.galaksi-table thead *,
+.galaksi-table th,
 .galaksi-table tbody *:not(:first-child),
 .galaksi-table tfoot *:not(:first-child) {
   text-align: center;

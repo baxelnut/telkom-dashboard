@@ -4,11 +4,26 @@
   overflow: auto;
 }
 
-.action-table .po-name {
-  min-width: 180px;
+.action-table td,
+.action-table th {
+  text-align: center;
 }
 
-.action-table p,
+.action-table .po-name {
+  min-width: 200px;
+}
+
+.action-table td:hover,
+.action-table td:hover * {
+  color: white;
+}
+
+.action-table .po-name,
+.action-table .witel-name { 
+  text-align: start;
+}
+
+.action-table *,
 .action-table-row td {
   transition: background-color 0.3s ease, color 0.3s ease,
     transform 0.2s ease-in-out;
@@ -17,17 +32,7 @@
 
 .action-table-row td:hover {
   background-color: var(--secondary);
-  transform: scale(1.05);
-}
-
-.action-table-row td:hover * {
-  color: white;
-}
-
-.action-table th *,
-.action-table td:not(.po-name, .witel-name) * {
-  text-align: center;
-  width: 100%;
+  transform: scale(1.04);
 }
 
 .action-table .unresponsive {

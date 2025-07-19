@@ -1,0 +1,93 @@
+.kpi-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.card.kpi {
+  min-height: fit-content;
+}
+
+.card.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.25rem;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.level-1 {
+  background-color: rgba(var(--error-rgb), 0.2);
+}
+.level-2 {
+  background-color: rgba(var(--error-rgb), 0.4);
+}
+.level-3 {
+  background-color: rgba(var(--error-rgb), 0.6);
+}
+.level-4 {
+  background-color: rgba(var(--error-rgb), 0.8);
+}
+.level-5 {
+  background-color: rgba(var(--error-rgb), 1);
+}
+
+.heatmap-cell,
+.heatmap-legend span {
+  font-size: var(--small-p);
+  font-weight: 500;
+  border: 1px solid rgba(var(--neutral-rgb), 0.25);
+  color: rgba(var(--text-rgb), 0.5);
+}
+
+.heatmap-legend {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 0.5rem;
+}
+
+.heatmap-legend span {
+  display: inline-block;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .heatmap-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .heatmap-grid {
+    grid-template-columns: repeat(16, 1fr);
+  }
+}
+
+/* Dekstop hover (optional but classy) */
+@media (hover: hover) and (pointer: fine) {
+  .heatmap-cell:hover {
+    transform: scale(1.05);
+    border: 1px solid var(--neutral);
+    color: var(--text);
+    font-size: var(--small-h);
+  }
+}

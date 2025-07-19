@@ -9,6 +9,7 @@ import { getExportOptions } from "../../../helpers/exportTableData";
 
 export default function AosodomoroTableCard({
   data,
+  raw,
   loading,
   error,
   selectedSegmen,
@@ -27,8 +28,13 @@ export default function AosodomoroTableCard({
           Report for {selectedSegmen === "ALL" ? "All Segmen" : selectedSegmen}
         </h6>
         <div className="stats">
-          <p>Total raw data: {data.totalRawData ?? " ..."} rows</p>
-          <p>Processed into: {data.totalProcessedData ?? " ..."} rows</p>
+          <p>
+            Total raw data: <strong>{raw?.totalRawData ?? " ..."}</strong> rows
+          </p>
+          <p>
+            Processed into: <strong>{raw?.totalProcessedData ?? " ..."}</strong>{" "}
+            rows
+          </p>
         </div>
       </div>
 

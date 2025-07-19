@@ -44,17 +44,17 @@ export const appRoutes = [
 
   {
     path: "/kpis/completion-ratio",
-    element: <CompletionRatioPage API_URL={DEV_API_URL} />,
+    element: <CompletionRatioPage API_URL={API_URL} />,
     title: "Completion Ratio",
   },
   {
     path: "/kpis/sla",
-    element: <SLAPage API_URL={DEV_API_URL} />,
+    element: <SLAPage API_URL={API_URL} />,
     title: "SLA",
   },
   {
     path: "/kpis/health-index",
-    element: <OverallHealthIndexPage API_URL={DEV_API_URL} />,
+    element: <OverallHealthIndexPage API_URL={API_URL} />,
     title: "Overall Health Index",
   },
 

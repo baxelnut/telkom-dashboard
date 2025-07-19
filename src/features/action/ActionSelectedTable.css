@@ -19,4 +19,6 @@
   min-width: 190px;
 }
 
- 
+.notes:hover {
+  background-color: red !;
+}

@@ -7,14 +7,10 @@ export default function TableScroll({ data, currentPage, rowsPerPage }) {
       <table>
         <thead>
           <tr>
-            <th>
-              <h6 className="unresponsive">
-                {/* Empty header for row numbers */}
-              </h6>
-            </th>
+            <th>{/* Numbers */}</th>
             {Object.keys(data[0] || {}).map((key) => (
-              <th key={key}>
-                <h6 className="unresponsive">{key}</h6>
+              <th key={key} className="unresponsive">
+                {key}
               </th>
             ))}
           </tr>
@@ -23,8 +19,7 @@ export default function TableScroll({ data, currentPage, rowsPerPage }) {
           {data.map((row, index) => (
             <tr key={index}>
               <td className="unresponsive">
-                {/* Numbers */}
-                <p>{currentPage * rowsPerPage + index + 1}</p>
+                {currentPage * rowsPerPage + index + 1}
               </td>
               {Object.values(row).map((value, i) => (
                 <td

@@ -8,23 +8,11 @@ export const renderSelectedTable = ({ filtered, hasInProgress }) => {
       <table>
         <thead>
           <tr>
-            <th>
-              <h6>{/* For numbering */}</h6>
-            </th>
-            {hasInProgress && (
-              <th>
-                <h6>ACTION</h6>
-              </th>
-            )}
-            {hasInProgress && (
-              <th>
-                <h6>NOTES</h6>
-              </th>
-            )}
+            <th> {/* Numbers */}</th>
+            {hasInProgress && <th>ACTION</th>}
+            {hasInProgress && <th>NOTES</th>}
             {Object.keys(filtered[0]).map((c) => (
-              <th key={c}>
-                <h6>{c}</h6>
-              </th>
+              <th key={c}>{c}</th>
             ))}
           </tr>
         </thead>

@@ -12,12 +12,6 @@
   min-height: fit-content;
 }
 
-.card.action.table td:hover p {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
 .filter-container.back-btn {
   flex-direction: row;
   justify-content: space-between;

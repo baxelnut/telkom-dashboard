@@ -14,26 +14,8 @@
   border-collapse: collapse;
 }
 
-.aosodomoro-table th,
-.aosodomoro-table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-
-.aosodomoro-table td p {
-  width: 100%;
-}
-
 .aosodomoro-table td:not(.unresponsive) * {
   cursor: pointer;
-}
-
-.aosodomoro-table td:hover p {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
 }
 
 .aosodomoro-table td p {
@@ -64,6 +46,11 @@
   cursor: pointer;
   transition: background-color 0.4s ease, color 0.1s ease,
     transform 0.3s ease-in-out;
+}
+
+.aosodomoro-table td,
+.aosodomoro-table th {
+  text-align: center;
 }
 
 .aosodomoro-table td:hover {
