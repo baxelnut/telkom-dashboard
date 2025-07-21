@@ -2,30 +2,29 @@ name: Run Scheduled Report
 
 on:
   schedule:
-    - cron: "* * * * *" # every min for debugging
-  workflow_dispatch: # manual trigger button
+    - cron: "0 6 * * *" # 06:00 UTC → 13:00 WIB, once every day
+  workflow_dispatch: # manual back‑up trigger
 
 jobs:
   report:
     runs-on: ubuntu-latest
-
     defaults:
       run:
-        working-directory: backend # <‑‑ all “run:” commands now execute in /backend
+        working-directory: backend
 
     steps:
-      - name: 📥  Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🛠  Setup Node
+      - name: 🛠 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: 📦  Install dependencies
+      - name: 📦 Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: 🚀  Run report script
+      - name: 🚀 Run report
         run: node scripts/sendReport.js
         env:
           TELKOM_DASHBOARD_EMAIL: ${{ secrets.TELKOM_DASHBOARD_EMAIL }}

@@ -15,17 +15,17 @@ const utcHour = now.getUTCHours();
 const utcDay = now.getUTCDay(); // Monday = 1, Friday = 5
 
 const isScheduledDay = utcDay === 1 || utcDay === 5;
-const isInTimeWindow = utcHour >= 5 && utcHour < 9; // 12:00–16:00 WIB
+const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 13:00–18:00 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
 
 // Enforce time window
-// if (!(isScheduledDay && isInTimeWindow)) {
-//   console.log(
-//     "⏹️ Not within scheduled time window (Mon/Fri >12:00 WIB). Skipping."
-//   );
-//   process.exit(0);
-// }
+if (!(isScheduledDay && isInTimeWindow)) {
+  console.log(
+    "⏹️ Not within scheduled time window (Mon/Fri >13:00 WIB). Skipping."
+  );
+  process.exit(0);
+}
 
 // Start Puppeteer and send report
 export const sendScheduledReports = async () => {

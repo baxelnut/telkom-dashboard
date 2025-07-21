@@ -1,20 +1,16 @@
 // sendReport.js
 import dotenv from "dotenv";
 dotenv.config();
-
 import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
 
-const now = new Date();
-const timestamp = now.toISOString();
-
 (async () => {
+  console.log("🔥 Report run at:", new Date().toISOString());
   try {
-    console.log("🔥 Scheduled report running at:", timestamp);
     await sendScheduledReports();
-    console.log("✅ Report sent.");
+    console.log("✅ Report finished.");
     process.exit(0);
   } catch (err) {
-    console.error("❌ Failed to send report:", err);
+    console.error("❌ Report failed:", err);
     process.exit(1);
   }
 })();
