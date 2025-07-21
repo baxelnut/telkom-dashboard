@@ -1,0 +1,32 @@
+name: Run Scheduled Report
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # every 5 mins for testing
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run report
+        run: node scripts/sendReport.js
+
+        env:
+          TELKOM_DASHBOARD_EMAIL: ${{ secrets.TELKOM_DASHBOARD_EMAIL }}
+          TELKOM_DASHBOARD_PASSWORD: ${{ secrets.TELKOM_DASHBOARD_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_GROUP_CHAT_ID: ${{ secrets.TELEGRAM_GROUP_CHAT_ID }}
+          TELEGRAM_CHANNEL_CHAT_ID: ${{ secrets.TELEGRAM_CHANNEL_CHAT_ID }}
