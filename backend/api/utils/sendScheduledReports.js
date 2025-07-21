@@ -1,25 +1,48 @@
-import dotenv from "dotenv";
-dotenv.config();
-
-import puppeteer from "puppeteer";
 import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
+import puppeteer from "puppeteer";
+
+dotenv.config();
 
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
+const LOG_PATH = path.resolve("last-run.json");
 
-export const sendScheduledReports = async () => {
-  const now = new Date();
-  const timestamp = now.toISOString();
-  const day = now.getDay(); // 1 = Monday, 5 = Friday
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+const now = new Date();
+const timestamp = now.toISOString();
+const utcHour = now.getUTCHours();
+const utcDay = now.getUTCDay(); // Monday = 1, Friday = 5
+const dateKey = timestamp.split("T")[0]; // YYYY-MM-DD
 
-  console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
+const isScheduledDay = utcDay === 1 || utcDay === 5;
+const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
 
-  // Only run on Monday & Friday at 13:00 (uncomment when ready)
-  // if (!((day === 1 || day === 5) && hour === 13 && minute === 0)) return;
+console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
 
+// Step 1: Check for duplicate send
+if (fs.existsSync(LOG_PATH)) {
+  const lastRun = JSON.parse(fs.readFileSync(LOG_PATH, "utf8"));
+  if (lastRun.date === dateKey) {
+    console.log("⏹️ Report already sent today. Skipping.");
+    process.exit(0);
+  }
+}
+
+// Step 2: Enforce time window
+if (!(isScheduledDay && isInTimeWindow)) {
+  console.log(
+    "⏹️ Not within scheduled time window (Mon/Fri 13:00–14:00 WIB). Skipping."
+  );
+  process.exit(0);
+}
+
+// Step 3: Mark this run (before execution to avoid double runs on failure)
+fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
+
+// Step 4: Start Puppeteer and send report
+const sendScheduledReports = async () => {
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -38,14 +61,14 @@ export const sendScheduledReports = async () => {
     console.log("🔘 Clicking login button...");
     await Promise.all([
       page.waitForNavigation({ waitUntil: "networkidle2" }),
-      page.click("#login-btn"), // Ensure login button has id="login-btn"
+      page.click("#login-btn"),
     ]);
 
     if (!page.url().includes("/overview")) {
       throw new Error("Login failed — /overview not reached");
     }
 
-    console.log("✅ Logged in successfully.");
+    console.log("Logged in successfully.");
 
     const reportPages = [
       {
@@ -75,8 +98,7 @@ export const sendScheduledReports = async () => {
 
           // Wait for frontend to process image capture & upload
           await new Promise((res) => setTimeout(res, 6000));
-
-          console.log(`✅ ${name} report sent.`);
+          console.log(`${name} report sent.`);
         } else {
           console.warn(`⚠️ ${buttonId} not found on ${path}`);
         }
@@ -85,10 +107,9 @@ export const sendScheduledReports = async () => {
       }
     }
 
-    console.log("✅ All reports processed.");
+    console.log("All reports processed.");
   } catch (err) {
     console.error("❌ Fatal error during scheduled report:", err.message);
-
     const safeTime = timestamp.replace(/[:.]/g, "-");
     await page.screenshot({ path: `debug-${safeTime}.png`, fullPage: true });
     const html = await page.content();
@@ -97,3 +118,5 @@ export const sendScheduledReports = async () => {
     await browser.close();
   }
 };
+
+sendScheduledReports();

@@ -2,7 +2,7 @@ name: Run Scheduled Report
 
 on:
   schedule:
-    - cron: "* * * * *" # every minute for debugging
+    - cron: "* * * * *" # every min for debugging
   workflow_dispatch: # manual trigger button
 
 jobs:
