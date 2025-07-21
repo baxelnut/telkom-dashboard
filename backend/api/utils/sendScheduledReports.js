@@ -21,7 +21,7 @@ const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
 
-// Step 1: Check for duplicate send
+// Check for duplicate send
 if (fs.existsSync(LOG_PATH)) {
   const lastRun = JSON.parse(fs.readFileSync(LOG_PATH, "utf8"));
   if (lastRun.date === dateKey) {
@@ -30,7 +30,7 @@ if (fs.existsSync(LOG_PATH)) {
   }
 }
 
-// Step 2: Enforce time window
+// Enforce time window
 // if (!(isScheduledDay && isInTimeWindow)) {
 //   console.log(
 //     "⏹️ Not within scheduled time window (Mon/Fri 13:00–13:59 WIB). Skipping."
@@ -38,10 +38,7 @@ if (fs.existsSync(LOG_PATH)) {
 //   process.exit(0);
 // }
 
-// Step 3: Mark this run (before execution to avoid double runs on failure)
-fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
-
-// Step 4: Start Puppeteer and send report
+// Start Puppeteer and send report
 export const sendScheduledReports = async () => {
   const browser = await puppeteer.launch({
     headless: true,
@@ -107,7 +104,8 @@ export const sendScheduledReports = async () => {
       }
     }
 
-    console.log("All reports processed.");
+    console.log("✅ All reports processed. Writing to log...");
+    fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
   } catch (err) {
     console.error("❌ Fatal error during scheduled report:", err.message);
     const safeTime = timestamp.replace(/[:.]/g, "-");
@@ -118,4 +116,3 @@ export const sendScheduledReports = async () => {
     await browser.close();
   }
 };
- 
