@@ -1,3 +1,4 @@
+// sendScheduledReports.js
 import fs from "fs";
 import dotenv from "dotenv";
 import puppeteer from "puppeteer";
@@ -12,7 +13,6 @@ const now = new Date();
 const timestamp = now.toISOString();
 const utcHour = now.getUTCHours();
 const utcDay = now.getUTCDay(); // Monday = 1, Friday = 5
-const dateKey = timestamp.split("T")[0]; // YYYY-MM-DD
 
 const isScheduledDay = utcDay === 1 || utcDay === 5;
 const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
@@ -20,12 +20,12 @@ const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
 
 // Enforce time window
-// if (!(isScheduledDay && isInTimeWindow)) {
-//   console.log(
-//     "⏹️ Not within scheduled time window (Mon/Fri 13:00–13:59 WIB). Skipping."
-//   );
-//   process.exit(0);
-// }
+if (!(isScheduledDay && isInTimeWindow)) {
+  console.log(
+    "⏹️ Not within scheduled time window (Mon/Fri >12:00 WIB). Skipping."
+  );
+  process.exit(0);
+}
 
 // Start Puppeteer and send report
 export const sendScheduledReports = async () => {
