@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import dotenv from "dotenv";
 import puppeteer from "puppeteer";
 
@@ -19,23 +18,6 @@ const isScheduledDay = utcDay === 1 || utcDay === 5;
 const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
-
-const LOG_PATH = path.resolve("logs/last-run.json");
-const LOG_DIR = path.dirname(LOG_PATH);
-
-console.log("LOG_PATH:", LOG_PATH);
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true });
-}
-
-// Check for duplicate send
-if (fs.existsSync(LOG_PATH)) {
-  const lastRun = JSON.parse(fs.readFileSync(LOG_PATH, "utf8"));
-  if (lastRun.date === dateKey) {
-    console.log("⏹️ Report already sent today. Skipping.");
-    process.exit(0);
-  }
-}
 
 // Enforce time window
 // if (!(isScheduledDay && isInTimeWindow)) {
