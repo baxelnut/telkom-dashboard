@@ -1,12 +1,12 @@
-import puppeteer from "puppeteer";
 import dotenv from "dotenv";
-import fs from "fs";
-
 dotenv.config();
+
+import puppeteer from "puppeteer";
+import fs from "fs";
 
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
-const BASE_URL = "https://rso2telkomdashboard.web.app";  
+const BASE_URL = "https://rso2telkomdashboard.web.app";
 
 export const sendScheduledReports = async () => {
   const now = new Date();
@@ -20,7 +20,11 @@ export const sendScheduledReports = async () => {
   // Only run on Monday & Friday at 13:00 (uncomment when ready)
   // if (!((day === 1 || day === 5) && hour === 13 && minute === 0)) return;
 
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+
   const page = await browser.newPage();
 
   try {
