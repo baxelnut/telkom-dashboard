@@ -15,7 +15,7 @@ const utcHour = now.getUTCHours();
 const utcDay = now.getUTCDay(); // Monday = 1, Friday = 5
 
 const isScheduledDay = utcDay === 1 || utcDay === 5;
-const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
+const isInTimeWindow = utcHour >= 5 && utcHour < 9; // 12:00–16:00 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
 
