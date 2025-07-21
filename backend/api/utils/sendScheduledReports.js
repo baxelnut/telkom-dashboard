@@ -33,7 +33,7 @@ if (fs.existsSync(LOG_PATH)) {
 // Step 2: Enforce time window
 if (!(isScheduledDay && isInTimeWindow)) {
   console.log(
-    "⏹️ Not within scheduled time window (Mon/Fri 13:00–14:00 WIB). Skipping."
+    "⏹️ Not within scheduled time window (Mon/Fri 13:00–13:59 WIB). Skipping."
   );
   process.exit(0);
 }
@@ -42,7 +42,7 @@ if (!(isScheduledDay && isInTimeWindow)) {
 fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
 
 // Step 4: Start Puppeteer and send report
-const sendScheduledReports = async () => {
+export const sendScheduledReports = async () => {
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -118,5 +118,4 @@ const sendScheduledReports = async () => {
     await browser.close();
   }
 };
-
-sendScheduledReports();
+ 
