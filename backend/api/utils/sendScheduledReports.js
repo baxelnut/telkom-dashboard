@@ -94,7 +94,6 @@ export const sendScheduledReports = async () => {
     }
 
     console.log("✅ All reports processed. Writing to log...");
-    fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
   } catch (err) {
     console.error("❌ Fatal error during scheduled report:", err.message);
     const safeTime = timestamp.replace(/[:.]/g, "-");
