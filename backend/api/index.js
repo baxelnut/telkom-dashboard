@@ -24,19 +24,29 @@ app.use("/api/galaksi", galaksi);
 app.use("/api/admin", admin);
 app.use("/api/telegram", telegramRoutes);
 
-// Server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
 // 🕒 Production-ready scheduler: Mon & Fri at 1 PM
-cron.schedule("0 13 * * 1,5", () => {
-  console.log("⏰ Scheduled report triggered (Mon/Fri 13:00)");
-  sendScheduledReports();
-});
+// cron.schedule("0 13 * * 1,5", () => {
+//   console.log("⏰ Scheduled report triggered (Mon/Fri 13:00)");
+//   sendScheduledReports();
+// });
 
 // Schedule the report sending job every minute (for debugging)
 // cron.schedule("* * * * *", () => {
 //   console.log("⏰ Triggering scheduled report job...");
 //   sendScheduledReports();
 // });
+
+app.get("/api/manual-send-report", async (req, res) => {
+  try {
+    await sendScheduledReports();
+    res.status(200).json({ message: "✅ Report triggered successfully" });
+  } catch (err) {
+    console.error("❌ Manual report trigger failed:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

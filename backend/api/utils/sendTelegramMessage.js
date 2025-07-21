@@ -7,7 +7,8 @@ const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_GROUP_CHAT_ID } =
   process.env;
 
 export const sendTelegramMessage = async (text, target = "private") => {
-  const chatId = target === "group" ? TELEGRAM_GROUP_CHAT_ID : TELEGRAM_CHAT_ID;
+  const chatId =
+    target === "private" ? TELEGRAM_CHAT_ID : TELEGRAM_GROUP_CHAT_ID;
 
   console.log("========== TELEGRAM DEBUG ==========");
   console.log("💬 Sending to:", target);

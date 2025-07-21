@@ -36,7 +36,7 @@ export default function AosodomoroTable({
     sendTableToTelegram({
       selector: ".aosodomoro-table table",
       apiUrl: API_URL,
-      target: "channel",
+      target: "group",
       setStatus,
       title: "Weekly Report AOSODOMORO Non Connectivity",
       subtext:
