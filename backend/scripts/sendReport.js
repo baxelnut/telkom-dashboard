@@ -6,6 +6,7 @@ import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
 
 (async () => {
   try {
+    console.log("🔥 Scheduled report running at:", new Date().toISOString());
     await sendScheduledReports();
     console.log("✅ Report sent.");
     process.exit(0);
