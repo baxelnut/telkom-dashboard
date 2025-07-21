@@ -8,7 +8,6 @@ dotenv.config();
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
-const LOG_PATH = path.resolve("last-run.json");
 
 const now = new Date();
 const timestamp = now.toISOString();
@@ -20,6 +19,14 @@ const isScheduledDay = utcDay === 1 || utcDay === 5;
 const isInTimeWindow = utcHour === 6; // 13:00–13:59 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
+
+const LOG_PATH = path.resolve("logs/last-run.json");
+const LOG_DIR = path.dirname(LOG_PATH);
+
+console.log("LOG_PATH:", LOG_PATH);
+if (!fs.existsSync(LOG_DIR)) {
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+}
 
 // Check for duplicate send
 if (fs.existsSync(LOG_PATH)) {

@@ -47,4 +47,3 @@ safe-json-env.cjs
 
 # ===== FOR TESTING ONLY =====
 ExamplePage.jsx
-backend/last-run.json
