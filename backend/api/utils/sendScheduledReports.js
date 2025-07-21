@@ -31,12 +31,12 @@ if (fs.existsSync(LOG_PATH)) {
 }
 
 // Step 2: Enforce time window
-if (!(isScheduledDay && isInTimeWindow)) {
-  console.log(
-    "⏹️ Not within scheduled time window (Mon/Fri 13:00–13:59 WIB). Skipping."
-  );
-  process.exit(0);
-}
+// if (!(isScheduledDay && isInTimeWindow)) {
+//   console.log(
+//     "⏹️ Not within scheduled time window (Mon/Fri 13:00–13:59 WIB). Skipping."
+//   );
+//   process.exit(0);
+// }
 
 // Step 3: Mark this run (before execution to avoid double runs on failure)
 fs.writeFileSync(LOG_PATH, JSON.stringify({ date: dateKey }));
