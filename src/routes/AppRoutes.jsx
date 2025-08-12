@@ -1,25 +1,13 @@
 // Pages
 import ActionBasedPage from "../pages/action-based/ActionBasedPage";
 import AosodomoroReportPage from "../pages/reports/aosodomoro/AosodomoroReportPage";
-import CompletionRatioPage from "../pages/kpis/completion-ratio/CompletionRatioPage";
 import GalaksiReportPage from "../pages/reports/galaksi/GalaksiReportPage";
-import OverallHealthIndexPage from "../pages/kpis/health-index/OverallHealthIndexPage";
 import OverviewPage from "../pages/overview/OverviewPage";
-import SLAPage from "../pages/kpis/sla/SLAPage";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
 
-// ===== FOR TESTING =====
-// import ExamplePage from "../pages/ExamplePage";
-
 export const appRoutes = [
-  // ===== FOR TESTING =====
-  // {
-  //   path: "/example",
-  //   element: <ExamplePage API_URL={DEV_API_URL} />,
-  //   title: "TESTING",
-  // },
   {
     path: "/",
     element: <OverviewPage API_URL={API_URL} />,
@@ -43,24 +31,36 @@ export const appRoutes = [
   },
 
   {
-    path: "/kpis/completion-ratio",
-    element: <CompletionRatioPage API_URL={API_URL} />,
-    title: "Completion Ratio",
-  },
-  {
-    path: "/kpis/sla",
-    element: <SLAPage API_URL={API_URL} />,
-    title: "SLA",
-  },
-  {
-    path: "/kpis/health-index",
-    element: <OverallHealthIndexPage API_URL={API_URL} />,
-    title: "Overall Health Index",
-  },
-
-  {
     path: "/action-based",
     element: <ActionBasedPage API_URL={API_URL} />,
     title: "Action Based",
   },
 ];
+
+// ===== FOR TESTING =====
+// import ExamplePage from "../pages/ExamplePage";
+// {
+//   path: "/example",
+//   element: <ExamplePage API_URL={DEV_API_URL} />,
+//   title: "TESTING",
+// },
+
+// ===== POSTPONED =====
+// import CompletionRatioPage from "../pages/kpis/completion-ratio/CompletionRatioPage";
+// import OverallHealthIndexPage from "../pages/kpis/health-index/OverallHealthIndexPage";
+// import SLAPage from "../pages/kpis/sla/SLAPage";
+// {
+//   path: "/kpis/completion-ratio",
+//   element: <CompletionRatioPage API_URL={API_URL} />,
+//   title: "Completion Ratio",
+// },
+// {
+//   path: "/kpis/sla",
+//   element: <SLAPage API_URL={API_URL} />,
+//   title: "SLA",
+// },
+// {
+//   path: "/kpis/health-index",
+//   element: <OverallHealthIndexPage API_URL={API_URL} />,
+//   title: "Overall Health Index",
+// },
