@@ -4,15 +4,6 @@
   gap: 0.5rem;
 }
 
-.card.action.table .title {
-  text-align: center;
-}
-
 .card.action.table .table-wrapper {
   min-height: fit-content;
-}
-
-.filter-container.back-btn {
-  flex-direction: row;
-  justify-content: space-between;
 }
