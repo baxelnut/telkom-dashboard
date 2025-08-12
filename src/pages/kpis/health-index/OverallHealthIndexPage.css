@@ -31,19 +31,19 @@
 }
 
 .level-1 {
-  background-color: rgba(var(--error-rgb), 0.2);
+  background-color: rgba(var(--danger-rgb), 0.2);
 }
 .level-2 {
-  background-color: rgba(var(--error-rgb), 0.4);
+  background-color: rgba(var(--danger-rgb), 0.4);
 }
 .level-3 {
-  background-color: rgba(var(--error-rgb), 0.6);
+  background-color: rgba(var(--danger-rgb), 0.6);
 }
 .level-4 {
-  background-color: rgba(var(--error-rgb), 0.8);
+  background-color: rgba(var(--danger-rgb), 0.8);
 }
 .level-5 {
-  background-color: rgba(var(--error-rgb), 1);
+  background-color: rgba(var(--danger-rgb), 1);
 }
 
 .heatmap-cell,

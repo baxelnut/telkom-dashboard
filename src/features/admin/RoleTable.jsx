@@ -57,7 +57,7 @@ export default function RoleTable({
                         text="Accept"
                         iconPath={SVG_PATHS.checkLarge}
                         onClick={() => onRoleChange(email, "user")}
-                        backgroundColor="var(--success)"
+                        backgroundColor="var(--safe)"
                         iconAfter
                         short
                       />
@@ -66,7 +66,7 @@ export default function RoleTable({
                           text="Decline"
                           iconPath={SVG_PATHS.xLarge}
                           onClick={() => onRoleChange(email, "declined")}
-                          backgroundColor="var(--error)"
+                          backgroundColor="var(--danger)"
                           iconAfter
                           short
                         />
@@ -85,7 +85,7 @@ export default function RoleTable({
                         text="Revoke access"
                         iconPath={SVG_PATHS.xLarge}
                         onClick={() => onRoleChange(email, "waiting approval")}
-                        backgroundColor="var(--error)"
+                        backgroundColor="var(--danger)"
                         short
                       />
                     </>

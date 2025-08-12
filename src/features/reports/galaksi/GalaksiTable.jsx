@@ -50,7 +50,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
             text="Announce!"
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
-            backgroundColor={"var(--success)"}
+            backgroundColor={"var(--safe)"}
             rounded
             iconAfter
           />

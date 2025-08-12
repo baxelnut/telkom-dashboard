@@ -29,8 +29,8 @@
   --bg: #d5d9e7;
   --text: #000000;
   --neutral: #777777;
-  --error: #d72323;
-  --success: #5cb338;
+  --danger: #d72323;
+  --safe: #5cb338;
 
   /* RGB */
   --primary-rgb: 49, 42, 104;
@@ -41,8 +41,8 @@
   --bg-rgb: 213, 217, 231;
   --text-rgb: 0, 0, 0;
   --neutral-rgb: 143, 143, 143;
-  --error-rgb: 215, 35, 35;
-  --success-rgb: 92, 179, 56;
+  --danger-rgb: 215, 35, 35;
+  --safe-rgb: 92, 179, 56;
 
   /* Filters */
   --filter-bg: invert(4%) sepia(57%) saturate(387%) hue-rotate(202deg)

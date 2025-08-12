@@ -47,13 +47,13 @@
 
   position: relative;
   z-index: 1000;
-  background-color: rgba(var(--success-rgb), 0.15);
+  background-color: rgba(var(--safe-rgb), 0.15);
   border-radius: 4px;
   padding: 0.5rem;
 }
 
 .success-msg {
-  color: var(--success);
+  color: var(--safe);
   font-weight: 600;
   text-align: center;
   font-size: clamp(0.75rem, 0.85vw, 0.85rem);

@@ -82,7 +82,7 @@ export default function CompletionRatioPage({ API_URL }) {
                     <CustomTooltip {...props} total={totalOrders} />
                   )}
                 />
-                <Bar dataKey="completed" fill="var(--success)">
+                <Bar dataKey="completed" fill="var(--safe)">
                   <LabelList
                     dataKey="completed"
                     position="top"

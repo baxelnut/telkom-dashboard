@@ -10,8 +10,8 @@ export const getStatusColors = () => {
   const getRGBA = (cssVarName) =>
     `rgba(${styles.getPropertyValue(`${cssVarName}-rgb`).trim()}, 0.5)`;
   return {
-    Lanjut: getRGBA("--success"),
-    Cancel: getRGBA("--error"),
+    Lanjut: getRGBA("--safe"),
+    Cancel: getRGBA("--danger"),
     "Bukan Order Reg": getRGBA("--secondary"),
     "No Status": "transparent",
   };

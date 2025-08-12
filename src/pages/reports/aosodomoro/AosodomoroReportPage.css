@@ -51,11 +51,11 @@
 }
 
 .aosodomoro .tr-status-lanjut {
-  background-color: rgb(var(--success-rgb), 0.5);
+  background-color: rgb(var(--safe-rgb), 0.5);
 }
 
 .aosodomoro .tr-status-cancel {
-  background-color: rgb(var(--error-rgb), 0.5);
+  background-color: rgb(var(--danger-rgb), 0.5);
 }
 
 .aosodomoro .tr-status-bukan-order-reg {

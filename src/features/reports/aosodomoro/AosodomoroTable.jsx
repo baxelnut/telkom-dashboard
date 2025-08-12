@@ -57,7 +57,7 @@ export default function AosodomoroTable({
             text="Announce!"
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
-            backgroundColor={"var(--success)"}
+            backgroundColor={"var(--safe)"}
             rounded
             iconAfter
           />
