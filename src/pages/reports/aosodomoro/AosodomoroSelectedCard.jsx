@@ -4,7 +4,7 @@ import Button from "../../../components/ui/buttons/Button";
 import Dropdown from "../../../components/ui/input/Dropdown";
 import SelectedTable from "../../../features/reports/aosodomoro/SelectedTable";
 // Helpers
-import { getExportOptions } from "../../../helpers/exportTableData";
+import { getExportOptions } from "../../../helpers/exportHelpers";
 
 export default function AosodomoroSelectedCard({
   selectedCell,

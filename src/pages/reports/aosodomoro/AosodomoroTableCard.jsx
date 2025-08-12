@@ -5,7 +5,7 @@ import CardContent from "../../../components/ui/cards/CardContent";
 import Dropdown from "../../../components/ui/input/Dropdown";
 // Helpers
 import { SEGMEN_OPS } from "../../../helpers/aosodomoroUtils";
-import { getExportOptions } from "../../../helpers/exportTableData";
+import { getExportOptions } from "../../../helpers/exportHelpers";
 
 export default function AosodomoroTableCard({
   data,

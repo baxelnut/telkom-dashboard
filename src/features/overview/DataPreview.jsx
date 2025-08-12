@@ -11,7 +11,7 @@ import TableScroll from "../../components/ui/tables/TableScroll";
 import useFetchData from "../../hooks/useFetchData";
 import { useAuth } from "../../context/AuthContext";
 // Helpers
-import { exportData, getExportOptions } from "../../helpers/exportTableData";
+import { exportData, getExportOptions } from "../../helpers/exportHelpers";
 import { rowPerPageOptions } from "../../helpers/overviewUtils";
 import { hiddenCols } from "../../helpers/tableHelper";
 

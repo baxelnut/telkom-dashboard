@@ -10,7 +10,7 @@ import Checkbox from "../../../components/ui/input/Checkbox";
 import useFetchData from "../../../hooks/useFetchData";
 import { useAuth } from "../../../context/AuthContext";
 // Helpers
-import { exportData } from "../../../helpers/exportTableData";
+import { exportData } from "../../../helpers/exportHelpers";
 import { ORDER_SUBTYPE } from "../../../helpers/aosodomoroUtils";
 
 export default function AosodomoroReportPage({ API_URL }) {
