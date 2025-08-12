@@ -70,36 +70,67 @@ export function filterRows(enrichedData, filters, activeFilters) {
   const { witelFilterActive, poFilterActive } = activeFilters;
 
   return enrichedData.filter((r) => {
+    // Normalize row values once
     const rowWitel = (r.WITEL || "").toString().trim().toUpperCase();
-    if (witelFilterActive && rowWitel !== swNorm) return false;
 
+    const poNameStr = Array.isArray(r.PO_NAME)
+      ? r.PO_NAME.join(", ")
+      : r.PO_NAME || "";
+    const poEmailStr = Array.isArray(r.PO_EMAIL)
+      ? r.PO_EMAIL.join(", ")
+      : r.PO_EMAIL || "";
+
+    const poNameNorm = poNameStr.toString().toUpperCase();
+    const poEmailNorm = poEmailStr.toString().toUpperCase();
+
+    // If PO filter active => match PO (by name or email) and ignore WITEL
     if (poFilterActive) {
-      const poNameStr = Array.isArray(r.PO_NAME)
-        ? r.PO_NAME.join(", ")
-        : r.PO_NAME || "";
-      const poEmailStr = Array.isArray(r.PO_EMAIL)
-        ? r.PO_EMAIL.join(", ")
-        : r.PO_EMAIL || "";
-
-      const poNameNorm = poNameStr.toUpperCase();
-      const poEmailNorm = poEmailStr.toUpperCase();
-
       if (!poNameNorm.includes(spNorm) && !poEmailNorm.includes(spNorm)) {
         return false;
       }
+      return true; // PO matched, keep this row regardless of WITEL
     }
+    // otherwise, enforce WITEL filter if active
+    if (witelFilterActive && rowWitel !== swNorm) return false;
 
     return true;
   });
 }
 
 export function filterItems(rows, filters, activeFilters) {
-  const { spdNorm, ssNorm } = filters;
-  const { periodFilterActive, statusFilterActive } = activeFilters;
+  const { spNorm, spdNorm, ssNorm } = filters;
+  const { poFilterActive, periodFilterActive, statusFilterActive } =
+    activeFilters;
 
   return rows
     .map((r) => {
       let items = Array.isArray(r.items) ? r.items.slice() : [];
+
+      // Normalize PO identifiers once
+      const poNameNorm = (
+        Array.isArray(r.PO_NAME) ? r.PO_NAME.join(", ") : r.PO_NAME || ""
+      )
+        .toString()
+        .trim()
+        .toUpperCase();
+      const poEmailNorm = (
+        Array.isArray(r.PO_EMAIL) ? r.PO_EMAIL.join(", ") : r.PO_EMAIL || ""
+      )
+        .toString()
+        .trim()
+        .toUpperCase();
+
+      // Filter by PO only if PO filter is NOT active, otherwise filter by selected PO at higher level
+      items = items.filter((i) => {
+        const picNorm = (i.PIC || "").toString().trim().toUpperCase();
+        // Match PIC to PO_NAME or PO_EMAIL for this row
+        return (
+          picNorm === poNameNorm ||
+          picNorm === poEmailNorm ||
+          picNorm.includes(poNameNorm) ||
+          picNorm.includes(poEmailNorm)
+        );
+      });
 
       if (periodFilterActive) {
         if (spdNorm === "<3") items = items.filter((i) => i._bucket === "<");
@@ -163,4 +194,36 @@ export function makeFilename(filters, activeFilters) {
     : "ALL STATUS";
 
   return `${filenamePO}_${filenameWitel}_${periodLabel}BLN_${filenameStatus}_${dateOnly}`;
+}
+
+export function dedupeByKey(
+  arr,
+  keyCandidates = ["UUID", "ORDER_ID", "LI_SID"]
+) {
+  const seen = new Map();
+  for (const item of arr) {
+    // find first available key value
+    let k;
+    for (const key of keyCandidates) {
+      if (
+        item[key] !== undefined &&
+        item[key] !== null &&
+        `${item[key]}`.trim() !== ""
+      ) {
+        k = `${key}:${item[key]}`;
+        break;
+      }
+    }
+    // fallback to serialized unique content (less ideal)
+    if (!k) {
+      k = JSON.stringify([
+        item.PO_NAME ?? "",
+        item.LI_SID ?? "",
+        item.ORDER_ID ?? "",
+        item.NIPNAS ?? "",
+      ]);
+    }
+    if (!seen.has(k)) seen.set(k, item);
+  }
+  return Array.from(seen.values());
 }

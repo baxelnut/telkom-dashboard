@@ -24,6 +24,7 @@ import {
   flattenForExport,
   makeFilename,
   exportData,
+  dedupeByKey,
 } from "../../helpers/exportHelpers";
 
 export default function ActionBasedPage({ API_URL }) {
@@ -58,12 +59,14 @@ export default function ActionBasedPage({ API_URL }) {
     const filteredRows = filterRows(enrichedData, filters, activeFilters);
     const rows = filterItems(filteredRows, filters, activeFilters);
     const flat = flattenForExport(rows);
-    if (!flat.length) {
+    const deduped = dedupeByKey(flat, ["UUID", "ORDER_ID", "LI_SID"]);
+    const finalName = makeFilename(filters, activeFilters);
+    // check & export
+    if (!deduped.length) {
       alert("No data found for the selected filters.");
       return;
     }
-    const finalName = makeFilename(filters, activeFilters);
-    exportData(selected.exportType, flat, finalName);
+    exportData(selected.exportType, deduped, finalName);
   };
 
   const debounceRefresh = () => {
