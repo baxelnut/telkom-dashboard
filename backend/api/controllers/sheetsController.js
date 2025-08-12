@@ -568,7 +568,6 @@ export const getPO = async (req, res) => {
   try {
     const sheetURL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${PO_GID}`;
     const raw = await fetch(sheetURL).then((res) => res.text());
-
     const json = JSON.parse(raw.substring(47).slice(0, -2));
 
     const rawHeaders = json.table.rows[0].c;
@@ -587,10 +586,12 @@ export const getPO = async (req, res) => {
           const cell = row.c[idx];
           obj[header] = cell?.v || "";
         });
-
         return Object.values(obj).every((v) => v === "") ? null : obj;
       })
       .filter(Boolean);
+
+    // Sort alphabetically by PO_NAME
+    data.sort((a, b) => a.PO_NAME.localeCompare(b.PO_NAME));
 
     res.status(200).json({ data });
   } catch (err) {
