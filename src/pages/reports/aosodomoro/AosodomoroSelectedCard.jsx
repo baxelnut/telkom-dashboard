@@ -14,6 +14,7 @@ export default function AosodomoroSelectedCard({
   onExportChange,
   onExport,
   onBack,
+  isAdmin,
 }) {
   const cell = selectedCell || {};
 
@@ -75,6 +76,7 @@ export default function AosodomoroSelectedCard({
           selectedCell={selectedCell}
           selectedData={data}
           selectedSegmen={selectedSegmen}
+          isAdmin={isAdmin}
         />
       </div>
     </div>

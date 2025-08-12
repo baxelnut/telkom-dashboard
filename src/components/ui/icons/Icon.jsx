@@ -10,31 +10,10 @@ export default function Icon({
   viewBox = "0 0 16 16",
   onClick = null,
   style = {},
-  text = "",
 }) {
-  // If 'text' prop exists, render text instead of paths
-  if (text != "") {
-    return (
-      <svg
-        className={`app-icon ${className}`}
-        xmlns="http://www.w3.org/2000/svg"
-        width={size}
-        height={size}
-        fill={fill}
-        viewBox={viewBox}
-        onClick={onClick}
-        style={style}
-      >
-        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle">
-          {text}
-        </text>
-      </svg>
-    );
-  }
-
   return (
     <svg
-      className="app-icon"
+      className={`app-icon ${className}`}
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
@@ -64,5 +43,4 @@ Icon.propTypes = {
   fill: PropTypes.string,
   className: PropTypes.string,
   viewBox: PropTypes.string,
-  text: PropTypes.string, // new optional prop for text inside SVG
 };

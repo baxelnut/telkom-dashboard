@@ -6,13 +6,15 @@ import "./AosodomoroReportPage.css";
 import AosodomoroTableCard from "./AosodomoroTableCard";
 import AosodomoroSelectedCard from "./AosodomoroSelectedCard";
 import Checkbox from "../../../components/ui/input/Checkbox";
-// Custom hook
+// Custom hook & Context
 import useFetchData from "../../../hooks/useFetchData";
+import { useAuth } from "../../../context/AuthContext";
 // Helpers
 import { exportData } from "../../../helpers/exportTableData";
 import { ORDER_SUBTYPE } from "../../../helpers/aosodomoroUtils";
 
 export default function AosodomoroReportPage({ API_URL }) {
+  const { isAdmin } = useAuth();
   const { data, loading, error, raw } = useFetchData(
     `${API_URL}/regional-3/report`
   );
@@ -118,6 +120,7 @@ export default function AosodomoroReportPage({ API_URL }) {
           onExportChange={setSelectedExport}
           onExport={handleExport}
           onBack={() => setSelectedCell(null)}
+          isAdmin={isAdmin}
         />
       )}
     </div>

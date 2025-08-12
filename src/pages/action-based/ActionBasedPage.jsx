@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
 import { useRef, useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 // Styles
 import "./ActionBasedPage.css";
 // Components
@@ -8,6 +8,7 @@ import ActionSelectedTable from "../../features/action/ActionSelectedTable";
 import Button from "../../components/ui/buttons/Button";
 import CardsContent from "../../components/ui/cards/CardContent";
 import Dropdown from "../../components/ui/input/Dropdown";
+import OverviewByWitel from "../../features/overview/OverviewByWitel";
 // Context & Hooks
 import { useAuth } from "../../context/AuthContext";
 import useMultiFetchData from "../../hooks/useMultiFetchData";
@@ -148,6 +149,8 @@ export default function ActionBasedPage({ API_URL }) {
           content="Interactive insights based on user or system actions. Useful for auditing and behavior tracking."
         />
       </Helmet>
+
+      <OverviewByWitel API_URL={API_URL} />
 
       <div
         className="card action table"

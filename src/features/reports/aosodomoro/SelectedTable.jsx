@@ -11,6 +11,7 @@ export default function SelectedTable({
   selectedCell,
   selectedData,
   selectedSegmen,
+  isAdmin,
 }) {
   const { witelName, kategoriUmur, isTotal, extractedIds, subType, subTypes } =
     selectedCell;
@@ -34,5 +35,5 @@ export default function SelectedTable({
 
   const hasInProgress = filtered.some((i) => i.KATEGORI === "IN PROCESS");
 
-  return renderSelectedTable({ filtered, hasInProgress });
+  return renderSelectedTable({ filtered, hasInProgress, isAdmin });
 }

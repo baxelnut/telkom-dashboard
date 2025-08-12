@@ -1,6 +1,8 @@
+// Helpers
 import { formatSelectedCurrency } from "../../../helpers/formattingUtils";
+import { hiddenCols } from "../../../helpers/tableHelper";
 
-export const renderSelectedTable = ({ filtered, hasInProgress }) => {
+export const renderSelectedTable = ({ filtered, hasInProgress, isAdmin }) => {
   if (!filtered.length) return <p>No matching data found.</p>;
 
   return (
@@ -8,12 +10,15 @@ export const renderSelectedTable = ({ filtered, hasInProgress }) => {
       <table>
         <thead>
           <tr>
-            <th> {/* Numbers */}</th>
+            <th>{/* Numbers */}</th>
             {hasInProgress && <th>ACTION</th>}
             {hasInProgress && <th>NOTES</th>}
-            {Object.keys(filtered[0]).map((c) => (
-              <th key={c}>{c}</th>
-            ))}
+
+            {Object.keys(filtered[0])
+              .filter((c) => isAdmin || !hiddenCols.includes(c))
+              .map((c) => (
+                <th key={c}>{c}</th>
+              ))}
           </tr>
         </thead>
         <tbody>
@@ -40,15 +45,17 @@ export const renderSelectedTable = ({ filtered, hasInProgress }) => {
                   <td>{inProg && <p>{itm.NOTES ?? "-"}</p>}</td>
                 )}
 
-                {Object.keys(itm).map((c) => (
-                  <td key={c}>
-                    <p>
-                      {c === "REVENUE"
-                        ? formatSelectedCurrency(itm[c])
-                        : itm[c] ?? "-"}
-                    </p>
-                  </td>
-                ))}
+                {Object.keys(itm)
+                  .filter((c) => isAdmin || !hiddenCols.includes(c))
+                  .map((c) => (
+                    <td key={c}>
+                      <p>
+                        {c === "REVENUE"
+                          ? formatSelectedCurrency(itm[c])
+                          : itm[c] ?? "-"}
+                      </p>
+                    </td>
+                  ))}
               </tr>
             );
           })}
