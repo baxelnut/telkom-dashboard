@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useLocation, Link, NavLink } from "react-router-dom";
 // Styles
 import "./Sidebar.css";
 // Components
 import ChevronIcon from "../ui/icons/ChevronIcon";
 import Icon from "../ui/icons/Icon";
-// Context
-import { useTheme } from "../../context/ThemeContext";
+// Custom hook & context
+import useLogoSrc from "../../hooks/useLogoSrc";
 import { useAuth } from "../../context/AuthContext";
 // Data
 import { SIDEBAR_MENUS } from "../../data/navData";
@@ -18,32 +18,18 @@ export default function Sidebar({
   isMobileMenuOpen,
   onMobileMenuToggle,
 }) {
+  const { isAdmin } = useAuth();
   const location = useLocation();
   const sidebarRef = useRef(null);
+  const getLogoSrc = useLogoSrc();
+  const [logoSrc, setLogoSrc] = useState(getLogoSrc);
   const [openLabel, setOpenLabel] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { isDarkMode } = useTheme();
-  const { isAdmin } = useAuth();
-
+  // Remove Admin Panel if not admin
   const filteredLinks = links.filter((item) => {
-    // Remove Admin Panel if not admin
     if (item.label === "Admin Panel" && !isAdmin) return false;
     return true;
   });
-
-  //Get Logo Based on Mode + Screen
-  const getLogoSrc = useCallback(() => {
-    const isTabletUp = window.innerWidth >= 768;
-    return isTabletUp
-      ? isDarkMode
-        ? "/logos/telkom-big-reverse.svg"
-        : "/logos/telkom-big.svg"
-      : isDarkMode
-      ? "/logos/telkom-reverse.svg"
-      : "/logos/telkom.svg";
-  }, [isDarkMode]);
-
-  const [logoSrc, setLogoSrc] = useState(getLogoSrc);
 
   // Update logo on dark mode toggle
   useEffect(() => {
@@ -92,9 +78,26 @@ export default function Sidebar({
     if (active) setOpenLabel(active.label);
   }, [location.pathname, links]);
 
-  // Helpers
   const toggleMenu = (label) => {
-    setOpenLabel((prev) => (prev === label ? null : label));
+    if (isCollapsed && !isMobile) {
+      onCollapseChange?.(false);
+      // wait a frame so layout updates, then open submenu
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setOpenLabel((prev) => (prev === label ? null : label));
+        });
+      });
+      return;
+    }
+    if (isMobile && !isMobileMenuOpen) {
+      onMobileMenuToggle?.(true);
+      setTimeout(
+        () => setOpenLabel((prev) => (prev === label ? null : label)),
+        60 // small delay so mobile menu has space to render
+      );
+      return;
+    }
+    setOpenLabel((prev) => (prev === label ? null : label)); // Normal toggle
   };
 
   const handleNavClick = () => {
