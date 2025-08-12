@@ -162,7 +162,6 @@ export default function ActionSelectedTable({
                       >
                         {isWarning ? "Segera Diproses" : "Aman"}
                       </p>
-                      <p>{row.isWarning}</p>
                     </div>
                   </td>
 
