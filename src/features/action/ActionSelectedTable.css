@@ -4,6 +4,18 @@
   overflow: auto;
 }
 
+.selected-action-table .no-data {
+  text-align: center;
+  padding: 1rem;
+}
+
+.selected-action-table .alert-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0.5rem;
+}
+
 .notes {
   background-color: var(--card);
   color: var(--text);
@@ -17,8 +29,4 @@
 
 .action-cell {
   min-width: 190px;
-}
-
-.notes:hover {
-  background-color: red !;
 }

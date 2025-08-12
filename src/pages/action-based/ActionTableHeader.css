@@ -1,0 +1,8 @@
+.filter-container.back-btn {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.card.action.table .title {
+  text-align: center;
+}
