@@ -7,34 +7,44 @@ import {
   bucketCounts,
 } from "../../helpers/actionBasedUtils";
 
-export default function ActionTable({ data, onRowClick }) {
+/**
+ * Props:
+ *  - data: { data: [...] }
+ *  - onRowClick: (witel, po, period, status) => void
+ *  - bucket: "<" | ">"  // which bucket this table renders
+ */
+export default function ActionTable({ data, onRowClick, bucket = "<" }) {
   const STATUS_COLORS = getStatusColors();
   const rows = data.data || [];
 
   const cellClass = (count, base) => (count === 0 ? "unresponsive" : base);
+
+  // map bucket symbol to the period string your app expects when navigating
+  const periodForBucket = bucket === "<" ? "<3" : ">3";
+
   const handleCellClick = (witel, po, period, status) => () =>
     onRowClick(witel, po, period, status);
 
-  const renderStatusHeaders = (prefix) =>
+  const renderStatusHeaders = () =>
     STATUSES.map((s) => (
-      <td
-        key={`${prefix}-${s}`}
+      <th
+        key={s}
         className="render-status"
         style={{ backgroundColor: STATUS_COLORS[s] }}
       >
         <strong>{s}</strong>
-      </td>
+      </th>
     ));
 
-  const renderBucketCells = (bucket, prefix, witel, po, period) =>
+  const renderBucketCells = (bucketCountsObj, prefix, witel, po) =>
     STATUSES.map((s) => (
       <td
         key={`${prefix}-${s}`}
-        className={cellClass(bucket[s], `${prefix}-cell`)}
+        className={cellClass(bucketCountsObj[s], `${prefix}-cell`)}
         style={{ cursor: "pointer" }}
-        onClick={handleCellClick(witel, po, period, s)}
+        onClick={handleCellClick(witel, po, periodForBucket, s)}
       >
-        {bucket[s]}
+        {bucketCountsObj[s]}
       </td>
     ));
 
@@ -43,16 +53,9 @@ export default function ActionTable({ data, onRowClick }) {
       <table>
         <thead>
           <tr>
-            <th rowSpan="2">PO</th>
-            <th rowSpan="2">WITEL</th>
-            <th colSpan={STATUSES.length + 1}>&lt;3 BLN</th>
-            <th colSpan={STATUSES.length + 1}>&gt;3 BLN</th>
-            <th rowSpan="2">GRAND TOTAL</th>
-          </tr>
-          <tr>
-            {renderStatusHeaders("u")}
-            <th>Total</th>
-            {renderStatusHeaders("o")}
+            <th>PO</th>
+            <th>WITEL</th>
+            {renderStatusHeaders()}
             <th>Total</th>
           </tr>
         </thead>
@@ -60,62 +63,56 @@ export default function ActionTable({ data, onRowClick }) {
         <tbody>
           {rows.map((row, idx) => {
             const { PO_NAME, WITEL, items = [] } = row;
-            const under = bucketCounts(items, "<", PO_NAME);
-            const over = bucketCounts(items, ">", PO_NAME);
-            const grandTotal = under.TOTAL + over.TOTAL;
+            // use the provided bucket to count only items in that bucket
+            const counts = bucketCounts(items, bucket, PO_NAME);
 
             return (
               <tr key={idx} className="action-table-row">
+                {/* Clicking PO opens details for this PO scoped to this bucket */}
                 <td
                   className="po-name"
                   onClick={handleCellClick(
                     WITEL,
                     PO_NAME,
-                    "ALL PERIOD",
+                    periodForBucket,
                     "ALL STATUS"
                   )}
                 >
                   <strong>{PO_NAME}</strong>
                 </td>
 
+                {/* Clicking WITEL opens details for this WITEL scoped to this bucket */}
                 <td
                   className="witel-name"
                   onClick={handleCellClick(
                     WITEL,
                     "ALL PO",
-                    "ALL PERIOD",
+                    periodForBucket,
                     "ALL STATUS"
                   )}
                 >
                   {WITEL}
                 </td>
 
-                {renderBucketCells(under, "u", WITEL, PO_NAME, "<3")}
-                <td
-                  className={cellClass(under.TOTAL, "tot-cell")}
-                  onClick={handleCellClick(WITEL, PO_NAME, "<3", "ALL STATUS")}
-                >
-                  <strong>{under.TOTAL}</strong>
-                </td>
+                {/* Status columns */}
+                {renderBucketCells(
+                  counts,
+                  bucket === "<" ? "u" : "o",
+                  WITEL,
+                  PO_NAME
+                )}
 
-                {renderBucketCells(over, "o", WITEL, PO_NAME, ">3")}
+                {/* Total for this bucket */}
                 <td
-                  className={cellClass(over.TOTAL, "tot-cell")}
-                  onClick={handleCellClick(WITEL, PO_NAME, ">3", "ALL STATUS")}
-                >
-                  <strong>{over.TOTAL}</strong>
-                </td>
-
-                <td
-                  className={cellClass(grandTotal, "tot-cell grand-total-cell")}
+                  className={cellClass(counts.TOTAL, "tot-cell")}
                   onClick={handleCellClick(
                     WITEL,
                     PO_NAME,
-                    "ALL PERIOD",
+                    periodForBucket,
                     "ALL STATUS"
                   )}
                 >
-                  <strong>{grandTotal}</strong>
+                  <strong>{counts.TOTAL}</strong>
                 </td>
               </tr>
             );
