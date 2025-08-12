@@ -59,11 +59,7 @@ export default function Dropdown({
 
       {(chevronDown || trailingIcon) && (
         <span className="dropdown-icon">
-          <Icon
-            path={trailingIcon ?? SVG_PATHS.chevronDown}
-            width={12}
-            height={12}
-          />
+          <Icon path={trailingIcon ?? SVG_PATHS.chevronDown} size={12} />
         </span>
       )}
     </div>

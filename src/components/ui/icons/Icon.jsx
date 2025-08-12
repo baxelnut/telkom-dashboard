@@ -3,21 +3,41 @@ import PropTypes from "prop-types";
 import "./Icon.css";
 
 export default function Icon({
-  path,
-  width = 16,
-  height = 16,
-  fill = "var(--text)",
   className = "",
+  path,
+  size = 16,
+  fill = "var(--text)",
   viewBox = "0 0 16 16",
   onClick = null,
   style = {},
+  text = "",
 }) {
+  // If 'text' prop exists, render text instead of paths
+  if (text != "") {
+    return (
+      <svg
+        className={`app-icon ${className}`}
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        fill={fill}
+        viewBox={viewBox}
+        onClick={onClick}
+        style={style}
+      >
+        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle">
+          {text}
+        </text>
+      </svg>
+    );
+  }
+
   return (
     <svg
-      className={`app-icon ${className}`}
+      className="app-icon"
       xmlns="http://www.w3.org/2000/svg"
-      width={width}
-      height={height}
+      width={size}
+      height={size}
       fill={fill}
       viewBox={viewBox}
       onClick={onClick}
@@ -39,10 +59,10 @@ Icon.propTypes = {
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
     PropTypes.node,
-  ]).isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  ]),
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   fill: PropTypes.string,
   className: PropTypes.string,
   viewBox: PropTypes.string,
+  text: PropTypes.string, // new optional prop for text inside SVG
 };
