@@ -16,6 +16,8 @@ import useMultiFetchData from "../../hooks/useMultiFetchData";
 import { getExportOptions, exportData } from "../../helpers/exportTableData";
 
 export default function ActionBasedPage({ API_URL }) {
+  const { user, isAdmin } = useAuth();
+  const debounceTimer = useRef(null);
   const { data, loading, error, refetch } = useMultiFetchData({
     po: `${API_URL}/regional-3/sheets/po`,
     report: `${API_URL}/regional-3/report`,
@@ -25,8 +27,6 @@ export default function ActionBasedPage({ API_URL }) {
     detailed: [null, null, null, null], // [witel, po, period, status]
     exportType: "Excel",
   });
-  const { user } = useAuth();
-  const debounceTimer = useRef(null);
   const [witel, po, period, status] = selected.detailed;
 
   const witelOptions = useMemo(() => {
@@ -230,6 +230,7 @@ export default function ActionBasedPage({ API_URL }) {
                   API_URL={API_URL}
                   userEmail={user?.email}
                   onUpdateSuccess={debounceRefresh}
+                  isAdmin={isAdmin}
                 />
               )}
             </div>

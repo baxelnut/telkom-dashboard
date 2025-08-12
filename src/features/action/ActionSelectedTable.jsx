@@ -4,18 +4,20 @@ import "./ActionSelectedTable.css";
 // Components
 import Dropdown from "../../components/ui/input/Dropdown";
 // Helpers
+import { hiddenCols } from "../../helpers/tableHelper";
+import { formatCurrency } from "../../helpers/formattingUtils";
 import {
   getStatusColors,
   ACT_OPS,
   getLogLine,
 } from "../../helpers/actionBasedUtils";
-import { formatCurrency } from "../../helpers/formattingUtils";
 
 export default function ActionSelectedTable({
-  reportData,
   API_URL,
+  reportData,
   userEmail,
   onUpdateSuccess,
+  isAdmin,
 }) {
   const [actions, setActions] = useState({});
   const [notes, setNotes] = useState({});
@@ -23,7 +25,13 @@ export default function ActionSelectedTable({
   const textareaRefs = useRef({});
   const STATUS_COLORS = getStatusColors();
 
-  const headers = inProcessItems.length ? Object.keys(inProcessItems[0]) : [];
+  // Filter out hidden columns for non-admins
+  const headers = inProcessItems.length
+    ? Object.keys(inProcessItems[0]).filter(
+        (col) => isAdmin || !hiddenCols.includes(col)
+      )
+    : [];
+
   const dropdownOptions = [
     { value: "", label: "— Select Action —" },
     ...ACT_OPS,
@@ -75,9 +83,12 @@ export default function ActionSelectedTable({
             const uuid = row.UUID;
             const status = actions[uuid] ?? row.STATUS ?? "";
             const currentNote = notes[uuid] ?? row.NOTES ?? "";
+
             return (
               <tr key={uuid} style={{ backgroundColor: STATUS_COLORS[status] }}>
                 <td>{idx + 1}</td>
+
+                {/* ACTION dropdown */}
                 <td className="action-cell">
                   <Dropdown
                     options={dropdownOptions}
@@ -95,6 +106,7 @@ export default function ActionSelectedTable({
                   />
                 </td>
 
+                {/* NOTES textarea */}
                 <td className="action-cell">
                   <textarea
                     ref={(el) => (textareaRefs.current[uuid] = el)}
@@ -115,6 +127,7 @@ export default function ActionSelectedTable({
                   />
                 </td>
 
+                {/* Data columns */}
                 {headers.map((h, i) => (
                   <td key={i} className="unresponsive">
                     {h === "REVENUE" ? formatCurrency(row[h]) : row[h] ?? "-"}
