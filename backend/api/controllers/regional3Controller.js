@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import { splitByPeriod } from "../utils/splitByPeriod.js";
+
 const { SPREADSHEET_ID, FORMATTED_GID } = process.env;
 
 const BIG_5_REGIONS = [
@@ -20,43 +22,29 @@ const isBig5Region = (region) => {
   return BIG_5_REGIONS.includes(upperRegion) ? upperRegion : "N/A";
 };
 
-const namingConvention = {
-  AO: ["New Install"],
-  SO: ["Suspend"],
-  DO: ["Disconnect"],
-  MO: [
-    "Modify",
-    "Modify BA",
-    "Modify Price",
-    "Renewal Agreement",
-    "Modify Termin",
-  ],
-  RO: ["Resume"],
-};
-
 const processData = (data) => {
   const groupedByWitel = groupBy(data, "NEW_WITEL");
 
   return Object.keys(groupedByWitel)
     .map((witelName) => {
-      if (!isBig5Region(witelName)) {
-        return null;
-      }
-
+      if (!isBig5Region(witelName)) return null;
       const witelData = groupedByWitel[witelName];
 
-      const kategoriData = witelData.reduce((result, item) => {
-        const kategori = item["KATEGORI"];
-        if (!result[kategori]) {
-          result[kategori] = processKategoriData(witelData, kategori);
-        }
-        return result;
-      }, {});
+      const kategoriData = {};
+      const categories = [...new Set(witelData.map((i) => i["KATEGORI"]))];
 
-      return {
-        witelName,
-        ...kategoriData,
-      };
+      categories.forEach((kategori) => {
+        if (kategori === "IN PROCESS") {
+          const inProcItems = witelData.filter(
+            (i) => i["KATEGORI"] === "IN PROCESS"
+          );
+          kategoriData[kategori] = splitByPeriod(inProcItems);
+        } else {
+          kategoriData[kategori] = processKategoriData(witelData, kategori);
+        }
+      });
+
+      return { witelName, ...kategoriData };
     })
     .filter(Boolean);
 };
