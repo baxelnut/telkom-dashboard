@@ -3,17 +3,20 @@ import { PieChart, Pie, Cell, Tooltip } from "recharts";
 // Style
 import "./OverviewByWitel.css";
 // Components
+import Icon from "../../components/ui/icons/Icon";
 import Error from "../../components/ui/states/Error";
 import Loading from "../../components/ui/states/Loading";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
+// Data
+import { SVG_PATHS } from "../../data/utilData";
 
 // Helpers
 const getStatusColors = () => {
   const styles = getComputedStyle(document.documentElement);
   return {
-    lanjut: styles.getPropertyValue("--success").trim(),
-    cancel: styles.getPropertyValue("--error").trim(),
+    lanjut: styles.getPropertyValue("--safe").trim(),
+    cancel: styles.getPropertyValue("--danger").trim(),
     bukan_order_reg: styles.getPropertyValue("--secondary").trim(),
     no_status: styles.getPropertyValue("--neutral").trim(),
   };
@@ -66,6 +69,7 @@ export default function OverviewByWitel({ API_URL }) {
           }))
           .filter((item) => item.value > 0);
         const total = pieData.reduce((acc, cur) => acc + cur.value, 0);
+
         return (
           <div
             key={index}
@@ -75,39 +79,52 @@ export default function OverviewByWitel({ API_URL }) {
             <h6 className="witel-name">
               {overviewStatus["new_witel"] || "Unknown"}
             </h6>
-            <div className="graph-container">
-              <PieChart width={200} height={220}>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={90}
-                  dataKey="value"
-                >
-                  {pieData.map((entry, i) => (
-                    <Cell key={`cell-${i}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={(props) => (
-                    <CustomTooltip {...props} total={total} />
-                  )}
+            {total === 0 ? (
+              <div className="no-data-graph">
+                <Icon
+                  path={SVG_PATHS.checkSquare}
+                  fill="var(--safe)"
+                  size={20}
                 />
-              </PieChart>
-            </div>
-            <div className="o-pie-dec-container">
-              {pieData.map((item, i) => (
-                <div key={i} className="o-pie-dec">
-                  <p style={{ color: item.color }}>
-                    {item.name} ({`${((item.value / total) * 100).toFixed(1)}%`}
-                    )
-                  </p>
-                  <p className="small-h" style={{ color: item.color }}>
-                    {item.value}
-                  </p>
+                <p>No "In Process" status</p>
+              </div>
+            ) : (
+              <>
+                <div className="graph-container">
+                  <PieChart width={200} height={220}>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={90}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, i) => (
+                        <Cell key={`cell-${i}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      content={(props) => (
+                        <CustomTooltip {...props} total={total} />
+                      )}
+                    />
+                  </PieChart>
                 </div>
-              ))}
-            </div>
+                <div className="o-pie-dec-container">
+                  {pieData.map((item, i) => (
+                    <div key={i} className="o-pie-dec">
+                      <p style={{ color: item.color }}>
+                        {item.name} (
+                        {`${((item.value / total) * 100).toFixed(1)}%`})
+                      </p>
+                      <p className="small-h" style={{ color: item.color }}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         );
       })}

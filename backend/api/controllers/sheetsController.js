@@ -99,40 +99,41 @@ export const processStatus = async (req, res) => {
   try {
     const data = await fetchFormattedReportData();
 
-    const filteredData = data.filter(
-      (entry) => entry["KATEGORI"] === "IN PROCESS"
-    );
+    // Get unique NEW_WITEL list
+    const allWitels = [...new Set(data.map((entry) => entry["NEW_WITEL"]))];
 
+    // Pre-fill resultMap with 0s
     const resultMap = {};
-
-    filteredData.forEach((entry) => {
-      const witel = entry["NEW_WITEL"];
-
-      if (!resultMap[witel]) {
-        resultMap[witel] = {
-          new_witel: witel,
-          lanjut: 0,
-          cancel: 0,
-          bukan_order_reg: 0,
-          no_status: 0,
-        };
-      }
-
-      switch (entry["STATUS"]) {
-        case "Lanjut":
-          resultMap[witel].lanjut++;
-          break;
-        case "Cancel":
-          resultMap[witel].cancel++;
-          break;
-        case "Bukan Order Reg":
-          resultMap[witel].bukan_order_reg++;
-          break;
-        default:
-          resultMap[witel].no_status++;
-          break;
-      }
+    allWitels.forEach((witel) => {
+      resultMap[witel] = {
+        new_witel: witel,
+        lanjut: 0,
+        cancel: 0,
+        bukan_order_reg: 0,
+        no_status: 0,
+      };
     });
+
+    // Loop only over "IN PROCESS" rows to increment
+    data
+      .filter((entry) => entry["KATEGORI"] === "IN PROCESS")
+      .forEach((entry) => {
+        const witel = entry["NEW_WITEL"];
+        switch (entry["STATUS"]) {
+          case "Lanjut":
+            resultMap[witel].lanjut++;
+            break;
+          case "Cancel":
+            resultMap[witel].cancel++;
+            break;
+          case "Bukan Order Reg":
+            resultMap[witel].bukan_order_reg++;
+            break;
+          default:
+            resultMap[witel].no_status++;
+            break;
+        }
+      });
 
     res.status(200).json({ data: Object.values(resultMap) });
   } catch (err) {
