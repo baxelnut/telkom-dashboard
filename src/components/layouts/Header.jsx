@@ -19,7 +19,6 @@ export default function Header({
   API_URL,
 }) {
   const { isDarkMode, setIsDarkMode } = useTheme();
-
   const [userDisplay, setUserDisplay] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
@@ -38,13 +37,22 @@ export default function Header({
     const fetchUserData = async () => {
       try {
         const res = await fetch(
-          `${API_URL}/admin/user-info?email=${user.email}`
+          `${API_URL}/admin/user-info?email=${encodeURIComponent(user.email)}`
         );
-        if (!res.ok) throw new Error("Failed to fetch user data");
-
+        const raw = await res.clone().text();
+        if (!res.ok) {
+          let errText; // parse json error if backend returns json
+          try {
+            errText = await res.json();
+          } catch (e) {
+            errText = raw;
+          }
+          throw new Error(
+            "Failed to fetch user data: " + (errText?.message || errText)
+          );
+        }
         const json = await res.json();
         const userData = json.data;
-
         setUserDisplay((prev) => ({
           ...prev,
           fullName: userData.fullName || prev.fullName,
@@ -54,7 +62,6 @@ export default function Header({
         console.error("🔥 Failed to fetch full user data:", err);
       }
     };
-
     if (user?.email) {
       fetchUserData();
     }

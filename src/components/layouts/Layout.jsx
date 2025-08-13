@@ -10,7 +10,6 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function Layout({ pageTitle, children, API_URL }) {
   const { user } = useAuth();
-
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
