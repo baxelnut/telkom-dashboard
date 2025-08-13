@@ -54,14 +54,14 @@ export async function sendTableToTelegram({
     const json = await res.json();
 
     if (res.ok) {
-      if (setStatus) setStatus("✅ Table sent to Telegram!");
+      if (setStatus) setStatus("Sent to Telegram!");
       console.log("Telegram image sent:", json);
     } else {
-      if (setStatus) setStatus("❌ Failed to send.");
+      if (setStatus) setStatus("Failed to send.");
       console.error("Telegram image error:", json);
     }
   } catch (err) {
     console.error("Telegram send error:", err);
-    if (setStatus) setStatus("❌ Error while sending.");
+    if (setStatus) setStatus("Error while sending.");
   }
 }
