@@ -15,23 +15,23 @@ export default function RoleTable({
     <table className="role-table">
       <thead>
         <tr>
-          <th> {/* Numbers */}</th>
+          <th>{/* Numbers */}</th>
           <th>Role</th>
           <th>Name</th>
           <th>Email</th>
-          <th>User ID</th>
+          <th>ID</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         {users.map((user, i) => {
-          const { role, email, fullName, id } = user;
+          const { role, email, fullName, docId } = user;
           const newRole = role === "admin" ? "user" : "admin";
           const capitalizedRole =
             role?.charAt(0).toUpperCase() + role?.slice(1);
 
           return (
-            <tr key={id}>
+            <tr key={docId}>
               <td style={{ textAlign: "center" }}>{i + 1}</td>
               <td
                 className={`${
@@ -47,8 +47,9 @@ export default function RoleTable({
                 <p>{email}</p>
               </td>
               <td>
-                <p>{id}</p>
+                <p>{docId}</p>
               </td>
+
               <td>
                 <div className="btn-container">
                   {context === "pending" ? (
@@ -82,7 +83,7 @@ export default function RoleTable({
                         hollow={newRole === "user"}
                       />
                       <Button
-                        text="Revoke access"
+                        text="Revoke"
                         iconPath={SVG_PATHS.xLarge}
                         onClick={() => onRoleChange(email, "waiting approval")}
                         backgroundColor="var(--danger)"
