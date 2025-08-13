@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 // Style
 import "./GalaksiReportPage.css";
 // Components
-import AchExplaination from "../../../features/reports/galaksi/AchExplaination";
 import CardContent from "../../../components/ui/cards/CardContent";
 import GalaksiTable from "../../../features/reports/galaksi/GalaksiTable";
 // Custom hook
@@ -41,7 +40,6 @@ export default function GalaksiReportPage({ API_URL }) {
         <h6 className="small-h">{`${formattedDate} ${formattedTime}`}</h6>
       </div>
       <div className="card galaksi table">
-        <AchExplaination />
         <CardContent
           loading={loading}
           error={error}

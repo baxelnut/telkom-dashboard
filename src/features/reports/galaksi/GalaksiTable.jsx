@@ -2,6 +2,7 @@ import { useState } from "react";
 // /Style
 import "./GalaksiTable.css";
 // Components
+import AchExplanation from "../../../features/reports/galaksi/AchExplaination";
 import Button from "../../../components/ui/buttons/Button";
 // Context
 import { useAuth } from "../../../context/AuthContext";
@@ -44,18 +45,19 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
     <div className="galaksi-table">
       {isAdmin && (
         <div className="filter-container announce">
-          <p>{status}</p>
           <Button
             id="announce-galaksi"
-            text="Announce!"
+            text={status == "" ? "Announce Telegram" : status}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
-            backgroundColor={"var(--safe)"}
-            rounded
+            backgroundColor="#0088cc"
             iconAfter
+            short
           />
         </div>
       )}
+      <AchExplanation />
+
       <div className="table-wrapper">
         <table>
           <thead>

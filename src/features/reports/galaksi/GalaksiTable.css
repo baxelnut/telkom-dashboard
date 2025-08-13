@@ -8,6 +8,10 @@
   gap: 0.5rem;
 }
 
+.galaksi-table .filter-container.announce {
+  justify-content: start;
+}
+
 .galaksi-table .table-wrapper table {
   pointer-events: none !important;
 }
