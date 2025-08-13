@@ -35,7 +35,7 @@
 }
 
 /* Respect user-defined hover color in custom-hover */
-.custom-hover:hover h6,
+.custom-hover:hover *,
 .custom-hover:hover svg {
   color: var(--btn-hover-color, var(--bg)) !important;
 }
@@ -55,13 +55,6 @@
 .custom-hover:hover *,
 .custom-hover:hover svg {
   color: var(--btn-hover-color, var(--bg));
-}
-
-/* Icon sizes inside buttons */
-.btn svg,
-.hollow svg {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 /* Full width button */
@@ -114,14 +107,9 @@
 
 /* Optional compact style */
 .short {
-  padding: 6px 14px !important;
+  padding: 8px 14px !important;
   line-height: 1;
   max-height: 36px;
-}
-
-.short svg {
-  width: 1rem;
-  height: 1rem;
 }
 
 .btn:hover,
