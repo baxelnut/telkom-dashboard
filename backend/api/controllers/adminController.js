@@ -3,18 +3,17 @@ import { db } from "../firebaseAdmin.js";
 export const getAllUsers = async (req, res) => {
   try {
     const usersSnapshot = await db.collection("users").get();
-
     if (usersSnapshot.empty) {
       return res.status(404).json({ error: "No admins found" });
     }
-
     const admins = usersSnapshot.docs.map((doc) => ({
       id: doc.id,
       fullName: doc.data().fullName,
       email: doc.data().email,
       role: doc.data().role,
+      docId: doc.data().docId,
+      uid: doc.data().uid,
     }));
-
     res.status(200).json({ data: admins });
   } catch (err) {
     console.error("🔥 getAllUsers Error:", err);
@@ -30,20 +29,19 @@ export const getUserByEmail = async (req, res) => {
       .where("email", "==", email)
       .limit(1)
       .get();
-
     if (snapshot.empty) {
       return res.status(404).json({ error: "User not found" });
     }
-
     const userDoc = snapshot.docs[0];
     const userData = userDoc.data();
-
     res.status(200).json({
       data: {
         id: userDoc.id,
         email: userData.email,
         role: userData.role,
         fullName: userData.fullName,
+        docId: userData.docId,
+        uid: userData.uid,
       },
     });
   } catch (err) {
@@ -58,17 +56,16 @@ export const getAllAdmins = async (req, res) => {
       .collection("users")
       .where("role", "==", "admin")
       .get();
-
     if (usersSnapshot.empty) {
       return res.status(404).json({ error: "No admins found" });
     }
-
     const admins = usersSnapshot.docs.map((doc) => ({
       id: doc.id,
       email: doc.data().email,
       role: doc.data().role,
+      docId: doc.data().docId,
+      uid: doc.data().uid,
     }));
-
     res.status(200).json({ data: admins });
   } catch (err) {
     console.error("🔥 getAllAdmins Error:", err);
@@ -82,24 +79,20 @@ export const getAdminInfo = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "Missing userId param" });
     }
-
     const userDoc = await db.collection("users").doc(userId).get();
-
     if (!userDoc.exists) {
       return res.status(404).json({ error: "User not found" });
     }
-
     const userData = userDoc.data();
-
     if (userData.role !== "admin") {
       return res.status(403).json({ error: "Access denied: Not an admin" });
     }
-
     const adminInfo = {
       email: userData.email,
       role: userData.role,
+      docId: userData.docId,
+      uid: userData.uid,
     };
-
     res.status(200).json({ data: adminInfo });
   } catch (err) {
     console.error("🔥 getAdminInfo Error:", err);
@@ -110,27 +103,21 @@ export const getAdminInfo = async (req, res) => {
 export const updateUserRole = async (req, res) => {
   try {
     const { email, role } = req.body;
-
     if (!email || !role) {
       return res
         .status(400)
         .json({ error: "Missing 'email' or 'role' in body" });
     }
-
     const usersSnapshot = await db
       .collection("users")
       .where("email", "==", email)
       .get();
-
     if (usersSnapshot.empty) {
       return res.status(404).json({ error: "User not found" });
     }
-
     const userDoc = usersSnapshot.docs[0];
     const userRef = userDoc.ref;
-
     await userRef.update({ role });
-
     return res
       .status(200)
       .json({ message: `User role updated to '${role}' for ${email}` });
@@ -144,26 +131,30 @@ export const updateUserRole = async (req, res) => {
 
 export const registerNewUser = async (req, res) => {
   try {
-    const { email, firstName, lastName } = req.body;
-
-    if (!email || !firstName || !lastName) {
+    const { uid, email, firstName, lastName } = req.body;
+    if (!uid || !email || !firstName || !lastName) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
     const fullName = `${firstName} ${lastName}`;
     const role = "waiting approval";
-
-    const newUserRef = db.collection("users").doc();
-    await newUserRef.set({
+    const userRef = db.collection("users").doc(uid);
+    // If doc exists, respond 409
+    const snapshot = await userRef.get();
+    if (snapshot.exists) {
+      return res.status(409).json({ error: "User already registered" });
+    }
+    // Write authoritative data. docId same as uid for consistency.
+    await userRef.set({
+      uid,
       email,
       fullName,
       role,
+      docId: uid,
+      createdAt: new Date().toISOString(),
     });
-
-    res.status(201).json({
-      message: "User registered and waiting approval",
-      userId: newUserRef.id,
-    });
+    res
+      .status(201)
+      .json({ message: "User registered and waiting approval", uid });
   } catch (err) {
     console.error("🔥 registerNewUser Error:", err);
     res.status(500).json({ error: err.message || "Server error" });
