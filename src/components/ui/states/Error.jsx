@@ -3,7 +3,7 @@ import "./Error.css";
 // Components
 import Icon from "../icons/Icon";
 // Data
-import { SVG_PATHS } from "../../../data/utilData";
+import { SVG_PATHS } from "../../../data/utilsData";
 
 export default function Error({ message, className = "error-container" }) {
   const displayMessage = message?.trim() ? message : "Something went wrong!";

@@ -3,7 +3,7 @@ import "./RoleTable.css";
 // Components
 import Button from "../../components/ui/buttons/Button";
 // Data
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 
 export default function RoleTable({
   users = [],

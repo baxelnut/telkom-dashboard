@@ -7,7 +7,7 @@ import Button from "../../../components/ui/buttons/Button";
 // Context
 import { useAuth } from "../../../context/AuthContext";
 // Data
-import { SVG_PATHS } from "../../../data/utilData";
+import { SVG_PATHS } from "../../../data/utilsData";
 // Helpers
 import { CUSTOM_ORDER } from "../../../helpers/overviewUtils";
 import { sendTableToTelegram } from "../../bot/sendTableToTelegram";

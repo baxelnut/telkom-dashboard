@@ -1,4 +1,4 @@
-import { SVG_PATHS } from "./utilData";
+import { SVG_PATHS } from "./utilsData";
 
 export const SIDEBAR_MENUS = [
   {

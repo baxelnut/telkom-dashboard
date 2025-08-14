@@ -1,7 +1,7 @@
 // Style
 import "./ChevronIcon.css";
 // Data
-import { SVG_PATHS } from "../../../data/utilData";
+import { SVG_PATHS } from "../../../data/utilsData";
 
 const directionMap = {
   up: "chevronUp",

@@ -5,7 +5,7 @@ import "./ActionSelectedTable.css";
 import Dropdown from "../../components/ui/input/Dropdown";
 import Icon from "../../components/ui/icons/Icon";
 // Data
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 // Helpers
 import { hiddenCols } from "../../helpers/tableHelper";
 import { formatCurrency } from "../../helpers/formattingUtils";

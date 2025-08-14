@@ -9,7 +9,7 @@ import Loading from "../../components/ui/states/Loading";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
 // Data
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 
 // Helpers
 const getStatusColors = () => {

@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import "./UserProfile.css";
 import Button from "../../components/ui/buttons/Button";
 import InputField from "../../components/ui/input/InputField";
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 import { useNavigate } from "react-router-dom";
 
 export default function UserProfile({ userData, showProfile }) {

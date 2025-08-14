@@ -12,7 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
 // Data
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 
 export default function AdminPanelPage({ API_URL }) {
   const {

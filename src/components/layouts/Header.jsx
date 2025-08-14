@@ -7,7 +7,7 @@ import UserProfile from "../../features/auth/UserProfile";
 // Context
 import { useTheme } from "../../context/ThemeContext";
 // Data
-import { SVG_PATHS } from "../../data/utilData";
+import { SVG_PATHS } from "../../data/utilsData";
 
 export default function Header({
   title,

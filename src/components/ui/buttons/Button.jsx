@@ -4,7 +4,7 @@ import "./Button.css";
 // Components
 import Icon from "../icons/Icon";
 // Data
-import { SVG_PATHS } from "../../../data/utilData";
+import { SVG_PATHS } from "../../../data/utilsData";
 
 export default function Button({
   id = null,
