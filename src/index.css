@@ -138,7 +138,8 @@ option,
 li,
 a,
 blockquote,
-span {
+span,
+em {
   font-size: clamp(0.9rem, 0.9vw, 1rem);
 }
 
