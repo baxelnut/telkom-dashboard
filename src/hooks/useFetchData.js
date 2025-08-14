@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
  */
 export default function useFetchData(url, skip = false) {
   const [data, setData] = useState([]);
-  const [raw, setRaw] = useState(null); // 🌟 NEW
+  const [raw, setRaw] = useState(null);
   const [loading, setLoading] = useState(!skip);
   const [error, setError] = useState(null);
 
