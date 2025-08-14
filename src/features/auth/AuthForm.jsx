@@ -66,6 +66,7 @@ export default function AuthForm() {
             value={form.firstName}
             onChange={handleChange("firstName")}
             fullWidth
+            required
           />
           <InputField
             label="Last Name"
@@ -73,6 +74,7 @@ export default function AuthForm() {
             value={form.lastName}
             onChange={handleChange("lastName")}
             fullWidth
+            required
           />
           <InputField
             label="Telegram ID"
@@ -81,6 +83,7 @@ export default function AuthForm() {
             onChange={handleChange("telegramId")}
             fullWidth
             isId
+            required
           />
         </>
       )}
@@ -92,6 +95,7 @@ export default function AuthForm() {
         value={form.email}
         onChange={handleChange("email")}
         fullWidth
+        required
       />
       <InputField
         label="Password"
@@ -101,6 +105,7 @@ export default function AuthForm() {
         onChange={handleChange("password")}
         obscurial
         fullWidth
+        required
       />
 
       <div className="helper-container">
