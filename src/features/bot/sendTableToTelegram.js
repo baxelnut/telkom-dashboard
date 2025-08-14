@@ -4,7 +4,7 @@ import html2canvas from "html2canvas";
  * Sends a screenshot of a table to Telegram with a custom message.
  * @param {object} options
  * @param {string} options.selector - CSS selector of the table container (e.g., ".aosodomoro-table")
- * @param {string} options.apiUrl - Backend base URL (e.g., "http://localhost:5000/api")
+ * @param {string} options.API_URL - Backend base URL (e.g., "http://localhost:5000/api")
  * @param {string} options.target - "group" or "private"
  * @param {function} [options.setTeleStatus] - Optional setter for UI feedback
  * @param {string} options.title - Message header/title
@@ -14,7 +14,7 @@ import html2canvas from "html2canvas";
  */
 export async function sendTableToTelegram({
   selector,
-  apiUrl,
+  API_URL,
   target = "group",
   setTeleStatus,
   title,
@@ -22,11 +22,11 @@ export async function sendTableToTelegram({
   link,
   dateStr,
 }) {
-  if (setTeleStatus) setTeleStatus("📸 Capturing table...");
+  if (setTeleStatus) setTeleStatus("Please wait...");
 
   const table = document.querySelector(selector);
   if (!table) {
-    if (setTeleStatus) setTeleStatus("❌ Table not found.");
+    if (setTeleStatus) setTeleStatus("Table not found.");
     console.error(`Table with selector "${selector}" not found.`);
     return;
   }
@@ -46,7 +46,7 @@ export async function sendTableToTelegram({
 
     formData.append("caption", caption);
 
-    const res = await fetch(`${apiUrl}/telegram/photo`, {
+    const res = await fetch(`${API_URL}/telegram/photo`, {
       method: "POST",
       body: formData,
     });
@@ -54,7 +54,7 @@ export async function sendTableToTelegram({
     const json = await res.json();
 
     if (res.ok) {
-      if (setTeleStatus) setTeleStatus("Sent to Telegram!");
+      if (setTeleStatus) setTeleStatus("Sent!");
     } else {
       if (setTeleStatus) setTeleStatus("Failed to send.");
       console.error("Telegram image error:", json);
