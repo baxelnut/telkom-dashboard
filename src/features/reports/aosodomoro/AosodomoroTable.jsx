@@ -110,15 +110,19 @@ export default function AosodomoroTable({
             short
           />
 
-          {/* <Button
+          <Button
             id="refresh-gsheets"
-            text={gsheetStatus ?? "Refresh Gsheets"}
+            text={
+              gsheetStatus == "" || gsheetStatus == null
+                ? "Refresh Gsheets"
+                : gsheetStatus
+            }
             onClick={handleRefreshGsheets}
             iconPath={SVG_PATHS.sheets}
             backgroundColor="#34A853"
             iconAfter
             short
-          /> */}
+          />
         </div>
       )}
       <div className="table-wrapper">
