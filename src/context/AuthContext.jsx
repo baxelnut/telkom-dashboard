@@ -27,7 +27,9 @@ export function AuthProvider({ children }) {
 
         // Get role from backend
         const res = await fetch(
-          `${API_URL}/admin/user-info?email=${encodeURIComponent(fbUser.email)}`
+          `${API_URL}/admin/user-info/by-email?email=${encodeURIComponent(
+            fbUser.email
+          )}`
         );
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed to fetch role");
