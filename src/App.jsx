@@ -6,16 +6,17 @@ import {
 } from "react-router-dom";
 // Style
 import "./App.css";
+// Components
+import AdminPanelPage from "./pages/admin-panel/AdminPanelPage";
+import LoginPage from "./pages/auth/LoginPage";
+import ManageUserPage from "./pages/admin-panel/ManageUserPage";
+import PageNotFound from "./pages/PageNotFound";
+import ScrollToTop from "./components/utils/ScrollToTop";
 // Layouts
 import Layout from "./components/layouts/Layout";
 // Routes
 import { appRoutes } from "./routes/AppRoutes";
 import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
-// Components
-import AdminPanelPage from "./pages/admin-panel/AdminPanelPage";
-import ScrollToTop from "./components/utils/ScrollToTop";
-import PageNotFound from "./pages/PageNotFound";
-import LoginPage from "./pages/auth/LoginPage";
 // Context
 import { useTheme } from "./context/ThemeContext";
 // API URLs
@@ -63,6 +64,14 @@ export default function App() {
                 <Layout pageTitle="Admin Panel" API_URL={API_URL}>
                   <AdminPanelPage API_URL={API_URL} />
                 </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-panel/:uid"
+            element={
+              <ProtectedRoute adminOnly>
+                <ManageUserPage API_URL={API_URL} />
               </ProtectedRoute>
             }
           />
