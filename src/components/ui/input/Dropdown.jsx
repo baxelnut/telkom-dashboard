@@ -6,6 +6,7 @@ import Icon from "../icons/Icon";
 import { SVG_PATHS } from "../../../data/utilsData";
 
 export default function Dropdown({
+  name,
   options = [],
   value = "",
   onChange = () => {},
@@ -17,6 +18,7 @@ export default function Dropdown({
   backgroundColor = null,
   textColor = null,
   chevronDown = false,
+  disabled = false,
 }) {
   const classes = [
     "dropdown",
@@ -35,10 +37,12 @@ export default function Dropdown({
   return (
     <div className="dropdown-wrapper" style={style}>
       <select
+        name={name}
         className={classes}
         value={value}
         onChange={onChange}
         style={{ color: textColor }}
+        disabled={disabled}
       >
         {options.map((option) =>
           option.options ? (

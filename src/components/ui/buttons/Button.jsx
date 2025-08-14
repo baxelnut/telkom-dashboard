@@ -16,7 +16,7 @@ export default function Button({
   rounded = false,
   short = false,
   iconPath = null,
-  iconSize = 16,
+  iconSize = 14,
   iconAfter = false,
   viewBox = "0 0 16 16",
   onClick = null,
@@ -62,8 +62,7 @@ export default function Button({
   const iconComponent = iconPath ? (
     <Icon
       path={iconPath}
-      width={iconSize}
-      height={iconSize}
+      size={iconSize} 
       fill={textColor || "var(--btn-color)"}
       viewBox={viewBox}
     />
