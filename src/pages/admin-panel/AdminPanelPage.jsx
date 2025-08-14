@@ -66,7 +66,7 @@ export default function AdminPanelPage({ API_URL }) {
   const declinedUsers = users.filter((u) => u.role === "declined");
 
   return (
-    <div className="admin-panel-page">
+    <div className="page admin-panel">
       <Helmet>
         <title>Admin Panel | Telkom</title>
         <meta
@@ -101,14 +101,15 @@ export default function AdminPanelPage({ API_URL }) {
                       ? "No declined users found."
                       : "No pending approvals yet."}
                   </h6>
-                  <p className="small-p">
+                  <em className="not-set">
                     {showDeclined
                       ? "You’ve either accepted all or none were submitted."
                       : "Once users sign up and request access, they’ll appear here for approval."}
-                  </p>
+                  </em>
                 </div>
               ) : (
                 <RoleTable
+                  API_URL={API_URL}
                   users={showDeclined ? declinedUsers : pendingUsers}
                   showDeclined={showDeclined}
                   onRoleChange={updateUserRole}
@@ -128,6 +129,7 @@ export default function AdminPanelPage({ API_URL }) {
           children={
             <div className="table-wrapper">
               <RoleTable
+                API_URL={API_URL}
                 users={approvedUsers}
                 onRoleChange={updateUserRole}
                 context="approved"

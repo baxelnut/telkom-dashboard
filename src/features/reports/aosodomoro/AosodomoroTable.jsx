@@ -6,7 +6,7 @@ import Button from "../../../components/ui/buttons/Button";
 // Context
 import { useAuth } from "../../../context/AuthContext";
 // Data
-import { SVG_PATHS } from "../../../data/utilData";
+import { SVG_PATHS } from "../../../data/utilsData";
 // Helpers
 import { formatDate } from "../../../helpers/formattingUtils";
 import { sendTableToTelegram } from "../../../features/bot/sendTableToTelegram";
@@ -18,15 +18,16 @@ import {
 } from "./aosodomoroRenderers";
 
 export default function AosodomoroTable({
+  API_URL,
   tableData,
   selectedSegmen,
   selectedSubtypes,
   onCellSelect,
-  API_URL,
 }) {
   const { isAdmin } = useAuth();
   const [status, setStatus] = useState("");
   const [selectedCell, setSelectedCell] = useState(null);
+
   const handleCellClick = (celltableData) => {
     setSelectedCell(celltableData);
     onCellSelect(celltableData);
@@ -47,19 +48,78 @@ export default function AosodomoroTable({
     });
   };
 
+  const handleRefreshGsheets = async () => {
+    try {
+      setStatus("Refreshing GSheets...");
+      // Build API base:
+      const url = `${API_URL}/gas/push`;
+
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // optionally forward some context to server/GAS; keep minimal
+        body: JSON.stringify({
+          meta: {
+            triggeredBy: "frontend",
+            timestamp: new Date().toISOString(),
+          },
+        }),
+      });
+
+      // network-level failure will throw above
+      const text = await resp.text();
+      // Try parse JSON body
+      let data;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (err) {
+        // Not JSON — show raw snippet for debugging
+        setStatus("GSheets: unexpected response (see console)");
+        console.error("Non-JSON response from /api/gas/push:", text);
+        return;
+      }
+
+      if (!resp.ok || !data?.ok) {
+        const errorMsg = data?.error || `HTTP ${resp.status}`;
+        setStatus(`GSheets Error: ${errorMsg}`);
+        console.error("GSheets error detail:", data);
+        return;
+      }
+
+      setStatus("GSheets refresh triggered ✔️");
+      console.log("GAS response:", data);
+    } catch (err) {
+      console.error("Fetch error", err);
+      setStatus("Failed to refresh GSheets");
+    } finally {
+      // clear status after 4s so UI returns to normal
+      setTimeout(() => setStatus(""), 4000);
+    }
+  };
+
   return (
     <div className="table-scroll aosodomoro-table">
       {isAdmin && (
         <div className="filter-container announce">
-          <p>{status}</p>
-          <Button
+          {/* <Button
             id="announce-aosodomoro"
-            text="Announce!"
+            text={status == "" ? "Announce Telegram" : status}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
-            backgroundColor={"var(--safe)"}
-            rounded
+            backgroundColor="#0088cc"
             iconAfter
+            short
+          /> */}
+          <Button
+            id="refresh-gsheets"
+            text={status == "" ? "Refresh Gsheets" : status}
+            onClick={handleRefreshGsheets}
+            iconPath={SVG_PATHS.sheets}
+            backgroundColor="#34A853"
+            iconAfter
+            short
           />
         </div>
       )}
