@@ -139,7 +139,7 @@ function toTitleCase(str) {
 export const registerNewUser = async (req, res) => {
   try {
     let { uid, email, firstName, lastName, telegramId } = req.body;
-    if (!uid || !email || !firstName || !lastName) {
+    if (!uid || !email || !firstName || !lastName || !telegramId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     firstName = toTitleCase(firstName);
