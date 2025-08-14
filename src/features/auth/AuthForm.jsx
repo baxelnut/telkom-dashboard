@@ -27,6 +27,7 @@ export default function AuthForm() {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
+    telegramId: "",
     email: "",
     password: "",
   });
@@ -39,8 +40,9 @@ export default function AuthForm() {
     if (user) navigate("/overview", { replace: true });
   }, [user]);
 
-  const handleChange = (field) => (e) =>
+  const handleChange = (field) => (e) => {
     setForm({ ...form, [field]: e.target.value });
+  };
 
   if (loading)
     return (
@@ -59,30 +61,42 @@ export default function AuthForm() {
       {isSignup && (
         <>
           <InputField
-            placeholder="First Name"
+            label="First Name"
+            placeholder="Enter first name"
             value={form.firstName}
             onChange={handleChange("firstName")}
             fullWidth
           />
           <InputField
-            placeholder="Last Name"
+            label="Last Name"
+            placeholder="Enter last name"
             value={form.lastName}
             onChange={handleChange("lastName")}
             fullWidth
+          />
+          <InputField
+            label="Telegram ID"
+            placeholder="Enter Telegram ID"
+            value={form.telegramId}
+            onChange={handleChange("telegramId")}
+            fullWidth
+            isId
           />
         </>
       )}
 
       <InputField
+        label="Email"
         type="email"
-        placeholder="Email"
+        placeholder="Enter your email"
         value={form.email}
         onChange={handleChange("email")}
         fullWidth
       />
       <InputField
+        label="Password"
         type="password"
-        placeholder="Password"
+        placeholder="Enter your password"
         value={form.password}
         onChange={handleChange("password")}
         obscurial

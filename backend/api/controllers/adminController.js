@@ -129,32 +129,41 @@ export const updateUserRole = async (req, res) => {
   }
 };
 
+function toTitleCase(str) {
+  return str
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export const registerNewUser = async (req, res) => {
   try {
-    const { uid, email, firstName, lastName } = req.body;
+    let { uid, email, firstName, lastName, telegramId } = req.body;
     if (!uid || !email || !firstName || !lastName) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+    firstName = toTitleCase(firstName);
+    lastName = toTitleCase(lastName);
     const fullName = `${firstName} ${lastName}`;
     const role = "waiting approval";
     const userRef = db.collection("users").doc(uid);
-    // If doc exists, respond 409
     const snapshot = await userRef.get();
     if (snapshot.exists) {
       return res.status(409).json({ error: "User already registered" });
     }
-    // Write authoritative data. docId same as uid for consistency.
     await userRef.set({
       uid,
+      docId: uid,
+      role,
       email,
       fullName,
-      role,
-      docId: uid,
+      telegramId,
       createdAt: new Date().toISOString(),
     });
-    res
-      .status(201)
-      .json({ message: "User registered and waiting approval", uid });
+    res.status(201).json({
+      message: "User registered and waiting approval",
+      uid,
+    });
   } catch (err) {
     console.error("🔥 registerNewUser Error:", err);
     res.status(500).json({ error: err.message || "Server error" });

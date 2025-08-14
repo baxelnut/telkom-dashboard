@@ -39,6 +39,7 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
     isSignup,
     firstName,
     lastName,
+    telegramId,
   }) => {
     if (!email || !password)
       return showError("Email and password cannot be empty.");
@@ -61,7 +62,7 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
         const res = await fetch(`${API_URL}/admin/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid, email, firstName, lastName }),
+          body: JSON.stringify({ uid, email, firstName, lastName, telegramId }),
         });
 
         const text = await res.text();
