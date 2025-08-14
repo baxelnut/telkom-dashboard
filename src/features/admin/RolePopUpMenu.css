@@ -1,0 +1,16 @@
+.popup-menu {
+  width: fit-content;
+  min-width: 240px;
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  background-color: var(--card);
+  border: 1px solid var(--text);
+  box-shadow: 0px 0px 12px var(--text);
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+}

@@ -1,7 +1,24 @@
+.role-table {
+  overflow: visible;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.role-table td {
+  overflow: visible;
+  padding: 8px 6px;
+}
+
+.action-td {
+  white-space: nowrap; /* Prevent wrapping */
+  width: 1%; /* Force minimal space */
+}
+
 .role-table .btn-container {
+  position: relative; /* anchor for popup */
+  width: fit-content;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
   gap: 0.5rem;
 }
 
@@ -11,4 +28,8 @@
 
 .role-table td p {
   max-width: fit-content;
+}
+
+.role-table .icon-button {
+  cursor: pointer;
 }
