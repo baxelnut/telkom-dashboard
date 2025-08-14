@@ -62,6 +62,23 @@
   background-color: rgb(var(--secondary-rgb), 0.5);
 }
 
+.aosodomoro .loading-overlay {
+  position: fixed;
+  inset: 0; /* top:0; bottom:0; left:0; right:0; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(var(--text-rgb), 0.85);
+  z-index: 9999;
+}
+
+.aosodomoro .loading-overlay p {
+  color: var(--bg) !important;
+  background-color: var(--primary-variant);
+  box-shadow: 0 0px 10px rgba(var(--neutral-rgb), 0.25);
+  padding: 0.5rem 1rem;
+}
+
 /* Tablet and up */
 @media (min-width: 768px) {
   .aosodomoro.filter .subtype-filter {

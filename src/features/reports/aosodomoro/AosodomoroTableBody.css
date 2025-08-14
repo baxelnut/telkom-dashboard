@@ -1,0 +1,16 @@
+.aosodomoro-row {
+  background-color: var(--secondary);
+}
+
+.grand-total-row {
+  background-color: var(--primary-variant);
+}
+
+.aosodomoro-row *,
+.grand-total-row * {
+  color: white !important;
+}
+
+.aosodomoro-row td:hover {
+  background-color: var(--primary-variant);
+}

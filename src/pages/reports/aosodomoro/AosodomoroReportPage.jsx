@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 // Style
 import "./AosodomoroReportPage.css";
@@ -6,6 +6,7 @@ import "./AosodomoroReportPage.css";
 import AosodomoroTableCard from "./AosodomoroTableCard";
 import AosodomoroSelectedCard from "./AosodomoroSelectedCard";
 import Checkbox from "../../../components/ui/input/Checkbox";
+import Loading from "../../../components/ui/states/Loading";
 // Custom hook & Context
 import useFetchData from "../../../hooks/useFetchData";
 import { useAuth } from "../../../context/AuthContext";
@@ -29,6 +30,8 @@ export default function AosodomoroReportPage({ API_URL }) {
           ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
         );
   });
+  const [teleStatus, setTeleStatus] = useState(null);
+  const [gsheetStatus, setGsheetsStatus] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("selectedSubtypes", JSON.stringify(selectedSubtypes));
@@ -71,6 +74,12 @@ export default function AosodomoroReportPage({ API_URL }) {
     await exportData(type, flatData, customSheetName);
   };
 
+  const isLoading = useMemo(() => {
+    const check = (s) =>
+      !!s && typeof s === "string" && s.toLowerCase().includes("please wait");
+    return check(teleStatus) || check(gsheetStatus);
+  }, [teleStatus, gsheetStatus]);
+
   return (
     <div className="report-page aosodomoro">
       <Helmet>
@@ -80,6 +89,12 @@ export default function AosodomoroReportPage({ API_URL }) {
           content="Analytical report for AOSODOMORO initiatives, containing key performance indicators and strategic insights."
         />
       </Helmet>
+
+      {isLoading && (
+        <div className="loading-overlay">
+          <Loading label="Working on it... Please do not close this window" />
+        </div>
+      )}
 
       {!selectedCell && (
         <div className="card aosodomoro filter">
@@ -110,6 +125,8 @@ export default function AosodomoroReportPage({ API_URL }) {
           onExport={handleExport}
           onCellSelect={setSelectedCell}
           API_URL={API_URL}
+          setTeleStatus={setTeleStatus} // Pass down
+          setGsheetsStatus={setGsheetsStatus} // Pass down
         />
       ) : (
         <AosodomoroSelectedCard

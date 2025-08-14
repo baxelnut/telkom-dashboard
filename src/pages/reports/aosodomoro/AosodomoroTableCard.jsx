@@ -20,6 +20,8 @@ export default function AosodomoroTableCard({
   onExport,
   onCellSelect,
   API_URL,
+  setTeleStatus, // Received from parent
+  setGsheetsStatus, // Received from parent
 }) {
   return (
     <div className="card aosodomoro table">
@@ -82,6 +84,8 @@ export default function AosodomoroTableCard({
               selectedSubtypes={selectedSubtypes}
               onCellSelect={onCellSelect}
               API_URL={API_URL}
+              setTeleStatus={setTeleStatus} // Pass down
+              setGsheetsStatus={setGsheetsStatus} // Pass down
             />
           )
         }
