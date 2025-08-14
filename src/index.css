@@ -17,8 +17,8 @@
   overflow: hidden;
 
   /* Font sizes */
-  --small-h: clamp(0.9rem, 1vw, 1rem);
-  --small-p: clamp(0.75rem, 0.85vw, 0.85rem);
+  --small-h: clamp(0.8rem, 0.9vw, 0.9rem);
+  --small-p: clamp(0.7rem, 0.85vw, 0.8rem);
 
   /* Colors */
   --primary: #312a68;
@@ -137,7 +137,8 @@ select,
 option,
 li,
 a,
-blockquote {
+blockquote,
+span {
   font-size: clamp(0.9rem, 0.9vw, 1rem);
 }
 
@@ -155,6 +156,11 @@ a:hover {
 
 strong {
   font-weight: 600;
+}
+
+label {
+  font-size: var(--small-p);
+  font-weight: 500;
 }
 
 /* Custom fonts */
