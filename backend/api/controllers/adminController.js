@@ -1,3 +1,4 @@
+import admin from "firebase-admin";
 import { db } from "../firebaseAdmin.js";
 
 export const getAllUsers = async (req, res) => {
@@ -13,10 +14,11 @@ export const getAllUsers = async (req, res) => {
       role: doc.data().role,
       docId: doc.data().docId,
       uid: doc.data().uid,
+      telegramId: doc.data().telegramId,
     }));
     res.status(200).json({ data: admins });
   } catch (err) {
-    console.error("🔥 getAllUsers Error:", err);
+    console.error("getAllUsers Error:", err);
     res.status(500).json({ error: err.message || "Unknown server error" });
   }
 };
@@ -42,10 +44,110 @@ export const getUserByEmail = async (req, res) => {
         fullName: userData.fullName,
         docId: userData.docId,
         uid: userData.uid,
+        telegramId: userData.telegramId,
       },
     });
   } catch (err) {
-    console.error("🔥 getUserByEmail Error:", err);
+    console.error("getUserByEmail Error:", err);
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
+
+export const getUserByUid = async (req, res) => {
+  const uid = req.query.uid || req.params.uid;
+  try {
+    const snapshot = await db
+      .collection("users")
+      .where("uid", "==", uid)
+      .limit(1)
+      .get();
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const userDoc = snapshot.docs[0];
+    const userData = userDoc.data();
+    res.status(200).json({
+      data: {
+        id: userDoc.id,
+        email: userData.email,
+        role: userData.role,
+        fullName: userData.fullName,
+        docId: userData.docId,
+        uid: userData.uid,
+        telegramId: userData.telegramId,
+      },
+    });
+  } catch (err) {
+    console.error("getUserByUid Error:", err);
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
+
+export const updateUserByUid = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const { fullName, email, telegramId, role } = req.body;
+
+    if (!uid) {
+      return res.status(400).json({ error: "Missing uid in URL" });
+    }
+
+    const snapshot = await db
+      .collection("users")
+      .where("uid", "==", uid)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDoc = snapshot.docs[0];
+    const userRef = userDoc.ref;
+
+    // Prepare only provided fields
+    const updates = {};
+    if (fullName !== undefined) updates.fullName = fullName;
+    if (email !== undefined) updates.email = email;
+    if (telegramId !== undefined) updates.telegramId = telegramId;
+    if (role !== undefined) updates.role = role;
+
+    await userRef.update(updates);
+
+    res.status(200).json({
+      message: "User updated successfully",
+      data: { id: userDoc.id, ...updates },
+    });
+  } catch (err) {
+    console.error("updateUserByUid Error:", err);
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
+
+export const deleteUserByUid = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    if (!uid) return res.status(400).json({ error: "Missing UID parameter" });
+    
+    // Delete Firestore doc
+    const snapshot = await db
+      .collection("users")
+      .where("uid", "==", uid)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty)
+      return res.status(404).json({ error: "User not found" });
+
+    await snapshot.docs[0].ref.delete();
+
+    await admin.auth().deleteUser(uid); // Delete Firebase Auth user
+
+    res.status(200).json({
+      message: `User with UID ${uid} deleted from Firestore & Auth successfully`,
+    });
+  } catch (err) {
+    console.error("deleteUserByUid Error:", err);
     res.status(500).json({ error: err.message || "Server error" });
   }
 };
@@ -68,7 +170,7 @@ export const getAllAdmins = async (req, res) => {
     }));
     res.status(200).json({ data: admins });
   } catch (err) {
-    console.error("🔥 getAllAdmins Error:", err);
+    console.error("getAllAdmins Error:", err);
     res.status(500).json({ error: err.message || "Unknown server error" });
   }
 };
@@ -95,7 +197,7 @@ export const getAdminInfo = async (req, res) => {
     };
     res.status(200).json({ data: adminInfo });
   } catch (err) {
-    console.error("🔥 getAdminInfo Error:", err);
+    console.error("getAdminInfo Error:", err);
     res.status(500).json({ error: err.message || "Unknown server error" });
   }
 };
@@ -122,7 +224,7 @@ export const updateUserRole = async (req, res) => {
       .status(200)
       .json({ message: `User role updated to '${role}' for ${email}` });
   } catch (err) {
-    console.error("🔥 updateUserRole Error:", err);
+    console.error("updateUserRole Error:", err);
     return res
       .status(500)
       .json({ error: err.message || "Unknown server error" });
@@ -165,7 +267,7 @@ export const registerNewUser = async (req, res) => {
       uid,
     });
   } catch (err) {
-    console.error("🔥 registerNewUser Error:", err);
+    console.error("registerNewUser Error:", err);
     res.status(500).json({ error: err.message || "Server error" });
   }
 };

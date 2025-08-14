@@ -6,14 +6,23 @@ import {
   updateUserRole,
   registerNewUser,
   getUserByEmail,
+  getUserByUid,
+  updateUserByUid,
+  deleteUserByUid,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
 
 router.get("/users", getAllUsers);
-router.get("/user-info", getUserByEmail);
+router.delete("/users/:uid", deleteUserByUid);
+
+router.get("/user-info/by-email", getUserByEmail);
+router.get("/user-info/by-uid", getUserByUid);
+router.put("/user-info/update/:uid", updateUserByUid);
+
 router.get("/all-admins", getAllAdmins);
 router.get("/admin-info/:userId", getAdminInfo);
+
 router.patch("/set-role", updateUserRole);
 router.post("/register", registerNewUser);
 
