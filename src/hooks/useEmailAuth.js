@@ -41,8 +41,28 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
     lastName,
     telegramId,
   }) => {
-    if (!email || !password)
-      return showError("Email and password cannot be empty.");
+    // Common required fields
+    let requiredFields = [
+      { key: "email", label: "Email" },
+      { key: "password", label: "Password" },
+    ];
+
+    // Extra required fields for signup
+    if (isSignup) {
+      requiredFields.push(
+        { key: "firstName", label: "First name" },
+        { key: "lastName", label: "Last name" },
+        { key: "telegramId", label: "Telegram ID" }
+      );
+    }
+
+    // Check missing field
+    for (let field of requiredFields) {
+      if (!eval(field.key) || String(eval(field.key)).trim() === "") {
+        return showError(`${field.label} is required.`);
+      }
+    }
+    
     setLoading(true);
     setMessage({ type: "", text: "" });
 
