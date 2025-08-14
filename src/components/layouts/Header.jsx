@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 // Style
 import "./Header.css";
@@ -12,18 +11,12 @@ import { SVG_PATHS } from "../../data/utilData";
 
 export default function Header({
   title,
-  user,
+  userData,
   onMenuClick,
   showDropdown,
   setShowDropdown,
-  API_URL,
 }) {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const [userDisplay, setUserDisplay] = useState({
-    fullName: user?.fullName || "",
-    email: user?.email || "",
-    photoURL: "/images/default_profile.png",
-  });
 
   const showProfile = () => {
     setShowDropdown((prev) => !prev);
@@ -32,40 +25,6 @@ export default function Header({
   const toggleDarkMode = (checked) => {
     setIsDarkMode(checked);
   };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const res = await fetch(
-          `${API_URL}/admin/user-info?email=${encodeURIComponent(user.email)}`
-        );
-        const raw = await res.clone().text();
-        if (!res.ok) {
-          let errText; // parse json error if backend returns json
-          try {
-            errText = await res.json();
-          } catch (e) {
-            errText = raw;
-          }
-          throw new Error(
-            "Failed to fetch user data: " + (errText?.message || errText)
-          );
-        }
-        const json = await res.json();
-        const userData = json.data;
-        setUserDisplay((prev) => ({
-          ...prev,
-          fullName: userData.fullName || prev.fullName,
-          email: userData.email || prev.email,
-        }));
-      } catch (err) {
-        console.error("🔥 Failed to fetch full user data:", err);
-      }
-    };
-    if (user?.email) {
-      fetchUserData();
-    }
-  }, [user?.email]);
 
   return (
     <div className="header-container">
@@ -84,13 +43,13 @@ export default function Header({
 
         <img
           className="picture"
-          src={userDisplay.photoURL}
+          src={userData.imageUrl || "/images/default_profile.png"}
           onClick={showProfile}
           alt="Profile"
         />
 
         <h6 className="small-h name" onClick={showProfile}>
-          {userDisplay.fullName || "Guest"}
+          {userData.fullName || "Guest"}
         </h6>
 
         <Icon
@@ -107,7 +66,7 @@ export default function Header({
         />
 
         {showDropdown && (
-          <UserProfile user={userDisplay} showProfile={showProfile} />
+          <UserProfile userData={userData} showProfile={showProfile} />
         )}
       </div>
     </div>

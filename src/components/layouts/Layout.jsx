@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // Style
 import "./Layout.css";
 // Components
@@ -9,7 +9,7 @@ import Sidebar from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Layout({ pageTitle, children, API_URL }) {
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -22,6 +22,18 @@ export default function Layout({ pageTitle, children, API_URL }) {
     }
   };
 
+  useEffect(() => {
+    if (!userData) {
+      setShowDropdown(false);
+      return;
+    }
+    if (!userData.telegramId) {
+      setShowDropdown(true); // If telegramId is missing -> force open the profile dropdown
+    } else {
+      setShowDropdown(false); // If user has telegramId, make sure the dropdown is closed by default
+    }
+  }, [userData]);
+
   return (
     <div className="layout">
       <Sidebar
@@ -33,15 +45,12 @@ export default function Layout({ pageTitle, children, API_URL }) {
       <div className={`content-container ${isCollapsed ? "collapsed" : ""}`}>
         <Header
           title={pageTitle}
-          user={user}
+          userData={userData}
           onMenuClick={handleMenuClick}
           showDropdown={showDropdown}
           setShowDropdown={setShowDropdown}
-          API_URL={API_URL}
         />
-
         <main className="content">{children}</main>
-
         <Footer isMobileMenuOpen={isMobileMenuOpen} />
       </div>
     </div>

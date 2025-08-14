@@ -4,7 +4,7 @@
   left: 0;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(var(--text-rgb), 0.25);
+  background-color: rgba(var(--text-rgb), 0.5);
   backdrop-filter: blur(4px);
   z-index: 998;
 }
@@ -13,8 +13,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
   text-align: start;
+  gap: 2rem;
   padding: 1rem;
   border-radius: 6px;
   z-index: 999;
@@ -46,7 +46,7 @@
 }
 
 .dropdown-user img {
-  width: 120px;
+  width: 80px;
   aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
@@ -63,6 +63,15 @@
 
 .user-section {
   width: 100%;
+}
+
+.user-section-container,
+.drop-btn-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .close-btn-container {
