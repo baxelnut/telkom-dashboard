@@ -6,7 +6,7 @@ import html2canvas from "html2canvas";
  * @param {string} options.selector - CSS selector of the table container (e.g., ".aosodomoro-table")
  * @param {string} options.apiUrl - Backend base URL (e.g., "http://localhost:5000/api")
  * @param {string} options.target - "group" or "private"
- * @param {function} [options.setStatus] - Optional setter for UI feedback
+ * @param {function} [options.setTeleStatus] - Optional setter for UI feedback
  * @param {string} options.title - Message header/title
  * @param {string} options.subtext - Subtitle or description
  * @param {string} options.link - Dashboard/report link
@@ -16,17 +16,17 @@ export async function sendTableToTelegram({
   selector,
   apiUrl,
   target = "group",
-  setStatus,
+  setTeleStatus,
   title,
   subtext,
   link,
   dateStr,
 }) {
-  if (setStatus) setStatus("📸 Capturing table...");
+  if (setTeleStatus) setTeleStatus("📸 Capturing table...");
 
   const table = document.querySelector(selector);
   if (!table) {
-    if (setStatus) setStatus("❌ Table not found.");
+    if (setTeleStatus) setTeleStatus("❌ Table not found.");
     console.error(`Table with selector "${selector}" not found.`);
     return;
   }
@@ -54,14 +54,13 @@ export async function sendTableToTelegram({
     const json = await res.json();
 
     if (res.ok) {
-      if (setStatus) setStatus("Sent to Telegram!");
-      console.log("Telegram image sent:", json);
+      if (setTeleStatus) setTeleStatus("Sent to Telegram!");
     } else {
-      if (setStatus) setStatus("Failed to send.");
+      if (setTeleStatus) setTeleStatus("Failed to send.");
       console.error("Telegram image error:", json);
     }
   } catch (err) {
     console.error("Telegram send error:", err);
-    if (setStatus) setStatus("Error while sending.");
+    if (setTeleStatus) setTeleStatus("Error while sending.");
   }
 }

@@ -21,7 +21,7 @@ import {
 
 export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   const { isAdmin } = useAuth();
-  const [status, setStatus] = useState("");
+  const [teleStatus, setTeleStatus] = useState(null);
 
   const achMap = mapAchievementData(achData, CUSTOM_ORDER);
   const tableRows = buildTableRows(poData, achMap, CUSTOM_ORDER);
@@ -33,7 +33,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
       apiUrl: API_URL,
       // target: "group", // for debugging
       target: "channel",
-      setStatus,
+      setTeleStatus,
       title: "GALAKSI PO AOSODOMORO Non Conn",
       subtext: "Zero AOSODOMORO > 3 BLN",
       link: "https://rso2telkomdashboard.web.app/reports/galaksi",
@@ -47,7 +47,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
         <div className="filter-container announce">
           <Button
             id="announce-galaksi"
-            text={status == "" ? "Announce Telegram" : status}
+            text={teleStatus ?? "Announce Telegram"}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
             backgroundColor="#0088cc"

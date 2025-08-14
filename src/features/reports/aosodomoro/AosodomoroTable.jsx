@@ -25,7 +25,8 @@ export default function AosodomoroTable({
   onCellSelect,
 }) {
   const { isAdmin } = useAuth();
-  const [status, setStatus] = useState("");
+  const [teleStatus, setTeleStatus] = useState(null);
+  const [gsheetStatus, setGsheetsStatus] = useState(null);
   const [selectedCell, setSelectedCell] = useState(null);
 
   const handleCellClick = (celltableData) => {
@@ -39,7 +40,7 @@ export default function AosodomoroTable({
       apiUrl: API_URL,
       // target: "group", // for debugging
       target: "channel",
-      setStatus,
+      setTeleStatus,
       title: "Weekly Report AOSODOMORO Non Connectivity",
       subtext:
         "Source: Database NCX\n\nUntuk detail data dapat diakses melalui link berikut:",
@@ -50,10 +51,9 @@ export default function AosodomoroTable({
 
   const handleRefreshGsheets = async () => {
     try {
-      setStatus("Refreshing GSheets...");
+      setGsheetsStatus("Refreshing GSheets...");
       // Build API base:
       const url = `${API_URL}/gas/push`;
-
       const resp = await fetch(url, {
         method: "POST",
         headers: {
@@ -67,7 +67,6 @@ export default function AosodomoroTable({
           },
         }),
       });
-
       // network-level failure will throw above
       const text = await resp.text();
       // Try parse JSON body
@@ -76,26 +75,24 @@ export default function AosodomoroTable({
         data = text ? JSON.parse(text) : null;
       } catch (err) {
         // Not JSON — show raw snippet for debugging
-        setStatus("GSheets: unexpected response (see console)");
+        setGsheetsStatus("GSheets: unexpected response (see console)");
         console.error("Non-JSON response from /api/gas/push:", text);
         return;
       }
-
       if (!resp.ok || !data?.ok) {
         const errorMsg = data?.error || `HTTP ${resp.status}`;
-        setStatus(`GSheets Error: ${errorMsg}`);
+        setGsheetsStatus(`GSheets Error: ${errorMsg}`);
         console.error("GSheets error detail:", data);
         return;
       }
-
-      setStatus("GSheets refresh triggered ✔️");
+      setGsheetsStatus("GSheets refresh triggered");
       console.log("GAS response:", data);
     } catch (err) {
       console.error("Fetch error", err);
-      setStatus("Failed to refresh GSheets");
+      setGsheetsStatus("Failed to refresh GSheets");
     } finally {
-      // clear status after 4s so UI returns to normal
-      setTimeout(() => setStatus(""), 4000);
+      // clear status after 10s so UI returns to normal
+      setTimeout(() => setGsheetsStatus(""), 10000);
     }
   };
 
@@ -103,24 +100,25 @@ export default function AosodomoroTable({
     <div className="table-scroll aosodomoro-table">
       {isAdmin && (
         <div className="filter-container announce">
-          {/* <Button
+          <Button
             id="announce-aosodomoro"
-            text={status == "" ? "Announce Telegram" : status}
+            text={teleStatus ?? "Announce Telegram"}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
             backgroundColor="#0088cc"
             iconAfter
             short
-          /> */}
-          <Button
+          />
+
+          {/* <Button
             id="refresh-gsheets"
-            text={status == "" ? "Refresh Gsheets" : status}
+            text={gsheetStatus ?? "Refresh Gsheets"}
             onClick={handleRefreshGsheets}
             iconPath={SVG_PATHS.sheets}
             backgroundColor="#34A853"
             iconAfter
             short
-          />
+          /> */}
         </div>
       )}
       <div className="table-wrapper">
