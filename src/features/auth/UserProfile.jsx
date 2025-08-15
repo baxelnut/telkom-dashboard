@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail, signOut } from "firebase/auth";
-import { auth, db } from "../../services/firebase/firebase";
 import { doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../services/firebase/firebase";
+// Style
 import "./UserProfile.css";
+// Components
 import Button from "../../components/ui/buttons/Button";
 import InputField from "../../components/ui/input/InputField";
+// Data
 import { SVG_PATHS } from "../../data/utilsData";
-import { useNavigate } from "react-router-dom";
 
 export default function UserProfile({ userData, showProfile }) {
   const navigate = useNavigate();

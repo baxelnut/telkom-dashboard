@@ -27,7 +27,11 @@ export default function Layout({ pageTitle, children, API_URL }) {
       setShowDropdown(false);
       return;
     }
-    if (!userData.telegramId) {
+    if (
+      !userData.telegramId ||
+      userData.telegramId == "" ||
+      userData.telegramId == "@"
+    ) {
       setShowDropdown(true); // If telegramId is missing -> force open the profile dropdown
     } else {
       setShowDropdown(false); // If user has telegramId, make sure the dropdown is closed by default
