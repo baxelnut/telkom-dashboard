@@ -74,6 +74,8 @@ export default function ActionSelectedTable({
     }
   };
 
+  const showAlertColumn = inProcessItems.some((row) => !row.isOver90);
+
   return (
     <div className="selected-action-table">
       {inProcessItems.length === 0 ? (
@@ -85,7 +87,7 @@ export default function ActionSelectedTable({
               <th>{/* Numbers */}</th>
               <th>ACTION</th>
               <th>NOTES</th>
-              <th>ALERT</th>
+              {showAlertColumn && <th>ALERT</th>}
               {headers.map((h, i) => (
                 <th key={i}>{h}</th>
               ))}
@@ -145,25 +147,27 @@ export default function ActionSelectedTable({
                   </td>
 
                   {/* ALERT column */}
-                  <td>
-                    <div className="alert-container">
-                      <Icon
-                        path={
-                          isWarning ? SVG_PATHS.error : SVG_PATHS.checkSquare
-                        }
-                        fill={isWarning ? "var(--danger)" : "var(--text)"}
-                        size={18}
-                      />
-                      <p
-                        style={{
-                          color: isWarning ? "var(--danger)" : "var(--text)",
-                          fontWeight: isWarning ? "600" : "400",
-                        }}
-                      >
-                        {isWarning ? "Segera Diproses" : "Aman"}
-                      </p>
-                    </div>
-                  </td>
+                  {showAlertColumn && !row.isOver90 && (
+                    <td>
+                      <div className="alert-container">
+                        <Icon
+                          path={
+                            isWarning ? SVG_PATHS.error : SVG_PATHS.checkSquare
+                          }
+                          fill={isWarning ? "var(--danger)" : "var(--text)"}
+                          size={18}
+                        />
+                        <p
+                          style={{
+                            color: isWarning ? "var(--danger)" : "var(--text)",
+                            fontWeight: isWarning ? "600" : "400",
+                          }}
+                        >
+                          {isWarning ? "Segera Diproses" : "Aman"}
+                        </p>
+                      </div>
+                    </td>
+                  )}
 
                   {/* Data columns */}
                   {headers.map((h, i) => (
