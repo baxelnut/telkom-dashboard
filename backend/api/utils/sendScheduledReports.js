@@ -52,7 +52,7 @@ export const sendScheduledReports = async () => {
     await page.click("#login-btn");
 
     // small grace so client handlers start
-    await page.waitForTimeout(400);
+    await new Promise((res) => setTimeout(res, 400));
 
     // Wait for either: overview DOM, client-side route, or timeout -> then fail with debug info
     try {
