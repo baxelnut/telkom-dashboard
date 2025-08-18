@@ -11,30 +11,24 @@ console.log(
   `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] script loaded`
 );
 
-// Prevent double-run in same process
+// Prevent duplicate runs in same process
 if (globalThis.__SEND_SCHEDULED_REPORTS_LOCK__) {
   console.log(
-    `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] Detected previous run. Exiting early.`
+    `[${new Date().toISOString()}] [run:${RUN_ID}] Duplicate run detected — exiting.`
   );
   console.trace();
   process.exit(0);
 }
 globalThis.__SEND_SCHEDULED_REPORTS_LOCK__ = true;
 
-// ====== CONFIG / SECRETS ======
+// CONFIG
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
 
-console.log(
-  `[${new Date().toISOString()}] [run:${RUN_ID}] Debug: email & password (REMOVE IN PROD)`
-);
-console.log(`[${new Date().toISOString()}] [run:${RUN_ID}] EMAIL: ${EMAIL}`);
-console.log(
-  `[${new Date().toISOString()}] [run:${RUN_ID}] PASSWORD: ${PASSWORD}`
-); // BE CAREFUL - remove after debugging
+console.log(`[DBG] EMAIL: ${EMAIL}`);
+console.log(`[DBG] PASSWORD: ${PASSWORD}`); // remove after debugging!
 
-// ====== SCHEDULE WINDOW (keep or comment out for testing) ======
 const now = new Date();
 const timestamp = now.toISOString();
 const utcHour = now.getUTCHours();
@@ -43,22 +37,21 @@ const isScheduledDay = utcDay === 1 || utcDay === 5;
 const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC => 13:00-18:00 WIB
 
 console.log(`[${timestamp}] ⏰ Triggering Telegram report automation...`);
+// Comment this next block temporarily during debugging if you want to run outside scheduled times
 if (!(isScheduledDay && isInTimeWindow)) {
   console.log(
-    `⏹️ Not within scheduled time window (Mon/Fri >13:00 WIB). Skipping.`
+    "⏹️ Not within scheduled time window (Mon/Fri >13:00 WIB). Skipping."
   );
-  // Comment out the next line while debugging locally if needed:
   // process.exit(0);
 }
 
-// ====== MAIN ======
 export const sendScheduledReports = async () => {
   console.log(
     `[${new Date().toISOString()}] [run:${RUN_ID}] Starting sendScheduledReports()`
   );
 
   const browser = await puppeteer.launch({
-    headless: process.env.HEADLESS === "false" ? false : true, // set HEADLESS=false in env for local debugging
+    headless: process.env.HEADLESS === "false" ? false : true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -68,25 +61,41 @@ export const sendScheduledReports = async () => {
 
   const page = await browser.newPage();
 
-  // Pipe page console messages into Node logs
+  // capture page console
   page.on("console", (msg) => {
     try {
       console.log(`[PAGE ${msg.type()}] ${msg.text()}`);
-    } catch (e) {
-      console.log(`[PAGE] console event parse error`);
+    } catch (e) {}
+  });
+
+  // log requests/responses for auth-like URLs
+  page.on("request", (req) => {
+    const url = req.url();
+    if (
+      /auth|login|signin|token|session|identitytoolkit|firebase|accounts.google/i.test(
+        url
+      )
+    ) {
+      console.log(`[REQ] ${req.method()} ${url}`);
     }
   });
 
-  // Log network requests that look related to auth/login (or all if you want)
-  page.on("request", (req) => {
+  page.on("response", async (res) => {
     try {
-      const url = req.url();
-      const method = req.method();
-      // Keep it focused: only auth-ish endpoints (tweak keywords as needed)
+      const url = res.url();
       if (
-        /auth|login|signin|token|session|firebase|identitytoolkit/i.test(url)
+        /auth|login|signin|token|session|identitytoolkit|firebase|accounts.google/i.test(
+          url
+        )
       ) {
-        console.log(`[REQ] ${method} ${url}`);
+        let shortBody = "";
+        try {
+          const text = await res.text();
+          shortBody = text.slice(0, 800).replace(/\n/g, " ");
+        } catch (e) {
+          shortBody = "<unable-to-read-body>";
+        }
+        console.log(`[RES] ${res.status()} ${url} => ${shortBody}`);
       }
     } catch (e) {}
   });
@@ -95,45 +104,42 @@ export const sendScheduledReports = async () => {
     console.log("🌐 Navigating to login page...");
     await page.goto(`${BASE_URL}/login`, {
       waitUntil: "networkidle2",
-      timeout: 45000,
+      timeout: 60000,
     });
 
-    // Wait for inputs to be present
-    console.log("⌛ Waiting for email/password inputs...");
-    await page.waitForSelector('input[type="email"]', { timeout: 15000 });
-    await page.waitForSelector('input[type="password"]', { timeout: 15000 });
+    console.log("⌛ Waiting for inputs...");
+    await page.waitForSelector('input[type="email"]', { timeout: 20000 });
+    await page.waitForSelector('input[type="password"]', { timeout: 20000 });
 
-    // Debug: read existing input placeholders / values and print
-    const emailPlaceholder = await page.$eval(
-      'input[type="email"]',
-      (el) => el.placeholder || ""
-    );
-    const passPlaceholder = await page.$eval(
-      'input[type="password"]',
-      (el) => el.placeholder || ""
-    );
-    console.log(
-      `[DBG] email placeholder="${emailPlaceholder}", pass placeholder="${passPlaceholder}"`
-    );
+    // debug placeholders
+    const placeholders = await page.evaluate(() => {
+      const e = document.querySelector('input[type="email"]');
+      const p = document.querySelector('input[type="password"]');
+      return {
+        emailPlaceholder: e?.placeholder || "",
+        passPlaceholder: p?.placeholder || "",
+      };
+    });
+    console.log(`[DBG] placeholders:`, placeholders);
 
-    console.log("⌨️ Setting email and password (React-friendly)...");
+    // set values React-friendly
+    console.log("⌨️ Setting values (React-friendly)...");
     await page.$eval(
       'input[type="email"]',
-      (el, value) => {
+      (el, v) => {
         el.focus();
-        el.value = value;
+        el.value = v;
         el.dispatchEvent(new Event("input", { bubbles: true }));
         el.dispatchEvent(new Event("change", { bubbles: true }));
         el.blur();
       },
       EMAIL
     );
-
     await page.$eval(
       'input[type="password"]',
-      (el, value) => {
+      (el, v) => {
         el.focus();
-        el.value = value;
+        el.value = v;
         el.dispatchEvent(new Event("input", { bubbles: true }));
         el.dispatchEvent(new Event("change", { bubbles: true }));
         el.blur();
@@ -141,151 +147,233 @@ export const sendScheduledReports = async () => {
       PASSWORD
     );
 
-    // Confirm values are set (read back)
-    const typedEmail = await page.$eval(
-      'input[type="email"]',
-      (el) => el.value
+    // confirm values inserted
+    const inserted = await page.evaluate(() => {
+      const e = document.querySelector('input[type="email"]')?.value || "";
+      const p = document.querySelector('input[type="password"]')?.value || "";
+      return { email: e, passLen: p.length };
+    });
+    console.log(
+      `[DBG] inserted email="${inserted.email}" passLen=${inserted.passLen}`
     );
-    const typedPass = await page.$eval(
-      'input[type="password"]',
-      (el) => el.value
-    );
-    console.log(`[DBG] typedEmail="${typedEmail}"`);
-    console.log(`[DBG] typedPass="${typedPass}"`);
 
-    // small grace so client handlers start
-    await new Promise((res) => setTimeout(res, 500));
+    // gather button info
+    const btnInfo = await page.evaluate(() => {
+      const el = document.querySelector("#login-btn");
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      const style = window.getComputedStyle(el);
+      return {
+        outerHTML: el.outerHTML,
+        disabled: el.disabled || el.getAttribute("aria-disabled") || false,
+        classes: el.className || null,
+        rect: {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        },
+        visible:
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.display !== "none" &&
+          style.visibility !== "hidden",
+      };
+    });
 
-    console.log("🔘 Clicking login button (in-page click)...");
-    const clicked = await page
-      .$$eval("#login-btn", (els) => {
-        if (!els || els.length === 0) return false;
-        // If the button is a custom component, ensure we click the first clickable descendant
-        const btn = els[0];
-        btn.click();
-        return true;
-      })
-      .catch(() => false);
-
-    if (!clicked) {
+    console.log(`[DBG] login-btn: ${btnInfo ? "FOUND" : "NOT FOUND"}`);
+    if (btnInfo) {
+      console.log(`[DBG] outerHTML: ${btnInfo.outerHTML}`);
       console.log(
-        "[DBG] #login-btn not found or click failed — fallback searching visible buttons"
+        `[DBG] disabled: ${btnInfo.disabled}, visible: ${btnInfo.visible}, classes: ${btnInfo.classes}`
       );
-      await page
-        .$$eval("button, a[role='button']", (els) => {
-          const match = els.find((el) =>
-            /login|sign ?in|sign ?up/i.test(el.innerText || "")
-          );
-          if (match) match.click();
-        })
-        .catch(() => {});
+      console.log(`[DBG] rect: ${JSON.stringify(btnInfo.rect)}`);
+    } else {
+      console.log("[DBG] #login-btn not found in DOM.");
     }
 
-    // right after click, print cookies & localStorage snapshot (helpful)
+    // If login button exists, find center coordinates and inspect elementFromPoint
+    if (btnInfo && btnInfo.visible) {
+      const cx = Math.round(btnInfo.rect.left + btnInfo.rect.width / 2);
+      const cy = Math.round(btnInfo.rect.top + btnInfo.rect.height / 2);
+
+      // element that would receive pointer
+      const elAtPointBefore = await page.evaluate(
+        (x, y) => {
+          const el = document.elementFromPoint(x, y);
+          return el
+            ? { tag: el.tagName, outerHTML: el.outerHTML.slice(0, 400) }
+            : null;
+        },
+        cx,
+        cy
+      );
+      console.log(
+        `[DBG] elementFromPoint(before): ${JSON.stringify(elAtPointBefore)}`
+      );
+
+      // Try in-page click first (should call React handler)
+      console.log("[DBG] Trying el.click() on #login-btn");
+      const clickedInPage = await page
+        .$eval("#login-btn", (el) => {
+          try {
+            el.click();
+            return true;
+          } catch (e) {
+            return false;
+          }
+        })
+        .catch(() => false);
+      console.log(`[DBG] el.click() returned: ${clickedInPage}`);
+
+      // small delay
+      await new Promise((res) => setTimeout(res, 700));
+
+      // If no network auth observed, try mouse click at center
+      console.log("[DBG] Trying page.mouse.click at button center");
+      try {
+        await page.mouse.move(cx, cy, { steps: 6 });
+        await page.mouse.click(cx, cy);
+      } catch (e) {
+        console.log("[DBG] page.mouse.click failed:", e.message);
+      }
+
+      await new Promise((res) => setTimeout(res, 700));
+
+      const elAtPointAfter = await page.evaluate(
+        (x, y) => {
+          const el = document.elementFromPoint(x, y);
+          return el
+            ? { tag: el.tagName, outerHTML: el.outerHTML.slice(0, 400) }
+            : null;
+        },
+        cx,
+        cy
+      );
+      console.log(
+        `[DBG] elementFromPoint(after): ${JSON.stringify(elAtPointAfter)}`
+      );
+    } else {
+      // fallback: try to find any button with "login" text and click it
+      console.log("[DBG] Fallback: click visible button with login text");
+      const fallbackClicked = await page
+        .$$eval("button, a[role='button']", (els) => {
+          const found = els.find((el) =>
+            /login|sign ?in|sign ?up/i.test(el.innerText || "")
+          );
+          if (found) {
+            try {
+              found.click();
+              return true;
+            } catch (e) {
+              return false;
+            }
+          }
+          return false;
+        })
+        .catch(() => false);
+      console.log(`[DBG] fallbackClicked: ${fallbackClicked}`);
+    }
+
+    // small wait then try pressing Enter in password field (some forms submit on Enter)
     await new Promise((res) => setTimeout(res, 800));
-    const cookiesPostClick = await page.cookies().catch(() => []);
-    console.log(
-      `[DBG] cookies after click: ${JSON.stringify(cookiesPostClick)}`
-    );
+    console.log("[DBG] Pressing Enter in password field as fallback");
+    try {
+      await page.focus('input[type="password"]');
+      await page.keyboard.press("Enter");
+    } catch (e) {
+      console.log("[DBG] Enter press failed:", e.message);
+    }
 
-    const localStorageKeysBefore = await page.evaluate(() =>
-      Object.keys(localStorage)
-    );
-    console.log(
-      `[DBG] localStorage keys after click: ${JSON.stringify(
-        localStorageKeysBefore
-      )}`
-    );
-
-    // Robust wait: any of these -> success
+    // Wait to detect a success condition:
     try {
       await Promise.race([
-        page.waitForSelector("div.page.overview", { timeout: 45000 }),
+        page.waitForSelector("div.page.overview", { timeout: 30000 }),
         page.waitForFunction(
           () => window.location.pathname.includes("/overview"),
-          { timeout: 45000 }
+          { timeout: 30000 }
         ),
         page.waitForFunction(
           () => {
-            // detect firebase auth localStorage keys or token keywords
             try {
               return Object.keys(localStorage).some((k) =>
-                /firebase|auth|token|idToken|accessToken/i.test(k)
+                /firebase|auth|token|idToken|accessToken|session/i.test(k)
               );
             } catch (e) {
               return false;
             }
           },
-          { timeout: 45000 }
+          { timeout: 30000 }
         ),
         page.waitForFunction(
-          () => {
-            // detect any non-empty cookies as a sign auth set something
-            try {
-              return document.cookie && document.cookie.length > 0;
-            } catch (e) {
-              return false;
-            }
-          },
-          { timeout: 45000 }
+          () => document.cookie && document.cookie.length > 0,
+          { timeout: 30000 }
         ),
       ]);
-    } catch (loginWaitErr) {
-      // capture debug artifacts
-      const safeTime = timestamp.replace(/[:.]/g, "-");
-      const pngName = `debug-post-login-${safeTime}.png`;
-      const htmlName = `debug-post-login-${safeTime}.html`;
-      console.log(
-        `[ERR] login wait timed out — saving debug artifacts: ${pngName}, ${htmlName}`
-      );
+    } catch (e) {
+      // timed out -> dump debug artifacts
+      const safeTime = new Date().toISOString().replace(/[:.]/g, "-");
+      const png = `debug-post-login-${safeTime}.png`;
+      const html = `debug-post-login-${safeTime}.html`;
+      console.log(`[ERR] Login detection timed out. Saving ${png} and ${html}`);
+      await page.screenshot({ path: png, fullPage: true }).catch(() => {});
+      const pageHtml = await page.content().catch(() => "<no-html>");
+      fs.writeFileSync(html, pageHtml);
 
-      await page.screenshot({ path: pngName, fullPage: true }).catch(() => {});
-      const html = await page.content().catch(() => "<no-html>");
-      fs.writeFileSync(htmlName, html);
-
-      // Dump localStorage keys and first 100 chars of each key's value for inspection
-      const lsDump = await page
+      // dump localStorage keys & snippet
+      const ls = await page
         .evaluate(() => {
-          const out = {};
           try {
+            const out = {};
             for (const k of Object.keys(localStorage)) {
-              out[k] = localStorage.getItem(k);
+              out[k] =
+                localStorage.getItem(k) &&
+                localStorage.getItem(k).slice(0, 300);
             }
-          } catch (e) {}
-          return out;
+            return out;
+          } catch (e) {
+            return {};
+          }
         })
         .catch(() => ({}));
-      const lsDumpPath = `debug-localstorage-${safeTime}.json`;
-      fs.writeFileSync(lsDumpPath, JSON.stringify(lsDump, null, 2));
 
-      // Read generic visible error texts
-      const loginErrorText = await page
+      fs.writeFileSync(
+        `debug-localstorage-${safeTime}.json`,
+        JSON.stringify(ls, null, 2)
+      );
+
+      // dump cookie string
+      const cookies = await page.cookies().catch(() => []);
+      fs.writeFileSync(
+        `debug-cookies-${safeTime}.json`,
+        JSON.stringify(cookies, null, 2)
+      );
+
+      // visible error text
+      const visibleErr = await page
         .$$eval(
           ".error, .error-msg, .toast-error, .notification--error, .ant-message, .MuiAlert-root, .toast, .alert",
           (els) => els.map((e) => e.innerText).join(" | ")
         )
         .catch(() => "");
+      console.log(`[ERR] visible error text: ${visibleErr}`);
 
-      console.log(`[ERR] visible error text: ${loginErrorText}`);
-
-      throw new Error(
-        `Login did not reach overview within 45s. ${
-          loginErrorText ? "Visible error: " + loginErrorText : ""
-        }`
-      );
+      throw new Error("Login did not reach overview within timeout.");
     }
 
-    console.log("✅ Logged in successfully (detected).");
+    console.log("✅ Login detected. Continuing to reports...");
 
-    // For extra visibility, print final localStorage keys & cookies
-    const lsFinal = await page
+    // Optional: print final localStorage & cookies
+    const finalLSKeys = await page
       .evaluate(() => Object.keys(localStorage))
       .catch(() => []);
-    const cookiesFinal = await page.cookies().catch(() => []);
-    console.log(`[DBG] localStorage keys final: ${JSON.stringify(lsFinal)}`);
-    console.log(`[DBG] cookies final: ${JSON.stringify(cookiesFinal)}`);
+    const finalCookies = await page.cookies().catch(() => []);
+    console.log(
+      `[DBG] final localStorage keys: ${JSON.stringify(finalLSKeys)}`
+    );
+    console.log(`[DBG] final cookies: ${JSON.stringify(finalCookies)}`);
 
-    // === proceed with your report pages
+    // proceed with report pages (your original loop)
     const reportPages = [
       {
         name: "AOSODOMORO",
@@ -303,19 +391,16 @@ export const sendScheduledReports = async () => {
       console.log(`📄 Navigating to ${path} for ${name} report...`);
       await page.goto(`${BASE_URL}${path}`, {
         waitUntil: "networkidle2",
-        timeout: 45000,
+        timeout: 60000,
       });
 
       try {
         console.log(`🔍 Waiting for ${buttonId}...`);
         await page.waitForSelector(buttonId, { timeout: 15000 });
-
         const btn = await page.$(buttonId);
         if (btn) {
           console.log(`📢 Clicking ${buttonId} to send ${name}...`);
           await btn.click();
-
-          // Wait for frontend to process image capture & upload
           await new Promise((res) => setTimeout(res, 6000));
           console.log(`${name} report sent.`);
         } else {
@@ -326,26 +411,16 @@ export const sendScheduledReports = async () => {
       }
     }
 
-    console.log("✅ All reports processed. Writing to log...");
+    console.log("✅ All reports processed.");
   } catch (err) {
     console.error("❌ Fatal error during scheduled report:", err.message);
-    try {
-      const safeTime = timestamp.replace(/[:.]/g, "-");
-      await page
-        .screenshot({ path: `debug-${safeTime}.png`, fullPage: true })
-        .catch(() => {});
-      const html = await page.content().catch(() => "<no-html>");
-      fs.writeFileSync(`debug-${safeTime}.html`, html);
-    } catch (e) {}
   } finally {
     await browser.close();
-    console.log(
-      `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] finished`
-    );
+    console.log(`[${new Date().toISOString()}] [run:${RUN_ID}] finished`);
   }
 };
 
-// Auto-run only when executed directly (ESM-safe)
+// auto-run only when executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   sendScheduledReports();
 }
