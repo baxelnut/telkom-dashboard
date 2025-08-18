@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res) => {
       role: doc.data().role,
       docId: doc.data().docId,
       uid: doc.data().uid,
-      teleUsername: doc.data().teleUsername,
+      telegramId: doc.data().telegramId,
     }));
     res.status(200).json({ data: admins });
   } catch (err) {
@@ -44,7 +44,7 @@ export const getUserByEmail = async (req, res) => {
         fullName: userData.fullName,
         docId: userData.docId,
         uid: userData.uid,
-        teleUsername: userData.teleUsername,
+        telegramId: userData.telegramId,
       },
     });
   } catch (err) {
@@ -74,7 +74,7 @@ export const getUserByUid = async (req, res) => {
         fullName: userData.fullName,
         docId: userData.docId,
         uid: userData.uid,
-        teleUsername: userData.teleUsername,
+        telegramId: userData.telegramId,
       },
     });
   } catch (err) {
@@ -86,7 +86,7 @@ export const getUserByUid = async (req, res) => {
 export const updateUserByUid = async (req, res) => {
   try {
     const { uid } = req.params;
-    const { fullName, email, teleUsername, role } = req.body;
+    const { fullName, email, telegramId, role } = req.body;
 
     if (!uid) {
       return res.status(400).json({ error: "Missing uid in URL" });
@@ -109,7 +109,7 @@ export const updateUserByUid = async (req, res) => {
     const updates = {};
     if (fullName !== undefined) updates.fullName = fullName;
     if (email !== undefined) updates.email = email;
-    if (teleUsername !== undefined) updates.teleUsername = teleUsername;
+    if (telegramId !== undefined) updates.telegramId = telegramId;
     if (role !== undefined) updates.role = role;
 
     await userRef.update(updates);
@@ -128,7 +128,7 @@ export const deleteUserByUid = async (req, res) => {
   try {
     const { uid } = req.params;
     if (!uid) return res.status(400).json({ error: "Missing UID parameter" });
-    
+
     // Delete Firestore doc
     const snapshot = await db
       .collection("users")
@@ -240,8 +240,8 @@ function toTitleCase(str) {
 
 export const registerNewUser = async (req, res) => {
   try {
-    let { uid, email, firstName, lastName, teleUsername } = req.body;
-    if (!uid || !email || !firstName || !lastName || !teleUsername) {
+    let { uid, email, firstName, lastName, telegramId } = req.body;
+    if (!uid || !email || !firstName || !lastName || !telegramId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     firstName = toTitleCase(firstName);
@@ -259,7 +259,7 @@ export const registerNewUser = async (req, res) => {
       role,
       email,
       fullName,
-      teleUsername,
+      telegramId,
       createdAt: new Date().toISOString(),
     });
     res.status(201).json({

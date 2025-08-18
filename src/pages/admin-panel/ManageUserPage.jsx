@@ -96,14 +96,13 @@ export default function ManageUserPage({ API_URL }) {
           disabled={!editMode}
         />
         <InputField
-          name="teleUsername"
+          name="telegramId"
           type="text"
-          label="Telegram"
-          value={form.teleUsername || ""}
+          label="Telegram ID"
+          value={form.telegramId || ""}
           onChange={handleChange}
           fullWidth
           disabled={!editMode}
-          isId
         />
         <Dropdown
           name="role"

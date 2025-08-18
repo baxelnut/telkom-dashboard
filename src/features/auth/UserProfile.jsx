@@ -18,14 +18,14 @@ export default function UserProfile({ userData, showProfile }) {
   const [isSaving, setIsSaving] = useState(false);
   const [editedUser, setEditedUser] = useState({
     fullName: userData?.fullName || "",
-    teleUsername: userData?.teleUsername || "",
+    telegramId: userData?.telegramId || "",
   });
 
   const [showTelegramReminder, setShowTelegramReminder] = useState(false);
 
   useEffect(() => {
     if (
-      !userData?.teleUsername &&
+      !userData?.telegramId &&
       !localStorage.getItem("telegramReminderShown")
     ) {
       setShowTelegramReminder(true);
@@ -45,7 +45,7 @@ export default function UserProfile({ userData, showProfile }) {
       const userRef = doc(db, "users", userData.id);
       await updateDoc(userRef, {
         fullName: editedUser.fullName.trim(),
-        teleUsername: editedUser.teleUsername.trim(),
+        telegramId: editedUser.telegramId.trim(),
       });
       setIsEditing(false);
       setShowTelegramReminder(false);
@@ -126,18 +126,17 @@ export default function UserProfile({ userData, showProfile }) {
             {isEditing ? (
               <InputField
                 type="text"
-                name="teleUsername"
-                placeholder="Enter your Telegram username"
-                value={editedUser.teleUsername}
+                name="telegramId"
+                placeholder="Enter your Telegram ID"
+                value={editedUser.telegramId}
                 onChange={handleInputChange}
                 fullWidth
-                isId
               />
             ) : (
               <div
                 className="user-info"
                 style={{
-                  backgroundColor: !userData?.teleUsername
+                  backgroundColor: !userData?.telegramId
                     ? "rgba(var(--danger-rgb), 0.25)"
                     : "var(--bg)",
                 }}
@@ -145,12 +144,12 @@ export default function UserProfile({ userData, showProfile }) {
                 <h6
                   className="small-h"
                   style={{
-                    color: !userData?.teleUsername
+                    color: !userData?.telegramId
                       ? "var(--danger)"
                       : "var(--text)",
                   }}
                 >
-                  {userData?.teleUsername || "Please add your Telegram username"}
+                  {userData?.telegramId || "Please add your Telegram ID"}
                 </h6>
               </div>
             )}
@@ -176,12 +175,12 @@ export default function UserProfile({ userData, showProfile }) {
                 ? "Saving..."
                 : isEditing
                 ? "Save"
-                : userData?.teleUsername
+                : userData?.telegramId
                 ? "Edit profile"
-                : "Add Telegram"
+                : "Add Telegram ID"
             }
             backgroundColor={
-              userData?.teleUsername ? "var(--primary-variant)" : "#0088cc"
+              userData?.telegramId ? "var(--primary-variant)" : "#0088cc"
             }
             fullWidth
             disabled={isSaving}

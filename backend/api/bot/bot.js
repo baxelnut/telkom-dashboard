@@ -4,10 +4,9 @@ import { db } from "../firebaseAdmin.js";
 // helper
 async function findUserByUsername(username) {
   if (!username) return null;
-  const formatted = username.startsWith("@") ? username : `@${username}`;
   const snapshot = await db
     .collection("users")
-    .where("teleUsername", "==", formatted)
+    .where("telegramId", "==")
     .limit(1)
     .get();
   if (snapshot.empty) return null;
@@ -33,7 +32,7 @@ bot.start(async (ctx) => {
   }
 
   const match = await findUserByUsername(tgUsername);
-  if (!match || !match.data.teleUsername || match.data.teleUsername === "@") {
+  if (!match || !match.data.telegramId) {
     return ctx.reply(
       `❌ No linked account found for @${tgUsername}.\n➡️ Go to Dashboard → Settings → Connect Telegram and set your username exactly as @${tgUsername}`
     );
@@ -65,7 +64,7 @@ bot.command("test", async (ctx) => {
       `Telegram username: @${tgUsername || "(none)"}\n` +
       `Matched in DB: ${match ? "✅ YES" : "❌ NO"}\n` +
       (match
-        ? `Full name: ${match.data.fullName}\nRole: ${match.data.role}\nStored teleUsername: ${match.data.teleUsername}`
+        ? `Full name: ${match.data.fullName}\nRole: ${match.data.role}\nStored telegramId: ${match.data.telegramId}`
         : "")
   );
 });

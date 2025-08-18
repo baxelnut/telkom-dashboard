@@ -16,7 +16,6 @@ export default function InputField({
   onChange,
   name,
   obscurial,
-  isId = false,
   required = false,
   fullWidth = false,
   autoFocus = false,
@@ -52,22 +51,11 @@ export default function InputField({
               name={name}
               type={isPassword && showPassword ? "text" : type}
               placeholder={placeholder}
-              value={
-                isId && value !== ""
-                  ? value.startsWith("@")
-                    ? value
-                    : `@${value.replace(/^@*/, "")}`
-                  : value
-              }
+              value={value}
               onChange={(e) => {
-                let val = e.target.value;
-                if (isId) {
-                  // Always ensure value starts with "@"
-                  if (!val.startsWith("@")) {
-                    val = "@" + val.replace(/^@*/, "");
-                  }
-                }
-                onChange({ target: { value: val, name: e.target.name } });
+                onChange({
+                  target: { value: e.target.value, name: e.target.name },
+                });
               }}
               required={required}
               autoFocus={autoFocus}

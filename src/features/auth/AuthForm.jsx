@@ -27,7 +27,7 @@ export default function AuthForm() {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    teleUsername: "",
+    telegramId: "",
     email: "",
     password: "",
   });
@@ -81,11 +81,10 @@ export default function AuthForm() {
           <InputField
             label="Telegram"
             type="text"
-            placeholder="Enter Telegram username"
-            value={form.teleUsername}
-            onChange={handleChange("teleUsername")}
+            placeholder="Enter Telegram ID"
+            value={form.telegramId}
+            onChange={handleChange("telegramId")}
             fullWidth
-            isId
             required
           />
         </>
