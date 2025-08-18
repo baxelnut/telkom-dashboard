@@ -85,7 +85,7 @@ export default function AuthForm() {
             value={form.teleUsername}
             onChange={handleChange("teleUsername")}
             fullWidth
-            isUsername
+            isId
             required
           />
         </>

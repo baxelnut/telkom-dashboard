@@ -131,7 +131,7 @@ export default function UserProfile({ userData, showProfile }) {
                 value={editedUser.teleUsername}
                 onChange={handleInputChange}
                 fullWidth
-                isUsername
+                isId
               />
             ) : (
               <div

@@ -103,7 +103,7 @@ export default function ManageUserPage({ API_URL }) {
           onChange={handleChange}
           fullWidth
           disabled={!editMode}
-          isUsername
+          isId
         />
         <Dropdown
           name="role"
