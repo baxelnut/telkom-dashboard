@@ -2,7 +2,7 @@ name: Run Scheduled Report
 
 on:
   schedule:
-    - cron: "* * * * *" # 06:00 UTC → 13:00 WIB, once every day
+    - cron: "0 6 * * *" # 06:00 UTC → 13:00 WIB, once every day
   workflow_dispatch: # manual back‑up trigger
 
 jobs:

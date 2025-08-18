@@ -45,10 +45,13 @@ export const sendScheduledReports = async () => {
     await page.type('input[type="password"]', PASSWORD);
 
     console.log("🔘 Clicking login button...");
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle2" }),
-      page.click("#login-btn"),
-    ]);
+    await page.click("#login-btn");
+    await page.waitForFunction(
+      () => window.location.href.includes("/overview"),
+      {
+        timeout: 30000,
+      }
+    );
 
     if (!page.url().includes("/overview")) {
       throw new Error("Login failed — /overview not reached");
