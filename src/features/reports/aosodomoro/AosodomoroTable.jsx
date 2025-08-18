@@ -63,7 +63,7 @@ export default function AosodomoroTable({
           />
           <Button
             id="refresh-gsheets"
-            text="Refresh Gsheets"
+            text="Refresh Data"
             onClick={handleRefreshGsheets}
             iconPath={SVG_PATHS.sheets}
             backgroundColor="#34A853"
