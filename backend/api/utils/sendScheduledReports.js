@@ -44,23 +44,66 @@ export const sendScheduledReports = async () => {
     console.log("🌐 Navigating to login page...");
     await page.goto(`${BASE_URL}/login`, { waitUntil: "networkidle2" });
 
-    console.log("⌨️ Typing email and password...");
-    await page.type('input[type="email"]', EMAIL, { delay: 50 });
-    await page.type('input[type="password"]', PASSWORD, { delay: 50 });
+    // Wait for inputs to be present
+    await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+    await page.waitForSelector('input[type="password"]', { timeout: 10000 });
 
-    console.log("🔘 Clicking login button...");
-    await page.click("#login-btn");
+    console.log("⌨️ Setting email and password (React-friendly)...");
+    // Set value and dispatch input event so React controlled components pick it up
+    await page.$eval(
+      'input[type="email"]',
+      (el, value) => {
+        el.focus();
+        el.value = value;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.blur();
+      },
+      EMAIL
+    );
+
+    await page.$eval(
+      'input[type="password"]',
+      (el, value) => {
+        el.focus();
+        el.value = value;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.blur();
+      },
+      PASSWORD
+    );
 
     // small grace so client handlers start
-    await new Promise((res) => setTimeout(res, 400));
+    await new Promise((res) => setTimeout(res, 250));
 
-    // Wait for either: overview DOM, client-side route, or timeout -> then fail with debug info
+    console.log("🔘 Clicking login button (in-page click)...");
+    // Click from page context to ensure React handlers fire
+    const clicked = await page
+      .$$eval("#login-btn", (els) => {
+        if (!els || els.length === 0) return false;
+        els[0].click();
+        return true;
+      })
+      .catch(() => false);
+
+    if (!clicked) {
+      // fallback: try generic button inside card (less ideal)
+      await page
+        .$$eval("button", (els) => {
+          const b = els.find((el) =>
+            /login|sign ?in|sign ?up/i.test(el.innerText || "")
+          );
+          if (b) b.click();
+        })
+        .catch(() => {});
+    }
+
+    // Wait for either the overview DOM marker or a pathname change
     try {
       await Promise.race([
-        page.waitForSelector("div.page.overview", { timeout: 30000 }),
+        page.waitForSelector("div.page.overview", { timeout: 45000 }),
         page.waitForFunction(
           () => window.location.pathname.includes("/overview"),
-          { timeout: 30000 }
+          { timeout: 45000 }
         ),
       ]);
     } catch (loginWaitErr) {
@@ -76,13 +119,13 @@ export const sendScheduledReports = async () => {
       // try to read any visible error message from the page to give a helpful message
       const loginErrorText = await page
         .$$eval(
-          ".error, .error-msg, .toast-error, .notification--error",
+          ".error, .error-msg, .toast-error, .notification--error, .ant-message, .MuiAlert-root",
           (els) => els.map((e) => e.innerText).join(" | ")
         )
         .catch(() => "");
 
       throw new Error(
-        `Login did not reach overview within 30s. ${
+        `Login did not reach overview within 45s. ${
           loginErrorText ? "Visible error: " + loginErrorText : ""
         }`
       );
@@ -109,7 +152,7 @@ export const sendScheduledReports = async () => {
 
       try {
         console.log(`🔍 Waiting for ${buttonId}...`);
-        await page.waitForSelector(buttonId, { timeout: 5000 });
+        await page.waitForSelector(buttonId, { timeout: 10000 });
 
         const btn = await page.$(buttonId);
         if (btn) {
@@ -138,3 +181,6 @@ export const sendScheduledReports = async () => {
     await browser.close();
   }
 };
+
+// Run (called unguarded because you run from GitHub Actions)
+sendScheduledReports();
