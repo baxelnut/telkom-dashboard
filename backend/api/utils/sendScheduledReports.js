@@ -1,4 +1,3 @@
-// sendScheduledReports.js
 import fs from "fs";
 import dotenv from "dotenv";
 import puppeteer from "puppeteer";
@@ -25,16 +24,18 @@ const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
 
-console.log(`[DBG] EMAIL: ${EMAIL}`);
-console.log(`[DBG] PASSWORD: ${PASSWORD}`); // remove after debugging!
-
-// Schedule guard (comment out while debugging locally)
-// const now = new Date();
-// const utcHour = now.getUTCHours();
-// const utcDay = now.getUTCDay();
-// const isScheduledDay = utcDay === 1 || utcDay === 5;
-// const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC => 13:00-18:00 WIB
-// if (!(isScheduledDay && isInTimeWindow)) process.exit(0);
+// Schedule guard: Mon + Fri, 06:00–11:00 UTC (13:00–18:00 WIB)
+const now = new Date();
+const utcHour = now.getUTCHours();
+const utcDay = now.getUTCDay();
+const isScheduledDay = utcDay === 1 || utcDay === 5;
+const isInTimeWindow = utcHour >= 6 && utcHour < 11;
+if (!(isScheduledDay && isInTimeWindow)) {
+  console.log(
+    `[${new Date().toISOString()}] Outside schedule window — exiting.`
+  );
+  process.exit(0);
+}
 
 export const sendScheduledReports = async () => {
   console.log(
@@ -52,12 +53,6 @@ export const sendScheduledReports = async () => {
 
   const page = await browser.newPage();
 
-  page.on("console", (m) => {
-    try {
-      console.log(`[PAGE ${m.type()}] ${m.text()}`);
-    } catch (e) {}
-  });
-
   try {
     console.log("🌐 Navigating to login page...");
     await page.goto(`${BASE_URL}/login`, {
@@ -65,216 +60,26 @@ export const sendScheduledReports = async () => {
       timeout: 60000,
     });
 
-    // Wait for inputs
-    await page.waitForSelector('input[type="email"]', { timeout: 20000 });
-    await page.waitForSelector('input[type="password"]', { timeout: 20000 });
+    // Type credentials
+    await page.type('input[type="email"]', EMAIL, { delay: 50 });
+    await page.type('input[type="password"]', PASSWORD, { delay: 50 });
 
-    // helper that types like a human into a selector
-    async function humanType(selector, text) {
-      // scroll into view and focus
-      await page.$eval(selector, (el) =>
-        el.scrollIntoView({ block: "center" })
-      );
-      await page.focus(selector);
+    console.log("🔘 Clicking login button...");
+    await page.click("#login-btn");
+    await page.waitForTimeout(1500);
 
-      // clear existing (CTRL+A / Backspace)
-      try {
-        await page.keyboard.down("Control");
-        await page.keyboard.press("KeyA");
-        await page.keyboard.up("Control");
-      } catch (e) {
-        // fallback: select via JS
-        await page.$eval(selector, (el) => {
-          el.value = "";
-        });
-      }
-      await page.keyboard.press("Backspace");
-
-      // type slowly so React handlers receive events
-      await page.keyboard.type(text, { delay: 60 });
-
-      // blur to trigger onBlur handlers
-      await page.$eval(selector, (el) => el.blur());
-    }
-
-    console.log("⌨️ Typing email via keyboard...");
-    await humanType('input[type="email"]', EMAIL);
-
-    // give React a little time to update state
-    await new Promise((r) => setTimeout(r, 800));
-
-    console.log("⌨️ Typing password via keyboard...");
-    await humanType('input[type="password"]', PASSWORD);
-
-    // longer wait so parent setState has time to propagate
-    await new Promise((r) => setTimeout(r, 1200));
-
-    // verify values in DOM
-    const vals = await page.evaluate(() => {
-      const e = document.querySelector('input[type="email"]')?.value || "";
-      const p = document.querySelector('input[type="password"]')?.value || "";
-      return { email: e, passLen: p.length };
-    });
-
-    console.log(
-      `[DBG] DOM after typing: email="${vals.email}" passLen=${vals.passLen}`
-    );
-
-    // check for visible validation errors BEFORE clicking
-    const preClickErrors = await page
-      .$$eval(
-        ".error, .error-msg, .toast-error, .notification--error, .error-message, .alert",
-        (els) => els.map((e) => e.innerText.trim()).filter(Boolean)
-      )
-      .catch(() => []);
-    if (preClickErrors.length > 0) {
-      console.log(
-        `[ERR] validation errors present before submit: ${JSON.stringify(
-          preClickErrors
-        )}`
-      );
-      // save debug artifacts & bail
-      const safeTime = new Date().toISOString().replace(/[:.]/g, "-");
-      await page
-        .screenshot({ path: `debug-pre-click-${safeTime}.png`, fullPage: true })
-        .catch(() => {});
-      const html = await page.content().catch(() => "<no-html>");
-      fs.writeFileSync(`debug-pre-click-${safeTime}.html`, html);
-      throw new Error(
-        "Validation errors present before submit — aborting click."
-      );
-    }
-
-    // click submit robustly
-    console.log(
-      "🔘 Clicking login button (el.click() then mouse click fallback)..."
-    );
-    const clicked = await page
-      .$eval("#login-btn", (el) => {
-        try {
-          el.click();
-          return true;
-        } catch (e) {
-          return false;
-        }
-      })
-      .catch(() => false);
-
-    await new Promise((r) => setTimeout(r, 500));
-
-    if (!clicked) {
-      console.log(
-        "[DBG] el.click() didn't run or #login-btn missing — trying fallback mouse click"
-      );
-      const rect = await page
-        .$eval("#login-btn", (el) => {
-          const r = el.getBoundingClientRect();
-          return { left: r.left, top: r.top, w: r.width, h: r.height };
-        })
-        .catch(() => null);
-      if (rect) {
-        const cx = Math.round(rect.left + rect.w / 2);
-        const cy = Math.round(rect.top + rect.h / 2);
-        try {
-          await page.mouse.move(cx, cy, { steps: 6 });
-          await page.mouse.click(cx, cy);
-        } catch (e) {
-          console.log("[DBG] mouse click fallback failed:", e.message);
-        }
-      } else {
-        // fallback search button by text and click
-        await page
-          .$$eval("button, a[role='button']", (els) => {
-            const found = els.find((el) =>
-              /login|sign ?in|sign ?up/i.test(el.innerText || "")
-            );
-            if (found)
-              try {
-                found.click();
-              } catch (e) {}
-          })
-          .catch(() => {});
-      }
-    }
-
-    // wait a small bit for handlers
-    await new Promise((r) => setTimeout(r, 1200));
-
-    // after click, look for immediate visible errors
-    const postClickErrors = await page
-      .$$eval(
-        ".error, .error-msg, .toast-error, .notification--error, .error-message, .alert",
-        (els) => els.map((e) => e.innerText.trim()).filter(Boolean)
-      )
-      .catch(() => []);
-
-    if (postClickErrors.length > 0) {
-      console.log(
-        `[ERR] post-click visible errors: ${JSON.stringify(postClickErrors)}`
-      );
-    }
-
-    // Robust success detection: DOM marker or pathname or localStorage/cookies
-    try {
-      await Promise.race([
-        page.waitForSelector("div.page.overview", { timeout: 45000 }),
-        page.waitForFunction(
-          () => window.location.pathname.includes("/overview"),
-          { timeout: 45000 }
-        ),
-        page.waitForFunction(
-          () => {
-            try {
-              return Object.keys(localStorage).some((k) =>
-                /auth|token|idToken|firebase|session/i.test(k)
-              );
-            } catch (e) {
-              return false;
-            }
-          },
-          { timeout: 45000 }
-        ),
-        page.waitForFunction(
-          () => document.cookie && document.cookie.length > 0,
-          { timeout: 45000 }
-        ),
-      ]);
-    } catch (loginErr) {
-      // save debug artifacts
-      const safeTime = new Date().toISOString().replace(/[:.]/g, "-");
-      console.log(
-        `[ERR] Login not detected. Saving debug artifacts debug-post-login-${safeTime}.*`
-      );
-      await page
-        .screenshot({
-          path: `debug-post-login-${safeTime}.png`,
-          fullPage: true,
-        })
-        .catch(() => {});
-      const html = await page.content().catch(() => "<no-html>");
-      fs.writeFileSync(`debug-post-login-${safeTime}.html`, html);
-
-      // collect and print visible errors & cookies/localStorage
-      const visibleErrs = await page
-        .$$eval(
-          ".error, .error-msg, .toast-error, .notification--error, .error-message, .alert",
-          (els) => els.map((e) => e.innerText.trim()).filter(Boolean)
-        )
-        .catch(() => []);
-      const cookies = await page.cookies().catch(() => []);
-      const ls = await page
-        .evaluate(() => Object.keys(localStorage))
-        .catch(() => []);
-      console.log(`[ERR] visibleErrs: ${JSON.stringify(visibleErrs)}`);
-      console.log(`[ERR] cookies: ${JSON.stringify(cookies)}`);
-      console.log(`[ERR] localStorage keys: ${JSON.stringify(ls)}`);
-
-      throw new Error("Login did not reach overview within timeout.");
-    }
+    // Success detection
+    await Promise.race([
+      page.waitForSelector("div.page.overview", { timeout: 45000 }),
+      page.waitForFunction(
+        () => window.location.pathname.includes("/overview"),
+        { timeout: 45000 }
+      ),
+    ]);
 
     console.log("✅ Logged in successfully.");
 
-    // proceed with your report clicks (unchanged)
+    // Report list
     const reportPages = [
       {
         name: "AOSODOMORO",
@@ -289,32 +94,39 @@ export const sendScheduledReports = async () => {
     ];
 
     for (const { name, path, buttonId } of reportPages) {
-      console.log(`📄 Navigating to ${path} for ${name} report...`);
+      console.log(`📄 Navigating to ${name} report...`);
       await page.goto(`${BASE_URL}${path}`, {
         waitUntil: "networkidle2",
         timeout: 60000,
       });
 
       try {
-        console.log(`🔍 Waiting for ${buttonId}...`);
         await page.waitForSelector(buttonId, { timeout: 15000 });
-        const btn = await page.$(buttonId);
-        if (btn) {
-          console.log(`📢 Clicking ${buttonId} to send ${name}...`);
-          await btn.click();
-          await new Promise((r) => setTimeout(r, 6000));
-          console.log(`${name} report sent.`);
-        } else {
-          console.warn(`⚠️ ${buttonId} not found on ${path}`);
-        }
+        await page.click(buttonId);
+        await page.waitForTimeout(6000);
+        console.log(`📢 ${name} report sent.`);
       } catch (err) {
-        console.warn(`❌ Error sending ${name}: ${err.message}`);
+        console.warn(`⚠️ Error sending ${name}: ${err.message}`);
+        // Save debug artifacts for investigation
+        const safeTime = new Date().toISOString().replace(/[:.]/g, "-");
+        await page
+          .screenshot({ path: `debug-${name}-${safeTime}.png`, fullPage: true })
+          .catch(() => {});
+        const html = await page.content().catch(() => "<no-html>");
+        fs.writeFileSync(`debug-${name}-${safeTime}.html`, html);
       }
     }
 
     console.log("✅ All reports processed.");
   } catch (err) {
     console.error("❌ Fatal error during scheduled report:", err.message);
+    // Save artifacts on failure
+    const safeTime = new Date().toISOString().replace(/[:.]/g, "-");
+    await page
+      .screenshot({ path: `debug-fatal-${safeTime}.png`, fullPage: true })
+      .catch(() => {});
+    const html = await page.content().catch(() => "<no-html>");
+    fs.writeFileSync(`debug-fatal-${safeTime}.html`, html);
   } finally {
     await browser.close();
     console.log(`[${new Date().toISOString()}] [run:${RUN_ID}] finished`);
@@ -323,5 +135,7 @@ export const sendScheduledReports = async () => {
 
 // Auto-run when executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  sendScheduledReports();
+  sendScheduledReports()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
 }
