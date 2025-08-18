@@ -22,12 +22,12 @@ const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
 
 // Schedule guard (comment out while debugging locally)
-// const now = new Date();
-// const utcHour = now.getUTCHours();
-// const utcDay = now.getUTCDay();
-// const isScheduledDay = utcDay === 1 || utcDay === 5;
-// const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC => 13:00-18:00 WIB
-// if (!(isScheduledDay && isInTimeWindow)) process.exit(0);
+const now = new Date();
+const utcHour = now.getUTCHours();
+const utcDay = now.getUTCDay();
+const isScheduledDay = utcDay === 1 || utcDay === 5;
+const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC => 13:00-18:00 WIB
+if (!(isScheduledDay && isInTimeWindow)) process.exit(0);
 
 export const sendScheduledReports = async () => {
   const browser = await puppeteer.launch({
