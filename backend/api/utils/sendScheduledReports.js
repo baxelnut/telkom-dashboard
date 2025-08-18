@@ -31,7 +31,11 @@ if (!(isScheduledDay && isInTimeWindow)) {
 export const sendScheduledReports = async () => {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+    ],
   });
 
   const page = await browser.newPage();
@@ -41,14 +45,50 @@ export const sendScheduledReports = async () => {
     await page.goto(`${BASE_URL}/login`, { waitUntil: "networkidle2" });
 
     console.log("⌨️ Typing email and password...");
-    await page.type('input[type="email"]', EMAIL);
-    await page.type('input[type="password"]', PASSWORD);
+    await page.type('input[type="email"]', EMAIL, { delay: 50 });
+    await page.type('input[type="password"]', PASSWORD, { delay: 50 });
 
     console.log("🔘 Clicking login button...");
     await page.click("#login-btn");
-    await page.waitForSelector(".page.overview", { timeout: 30000 });
 
-    console.log("Logged in successfully.");
+    // small grace so client handlers start
+    await page.waitForTimeout(400);
+
+    // Wait for either: overview DOM, client-side route, or timeout -> then fail with debug info
+    try {
+      await Promise.race([
+        page.waitForSelector("div.page.overview", { timeout: 30000 }),
+        page.waitForFunction(
+          () => window.location.pathname.includes("/overview"),
+          { timeout: 30000 }
+        ),
+      ]);
+    } catch (loginWaitErr) {
+      // capture debug artifacts
+      const safeTime = timestamp.replace(/[:.]/g, "-");
+      await page.screenshot({
+        path: `debug-post-login-${safeTime}.png`,
+        fullPage: true,
+      });
+      const html = await page.content();
+      fs.writeFileSync(`debug-post-login-${safeTime}.html`, html);
+
+      // try to read any visible error message from the page to give a helpful message
+      const loginErrorText = await page
+        .$$eval(
+          ".error, .error-msg, .toast-error, .notification--error",
+          (els) => els.map((e) => e.innerText).join(" | ")
+        )
+        .catch(() => "");
+
+      throw new Error(
+        `Login did not reach overview within 30s. ${
+          loginErrorText ? "Visible error: " + loginErrorText : ""
+        }`
+      );
+    }
+
+    console.log("✅ Logged in successfully.");
 
     const reportPages = [
       {
@@ -98,3 +138,8 @@ export const sendScheduledReports = async () => {
     await browser.close();
   }
 };
+
+// Run directly if executed as a script
+if (require.main === module) {
+  sendScheduledReports();
+}
