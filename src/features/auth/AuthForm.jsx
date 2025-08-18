@@ -62,6 +62,7 @@ export default function AuthForm() {
         <>
           <InputField
             label="First Name"
+            type="text"
             placeholder="Enter first name"
             value={form.firstName}
             onChange={handleChange("firstName")}
@@ -70,6 +71,7 @@ export default function AuthForm() {
           />
           <InputField
             label="Last Name"
+            type="text"
             placeholder="Enter last name"
             value={form.lastName}
             onChange={handleChange("lastName")}
@@ -78,6 +80,7 @@ export default function AuthForm() {
           />
           <InputField
             label="Telegram"
+            type="text"
             placeholder="Enter Telegram username"
             value={form.teleUsername}
             onChange={handleChange("teleUsername")}
@@ -91,6 +94,7 @@ export default function AuthForm() {
       <InputField
         label="Email"
         type="email"
+        name="email"
         placeholder="Enter your email"
         value={form.email}
         onChange={handleChange("email")}
@@ -100,6 +104,7 @@ export default function AuthForm() {
       <InputField
         label="Password"
         type="password"
+        name="password"
         placeholder="Enter your password"
         value={form.password}
         onChange={handleChange("password")}
@@ -130,6 +135,7 @@ export default function AuthForm() {
 
       <Button
         id="login-btn"
+        data-testid="login-submit"
         text={isSignup ? "Sign Up" : "Login"}
         onClick={() => {
           loginOrSignup({ ...form, rememberMe, isSignup }).then(
