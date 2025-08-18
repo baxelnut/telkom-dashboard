@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // Style
 import "./ManageUserPage.css";
 // Components
@@ -13,6 +13,7 @@ import { ROLE_OPT } from "../../data/manageUserData";
 
 export default function ManageUserPage({ API_URL }) {
   const { uid } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({});
@@ -65,9 +66,17 @@ export default function ManageUserPage({ API_URL }) {
 
   return (
     <div className="page admin manage">
-      <h4>Manage User</h4>
+      <div className="back-btn-container">
+        <Button
+          text="Back"
+          onClick={() => navigate(-1)}
+          iconPath={SVG_PATHS.chevronLeft}
+          short
+        />
+      </div>
 
       <div className="user-details">
+        <h4>Manage User</h4>
         <InputField
           name="fullName"
           type="text"
@@ -96,17 +105,18 @@ export default function ManageUserPage({ API_URL }) {
           disabled={!editMode}
           isUsername
         />
+        <Dropdown
+          name="role"
+          label="Role"
+          options={ROLE_OPT}
+          value={form.role || ""}
+          onChange={handleChange}
+          disabled={!editMode}
+          fullWidth
+          chevronDown
+        />
 
         <div className="details-footer-container">
-          <Dropdown
-            name="role"
-            options={ROLE_OPT}
-            value={form.role || ""}
-            onChange={handleChange}
-            chevronDown
-            short
-            disabled={!editMode}
-          />
           <div className="edit-btn-container">
             {editMode && (
               <Button
