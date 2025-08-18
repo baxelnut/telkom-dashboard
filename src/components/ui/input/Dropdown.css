@@ -7,9 +7,14 @@ option {
 
 .dropdown-wrapper {
   position: relative;
-  display: inline-block;
-  width: auto;
   width: fit-content;
+  display: inline-block;
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+.dropdown-wrapper.full {
+  width: 100% !important;
 }
 
 .dropdown {
@@ -34,10 +39,6 @@ option {
 .dropdown.short,
 .dropdown.short option {
   font-size: var(--small-h);
-}
-
-.dropdown.full {
-  width: 100%;
 }
 
 .dropdown.rounded-pill {

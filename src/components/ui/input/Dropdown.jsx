@@ -15,33 +15,30 @@ export default function Dropdown({
   rounded = false,
   radius = 6,
   trailingIcon = null,
-  backgroundColor = null,
-  textColor = null,
   chevronDown = false,
   disabled = false,
 }) {
   const classes = [
     "dropdown",
     short ? "short" : "",
-    fullWidth ? "full" : "",
     rounded ? "rounded-pill" : "rounded-soft",
     trailingIcon || chevronDown ? "with-icon" : "",
   ].join(" ");
 
   const style = {
-    ...(backgroundColor && { backgroundColor }),
-    ...(textColor && { color: textColor }),
     borderRadius: rounded ? "360px" : `${radius}px`,
   };
 
   return (
-    <div className="dropdown-wrapper" style={style}>
+    <div
+      className={`dropdown-wrapper ${fullWidth ? "full" : ""}`}
+      style={style}
+    >
       <select
         name={name}
         className={classes}
         value={value}
         onChange={onChange}
-        style={{ color: textColor }}
         disabled={disabled}
       >
         {options.map((option) =>
