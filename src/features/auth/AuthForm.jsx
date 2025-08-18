@@ -27,7 +27,7 @@ export default function AuthForm() {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    telegramId: "",
+    teleUsername: "",
     email: "",
     password: "",
   });
@@ -77,12 +77,12 @@ export default function AuthForm() {
             required
           />
           <InputField
-            label="Telegram ID"
-            placeholder="Enter Telegram ID"
-            value={form.telegramId}
-            onChange={handleChange("telegramId")}
+            label="Telegram"
+            placeholder="Enter Telegram username"
+            value={form.teleUsername}
+            onChange={handleChange("teleUsername")}
             fullWidth
-            isId
+            isUsername
             required
           />
         </>
@@ -129,6 +129,7 @@ export default function AuthForm() {
       )}
 
       <Button
+        id="login-btn"
         text={isSignup ? "Sign Up" : "Login"}
         onClick={() => {
           loginOrSignup({ ...form, rememberMe, isSignup }).then(

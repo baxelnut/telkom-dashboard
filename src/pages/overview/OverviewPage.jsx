@@ -11,7 +11,7 @@ import SegmenRadar from "../../features/overview/SegmenRadar";
 
 export default function OverviewPage({ API_URL }) {
   return (
-    <div className="overview-page">
+    <div className="page overview">
       <Helmet>
         <title>Dashboard Overview | Telkom</title>
         <meta

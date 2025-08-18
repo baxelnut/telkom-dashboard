@@ -19,7 +19,8 @@
     "form-data": "^4.0.3",
     "googleapis": "^148.0.0",
     "multer": "^2.0.1",
-    "puppeteer": "^24.12.1"
+    "puppeteer": "^24.12.1",
+    "telegraf": "^4.16.3"
   },
   "main": "index.js",
   "description": ""

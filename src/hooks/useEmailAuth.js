@@ -39,7 +39,7 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
     isSignup,
     firstName,
     lastName,
-    telegramId,
+    teleUsername,
   }) => {
     // Common required fields
     let requiredFields = [
@@ -52,7 +52,7 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
       requiredFields.push(
         { key: "firstName", label: "First name" },
         { key: "lastName", label: "Last name" },
-        { key: "telegramId", label: "Telegram ID" }
+        { key: "teleUsername", label: "Telegram username" }
       );
     }
 
@@ -82,7 +82,7 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
         const res = await fetch(`${API_URL}/admin/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid, email, firstName, lastName, telegramId }),
+          body: JSON.stringify({ uid, email, firstName, lastName, teleUsername }),
         });
 
         const text = await res.text();

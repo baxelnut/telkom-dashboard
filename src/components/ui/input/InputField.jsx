@@ -16,7 +16,7 @@
     onChange,
     name,
     obscurial,
-    isId = false,
+    isUsername = false,
     required = false,
     fullWidth = false,
     autoFocus = false,
@@ -53,7 +53,7 @@
                 type={isPassword && showPassword ? "text" : type}
                 placeholder={placeholder}
                 value={
-                  isId && value !== ""
+                  isUsername && value !== ""
                     ? value.startsWith("@")
                       ? value
                       : `@${value.replace(/^@*/, "")}`
@@ -61,7 +61,7 @@
                 }
                 onChange={(e) => {
                   let val = e.target.value;
-                  if (isId) {
+                  if (isUsername) {
                     // Always ensure value starts with "@"
                     if (!val.startsWith("@")) {
                       val = "@" + val.replace(/^@*/, "");

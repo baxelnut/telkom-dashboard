@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res) => {
       role: doc.data().role,
       docId: doc.data().docId,
       uid: doc.data().uid,
-      telegramId: doc.data().telegramId,
+      teleUsername: doc.data().teleUsername,
     }));
     res.status(200).json({ data: admins });
   } catch (err) {
@@ -44,7 +44,7 @@ export const getUserByEmail = async (req, res) => {
         fullName: userData.fullName,
         docId: userData.docId,
         uid: userData.uid,
-        telegramId: userData.telegramId,
+        teleUsername: userData.teleUsername,
       },
     });
   } catch (err) {
@@ -74,7 +74,7 @@ export const getUserByUid = async (req, res) => {
         fullName: userData.fullName,
         docId: userData.docId,
         uid: userData.uid,
-        telegramId: userData.telegramId,
+        teleUsername: userData.teleUsername,
       },
     });
   } catch (err) {
@@ -86,7 +86,7 @@ export const getUserByUid = async (req, res) => {
 export const updateUserByUid = async (req, res) => {
   try {
     const { uid } = req.params;
-    const { fullName, email, telegramId, role } = req.body;
+    const { fullName, email, teleUsername, role } = req.body;
 
     if (!uid) {
       return res.status(400).json({ error: "Missing uid in URL" });
@@ -109,7 +109,7 @@ export const updateUserByUid = async (req, res) => {
     const updates = {};
     if (fullName !== undefined) updates.fullName = fullName;
     if (email !== undefined) updates.email = email;
-    if (telegramId !== undefined) updates.telegramId = telegramId;
+    if (teleUsername !== undefined) updates.teleUsername = teleUsername;
     if (role !== undefined) updates.role = role;
 
     await userRef.update(updates);
@@ -240,8 +240,8 @@ function toTitleCase(str) {
 
 export const registerNewUser = async (req, res) => {
   try {
-    let { uid, email, firstName, lastName, telegramId } = req.body;
-    if (!uid || !email || !firstName || !lastName || !telegramId) {
+    let { uid, email, firstName, lastName, teleUsername } = req.body;
+    if (!uid || !email || !firstName || !lastName || !teleUsername) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     firstName = toTitleCase(firstName);
@@ -259,7 +259,7 @@ export const registerNewUser = async (req, res) => {
       role,
       email,
       fullName,
-      telegramId,
+      teleUsername,
       createdAt: new Date().toISOString(),
     });
     res.status(201).json({

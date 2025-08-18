@@ -209,4 +209,6 @@ export const sendScheduledReports = async () => {
 };
 
 // Run (called unguarded because you run from GitHub Actions)
-sendScheduledReports();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  sendScheduledReports();
+}

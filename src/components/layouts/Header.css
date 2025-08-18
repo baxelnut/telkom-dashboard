@@ -8,7 +8,7 @@
   border-bottom: 0.5px solid var(--neutral);
   background-color: var(--card);
   padding-inline: 1rem;
-  z-index: 990;
+  z-index: 998;
 }
 
 .profile {

@@ -87,14 +87,14 @@ export default function ManageUserPage({ API_URL }) {
           disabled={!editMode}
         />
         <InputField
-          name="telegramId"
+          name="teleUsername"
           type="text"
-          label="Telegram ID"
-          value={form.telegramId || ""}
+          label="Telegram"
+          value={form.teleUsername || ""}
           onChange={handleChange}
           fullWidth
           disabled={!editMode}
-          isId
+          isUsername
         />
 
         <div className="details-footer-container">

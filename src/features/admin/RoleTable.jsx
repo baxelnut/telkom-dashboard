@@ -65,13 +65,13 @@ export default function RoleTable({
           <th>Role</th>
           <th>Name</th>
           <th>Email</th>
-          <th>Telegram ID</th>
+          <th>Telegram</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {users.map((user, i) => {
-          const { role, email, fullName, uid, telegramId } = user;
+          const { role, email, fullName, uid, teleUsername } = user;
           const newRole = role === "admin" ? "user" : "admin";
           const capitalizedRole =
             role?.charAt(0).toUpperCase() + role?.slice(1);
@@ -94,7 +94,7 @@ export default function RoleTable({
               </td>
               <td>
                 <em>
-                  {telegramId ?? <span className="not-set">Not set</span>}
+                  {teleUsername ?? <span className="not-set">Not set</span>}
                 </em>
               </td>
               <td className="action-td">
