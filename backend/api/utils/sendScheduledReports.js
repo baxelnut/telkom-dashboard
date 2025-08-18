@@ -46,16 +46,7 @@ export const sendScheduledReports = async () => {
 
     console.log("🔘 Clicking login button...");
     await page.click("#login-btn");
-    await page.waitForFunction(
-      () => window.location.href.includes("/overview"),
-      {
-        timeout: 30000,
-      }
-    );
-
-    if (!page.url().includes("/overview")) {
-      throw new Error("Login failed — /overview not reached");
-    }
+    await page.waitForSelector(".page.overview", { timeout: 30000 });
 
     console.log("Logged in successfully.");
 
