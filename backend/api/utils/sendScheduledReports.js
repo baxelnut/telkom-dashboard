@@ -138,8 +138,3 @@ export const sendScheduledReports = async () => {
     await browser.close();
   }
 };
-
-// Run directly if executed as a script
-if (require.main === module) {
-  sendScheduledReports();
-}
