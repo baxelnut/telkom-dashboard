@@ -5,6 +5,29 @@ import puppeteer from "puppeteer";
 
 dotenv.config();
 
+const RUN_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const PID = process.pid;
+
+console.log(
+  `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] script loaded`
+);
+
+if (globalThis.__SEND_SCHEDULED_REPORTS_LOCK__) {
+  console.log(
+    `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] Detected previous run. Exiting early to avoid duplicate execution.`
+  );
+  // optional: dump a trace so you can see where the first call came from
+  console.trace();
+  // stop further execution
+  // If you prefer to explicitly fail the CI when duplicates are detected, use process.exit(1)
+  // but typically we just return/exit cleanly to avoid double-actions.
+  // For a module import scenario returning is enough, but since this file is run as entry, just exit.
+  process.exit(0);
+}
+
+// Set the global lock so subsequent imports/calls won't run again in this process
+globalThis.__SEND_SCHEDULED_REPORTS_LOCK__ = true;
+
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const BASE_URL = "https://rso2telkomdashboard.web.app";
@@ -29,6 +52,10 @@ if (!(isScheduledDay && isInTimeWindow)) {
 
 // Start Puppeteer and send report
 export const sendScheduledReports = async () => {
+  console.log(
+    `[${new Date().toISOString()}] [run:${RUN_ID}] Starting sendScheduledReports()`
+  );
+
   const browser = await puppeteer.launch({
     headless: true,
     args: [
@@ -49,7 +76,6 @@ export const sendScheduledReports = async () => {
     await page.waitForSelector('input[type="password"]', { timeout: 10000 });
 
     console.log("⌨️ Setting email and password (React-friendly)...");
-    // Set value and dispatch input event so React controlled components pick it up
     await page.$eval(
       'input[type="email"]',
       (el, value) => {
@@ -76,7 +102,6 @@ export const sendScheduledReports = async () => {
     await new Promise((res) => setTimeout(res, 250));
 
     console.log("🔘 Clicking login button (in-page click)...");
-    // Click from page context to ensure React handlers fire
     const clicked = await page
       .$$eval("#login-btn", (els) => {
         if (!els || els.length === 0) return false;
@@ -86,7 +111,6 @@ export const sendScheduledReports = async () => {
       .catch(() => false);
 
     if (!clicked) {
-      // fallback: try generic button inside card (less ideal)
       await page
         .$$eval("button", (els) => {
           const b = els.find((el) =>
@@ -116,7 +140,6 @@ export const sendScheduledReports = async () => {
       const html = await page.content();
       fs.writeFileSync(`debug-post-login-${safeTime}.html`, html);
 
-      // try to read any visible error message from the page to give a helpful message
       const loginErrorText = await page
         .$$eval(
           ".error, .error-msg, .toast-error, .notification--error, .ant-message, .MuiAlert-root",
@@ -179,6 +202,9 @@ export const sendScheduledReports = async () => {
     fs.writeFileSync(`debug-${safeTime}.html`, html);
   } finally {
     await browser.close();
+    console.log(
+      `[${new Date().toISOString()}] [run:${RUN_ID}] [pid:${PID}] finished`
+    );
   }
 };
 
