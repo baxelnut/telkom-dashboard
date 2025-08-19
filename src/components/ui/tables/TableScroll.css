@@ -12,6 +12,11 @@ table {
   white-space: nowrap;
 }
 
+table tr * {
+  font-size: clamp(0.9rem, 0.9vw, 1rem); /* same as <p> and da gang */
+  cursor: text;
+}
+
 table h6 {
   font-size: var(--small-h);
 }
