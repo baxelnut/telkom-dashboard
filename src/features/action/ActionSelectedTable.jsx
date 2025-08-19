@@ -23,6 +23,7 @@ export default function ActionSelectedTable({
   isAdmin,
   bucket, // "<" or ">"
   onAlertCountsChange,
+  alertFilter,
 }) {
   const [actions, setActions] = useState({});
   const [notes, setNotes] = useState({});
@@ -58,8 +59,17 @@ export default function ActionSelectedTable({
       onAlertCountsChange({ aman: amanCount, segera: segeraCount });
     }
 
-    setItems(items);
-  }, [reportData, bucket, onAlertCountsChange]);
+    // apply alertFilter AFTER counts (counts are totals for the bucket)
+    const filteredItems = items.filter((item) => {
+      if (!alertFilter || alertFilter === "ALL") return true;
+      if (alertFilter === "Aman") return !item.isWarning && !item.isOver90;
+      if (alertFilter === "Segera Diproses")
+        return item.isWarning && !item.isOver90;
+      return true;
+    });
+
+    setItems(filteredItems); // set filtered items once
+  }, [reportData, bucket, onAlertCountsChange, alertFilter]);
 
   useEffect(() => {
     inProcessItems.forEach(({ UUID }) => {
@@ -182,8 +192,12 @@ export default function ActionSelectedTable({
 
                   {/* Data columns */}
                   {headers.map((h, i) => (
-                    <td key={i} className="unresponsive">
-                      {h === "REVENUE" ? formatCurrency(row[h]) : row[h] ?? "-"}
+                    <td key={i} className="unresponsive data-col">
+                      <p>
+                        {h === "REVENUE"
+                          ? formatCurrency(row[h])
+                          : row[h] ?? "-"}
+                      </p>
                     </td>
                   ))}
                 </tr>

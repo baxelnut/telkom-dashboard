@@ -3,6 +3,8 @@ import "./ActionTableHeader.css";
 // Components
 import Button from "../../components/ui/buttons/Button";
 import Dropdown from "../../components/ui/input/Dropdown";
+// Data
+import { ALERT_OPTIONS } from "../../data/optionData";
 // Helpers
 import { getExportOptions } from "../../helpers/exportHelpers";
 
@@ -76,6 +78,24 @@ export default function ActionTableHeader({
               )
             </h6>
           )}
+        </div>
+      )}
+
+      {period == "<3" && (
+        <div className="filter-items sat">
+          <p>See Filter:</p>
+          <Dropdown
+            options={ALERT_OPTIONS}
+            value={selected.alertFilter}
+            onChange={(e) =>
+              setSelected((prev) => ({
+                ...prev,
+                alertFilter: e.target.value,
+              }))
+            }
+            short
+            chevronDown
+          />
         </div>
       )}
     </div>

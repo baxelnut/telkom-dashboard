@@ -34,9 +34,10 @@ export default function ActionBasedPage({ API_URL }) {
     report: `${API_URL}/regional-3/report`,
   });
   const [selected, setSelected] = useState({
-    witel: "ALL",
+    witel: "ALL", // initial selected witel
     detailed: [null, null, null, null], // [witel, po, period, status]
-    exportType: "Excel",
+    exportType: "Excel", // export type
+    alertFilter: "ALL", // "ALL" | "Aman" | "Segera Diproses"
   });
   const [alertCounts, setAlertCounts] = useState({ aman: 0, segera: 0 });
   const [witel, po, period, status] = selected.detailed;
@@ -156,6 +157,7 @@ export default function ActionBasedPage({ API_URL }) {
                 onUpdateSuccess={debounceRefresh}
                 isAdmin={isAdmin}
                 onAlertCountsChange={setAlertCounts}
+                alertFilter={selected.alertFilter}
               />
             </div>
           </CardsContent>

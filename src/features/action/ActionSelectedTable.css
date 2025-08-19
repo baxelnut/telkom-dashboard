@@ -4,6 +4,12 @@
   overflow: auto;
 }
 
+.selected-action-table .unresponsive.data-col p {
+  text-align: start;
+  pointer-events: all;
+  cursor: text !important;
+}
+
 .selected-action-table .no-data {
   text-align: center;
   padding: 1rem;
