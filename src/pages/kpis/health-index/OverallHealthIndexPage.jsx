@@ -45,7 +45,7 @@ export default function OverallHealthIndexPage({ API_URL }) {
         </div>
       </div>
 
-      <div className="kpi-cards-container">
+      <div className="cards-container kpi">
         <div className="card kpi">
           <h6>Service Uptime</h6>
           <p>91.987%</p>

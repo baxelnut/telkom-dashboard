@@ -44,7 +44,7 @@ export default function OverviewByWitel({ API_URL }) {
 
   if (loading || error || !data) {
     return (
-      <div className="cards-container-grid">
+      <div className="cards-container grid">
         {Array.from({ length: 5 }).map((_, index) => (
           <div key={index} className="card overview-by-witel ">
             {loading ? <Loading backgroundColor="transparent" /> : <Error />}
@@ -55,7 +55,7 @@ export default function OverviewByWitel({ API_URL }) {
   }
 
   return (
-    <div className="cards-container-grid">
+    <div className="cards-container grid">
       {data.map((overviewStatus, index) => {
         const statuses = Object.entries(getStatusColors());
         const pieData = statuses

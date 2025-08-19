@@ -20,11 +20,11 @@ export default function OverviewPage({ API_URL }) {
         />
       </Helmet>
 
-      <div className="cards-container-row-1-1">
+      <div className="cards-container row-1-1">
         <RevBySubType API_URL={API_URL} />
         <AmmountBySubType API_URL={API_URL} />
       </div>
-      <div className="cards-container-row">
+      <div className="cards-container row">
         <SessionBySubType API_URL={API_URL} />
         <div className="card segmen-radar-chart">
           <SegmenRadar API_URL={API_URL} />

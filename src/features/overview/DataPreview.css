@@ -19,7 +19,7 @@
 .data-preview .export-button-container {
   flex: 1;
   justify-content: end;
-  gap: 0.5rem;
+  gap: 0.25rem;
   width: 100%;
 }
 

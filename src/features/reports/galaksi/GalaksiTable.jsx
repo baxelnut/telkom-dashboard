@@ -47,7 +47,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
         <div className="filter-container announce">
           <Button
             id="announce-galaksi"
-            text={teleStatus ?? "Announce Telegram"}
+            text={teleStatus ?? "Send Telegram"}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
             backgroundColor="#0088cc"
