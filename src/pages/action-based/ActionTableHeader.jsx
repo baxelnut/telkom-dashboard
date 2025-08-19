@@ -3,10 +3,9 @@ import "./ActionTableHeader.css";
 // Components
 import Button from "../../components/ui/buttons/Button";
 import Dropdown from "../../components/ui/input/Dropdown";
-// Data
-import { ALERT_OPTIONS } from "../../data/optionData";
 // Helpers
 import { getExportOptions } from "../../helpers/exportHelpers";
+import { ALERT_OPTIONS } from "../../helpers/tableHelper";
 
 export default function ActionTableHeader({
   witel,
