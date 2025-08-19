@@ -44,23 +44,28 @@ export default function ActionSelectedTable({
   ];
 
   useEffect(() => {
-    // Flatten and filter items by bucket; if bucket is falsy, include all buckets (selected view)
-    const items = reportData
-      .flatMap((entry) => entry.items || [])
-      .filter((item) => (bucket ? item._bucket === bucket : true)); // include all when bucket is undefined
-
-    // compute alert counts (only for rows that show the ALERT column: !isOver90)
-    const alertRows = items.filter((item) => !item.isOver90);
-    const segeraCount = alertRows.filter((item) => !!item.isWarning).length; // warning => Segera Diproses
-    const amanCount = alertRows.filter((item) => !item.isWarning).length; // safe => Aman
-
-    // lift the numbers up if parent wants them
+    const raw = reportData.flatMap((entry) => entry.items || []); // flatten
+    // dedupe by UUID (keep the last occurrence)
+    const mapByUuid = new Map();
+    for (let i = 0; i < raw.length; i += 1) {
+      const item = raw[i];
+      const id = item?.UUID ?? `${i}`; // fallback if UUID missing (shouldn't happen)
+      mapByUuid.set(id, item);
+    }
+    const items = Array.from(mapByUuid.values());
+    // keep bucket filter
+    const bucketFiltered = bucket
+      ? items.filter((it) => it._bucket === bucket)
+      : items;
+    // compute counts on the bucket (totals)
+    const alertRows = bucketFiltered.filter((item) => !item.isOver90);
+    const segeraCount = alertRows.filter((item) => !!item.isWarning).length;
+    const amanCount = alertRows.filter((item) => !item.isWarning).length;
     if (typeof onAlertCountsChange === "function") {
       onAlertCountsChange({ aman: amanCount, segera: segeraCount });
     }
-
-    // apply alertFilter AFTER counts (counts are totals for the bucket)
-    const filteredItems = items.filter((item) => {
+    // apply the alertFilter
+    const filteredItems = bucketFiltered.filter((item) => {
       if (!alertFilter || alertFilter === "ALL") return true;
       if (alertFilter === "Aman") return !item.isWarning && !item.isOver90;
       if (alertFilter === "Segera Diproses")
@@ -68,7 +73,7 @@ export default function ActionSelectedTable({
       return true;
     });
 
-    setItems(filteredItems); // set filtered items once
+    setItems(filteredItems);
   }, [reportData, bucket, onAlertCountsChange, alertFilter]);
 
   useEffect(() => {
@@ -116,7 +121,7 @@ export default function ActionSelectedTable({
           </thead>
           <tbody>
             {inProcessItems.map((row, idx) => {
-              const uuid = row.UUID;
+              const uuid = row?.UUID ?? `row-${idx}`; // fallback key if UUID missing
               const status = actions[uuid] ?? row.STATUS ?? "";
               const currentNote = notes[uuid] ?? row.NOTES ?? "";
               const isWarning = !!row.isWarning; // Decide if it's in warning zone (60 > x > 90 days)
