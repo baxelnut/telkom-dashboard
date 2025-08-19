@@ -22,6 +22,7 @@ export default function ActionSelectedTable({
   onUpdateSuccess,
   isAdmin,
   bucket, // "<" or ">"
+  onAlertCountsChange,
 }) {
   const [actions, setActions] = useState({});
   const [notes, setNotes] = useState({});
@@ -42,13 +43,23 @@ export default function ActionSelectedTable({
   ];
 
   useEffect(() => {
-    // Flatten and filter items by bucket
+    // Flatten and filter items by bucket; if bucket is falsy, include all buckets (selected view)
     const items = reportData
       .flatMap((entry) => entry.items || [])
-      .filter((item) => item._bucket === bucket); // match "<" or ">"
+      .filter((item) => (bucket ? item._bucket === bucket : true)); // include all when bucket is undefined
+
+    // compute alert counts (only for rows that show the ALERT column: !isOver90)
+    const alertRows = items.filter((item) => !item.isOver90);
+    const segeraCount = alertRows.filter((item) => !!item.isWarning).length; // warning => Segera Diproses
+    const amanCount = alertRows.filter((item) => !item.isWarning).length; // safe => Aman
+
+    // lift the numbers up if parent wants them
+    if (typeof onAlertCountsChange === "function") {
+      onAlertCountsChange({ aman: amanCount, segera: segeraCount });
+    }
 
     setItems(items);
-  }, [reportData, bucket]);
+  }, [reportData, bucket, onAlertCountsChange]);
 
   useEffect(() => {
     inProcessItems.forEach(({ UUID }) => {

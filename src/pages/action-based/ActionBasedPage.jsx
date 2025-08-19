@@ -38,6 +38,7 @@ export default function ActionBasedPage({ API_URL }) {
     detailed: [null, null, null, null], // [witel, po, period, status]
     exportType: "Excel",
   });
+  const [alertCounts, setAlertCounts] = useState({ aman: 0, segera: 0 });
   const [witel, po, period, status] = selected.detailed;
   const witelOptions = useWitelOptions(data);
   const enrichedData = useEnrichedData(data);
@@ -107,6 +108,7 @@ export default function ActionBasedPage({ API_URL }) {
               status={status}
               period={period}
               bucketLabel={bucketKey === "<" ? "<3 BLN" : ">3 BLN"}
+              alertCounts={alertCounts}
             />
             <CardsContent loading={loading} error={error}>
               <div className="table-wrapper">
@@ -143,6 +145,7 @@ export default function ActionBasedPage({ API_URL }) {
             status={status}
             period={period}
             bucketLabel="Selected Witel"
+            alertCounts={alertCounts}
           />
           <CardsContent loading={loading} error={error}>
             <div className="table-wrapper">
@@ -152,6 +155,7 @@ export default function ActionBasedPage({ API_URL }) {
                 userEmail={user?.email}
                 onUpdateSuccess={debounceRefresh}
                 isAdmin={isAdmin}
+                onAlertCountsChange={setAlertCounts}
               />
             </div>
           </CardsContent>

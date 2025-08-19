@@ -17,6 +17,7 @@ export default function ActionTableHeader({
   status,
   period,
   bucketLabel,
+  alertCounts = { aman: 0, segera: 0 },
 }) {
   return (
     <div className="action-table-header">
@@ -68,6 +69,13 @@ export default function ActionTableHeader({
             {po} → {status} →{" "}
             {period === "ALL PERIOD" ? period : `${period} bulan`}
           </h6>
+
+          {period == "<3" && (
+            <h6 className="small-h">
+              (Aman = {alertCounts.aman}; Segera Diproses = {alertCounts.segera}
+              )
+            </h6>
+          )}
         </div>
       )}
     </div>
