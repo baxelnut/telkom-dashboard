@@ -19,12 +19,6 @@ async function findUserById(telegramId) {
 bot.start(async (ctx) => {
   const telegramId = String(ctx.from?.id || "");
 
-  if (process.env.NODE_ENV === "development" && telegramId !== "1360015931") {
-    return ctx.reply(
-      `🚫 This bot is in dev mode and locked to 1360015931. \n ${telegramId}`
-    );
-  }
-
   const match = await findUserById(telegramId);
   if (!match || !match.data.telegramId) {
     return ctx.reply(
@@ -68,10 +62,6 @@ export default bot;
 
 // helper to start polling in dev
 export async function startBot() {
-  if (process.env.NODE_ENV === "production") {
-    console.log("✅ Bot ready for WEBHOOK (Vercel).");
-    return;
-  }
   try {
     await bot.launch({ dropPendingUpdates: true });
     console.log("✅ Bot started in POLLING mode (local dev).");

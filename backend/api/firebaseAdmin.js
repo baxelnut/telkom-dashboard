@@ -1,7 +1,4 @@
-// Only use dotenv locally
-if (process.env.NODE_ENV !== "production") {
-  import("dotenv/config");
-}
+import "dotenv/config";
 
 import admin from "firebase-admin";
 import fs from "fs";
@@ -9,38 +6,29 @@ import path from "path";
 
 let serviceAccount;
 
+// Prefer env var (works in Vercel)
 if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-  try {
-    const rawJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
-    const parsed = JSON.parse(rawJson);
+  const parsed = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 
-    if (parsed.private_key) {
-      parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
-    }
-
-    serviceAccount = parsed;
-    console.log("Loaded service account from ENV");
-  } catch (err) {
-    console.error("Invalid FIREBASE_SERVICE_ACCOUNT_JSON:", err);
-    throw err;
+  if (parsed.private_key) {
+    parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
   }
+
+  serviceAccount = parsed;
+  console.log("✅ Service account from ENV");
 } else {
+  // Fallback for local dev with file
   const keyPath = path.resolve("./keys/serviceAccountKey.json");
-  try {
-    const fileContent = fs.readFileSync(keyPath, "utf8");
-    serviceAccount = JSON.parse(fileContent);
-    console.log("Loaded service account from file");
-  } catch (err) {
-    console.error(`Failed to load service account file at ${keyPath}:`, err);
-    throw err;
-  }
+  const fileContent = fs.readFileSync(keyPath, "utf8");
+  serviceAccount = JSON.parse(fileContent);
+  console.log("✅ Service account from file");
 }
 
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
-  // console.log("Firebase Admin initialized");
+  console.log("🔥 Firebase Admin initialized");
 }
 
 export const db = admin.firestore();

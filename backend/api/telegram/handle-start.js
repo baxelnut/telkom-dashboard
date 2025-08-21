@@ -1,4 +1,4 @@
-import admin from "../firebaseAdmin.js";
+import { db } from "../firebaseAdmin.js";
 import axios from "axios";
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -22,7 +22,6 @@ export default async function handler(req, res) {
 
   try {
     // Lookup user in Firestore by telegramId OR username (adjust to your schema)
-    const db = admin.firestore();
     let userDoc = null;
 
     if (telegramId) {
