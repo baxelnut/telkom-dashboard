@@ -1,42 +1,62 @@
-import bot from "../bot/bot.js";
+import axios from "axios";
+
+const API_BASE = process.env.API_BASE_URL || "http://localhost:5000";
 
 export default async function handler(req, res) {
-  console.log("[webhook] incoming request", { method: req.method });
+  if (req.method !== "POST") return res.status(200).send("OK");
 
-  if (req.method !== "POST") {
-    console.log("[webhook] non-POST request");
-    return res.status(200).send("OK");
-  }
-
-  console.log(
-    "[webhook] headers:",
-    req.headers && {
-      "content-type":
-        req.headers["content-type"] || req.headers["Content-Type"],
-    }
-  );
-
+  // parse body if needed
+  let update = req.body;
   try {
-    // Log body size and first chunk (avoid huge logging)
-    const bodyPreview = (() => {
-      try {
-        const s = JSON.stringify(req.body);
-        return s.length > 2000 ? s.slice(0, 2000) + "...(truncated)" : s;
-      } catch (e) {
-        return String(req.body).slice(0, 2000);
-      }
-    })();
-    console.log("[webhook] bodyPreview:", bodyPreview);
-
-    // Process update asynchronously so we can respond quickly
-    bot.handleUpdate(req.body).catch((err) => {
-      console.error("[webhook] bot.handleUpdate async error:", err);
-    });
-
-    // immediate 200 so Telegram considers delivery OK
+    if (typeof update === "string") update = JSON.parse(update);
+  } catch (e) {
+    console.warn("webhook: failed to parse body as JSON", e);
+    // still return OK to avoid Telegram retries, but log in Vercel
     return res.status(200).send("OK");
-  } catch (err) {
-    console.error("[webhook] handler top-level error:", err);
-    return res.status(500).send("Internal Server Error");
   }
+
+  // respond immediately so Telegram doesn't wait
+  res.status(200).send("OK");
+
+  // process asynchronously (fire-and-forget)
+  (async () => {
+    try {
+      // only forward /start updates
+      const text = update?.message?.text || "";
+      const from = update?.message?.from || {};
+      const chat = update?.message?.chat || {};
+
+      // Forward to your backend endpoint that implements the logic
+      // Example endpoint: POST /api/telegram/handle-start
+      if (text && text.trim() === "/start") {
+        await axios.post(
+          `${API_BASE}/api/telegram/handle-start`,
+          {
+            update,
+            chatId: chat.id,
+            username: from.username,
+            telegramId: from.id,
+          },
+          {
+            timeout: 30000,
+          }
+        );
+      } else {
+        await axios
+          .post(
+            `${API_BASE}/api/telegram/handle-generic`,
+            {
+              update,
+            },
+            { timeout: 10000 }
+          )
+          .catch(() => {});
+      }
+    } catch (err) {
+      console.error(
+        "webhook -> backend forwarding error:",
+        err?.response?.data || err?.message || err
+      );
+    }
+  })();
 }

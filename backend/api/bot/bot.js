@@ -2,39 +2,33 @@ import bot from "./botInstance.js";
 import { db } from "../firebaseAdmin.js";
 
 // helper
-async function findUserByUsername(username) {
-  if (!username) return null;
+async function findUserById(telegramId) {
+  if (!telegramId) return null;
+
   const snapshot = await db
     .collection("users")
-    .where("telegramId", "==")
+    .where("telegramId", "==", String(telegramId))
     .limit(1)
     .get();
+
   if (snapshot.empty) return null;
   return { id: snapshot.docs[0].id, data: snapshot.docs[0].data() };
 }
 
 // register handlers (these MUST run when the module is imported)
 bot.start(async (ctx) => {
-  const tgUsername = ctx.from?.username || null;
-  if (!tgUsername) {
+  const telegramId = String(ctx.from?.id || "");
+
+  if (process.env.NODE_ENV === "development" && telegramId !== "1360015931") {
     return ctx.reply(
-      "❌ Your Telegram account has no username set.\nPlease set a Telegram username in Telegram settings and link it in the dashboard."
+      `🚫 This bot is in dev mode and locked to 1360015931. \n ${telegramId}`
     );
   }
 
-  if (
-    process.env.NODE_ENV === "development" &&
-    tgUsername !== "basiliustengang"
-  ) {
-    return ctx.reply(
-      "🚫 This bot is in dev mode and locked to @basiliustengang."
-    );
-  }
-
-  const match = await findUserByUsername(tgUsername);
+  const match = await findUserById(telegramId);
   if (!match || !match.data.telegramId) {
     return ctx.reply(
-      `❌ No linked account found for @${tgUsername}.\n➡️ Go to Dashboard → Settings → Connect Telegram and set your username exactly as @${tgUsername}`
+      `❌ No linked account found for @${telegramId}.\n➡️ Go to Dashboard → Settings → Connect Telegram and set your username exactly as @${telegramId}`
     );
   }
 
@@ -56,12 +50,12 @@ bot.start(async (ctx) => {
 });
 
 bot.command("test", async (ctx) => {
-  const tgUsername = ctx.from?.username || null;
-  const match = await findUserByUsername(tgUsername);
+  const telegramId = ctx.from?.id || null;
+  const match = await findUserById(telegramId);
 
   ctx.reply(
     `🛠 Debug:\n` +
-      `Telegram username: @${tgUsername || "(none)"}\n` +
+      `Telegram ID: ${telegramId || "(none)"}\n` +
       `Matched in DB: ${match ? "✅ YES" : "❌ NO"}\n` +
       (match
         ? `Full name: ${match.data.fullName}\nRole: ${match.data.role}\nStored telegramId: ${match.data.telegramId}`
