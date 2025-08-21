@@ -114,6 +114,11 @@ export default function ManageUserPage({ API_URL }) {
           fullWidth
           chevronDown
         />
+        {user.lastLogin && (
+          <p className="last-login">
+            Last login: {new Date(user.lastLogin).toLocaleString()}
+          </p>
+        )}
 
         <div className="details-footer-container">
           <div className="edit-btn-container">

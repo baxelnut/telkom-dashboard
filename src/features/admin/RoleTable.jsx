@@ -66,12 +66,13 @@ export default function RoleTable({
           <th>Name</th>
           <th>Email</th>
           <th>Telegram ID</th>
+          <th>Last Login</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {users.map((user, i) => {
-          const { role, email, fullName, uid, telegramId } = user;
+          const { role, email, fullName, uid, telegramId, lastLogin } = user;
           const newRole = role === "admin" ? "user" : "admin";
           const capitalizedRole =
             role?.charAt(0).toUpperCase() + role?.slice(1);
@@ -100,6 +101,13 @@ export default function RoleTable({
                     <span className="not-set">Not set</span>
                   )}
                 </em>
+              </td>
+              <td>
+                {lastLogin ? (
+                  <em>{new Date(lastLogin).toLocaleString()}</em>
+                ) : (
+                  <span className="not-set">Never</span>
+                )}
               </td>
               <td className="action-td">
                 <div className="btn-container">
