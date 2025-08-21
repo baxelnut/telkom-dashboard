@@ -5,18 +5,45 @@ export const getAllUsers = async (req, res) => {
   try {
     const usersSnapshot = await db.collection("users").get();
     if (usersSnapshot.empty) {
-      return res.status(404).json({ error: "No admins found" });
+      return res.status(404).json({ error: "No users found" });
     }
-    const admins = usersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      fullName: doc.data().fullName,
-      email: doc.data().email,
-      role: doc.data().role,
-      docId: doc.data().docId,
-      uid: doc.data().uid,
-      telegramId: doc.data().telegramId,
-    }));
-    res.status(200).json({ data: admins });
+
+    const users = await Promise.all(
+      usersSnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+
+        let lastLogin = null;
+        try {
+          const userRecord = await admin.auth().getUser(data.uid);
+          lastLogin =
+            userRecord.metadata.lastSignInTime ||
+            userRecord.metadata.creationTime ||
+            null;
+        } catch (e) {
+          console.warn(`Auth record missing for uid: ${data.uid}`);
+        }
+
+        return {
+          id: doc.id,
+          fullName: data.fullName,
+          email: data.email,
+          role: data.role,
+          docId: data.docId,
+          uid: data.uid,
+          telegramId: data.telegramId,
+          lastLogin,
+        };
+      })
+    );
+
+    // Sort alphabetically by fullName (case-insensitive)
+    users.sort((a, b) =>
+      (a.fullName || "").localeCompare(b.fullName || "", undefined, {
+        sensitivity: "base",
+      })
+    );
+
+    res.status(200).json({ data: users });
   } catch (err) {
     console.error("getAllUsers Error:", err);
     res.status(500).json({ error: err.message || "Unknown server error" });
@@ -55,31 +82,41 @@ export const getUserByEmail = async (req, res) => {
 
 export const getUserByUid = async (req, res) => {
   const uid = req.query.uid || req.params.uid;
+
+  if (!uid) return res.status(400).json({ error: "UID is required" });
+
   try {
+    // Grab user record from Firebase Auth
+    const userRecord = await admin.auth().getUser(uid);
+
+    // Grab Firestore user document
     const snapshot = await db
       .collection("users")
       .where("uid", "==", uid)
       .limit(1)
       .get();
+
     if (snapshot.empty) {
       return res.status(404).json({ error: "User not found" });
     }
-    const userDoc = snapshot.docs[0];
-    const userData = userDoc.data();
-    res.status(200).json({
+
+    const userDoc = snapshot.docs[0].data();
+
+    // fallback: use creationTime if no lastSignInTime
+    const lastLogin =
+      userRecord.metadata.lastSignInTime ||
+      userRecord.metadata.creationTime ||
+      null;
+
+    res.json({
       data: {
-        id: userDoc.id,
-        email: userData.email,
-        role: userData.role,
-        fullName: userData.fullName,
-        docId: userData.docId,
-        uid: userData.uid,
-        telegramId: userData.telegramId,
+        ...userDoc,
+        lastLogin,
       },
     });
   } catch (err) {
-    console.error("getUserByUid Error:", err);
-    res.status(500).json({ error: err.message || "Server error" });
+    console.error("Error fetching user:", err);
+    res.status(500).json({ error: err.message });
   }
 };
 
