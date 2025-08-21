@@ -79,7 +79,7 @@ export default function AuthForm() {
             required
           />
           <InputField
-            label="Telegram"
+            label="Telegram ID"
             type="text"
             placeholder="Enter Telegram ID"
             value={form.telegramId}

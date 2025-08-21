@@ -122,7 +122,7 @@ export default function UserProfile({ userData, showProfile }) {
 
           {/* TELEGRAM */}
           <div className="user-section">
-            <p className="small-p">Telegram</p>
+            <p className="small-p">Telegram ID</p>
             {isEditing ? (
               <InputField
                 type="text"
