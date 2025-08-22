@@ -39,7 +39,7 @@ bot.start(async (ctx) => {
 
   await ctx.reply(`👋 Welcome ${match.data.fullName || "User"}!`);
   await ctx.reply(
-    "Here are your available commands:\n/report - Get latest orders\n/alerts - Manage alerts"
+    "Here are your available commands:\n/report - Get latest orders\n/alert - Manage alerts"
   );
 });
 

@@ -1,62 +1,105 @@
+import { db } from "../firebaseAdmin.js";
 import axios from "axios";
 
-const API_BASE = process.env.API_BASE_URL || "http://localhost:5000";
+const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+
+// in-memory dedupe for retries within the same instance
+const seen = new Set();
+const SEEN_LIMIT = 500;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(200).send("OK");
 
-  // parse body if needed
-  let update = req.body;
-  try {
-    if (typeof update === "string") update = JSON.parse(update);
-  } catch (e) {
-    console.warn("webhook: failed to parse body as JSON", e);
-    // still return OK to avoid Telegram retries, but log in Vercel
-    return res.status(200).send("OK");
-  }
+  const update = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-  // respond immediately so Telegram doesn't wait
+  // Ack ASAP so Telegram won't retry
   res.status(200).send("OK");
 
-  // process asynchronously (fire-and-forget)
-  (async () => {
-    try {
-      // only forward /start updates
-      const text = update?.message?.text || "";
-      const from = update?.message?.from || {};
-      const chat = update?.message?.chat || {};
+  try {
+    const updateId = update?.update_id;
+    const msg = update?.message;
+    const text = msg?.text?.trim();
+    const chatId = msg?.chat?.id;
+    const telegramId = msg?.from?.id;
 
-      // Forward to your backend endpoint that implements the logic
-      // Example endpoint: POST /api/telegram/handle-start
-      if (text && text.trim() === "/start") {
-        await axios.post(
-          `${API_BASE}/api/telegram/handle-start`,
-          {
-            update,
-            chatId: chat.id,
-            username: from.username,
-            telegramId: from.id,
-          },
-          {
-            timeout: 30000,
-          }
-        );
-      } else {
-        await axios
-          .post(
-            `${API_BASE}/api/telegram/handle-generic`,
-            {
-              update,
-            },
-            { timeout: 10000 }
-          )
-          .catch(() => {});
+    if (!chatId || !text) return;
+
+    // Idempotency: skip duplicates (Telegram retries / multi-hits)
+    if (updateId != null) {
+      if (seen.has(updateId)) return;
+      seen.add(updateId);
+      if (seen.size > SEEN_LIMIT) {
+        // keep memory bounded
+        const first = seen.values().next().value;
+        seen.delete(first);
       }
-    } catch (err) {
-      console.error(
-        "webhook -> backend forwarding error:",
-        err?.response?.data || err?.message || err
-      );
     }
-  })();
+
+    // UX: typing…
+    await axios
+      .post(`${TELEGRAM_API}/sendChatAction`, {
+        chat_id: chatId,
+        action: "typing",
+      })
+      .catch(() => {});
+
+    if (text === "/start") {
+      const snap = await db
+        .collection("users")
+        .where("telegramId", "==", String(telegramId))
+        .limit(1)
+        .get();
+
+      if (snap.empty) {
+        await axios.post(`${TELEGRAM_API}/sendMessage`, {
+          chat_id: chatId,
+          text: "❌ No linked account found.\n➡️ Go to Dashboard → Settings → Connect Telegram",
+        });
+        return;
+      }
+
+      const userDoc = snap.docs[0];
+      const user = userDoc.data();
+
+      await db
+        .collection("users")
+        .doc(userDoc.id)
+        .update({ teleChatId: chatId })
+        .catch(() => {});
+
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: `👋 Welcome ${user.fullName || "User"}! You are linked as: ${
+          user.role || "user"
+        } \nHere are your available commands:\n/report - Get latest orders\n/alert - Manage alerts`,
+      });
+
+      return;
+    }
+
+    if (text === "/report") {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "📊 Report output here...",
+      });
+      return;
+    }
+
+    // NEW: handle /alert and /alerts
+    if (text === "/alert" || text === "/alerts") {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "🔔 Alert management coming soon...\n(You can hook this to your DB logic)",
+      });
+      return;
+    }
+
+    // Fallback for unknown commands
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id: chatId,
+      text: "Unknown command. Try /report or /alert",
+    });
+  } catch (err) {
+    console.error("Webhook error:", err?.response?.data || err.message || err);
+  }
 }

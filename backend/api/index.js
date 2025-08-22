@@ -10,8 +10,6 @@ import telegramRoutes from "./routes/telegram.js";
 import gasRoutes from "./routes/gas.js";
 
 import webhookHandler from "./telegram/webhook.js";
-import handleStartHandler from "./telegram/handle-start.js";
-import handleGenericHandler from "./telegram/handle-generic.js";
 
 const app = express();
 
@@ -29,10 +27,8 @@ app.use("/api/gas", gasRoutes);
 
 // Telegram webhook
 app.post("/api/telegram/webhook", webhookHandler);
-app.post("/api/telegram/handle-start", handleStartHandler);
-app.post("/api/telegram/handle-generic", handleGenericHandler);
 
-if (process.env.NODE_ENV !== "prod") {
+if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
