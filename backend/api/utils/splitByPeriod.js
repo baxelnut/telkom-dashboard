@@ -11,7 +11,7 @@ export const splitByPeriod = (items) => {
       return;
     }
 
-    if (days >= 90) {
+    if (days > 90) {
       gt3.push({ ...it, isWarning: false, isOver90: true });
     } else {
       const isWarn = days >= 60;
