@@ -23,8 +23,7 @@ build/
 firestore.rules
 .firebase
 
-# 🔥 Lockfiles (Optional)
-package-lock.json
+# 🔥 Lockfiles (Optional) 
 yarn.lock
 pnpm-lock.yaml
 
