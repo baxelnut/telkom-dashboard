@@ -21,7 +21,14 @@ export default async function handler(req, res) {
     const text = msg?.text?.trim();
     const chatId = msg?.chat?.id;
     const telegramId = msg?.from?.id;
-
+    console.log(
+      "DEBUG telegramId:",
+      telegramId,
+      "chatId:",
+      chatId,
+      "text:",
+      text
+    );
     if (!chatId || !text) return;
 
     // Idempotency: skip duplicates (Telegram retries / multi-hits)
@@ -88,7 +95,7 @@ export default async function handler(req, res) {
         const resp = await axios.get(
           `${process.env.API_BASE_URL}/api/regional-3/report/by-telegram`,
           {
-            params: { telegramId },
+            params: { telegramId: String(telegramId) }, // force string
           }
         );
 
