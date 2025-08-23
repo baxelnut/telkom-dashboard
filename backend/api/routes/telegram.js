@@ -6,25 +6,8 @@ import axios from "axios";
 import multer from "multer";
 import FormData from "form-data";
 
-import { sendTelegramMessage } from "../utils/sendTelegramMessage.js";
-
 const upload = multer();
 const router = express.Router();
-
-router.post("/report", async (req, res) => {
-  const { message, target = "private" } = req.body;
-
-  if (!message) {
-    return res.status(400).json({ error: "Message is required" });
-  }
-
-  try {
-    await sendTelegramMessage(message, target);
-    res.status(200).json({ success: true, sent: message, target });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to send Telegram message" });
-  }
-});
 
 router.post("/photo", upload.single("photo"), async (req, res) => {
   const { target, caption } = req.body; // include caption
