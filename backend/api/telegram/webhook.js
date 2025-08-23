@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       if (snap.empty) {
         await axios.post(`${TELEGRAM_API}/sendMessage`, {
           chat_id: chatId,
-          text: "❌ No linked account found.\n➡️ Go to Dashboard → Settings → Connect Telegram",
+          text: "No linked account found.\nGo to Dashboard → Connect Telegram",
         });
         return;
       }
@@ -87,7 +87,7 @@ export default async function handler(req, res) {
     if (text === "/report") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "📊 Preparing your personal report — one sec...",
+        text: "Preparing your report, please wait...",
       });
 
       try {
@@ -111,13 +111,13 @@ export default async function handler(req, res) {
         // craft a compact summary message
         const s = body.summary;
         const textMsg =
-          `📊 Report for ${body.poName || body.fallbackName || "You"}\n\n` +
+          `Report for ${body.poName || body.fallbackName || "You"}\n\n` +
           `Total orders: ${s.totalOrders}\n` +
           `Total revenue: ${s.totalRevenue}\n` +
           `IN PROCESS: ${s.byKategori["IN PROCESS"] || 0}\n` +
-          `<3 months: ${s.byAge["<3bln"].count} orders (Rp ${s.byAge["<3bln"].revenue})\n` +
-          `>3 months: ${s.byAge[">3bln"].count} orders (Rp ${s.byAge[">3bln"].revenue})\n\n` +
-          `To view items, open the dashboard or ask for details.`;
+          `<3 months: ${s.byAge["<3bln"].count} orders` +
+          `>3 months: ${s.byAge[">3bln"].count} orders` +
+          `Visit dashboard to view items.`;
 
         await axios.post(`${TELEGRAM_API}/sendMessage`, {
           chat_id: chatId,
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
         );
         await axios.post(`${TELEGRAM_API}/sendMessage`, {
           chat_id: chatId,
-          text: "❌ Failed to build your report. Try again later.",
+          text: "Failed to build your report. Try again later.",
         });
       }
 
@@ -140,7 +140,7 @@ export default async function handler(req, res) {
     if (text === "/alert") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "🔔 Alert management coming soon...\n(You can hook this to your DB logic)",
+        text: "🔔 Alert management coming soon...",
       });
       return;
     }
