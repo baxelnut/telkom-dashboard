@@ -109,51 +109,29 @@ export async function getReportByTelegramId(req, res) {
     if (!telegramId)
       return res.status(400).json({ error: "Missing Telegram ID" });
 
-    const email = await getUserEmailByTelegramId(telegramId);
-    if (!email)
-      return res
-        .status(404)
-        .json({ error: "User or email not found for given Telegram ID" });
+    let email = await getUserEmailByTelegramId(telegramId);
+    const snap = await db
+      .collection("users")
+      .where("telegramId", "==", String(telegramId))
+      .limit(1)
+      .get();
+    const userDoc = snap.empty ? null : snap.docs[0].data();
+    let fullName = userDoc?.fullName || "";
+
+    // ===== DEBUG OVERRIDE =====
+    if (fullName === "DEVELOPER") fullName = "Alfonsus Jaconias";
+    if (email === "basilius.tengang.dev@gmail.com")
+      email = "alfonjaconias@gmail.com";
+    // ==========================
 
     const poMap = await buildPoMap();
-    const poName = poMap.get((email || "").toLowerCase());
-    if (!poName) {
-      // fallback: maybe user email is not in PO list; attempt to match by user's fullName in users doc
-      const snap = await db
-        .collection("users")
-        .where("telegramId", "==", String(telegramId))
-        .limit(1)
-        .get();
-      const userDoc = snap.empty ? null : snap.docs[0].data();
-      const fallbackName = userDoc?.fullName || null;
-      if (!fallbackName) {
-        return res.status(404).json({
-          error:
-            "No PO_NAME mapping found for user email, and no fallback name available.",
-        });
-      }
-      // continue with fallback name
-      const allRows = await fetchFormattedReportData();
-      const matched = allRows.filter(
-        (r) => normalize(r["PIC"]) === normalize(fallbackName)
-      );
-      const summary = summarizeRows(matched);
-      return res.json({
-        telegramId,
-        email,
-        usedFallbackFullName: true,
-        fallbackName,
-        matchCount: matched.length,
-        summary,
-        items: summary.sampleItems,
-      });
-    }
+    const poName = poMap.get((email || "").toLowerCase()) || fullName;
 
-    // filter rows where PIC === poName
     const allRows = await fetchFormattedReportData();
     const matched = allRows.filter(
       (r) => normalize(r["PIC"]) === normalize(poName)
     );
+
     const summary = summarizeRows(matched);
 
     return res.json({
@@ -163,6 +141,8 @@ export async function getReportByTelegramId(req, res) {
       matchCount: matched.length,
       summary,
       items: summary.sampleItems,
+      usedDebugOverride:
+        fullName !== userDoc?.fullName || email !== userDoc?.email,
     });
   } catch (err) {
     console.error("getReportByTelegramId error:", err);

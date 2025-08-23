@@ -96,7 +96,7 @@ export default async function handler(req, res) {
         if (!body || body.matchCount === 0) {
           await axios.post(`${TELEGRAM_API}/sendMessage`, {
             chat_id: chatId,
-            text: "✅ No reports found for your account.",
+            text: "No reports found for your account.",
           });
           return;
         }
