@@ -11,6 +11,8 @@ import gasRoutes from "./routes/gas.js";
 
 import webhookHandler from "./telegram/webhook.js";
 
+const PORT = process.env.PORT || 8000;
+
 const app = express();
 
 app.use(cors());
@@ -28,11 +30,11 @@ app.use("/api/gas", gasRoutes);
 // Telegram webhook
 app.post("/api/telegram/webhook", webhookHandler);
 
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
+// Only listen if we're NOT in Vercel
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
   });
 }
 
-export default app; // for Vercel
+export default app; // Vercel
