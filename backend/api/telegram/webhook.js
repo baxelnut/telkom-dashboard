@@ -80,13 +80,57 @@ export default async function handler(req, res) {
     if (text === "/report") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "📊 Report output here...",
+        text: "📊 Preparing your personal report — one sec...",
       });
+
+      try {
+        // call your backend endpoint using API_BASE (set in env)
+        const resp = await axios.get(
+          `${process.env.API_BASE_URL}/api/regional-3/report/by-telegram`,
+          {
+            params: { telegramId },
+          }
+        );
+
+        const body = resp.data;
+        if (!body || body.matchCount === 0) {
+          await axios.post(`${TELEGRAM_API}/sendMessage`, {
+            chat_id: chatId,
+            text: "✅ No reports found for your account.",
+          });
+          return;
+        }
+
+        // craft a compact summary message
+        const s = body.summary;
+        const textMsg =
+          `📊 Report for ${body.poName || body.fallbackName || "You"}\n\n` +
+          `Total orders: ${s.totalOrders}\n` +
+          `Total revenue: ${s.totalRevenue}\n` +
+          `IN PROCESS: ${s.byKategori["IN PROCESS"] || 0}\n` +
+          `<3 months: ${s.byAge["<3bln"].count} orders (Rp ${s.byAge["<3bln"].revenue})\n` +
+          `>3 months: ${s.byAge[">3bln"].count} orders (Rp ${s.byAge[">3bln"].revenue})\n\n` +
+          `To view items, open the dashboard or ask for details.`;
+
+        await axios.post(`${TELEGRAM_API}/sendMessage`, {
+          chat_id: chatId,
+          text: textMsg,
+        });
+      } catch (err) {
+        console.error(
+          "REPORT -> error",
+          err?.response?.data || err?.message || err
+        );
+        await axios.post(`${TELEGRAM_API}/sendMessage`, {
+          chat_id: chatId,
+          text: "❌ Failed to build your report. Try again later.",
+        });
+      }
+
       return;
     }
 
-    // NEW: handle /alert and /alerts
-    if (text === "/alert" || text === "/alerts") {
+    if (text === "/alert") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text: "🔔 Alert management coming soon...\n(You can hook this to your DB logic)",

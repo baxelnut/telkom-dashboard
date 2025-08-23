@@ -15,6 +15,10 @@ import {
   getSegmenSubtype2,
   getSegmenSubtype2Rev,
 } from "../controllers/sheetsController.js";
+import {
+  getReportByPic,
+  getReportByTelegramId,
+} from "../controllers/picController.js";
 
 const router = express.Router();
 
@@ -32,5 +36,10 @@ router.get("/sheets/kategori-simplified", getSheetKategoriSimplified);
 router.get("/sheets/order-subtype2", getSheetOrderType2);
 
 router.get("/sheets/po", getPO);
+
+router.get("/report/pic", getReportByPic);
+router.post("/report/pic", getReportByPic);
+router.get("/report/by-telegram", getReportByTelegramId);
+router.post("/report/by-telegram", getReportByTelegramId);
 
 export default router;
