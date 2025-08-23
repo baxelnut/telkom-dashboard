@@ -69,9 +69,9 @@ export default async function handler(req, res) {
 
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: `👋 Welcome ${user.fullName || "User"}! You are linked as: ${
-          user.role || "user"
-        } \nHere are your available commands:\n/report - Get latest orders\n/alert - Manage alerts`,
+        text: `👋 Welcome ${
+          user.fullName || "User"
+        }!\nHere are your available commands:\n/report - Get latest orders\n/alert - Manage alerts`,
       });
 
       return;
