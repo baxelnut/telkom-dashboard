@@ -9,14 +9,16 @@ export default async function handleAlert({
     case "/alertlist":
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "Active alerts listing not available yet. Dashboard only.",
+        text: "<b>Active Alerts</b>\n\n<i>Listing not available yet. Please check the dashboard.</i>",
+        parse_mode: "HTML",
       });
       return;
 
     case "/alertadd":
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "Add-alert flow not implemented yet. Use dashboard to create alerts.",
+        text: "<b>Add New Alert</b>\n\n<i>This flow is not implemented yet. Use the dashboard to create alerts.</i>",
+        parse_mode: "HTML",
       });
       return;
 
@@ -25,12 +27,12 @@ export default async function handleAlert({
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text:
-          "🔔 Alert Management\n\nUsage:\n" +
-          "/alertlist - View active alerts\n" +
-          "/alertadd - Create a new alert\n\n" +
-          "Coming soon to Telegram. For now, use the dashboard." +
-          "\n\nUse /help to show commands",
-        parse_mode: "Markdown",
+          "🔔 <b>Alert Management</b>\n\n" +
+          "<code>/alertlist</code> – View active alerts\n" +
+          "<code>/alertadd</code> – Create a new alert\n\n" +
+          "<i>Coming soon to Telegram. For now, use the dashboard.</i>\n\n" +
+          "Use <code>/help</code> to show all commands.",
+        parse_mode: "HTML",
       });
       return;
   }

@@ -13,15 +13,18 @@ const seen = new Set();
 const SEEN_LIMIT = 500;
 
 const commandList =
-  "**Available Commands:**\n\n" +
-  "/report - Summary report\n" +
-  "/reportwitel - Report by WITEL\n" +
-  "/reportlastweek - Report last 7 days\n" +
-  "/reportlastmonth - Report last 30 days\n" +
-  "/alert - Manage alerts\n" +
-  "/alertlist - Show alerts\n" +
-  "/alertadd - Add new alert\n" +
-  "/search - Search PO by ID\n" +
+  "<b>Available Commands:</b><br><br>" +
+  "<b>Reports:</b><br>" +
+  "/report - Summary report<br>" +
+  "/reportwitel - Report by WITEL<br>" +
+  "/reportlastweek - Last 7 days<br>" +
+  "/reportlastmonth - Last 30 days<br><br>" +
+  "<b>Alerts:</b><br>" +
+  "/alert - Manage alerts<br>" +
+  "/alertlist - Show alerts<br>" +
+  "/alertadd - Add new alert<br><br>" +
+  "<b>Search:</b><br>" +
+  "/search - Search PO by ID<br><br>" +
   "/help - Show commands";
 
 export default async function handler(req, res) {
@@ -113,6 +116,7 @@ export default async function handler(req, res) {
         await axios.post(`${TELEGRAM_API}/sendMessage`, {
           chat_id: chatId,
           text: "Unknown command. Please use /help for a list of available commands.",
+          parse_mode: "HTML",
         });
         break;
     }

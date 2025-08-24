@@ -16,6 +16,7 @@ export default async function handleStart({
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: "No linked account found. Please go to the Dashboard to connect your Telegram account.",
+      parse_mode: "HTML",
     });
     return;
   }
@@ -42,14 +43,14 @@ export default async function handleStart({
     ],
   };
 
-  const welcomeMessage = `👋 Welcome, **${
+  const welcomeMessage = `👋 Welcome, <b>${
     user.fullName || "User"
-  }**. Thank you for using the Telkom Regional Dashboard reporting service.`;
+  }</b>. Thank you for using the Telkom Dashboard reporting service.`;
 
   await axios.post(`${TELEGRAM_API}/sendMessage`, {
     chat_id: chatId,
-    text: `${welcomeMessage}\n\n${commandList}`,
+    text: `${welcomeMessage}<br><br>${commandList}`,
     reply_markup: keyboard,
-    parse_mode: "Markdown",
+    parse_mode: "HTML",
   });
 }

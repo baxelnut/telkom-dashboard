@@ -10,7 +10,8 @@ export default async function handleReport({
     if (commandText === "/reportlastweek") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "Last 7 days report is not implemented yet. Please check the dashboard.",
+        text: "<b>Last 7 days report</b> is not implemented yet. Please check the dashboard.",
+        parse_mode: "HTML",
       });
       return;
     }
@@ -18,17 +19,18 @@ export default async function handleReport({
     if (commandText === "/reportlastmonth") {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "Last 30 days report is not implemented yet. Please check the dashboard.",
+        text: "<b>Last 30 days report</b> is not implemented yet. Please check the dashboard.",
+        parse_mode: "HTML",
       });
       return;
     }
 
-    // Default: /report or /report <witelCode>
     const [witelCode] = args;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: "Preparing your report. Please wait...",
+      parse_mode: "HTML",
     });
 
     const resp = await axios.get(
@@ -46,25 +48,28 @@ export default async function handleReport({
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text: "No reports were found for your account.",
+        parse_mode: "HTML",
       });
       return;
     }
 
     const s = body.summary;
     const textMsg =
-      `**Report for ${body.poName || body.fallbackName || "User"}**\n\n` +
-      `**Total Orders:** ${s.totalOrders}\n` +
-      `**Total Revenue:** ${s.totalRevenue}\n` +
-      `**In Process:** ${s.byKategori["IN PROCESS"] || 0}\n` +
-      `**< 3 Months:** ${s.byAge["<3bln"].count} orders\n` +
-      `**> 3 Months:** ${s.byAge[">3bln"].count} orders\n\n` +
-      `Please visit the dashboard for a detailed view.` +
-      "\n\nUse /help to show commands";
+      `<b>Report for ${
+        body.poName || body.fallbackName || "User"
+      }</b><br><br>` +
+      `<b>Total Orders:</b> ${s.totalOrders}<br>` +
+      `<b>Total Revenue:</b> ${s.totalRevenue}<br>` +
+      `<b>In Process:</b> ${s.byKategori["IN PROCESS"] || 0}<br>` +
+      `<b>&lt; 3 Months:</b> ${s.byAge["<3bln"].count} orders<br>` +
+      `<b>&gt; 3 Months:</b> ${s.byAge[">3bln"].count} orders<br><br>` +
+      `Please visit the dashboard for a detailed view.<br><br>` +
+      `Use <code>/help</code> to show commands`;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: textMsg,
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
     });
   } catch (err) {
     console.error(
@@ -74,6 +79,7 @@ export default async function handleReport({
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: "Failed to generate the report. Please try again later.",
+      parse_mode: "HTML",
     });
   }
 }
