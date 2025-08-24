@@ -13,19 +13,19 @@ const seen = new Set();
 const SEEN_LIMIT = 500;
 
 const commandList =
-  "<b>Available Commands:</b>\n\n" +
-  "<b>Reports:</b>\n" +
+  "<b>Available Commands:</b>\n" +
+  "\n<b>Reports:</b>\n" +
   "/report - Summary report\n" +
   "/reportwitel - Report by WITEL\n" +
   "/reportlastweek - Last 7 days\n" +
-  "/reportlastmonth - Last 30 days\n\n" +
+  "/reportlastmonth - Last 30 days\n" +
   "<b>Alerts:</b>\n" +
   "/alert - Manage alerts\n" +
   "/alertlist - Show alerts\n" +
-  "/alertadd - Add new alert\n\n" +
+  "/alertadd - Add new alert\n" +
   "<b>Search:</b>\n" +
-  "/search - Search PO by ID\n\n" +
-  "/help - Show commands";
+  "/search - Search PO by ID\n" +
+  "\nUse /help to show commands";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(200).send("OK");

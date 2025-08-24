@@ -28,10 +28,10 @@ export default async function handleAlert({
         chat_id: chatId,
         text:
           "🔔 <b>Alert Management</b>\n\n" +
-          "<code>/alertlist</code> – View active alerts\n" +
-          "<code>/alertadd</code> – Create a new alert\n\n" +
+          "/alertlist – View active alerts\n" +
+          "/alertadd – Create a new alert\n\n" +
           "<i>Coming soon to Telegram. For now, use the dashboard.</i>\n\n" +
-          "Use <code>/help</code> to show all commands.",
+          "Use /help to show all commands.",
         parse_mode: "HTML",
       });
       return;
