@@ -28,7 +28,8 @@ export default async function handleAlert({
           "🔔 Alert Management\n\nUsage:\n" +
           "/alertlist - View active alerts\n" +
           "/alertadd - Create a new alert\n\n" +
-          "Coming soon to Telegram. For now, use the dashboard.",
+          "Coming soon to Telegram. For now, use the dashboard." +
+          "\n\nUse /help to show commands",
         parse_mode: "Markdown",
       });
       return;

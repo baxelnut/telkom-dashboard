@@ -12,6 +12,18 @@ const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOK
 const seen = new Set();
 const SEEN_LIMIT = 500;
 
+const commandList =
+  "**Available Commands:**\n\n" +
+  "/report - Summary report\n" +
+  "/reportwitel - Report by WITEL\n" +
+  "/reportlastweek - Report last 7 days\n" +
+  "/reportlastmonth - Report last 30 days\n" +
+  "/alert - Manage alerts\n" +
+  "/alertlist - Show alerts\n" +
+  "/alertadd - Add new alert\n" +
+  "/search - Search PO by ID\n" +
+  "/help - Show commands";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(200).send("OK");
 
@@ -49,7 +61,14 @@ export default async function handler(req, res) {
 
     switch (commandText) {
       case "/start":
-        await handleStart({ db, axios, telegramId, chatId, TELEGRAM_API });
+        await handleStart({
+          db,
+          axios,
+          telegramId,
+          chatId,
+          TELEGRAM_API,
+          commandList,
+        });
         break;
       case "/report":
       case "/reportlastweek":
@@ -88,7 +107,7 @@ export default async function handler(req, res) {
         });
         break;
       case "/help":
-        await handleHelp({ axios, chatId, TELEGRAM_API });
+        await handleHelp({ axios, chatId, TELEGRAM_API, commandList });
         break;
       default:
         await axios.post(`${TELEGRAM_API}/sendMessage`, {

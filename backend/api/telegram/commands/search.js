@@ -9,7 +9,9 @@ export default async function handleSearch({
   if (args.length === 0) {
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
-      text: "Please provide a search query after the command, e.g., `/search <po_id>` or `/search <customer_name>`.",
+      text:
+        "Please provide a search query after the command, e.g., `/search <po_id>` or `/search <customer_name>`." +
+        "\n\nUse /help to show commands",
     });
     return;
   }

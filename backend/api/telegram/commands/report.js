@@ -58,7 +58,8 @@ export default async function handleReport({
       `**In Process:** ${s.byKategori["IN PROCESS"] || 0}\n` +
       `**< 3 Months:** ${s.byAge["<3bln"].count} orders\n` +
       `**> 3 Months:** ${s.byAge[">3bln"].count} orders\n\n` +
-      `Please visit the dashboard for a detailed view.`;
+      `Please visit the dashboard for a detailed view.` +
+      "\n\nUse /help to show commands";
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
