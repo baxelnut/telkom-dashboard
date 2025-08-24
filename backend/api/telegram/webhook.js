@@ -52,22 +52,28 @@ export default async function handler(req, res) {
         await handleStart({ db, axios, telegramId, chatId, TELEGRAM_API });
         break;
       case "/report":
+      case "/reportlastweek":
+      case "/reportlastmonth":
         await handleReport({
           db,
           axios,
           telegramId,
           chatId,
           TELEGRAM_API,
+          commandText,
           args,
         });
         break;
       case "/alert":
+      case "/alertlist":
+      case "/alertadd":
         await handleAlert({
           db,
           axios,
           telegramId,
           chatId,
           TELEGRAM_API,
+          commandText,
           args,
         });
         break;

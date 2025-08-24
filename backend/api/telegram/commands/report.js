@@ -3,20 +3,41 @@ export default async function handleReport({
   telegramId,
   chatId,
   TELEGRAM_API,
+  commandText,
   args,
 }) {
-  const [reportType, ...rest] = args;
-
-  await axios.post(`${TELEGRAM_API}/sendMessage`, {
-    chat_id: chatId,
-    text: "Preparing your report. Please wait...",
-  });
-
   try {
+    if (commandText === "/reportlastweek") {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "Last 7 days report is not implemented yet. Please check the dashboard.",
+      });
+      return;
+    }
+
+    if (commandText === "/reportlastmonth") {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "Last 30 days report is not implemented yet. Please check the dashboard.",
+      });
+      return;
+    }
+
+    // Default: /report or /report <witelCode>
+    const [witelCode] = args;
+
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id: chatId,
+      text: "Preparing your report. Please wait...",
+    });
+
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/by-telegram`,
       {
-        params: { telegramId: String(telegramId) },
+        params: {
+          telegramId: String(telegramId),
+          witel: witelCode || undefined,
+        },
       }
     );
 
