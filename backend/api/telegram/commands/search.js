@@ -46,14 +46,14 @@ export default async function handleSearch({
     const resultsMsg = data.results
       .map(
         (item) =>
-          `<b>ID:</b> ${item.id}<br>` +
-          `<b>Customer:</b> ${item.customerName}<br>` +
-          `<b>Status:</b> ${item.status}<br>` +
+          `<b>ID:</b> ${item.id}\n` +
+          `<b>Customer:</b> ${item.customerName}\n` +
+          `<b>Status:</b> ${item.status}\n` +
           `<b>Details:</b> ${item.description || "N/A"}`
       )
-      .join("<br><br>");
+      .join("\n\n");
 
-    const responseText = `<b>Search Results for "${query}":</b><br><br>${resultsMsg}`;
+    const responseText = `<b>Search Results for "${query}":</b>\n\n${resultsMsg}`;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,

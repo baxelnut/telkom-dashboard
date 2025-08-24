@@ -13,18 +13,18 @@ const seen = new Set();
 const SEEN_LIMIT = 500;
 
 const commandList =
-  "<b>Available Commands:</b><br><br>" +
-  "<b>Reports:</b><br>" +
-  "/report - Summary report<br>" +
-  "/reportwitel - Report by WITEL<br>" +
-  "/reportlastweek - Last 7 days<br>" +
-  "/reportlastmonth - Last 30 days<br><br>" +
-  "<b>Alerts:</b><br>" +
-  "/alert - Manage alerts<br>" +
-  "/alertlist - Show alerts<br>" +
-  "/alertadd - Add new alert<br><br>" +
-  "<b>Search:</b><br>" +
-  "/search - Search PO by ID<br><br>" +
+  "<b>Available Commands:</b>\n\n" +
+  "<b>Reports:</b>\n" +
+  "/report - Summary report\n" +
+  "/reportwitel - Report by WITEL\n" +
+  "/reportlastweek - Last 7 days\n" +
+  "/reportlastmonth - Last 30 days\n\n" +
+  "<b>Alerts:</b>\n" +
+  "/alert - Manage alerts\n" +
+  "/alertlist - Show alerts\n" +
+  "/alertadd - Add new alert\n\n" +
+  "<b>Search:</b>\n" +
+  "/search - Search PO by ID\n\n" +
   "/help - Show commands";
 
 export default async function handler(req, res) {

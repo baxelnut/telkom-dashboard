@@ -49,7 +49,7 @@ export default async function handleStart({
 
   await axios.post(`${TELEGRAM_API}/sendMessage`, {
     chat_id: chatId,
-    text: `${welcomeMessage}<br><br>${commandList}`,
+    text: `${welcomeMessage}\n\n${commandList}`,
     reply_markup: keyboard,
     parse_mode: "HTML",
   });
