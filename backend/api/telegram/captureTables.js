@@ -4,7 +4,7 @@ import path from "path";
 import axios from "axios";
 import FormData from "form-data";
 
-const TEMP_DIR = path.resolve("./temp-screenshots");
+const TEMP_DIR = "/tmp";
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
 
 async function sendPhotoToTelegram({
@@ -29,10 +29,8 @@ async function sendPhotoToTelegram({
 
   console.log(`[CAPTURE] Photo sent: ${filePath}`);
 
-  // delete local file after sending
   try {
     fs.unlinkSync(filePath);
-    console.log(`[CAPTURE] Photo deleted: ${filePath}`);
   } catch (err) {
     console.warn(`[CAPTURE] Failed to delete file: ${filePath}`, err);
   }
@@ -75,21 +73,17 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
 
     const url = "https://rso2telkomdashboard.web.app/action-based";
 
-    // Capture Aosodomoro table
     const aosPath = await captureTable({
       url,
       selector: ".aosodomoro-table",
       filename: "aosodomoro.png",
     });
-
-    // Capture Galaksi table
     const galaksiPath = await captureTable({
       url,
       selector: ".galaksi-table",
       filename: "galaksi.png",
     });
 
-    // Send screenshots
     if (aosPath)
       await sendPhotoToTelegram({
         TELEGRAM_API,
