@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
 import fs from "fs";
 import path from "path";
 import axios from "axios";
@@ -40,7 +41,13 @@ async function sendPhotoToTelegram({
 
 async function captureTable({ url, selector, filename }) {
   console.log(`[CAPTURE] Opening ${url} to capture "${selector}"`);
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+
+  const browser = await puppeteer.launch({
+    args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
+
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle2" });
 
@@ -109,7 +116,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
       err?.response?.data || err?.message || err
     );
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id,
+      chat_id: chatId || process.env.TELEGRAM_CHAT_ID,
       text: "❌ Failed to capture tables. Please try again later.",
       parse_mode: "HTML",
     });
