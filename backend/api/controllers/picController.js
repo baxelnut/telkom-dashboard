@@ -167,38 +167,63 @@ export async function getReportByTelegramId(req, res) {
 
 export async function getAlertReport(req, res) {
   try {
-    const allRows = await fetchFormattedReportData();
+    const debug = req.query?.debug === "true";
 
-    // Apply the same filter as getReportByTelegramId
+    const allRows = await fetchFormattedReportData();
+    console.log(`[ALERT-API] total rows from sheet: ${allRows.length}`);
+
+    // helper normalizer (returns trimmed string or empty)
+    const _norm = (v) =>
+      v === null || v === undefined ? "" : String(v).toString().trim();
+
+    // helper to decide "no status"
+    const isNoStatus = (raw) => {
+      const s = _norm(raw).toUpperCase();
+      return s === "" || /^NO\s*STATUS$/i.test(s) || /^NOS$/i.test(s);
+    };
+
+    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS", STATUS empty/No Status
     const filtered = allRows.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
-      const kategori = normalize(r["KATEGORI"]);
-      const status = normalize(r["STATUS"]);
+      const kategori = _norm(r["KATEGORI"]).toUpperCase();
+      const statusRaw = _norm(r["STATUS"]);
 
-      const validUmur = !isNaN(umur) && umur > 60;
+      const validUmur = !Number.isNaN(umur) && umur > 60;
       const validKategori = kategori === "IN PROCESS";
-      const validStatus =
-        !status || status === "NO STATUS" || status === "No Status"; // covers null, undefined, "", "No Status"
+      const validStatus = isNoStatus(statusRaw);
 
       return validUmur && validKategori && validStatus;
     });
 
+    console.log(`[ALERT-API] filtered count: ${filtered.length}`);
+
     // Group by PIC + NEW_WITEL
     const grouped = {};
     filtered.forEach((r) => {
-      const pic = (r["PIC"] || "UNKNOWN").trim();
-      const witel = (r["NEW_WITEL"] || "-").trim();
+      const pic = _norm(r["PIC"]) || "UNKNOWN";
+      const witel = _norm(r["NEW_WITEL"]) || "-";
       const key = `${pic}|||${witel}`;
-      if (!grouped[key]) {
-        grouped[key] = { pic, witel, statuses: {}, total: 0 };
-      }
+      if (!grouped[key]) grouped[key] = { pic, witel, statuses: {}, total: 0 };
 
-      const status = (r["STATUS"] || "No Status").trim();
-      grouped[key].statuses[status] = (grouped[key].statuses[status] || 0) + 1;
+      const statusLabel = _norm(r["STATUS"]) || "No Status";
+      grouped[key].statuses[statusLabel] =
+        (grouped[key].statuses[statusLabel] || 0) + 1;
       grouped[key].total++;
     });
 
-    return res.json(Object.values(grouped));
+    const result = Object.values(grouped);
+
+    if (debug) {
+      // return diagnostic payload
+      return res.json({
+        totalRows: allRows.length,
+        filteredCount: filtered.length,
+        sampleFilteredRows: filtered.slice(0, 10),
+        grouped: result,
+      });
+    }
+
+    return res.json(result);
   } catch (err) {
     console.error("getAlertReport error:", err);
     return res.status(500).json({ error: err.message || "internal" });
