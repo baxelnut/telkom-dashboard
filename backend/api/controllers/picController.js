@@ -119,9 +119,9 @@ export async function getReportByTelegramId(req, res) {
     let fullName = userDoc?.fullName || "";
 
     // ===== DEBUG OVERRIDE =====
-    if (fullName === "DEVELOPER") fullName = "Alfonsus Jaconias";
+    if (fullName === "DEVELOPER") fullName = "Dwieka Septian";
     if (email === "basilius.tengang.dev@gmail.com")
-      email = "alfonjaconias@gmail.com";
+      email = "dwiekasap21@gmail.com";
     // ==========================
 
     const poMap = await buildPoMap();
@@ -134,11 +134,17 @@ export async function getReportByTelegramId(req, res) {
       (r) => normalize(r["PIC"]) === normalize(poName)
     );
 
-    // Filter by UMUR_ORDER > 60 and KATEGORI === "IN PROCESS"
+    // Filter by UMUR_ORDER > 60, KATEGORI === "IN PROCESS", and STATUS empty/No Status
     const filtered = matched.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
-      return !isNaN(umur) && umur > 60 && kategori === "IN PROCESS";
+      const status = normalize(r["STATUS"]);
+      const validUmur = !isNaN(umur) && umur > 60;
+      const validKategori = kategori === "IN PROCESS";
+      const validStatus =
+        !status || status === "No Status" || status === "NO STATUS"; // covers null, undefined, "", "No Status"
+
+      return validUmur && validKategori && validStatus;
     });
 
     const summary = summarizeRows(filtered);
