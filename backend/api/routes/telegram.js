@@ -10,43 +10,42 @@ const upload = multer();
 const router = express.Router();
 
 router.post("/photo", upload.single("photo"), async (req, res) => {
-  const { target, caption } = req.body; // include caption
+  const { target, caption, chatId } = req.body; // allow chatId override
   const file = req.file;
 
-  const chat_id =
-    target === "group"
-      ? process.env.TELEGRAM_GROUP_CHAT_ID
-      : target === "channel"
-      ? process.env.TELEGRAM_CHANNEL_CHAT_ID
-      : process.env.TELEGRAM_CHAT_ID;
+  let resolvedChatId;
+  if (chatId) {
+    resolvedChatId = chatId; // force send to user if specified
+  } else {
+    resolvedChatId =
+      target === "group"
+        ? process.env.TELEGRAM_GROUP_CHAT_ID
+        : target === "channel"
+        ? process.env.TELEGRAM_CHANNEL_CHAT_ID
+        : process.env.TELEGRAM_CHAT_ID;
+  }
 
   if (!file || !file.buffer) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
   const form = new FormData();
-  form.append("chat_id", chat_id);
+  form.append("chat_id", resolvedChatId);
   form.append("photo", file.buffer, {
     filename: file.originalname || "table.png",
     contentType: file.mimetype || "image/png",
   });
 
   if (caption) {
-    form.append("caption", caption); // forward caption to Telegram
-    form.append("parse_mode", "Markdown"); // allow *bold* etc.
+    form.append("caption", caption);
+    form.append("parse_mode", "Markdown");
   }
 
   try {
     const response = await axios.post(
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`,
       form,
-      {
-        headers: {
-          ...form.getHeaders(),
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-      }
+      { headers: form.getHeaders() }
     );
 
     res.status(200).json({ success: true, result: response.data });

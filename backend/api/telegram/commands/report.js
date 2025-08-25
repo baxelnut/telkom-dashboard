@@ -98,7 +98,7 @@ export default async function handleReport({
     );
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
-      text: "Failed to generate the report. Please try again later.",
+      text: "Failed to generate the report. Please try again.",
       parse_mode: "HTML",
     });
   }

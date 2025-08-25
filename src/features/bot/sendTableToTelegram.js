@@ -16,6 +16,7 @@ export async function sendTableToTelegram({
   selector,
   API_URL,
   target = "group",
+  chatId, // allow override
   setTeleStatus,
   title,
   subtext,
@@ -40,10 +41,10 @@ export async function sendTableToTelegram({
     const formData = new FormData();
     formData.append("photo", blob);
     formData.append("target", target);
+    if (chatId) formData.append("chatId", chatId);
 
-    // Format the message
+    // Format message
     const caption = `📊 *${title}*\n${dateStr}\n\n${subtext}\n\n🔗 ${link}`;
-
     formData.append("caption", caption);
 
     const res = await fetch(`${API_URL}/telegram/photo`, {

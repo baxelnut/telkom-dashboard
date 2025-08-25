@@ -1,13 +1,20 @@
-export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
+import { sendTableToTelegram } from "../../../../src/features/bot/sendTableToTelegram.js";
+import { formatDate } from "../../../../src/helpers/formattingUtils.js";
+
+export default async function handleAlert({
+  axios,
+  chatId,
+  TELEGRAM_API,
+  API_URL,
+}) {
   try {
-    // Let user know it's processing
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: "🚨 Preparing alert list. Please wait...",
       parse_mode: "HTML",
     });
 
-    // Call backend API
+    // Existing text alert logic
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
     );
@@ -26,7 +33,6 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       const statusSummary = Object.entries(g.statuses)
         .map(([status, count]) => `${status}: ${count}`)
         .join(" ");
-
       return `🙎 ${g.pic} – ${g.witel}\n${statusSummary} | Total: ${g.total}`;
     });
 
@@ -44,6 +50,31 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       chat_id: chatId,
       text: textMsg,
       parse_mode: "HTML",
+    });
+
+    // Send Aosodomoro table to the same chat
+    await sendTableToTelegram({
+      selector: ".aosodomoro-table table",
+      API_URL,
+      chatId, // force direct message to this user
+      target: "private",
+      title: "Weekly Report AOSODOMORO Non Connectivity",
+      subtext:
+        "Source: Database NCX\n\nUntuk detail data dapat diakses melalui link berikut:",
+      link: "https://rso2telkomdashboard.web.app/reports/aosodomoro",
+      dateStr: formatDate(),
+    });
+
+    // Send Galaksi table to the same chat
+    await sendTableToTelegram({
+      selector: ".galaksi-table table",
+      API_URL,
+      chatId,
+      target: "private",
+      title: "GALAKSI PO AOSODOMORO Non Conn",
+      subtext: "Zero AOSODOMORO > 3 BLN",
+      link: "https://rso2telkomdashboard.web.app/reports/galaksi",
+      dateStr: formatDate(),
     });
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
