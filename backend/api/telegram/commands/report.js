@@ -11,7 +11,7 @@ export default async function handleReport({
     // Let user know it's processing
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
-      text: "Preparing your report. Please wait...",
+      text: "📊 Preparing your report. Please wait...",
       parse_mode: "HTML",
     });
 
