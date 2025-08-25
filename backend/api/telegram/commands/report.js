@@ -79,9 +79,9 @@ export default async function handleReport({
 
     const textMsg =
       `📢 <b>Alert Order Mendekati &gt; 3 BLN</b>\n\n` +
-      `Witel: ${witel}\n` +
-      `PO: ${displayName}\n\n` +
-      `⚠️ ORDER &gt; 60 hari (A1 : Prioritas)\n` +
+      `<i>Witel: ${witel}</i>\n` +
+      `<i>PO: ${displayName}</i>\n\n` +
+      `⚠️ <b>ORDER &gt; 60 hari (A1 : Prioritas)</b>\n` +
       `<pre>ORDERID     | ORDERSUBTYPE\n--------------------------------\n${formattedRows}</pre>\n\n` +
       `Waktu Update: ${dateStr}\n\n` +
       `🔗 https://rso2telkomdashboard.web.app/action-based`;

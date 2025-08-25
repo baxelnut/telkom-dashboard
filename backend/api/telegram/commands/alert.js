@@ -28,7 +28,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       `📢 <b>Pemberitahuan Potensi Order &gt; 3 Bulan</b>\n\n` +
       `Berikut daftar order yang hampir melewati 3 bulan:\n\n` +
       parts.join("\n\n") +
-      `\n\n⚠️ Mohon segera dilakukan follow-up sebelum melewati batas waktu ⚠️\n\n` +
+      `\n\n⚠️ <i>Mohon segera dilakukan follow-up sebelum melewati batas waktu</i> ⚠️\n\n` +
       `Waktu Update: ${now}\n\n` +
       `🔗 https://rso2telkomdashboard.web.app/action-based`;
 
