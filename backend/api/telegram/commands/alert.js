@@ -22,22 +22,11 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
 
     const parts = rows.map((g) => {
       const statuses = g.statuses || {};
-      const orderedStatusKeys = Object.keys(statuses).sort((a, b) => {
-        const priority = (k) => {
-          if (!k) return 2;
-          const up = k.toString().toUpperCase();
-          if (up.includes("LANJUT")) return 0;
-          if (up.includes("NO STATUS") || up.includes("NOS")) return 1;
-          return 2;
-        };
-        return priority(a) - priority(b);
-      });
+      // dynamic, don't sort by hardcoded values
+      const statusSummary = Object.entries(statuses)
+        .map(([status, count]) => `${status}: ${count}`)
+        .join(" | ");
 
-      const statusSummary = orderedStatusKeys
-        .map((status) => `${status}: ${statuses[status]}`)
-        .join(" ");
-
-      // fallback values
       const pic = g.pic || "UNKNOWN";
       const witel = g.witel || "-";
       const total =
@@ -68,7 +57,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
     try {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
-        text: "❌ Failed to fetch alerts. Please try again later.",
+        text: "Failed to fetch alerts. Please try again.",
         parse_mode: "HTML",
       });
     } catch (sendErr) {
