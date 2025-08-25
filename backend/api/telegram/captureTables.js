@@ -1,4 +1,3 @@
-import puppeteer from "puppeteer";
 import chromium from "chrome-aws-lambda";
 import fs from "fs";
 import path from "path";
@@ -42,8 +41,9 @@ async function sendPhotoToTelegram({
 async function captureTable({ url, selector, filename }) {
   console.log(`[CAPTURE] Opening ${url} to capture "${selector}"`);
 
-  const browser = await puppeteer.launch({
+  const browser = await chromium.puppeteer.launch({
     args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
     headless: chromium.headless,
   });
