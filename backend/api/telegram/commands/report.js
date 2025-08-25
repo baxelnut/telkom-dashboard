@@ -27,15 +27,6 @@ export default async function handleReport({
     );
 
     const body = resp.data;
-    if (!body || body.matchCount === 0) {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: "No reports were found for your account.",
-        parse_mode: "HTML",
-      });
-      return;
-    }
-
     const items = body.items || [];
     const firstItem = items[0] || {};
     const displayName = body.poName || body.fallbackName || "Unknown";
@@ -63,7 +54,7 @@ export default async function handleReport({
       );
     });
 
-    if (filtered.length === 0) {
+    if (!body || body.matchCount === 0 || filtered.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text: `✅ You don't have any unmarked <b>In Process</b> orders with <b>Umur Order &gt; 60</b>.`,
