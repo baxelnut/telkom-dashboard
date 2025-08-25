@@ -2,17 +2,37 @@ import handleCaptureTables from "../captureTables.js";
 
 export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
   try {
-    // original text alert
+    //  notify user
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
       text: "🚨 Preparing alert list. Please wait...",
       parse_mode: "HTML",
     });
 
+    // fetch alert data
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
     );
-    const rows = resp.data || [];
+    console.log("[ALERT] fetch status:", resp?.status);
+    // debug small chunk of payload
+    try {
+      console.log(
+        "[ALERT] fetch sample:",
+        JSON.stringify(resp.data).slice(0, 1000)
+      );
+    } catch (e) {
+      console.log("[ALERT] fetch sample print failed");
+    }
+
+    // support multiple shapes
+    let rows = resp.data;
+    if (!Array.isArray(rows)) {
+      if (Array.isArray(resp.data?.data)) rows = resp.data.data;
+      else if (Array.isArray(resp.data?.rows)) rows = resp.data.rows;
+      else rows = [];
+    }
+
+    console.log("[ALERT] rows length:", rows.length);
 
     if (!Array.isArray(rows) || rows.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
@@ -21,12 +41,20 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         parse_mode: "HTML",
       });
     } else {
-      // format text message
       const parts = rows.map((g) => {
-        const statusSummary = Object.entries(g.statuses || {})
+        const statuses = g.statuses || {};
+        const statusSummary = Object.entries(statuses)
           .map(([status, count]) => `${status}: ${count}`)
-          .join(" ");
-        return `🙎 ${g.pic} – ${g.witel}\n${statusSummary} | Total: ${g.total}`;
+          .join(" | ");
+
+        const pic = g.pic || "UNKNOWN";
+        const witel = g.witel || "-";
+        const total =
+          typeof g.total === "number"
+            ? g.total
+            : Object.values(statuses).reduce((s, v) => s + Number(v || 0), 0);
+
+        return `🙎 ${pic} – ${witel}\n${statusSummary} | Total: ${total}`;
       });
 
       const now = new Date().toISOString().slice(0, 10);
@@ -46,14 +74,25 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       });
     }
 
-    // Capture and send tables
-    await handleCaptureTables({ chatId, TELEGRAM_API });
+    // try to capture and send tables, but do not let errors break everything
+    try {
+      await handleCaptureTables({ chatId, TELEGRAM_API });
+    } catch (capErr) {
+      console.error("[ALERT] captureTables failed:", capErr?.message || capErr);
+    }
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: "Failed to fetch alerts. Please try again later.",
-      parse_mode: "HTML",
-    });
+    try {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "Failed to fetch alerts. Please try again later.",
+        parse_mode: "HTML",
+      });
+    } catch (sendErr) {
+      console.error(
+        "ALERT -> fallback send error",
+        sendErr?.message || sendErr
+      );
+    }
   }
 }
