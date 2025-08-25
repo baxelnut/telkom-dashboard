@@ -36,9 +36,11 @@ export default async function handleReport({
 
     const s = body.summary;
     const items = body.items || [];
-
-    const witel = body["NEW_WITEL"] ?? body["New Witel"] ?? witelCode ?? "-";
+    const firstItem = items[0] || {};
     const displayName = body.poName || body.fallbackName || "Unknown";
+    const witel =
+      firstItem["NEW_WITEL"] ?? firstItem["New Witel"] ?? witelCode ?? "-";
+
     // Format items into table
     const formattedRows = items
       .map((r) => {

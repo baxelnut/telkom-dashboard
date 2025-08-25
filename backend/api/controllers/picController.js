@@ -134,10 +134,11 @@ export async function getReportByTelegramId(req, res) {
       (r) => normalize(r["PIC"]) === normalize(poName)
     );
 
-    // Filter only UMUR_ORDER > 60
+    // Filter by UMUR_ORDER > 60 and KATEGORI === "IN PROCESS"
     const filtered = matched.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
-      return !isNaN(umur) && umur > 60;
+      const kategori = normalize(r["KATEGORI"]);
+      return !isNaN(umur) && umur > 60 && kategori === "IN PROCESS";
     });
 
     const summary = summarizeRows(filtered);
