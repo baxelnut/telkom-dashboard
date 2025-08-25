@@ -39,7 +39,13 @@ export default async function handleReport({
 
     // Format items into table
     const formattedRows = items
-      .map((r) => `${r.ORDERID}  | ${r.ORDERSUBTYPE}`)
+      .map((r) => {
+        const orderId = String(r["ORDERID"] ?? r["ORDER_ID"] ?? "").trim();
+        const subtype = String(
+          r["ORDERSUBTYPE"] ?? r["ORDER_SUBTYPE"] ?? ""
+        ).trim();
+        return `${orderId || "-"}  | ${subtype || "-"}`;
+      })
       .join("\n");
 
     const now = new Date();
