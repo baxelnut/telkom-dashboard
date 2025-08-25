@@ -3,6 +3,7 @@ import axios from "axios";
 import handleStart from "./commands/start.js";
 import handleReport from "./commands/report.js";
 import handleAlert from "./commands/alert.js";
+import handleFeedback from "./commands/feedback.js";
 import handleHelp from "./commands/help.js";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;

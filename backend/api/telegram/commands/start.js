@@ -32,8 +32,6 @@ export default async function handleStart({
 
   const keyboard = {
     inline_keyboard: [
-      [{ text: "Get Report", callback_data: "/report" }],
-      [{ text: "Manage Alerts", callback_data: "/alert" }],
       [
         {
           text: "Go to Dashboard",
