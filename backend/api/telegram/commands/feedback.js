@@ -11,7 +11,7 @@ export default async function handleFeedback({
   if (!feedbackText) {
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
-      text: "Please provide your feedback after the command.\n\nExample:\n/feedback This dashboard is confusing 😅",
+      text: "Please provide your feedback after the command.\n\nExample:\n/feedback Bot ini membingungkan 😅",
       parse_mode: "HTML",
     });
     return;

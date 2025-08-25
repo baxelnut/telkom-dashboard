@@ -72,7 +72,6 @@ export default async function handler(req, res) {
           telegramId,
           chatId,
           TELEGRAM_API,
-          commandText,
           args,
         });
         break;
@@ -84,7 +83,6 @@ export default async function handler(req, res) {
           chatId,
           TELEGRAM_API,
           commandText,
-          args,
         });
         break;
       case "/feedback":

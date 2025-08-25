@@ -3,7 +3,6 @@ export default async function handleReport({
   telegramId,
   chatId,
   TELEGRAM_API,
-  commandText,
   args,
 }) {
   try {
@@ -36,15 +35,24 @@ export default async function handleReport({
     }
 
     const s = body.summary;
+    const items = body.items || [];
+
+    // Format items into table
+    const formattedRows = items
+      .map((r) => `${r.ORDERID}  | ${r.ORDERSUBTYPE}`)
+      .join("\n");
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
+
     const textMsg =
-      `<b>Report for ${body.poName || body.fallbackName || "User"}</b>\n\n` +
-      `<b>Total Orders:</b> ${s.totalOrders}\n` +
-      `<b>Total Revenue:</b> ${s.totalRevenue}\n` +
-      `<b>In Process:</b> ${s.byKategori["IN PROCESS"] || 0}\n` +
-      `<b>&lt; 3 Months:</b> ${s.byAge["<3bln"].count} orders\n` +
-      `<b>&gt; 3 Months:</b> ${s.byAge[">3bln"].count} orders\n\n` +
-      `Please visit the dashboard for a detailed view.\n\n` +
-      `Use /help to show commands`;
+      `📢 <b>Alert Order Mendekati &gt; 3 BLN</b>\n\n` +
+      `Witel: ${body.witel || witelCode || "-"}\n` +
+      `PO: ${body.poName || body.fallbackName || "Unknown"}\n\n` +
+      `⚠️ ORDER &gt; 60 hari (A1 : Prioritas)\n` +
+      `<pre>ORDERID     | ORDERSUBTYPE\n--------------------------------\n${formattedRows}</pre>\n\n` +
+      `Waktu Update: ${dateStr}\n\n` +
+      `🔗 https://rso2telkomdashboard.web.app/action-based`;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,

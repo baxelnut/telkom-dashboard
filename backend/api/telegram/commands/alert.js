@@ -3,7 +3,6 @@ export default async function handleAlert({
   chatId,
   TELEGRAM_API,
   commandText,
-  args,
 }) {
   switch (commandText) {
     case "/alert":
@@ -12,8 +11,6 @@ export default async function handleAlert({
         chat_id: chatId,
         text:
           "🔔 <b>Alert Management</b>\n\n" +
-          "/alertlist – View active alerts\n" +
-          "/alertadd – Create a new alert\n\n" +
           "<i>Coming soon to Telegram. For now, use the dashboard.</i>\n\n" +
           "Use /help to show all commands.",
         parse_mode: "HTML",
