@@ -168,21 +168,21 @@ export async function getReportByTelegramId(req, res) {
 export async function getAlertReport(req, res) {
   try {
     const debug = req.query?.debug === "true";
+    const statusMode = (req.query?.status || "nostatus")
+      .toString()
+      .toLowerCase();
+    // statusMode: "nostatus" (default) | "all"
 
     const allRows = await fetchFormattedReportData();
     console.log(`[ALERT-API] total rows from sheet: ${allRows.length}`);
 
-    // helper normalizer (returns trimmed string or empty)
     const _norm = (v) =>
       v === null || v === undefined ? "" : String(v).toString().trim();
-
-    // helper to decide "no status"
     const isNoStatus = (raw) => {
       const s = _norm(raw).toUpperCase();
       return s === "" || /^NO\s*STATUS$/i.test(s) || /^NOS$/i.test(s);
     };
 
-    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS", STATUS empty/No Status
     const filtered = allRows.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = _norm(r["KATEGORI"]).toUpperCase();
@@ -190,21 +190,23 @@ export async function getAlertReport(req, res) {
 
       const validUmur = !Number.isNaN(umur) && umur > 60;
       const validKategori = kategori === "IN PROCESS";
-      const validStatus = isNoStatus(statusRaw);
+
+      let validStatus = true;
+      if (statusMode === "nostatus") validStatus = isNoStatus(statusRaw);
+      // if statusMode === "all" keep validStatus === true
 
       return validUmur && validKategori && validStatus;
     });
 
     console.log(`[ALERT-API] filtered count: ${filtered.length}`);
 
-    // Group by PIC + NEW_WITEL
+    // grouping (same as before)
     const grouped = {};
     filtered.forEach((r) => {
       const pic = _norm(r["PIC"]) || "UNKNOWN";
       const witel = _norm(r["NEW_WITEL"]) || "-";
       const key = `${pic}|||${witel}`;
       if (!grouped[key]) grouped[key] = { pic, witel, statuses: {}, total: 0 };
-
       const statusLabel = _norm(r["STATUS"]) || "No Status";
       grouped[key].statuses[statusLabel] =
         (grouped[key].statuses[statusLabel] || 0) + 1;
@@ -214,7 +216,6 @@ export async function getAlertReport(req, res) {
     const result = Object.values(grouped);
 
     if (debug) {
-      // return diagnostic payload
       return res.json({
         totalRows: allRows.length,
         filteredCount: filtered.length,
