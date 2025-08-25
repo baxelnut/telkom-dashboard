@@ -37,6 +37,8 @@ export default async function handleReport({
     const s = body.summary;
     const items = body.items || [];
 
+    const witel = body["NEW_WITEL"] ?? body["New Witel"] ?? witelCode ?? "-";
+    const displayName = body.poName || body.fallbackName || "Unknown";
     // Format items into table
     const formattedRows = items
       .map((r) => {
@@ -53,8 +55,8 @@ export default async function handleReport({
 
     const textMsg =
       `📢 <b>Alert Order Mendekati &gt; 3 BLN</b>\n\n` +
-      `Witel: ${body.witel || witelCode || "-"}\n` +
-      `PO: ${body.poName || body.fallbackName || "Unknown"}\n\n` +
+      `Witel: ${witel}\n` +
+      `PO: ${displayName}\n\n` +
       `⚠️ ORDER &gt; 60 hari (A1 : Prioritas)\n` +
       `<pre>ORDERID     | ORDERSUBTYPE\n--------------------------------\n${formattedRows}</pre>\n\n` +
       `Waktu Update: ${dateStr}\n\n` +

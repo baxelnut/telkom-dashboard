@@ -128,17 +128,25 @@ export async function getReportByTelegramId(req, res) {
     const poName = poMap.get((email || "").toLowerCase()) || fullName;
 
     const allRows = await fetchFormattedReportData();
+
+    // Filter by PIC
     const matched = allRows.filter(
       (r) => normalize(r["PIC"]) === normalize(poName)
     );
 
-    const summary = summarizeRows(matched);
+    // Filter only UMUR_ORDER > 60
+    const filtered = matched.filter((r) => {
+      const umur = Number(r["UMUR_ORDER"] ?? 0);
+      return !isNaN(umur) && umur > 60;
+    });
+
+    const summary = summarizeRows(filtered);
 
     return res.json({
       telegramId,
       email,
       poName,
-      matchCount: matched.length,
+      matchCount: filtered.length,
       summary,
       items: summary.sampleItems,
       usedDebugOverride:
