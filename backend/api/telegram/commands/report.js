@@ -7,24 +7,6 @@ export default async function handleReport({
   args,
 }) {
   try {
-    if (commandText === "/reportlastweek") {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: "<b>Last 7 days report</b> is not implemented yet. Please check the dashboard.",
-        parse_mode: "HTML",
-      });
-      return;
-    }
-
-    if (commandText === "/reportlastmonth") {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: "<b>Last 30 days report</b> is not implemented yet. Please check the dashboard.",
-        parse_mode: "HTML",
-      });
-      return;
-    }
-
     const [witelCode] = args;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {

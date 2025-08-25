@@ -3,7 +3,6 @@ import axios from "axios";
 import handleStart from "./commands/start.js";
 import handleReport from "./commands/report.js";
 import handleAlert from "./commands/alert.js";
-import handleSearch from "./commands/search.js";
 import handleHelp from "./commands/help.js";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -13,18 +12,10 @@ const seen = new Set();
 const SEEN_LIMIT = 500;
 
 const commandList =
-  "<b>Available Commands:</b>\n" +
-  "\n<b>Reports:</b>\n" +
+  "<b>Available Commands:</b>\n\n" +
   "/report - Summary report\n" +
-  "/reportwitel - Report by WITEL\n" +
-  "/reportlastweek - Last 7 days\n" +
-  "/reportlastmonth - Last 30 days\n" +
-  "<b>Alerts:</b>\n" +
   "/alert - Manage alerts\n" +
-  "/alertlist - Show alerts\n" +
-  "/alertadd - Add new alert\n" +
-  "<b>Search:</b>\n" +
-  "/search - Search PO by ID\n" +
+  "/feedback - Give feedback (bug or feature)\n" +
   "\nUse /help to show commands";
 
 export default async function handler(req, res) {
@@ -74,8 +65,6 @@ export default async function handler(req, res) {
         });
         break;
       case "/report":
-      case "/reportlastweek":
-      case "/reportlastmonth":
         await handleReport({
           db,
           axios,
@@ -87,8 +76,6 @@ export default async function handler(req, res) {
         });
         break;
       case "/alert":
-      case "/alertlist":
-      case "/alertadd":
         await handleAlert({
           db,
           axios,
@@ -99,8 +86,8 @@ export default async function handler(req, res) {
           args,
         });
         break;
-      case "/search":
-        await handleSearch({
+      case "/feedback":
+        await handleFeedback({
           db,
           axios,
           telegramId,
