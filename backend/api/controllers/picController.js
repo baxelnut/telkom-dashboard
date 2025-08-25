@@ -169,11 +169,18 @@ export async function getAlertReport(req, res) {
   try {
     const allRows = await fetchFormattedReportData();
 
-    // Filter only IN PROCESS and umur > 90 days (3 bulan)
+    // Apply the same filter as getReportByTelegramId
     const filtered = allRows.filter((r) => {
-      const kategori = normalize(r["KATEGORI"]);
       const umur = Number(r["UMUR_ORDER"] ?? 0);
-      return kategori === "IN PROCESS" && !isNaN(umur) && umur >= 90;
+      const kategori = normalize(r["KATEGORI"]);
+      const status = normalize(r["STATUS"]);
+
+      const validUmur = !isNaN(umur) && umur > 60;
+      const validKategori = kategori === "IN PROCESS";
+      const validStatus =
+        !status || status === "NO STATUS" || status === "No Status"; // covers null, undefined, "", "No Status"
+
+      return validUmur && validKategori && validStatus;
     });
 
     // Group by PIC + NEW_WITEL
