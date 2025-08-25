@@ -18,12 +18,10 @@ import {
 import {
   getReportByPic,
   getReportByTelegramId,
+  getAlertReport,
 } from "../controllers/picController.js";
 
 const router = express.Router();
-
-router.get("/report", getReg3ReportData);
-router.get("/report/in-process", getReg3InProcessData);
 
 router.patch("/sheets/:id", updateSheet);
 router.get("/sheets/process-status", processStatus);
@@ -34,9 +32,11 @@ router.get("/sheets/segmen/subtype2/rev", getSegmenSubtype2Rev);
 router.get("/sheets/segmen-simplified", getSheetOrderSimplified);
 router.get("/sheets/kategori-simplified", getSheetKategoriSimplified);
 router.get("/sheets/order-subtype2", getSheetOrderType2);
-
 router.get("/sheets/po", getPO);
 
+router.get("/report", getReg3ReportData);
+router.get("/report/in-process", getReg3InProcessData);
+router.get("/report/alert", getAlertReport);
 router.get("/report/pic", getReportByPic);
 router.post("/report/pic", getReportByPic);
 router.get("/report/by-telegram", getReportByTelegramId);

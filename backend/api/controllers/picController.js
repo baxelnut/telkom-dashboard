@@ -164,3 +164,36 @@ export async function getReportByTelegramId(req, res) {
     return res.status(500).json({ error: err.message || "internal" });
   }
 }
+
+export async function getAlertReport(req, res) {
+  try {
+    const allRows = await fetchFormattedReportData();
+
+    // Filter only IN PROCESS and umur > 90 days (3 bulan)
+    const filtered = allRows.filter((r) => {
+      const kategori = normalize(r["KATEGORI"]);
+      const umur = Number(r["UMUR_ORDER"] ?? 0);
+      return kategori === "IN PROCESS" && !isNaN(umur) && umur >= 90;
+    });
+
+    // Group by PIC + NEW_WITEL
+    const grouped = {};
+    filtered.forEach((r) => {
+      const pic = (r["PIC"] || "UNKNOWN").trim();
+      const witel = (r["NEW_WITEL"] || "-").trim();
+      const key = `${pic}|||${witel}`;
+      if (!grouped[key]) {
+        grouped[key] = { pic, witel, statuses: {}, total: 0 };
+      }
+
+      const status = (r["STATUS"] || "No Status").trim();
+      grouped[key].statuses[status] = (grouped[key].statuses[status] || 0) + 1;
+      grouped[key].total++;
+    });
+
+    return res.json(Object.values(grouped));
+  } catch (err) {
+    console.error("getAlertReport error:", err);
+    return res.status(500).json({ error: err.message || "internal" });
+  }
+}
