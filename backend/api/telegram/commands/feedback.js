@@ -10,27 +10,15 @@ export default async function handleFeedback({
   args,
   message,
 }) {
+  const text = message?.text?.trim() || "";
   const feedbackText = args.join(" ").trim();
 
-  // User typed just "/feedback" → start flow
-  if (!feedbackText && !PENDING_FEEDBACK.has(telegramId)) {
-    PENDING_FEEDBACK.set(telegramId, { chatId, startedAt: Date.now() });
-
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: "✍️ Please enter your feedback now. Just type your message and send it.",
-      parse_mode: "HTML",
-    });
-    return;
-  }
-
-  // User already in feedback mode and sends any message
-  if (PENDING_FEEDBACK.has(telegramId) && !feedbackText) {
+  // 1️⃣ User already in pending feedback mode → capture any message
+  if (PENDING_FEEDBACK.has(telegramId)) {
     const session = PENDING_FEEDBACK.get(telegramId);
     PENDING_FEEDBACK.delete(telegramId);
 
-    const userFeedback = message?.text?.trim();
-    if (!userFeedback) {
+    if (!text) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
         text: "⚠️ I didn't catch any text. Feedback cancelled.",
@@ -38,21 +26,21 @@ export default async function handleFeedback({
       return;
     }
 
-    // Save to Firestore
+    // Save feedback
     const feedbackRef = db.collection("feedback").doc();
     await feedbackRef.set({
       telegramId,
       chatId: session.chatId,
-      feedback: userFeedback,
+      feedback: text,
       createdAt: new Date(),
     });
 
-    // Notify admin / developer
+    // Notify admin
     const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
     if (ADMIN_CHAT_ID) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: ADMIN_CHAT_ID,
-        text: `📩 New feedback from <b>${telegramId}</b>:\n\n${userFeedback}`,
+        text: `📩 New feedback from <b>${telegramId}</b>:\n\n${text}`,
         parse_mode: "HTML",
       });
     }
@@ -66,7 +54,7 @@ export default async function handleFeedback({
     return;
   }
 
-  // Inline feedback still works → "/feedback your text here"
+  // 2️User types `/feedback some text` → inline feedback
   if (feedbackText) {
     const feedbackRef = db.collection("feedback").doc();
     await feedbackRef.set({
@@ -90,5 +78,18 @@ export default async function handleFeedback({
       text: "✅ Thanks for your feedback! We're building this with you 🚀",
       parse_mode: "HTML",
     });
+    return;
+  }
+
+  // 3️User typed `/feedback` → start pending session
+  if (!feedbackText) {
+    PENDING_FEEDBACK.set(telegramId, { chatId, startedAt: Date.now() });
+
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id: chatId,
+      text: "✍️ Please enter your feedback now. Just type your message and send it.",
+      parse_mode: "HTML",
+    });
+    return;
   }
 }
