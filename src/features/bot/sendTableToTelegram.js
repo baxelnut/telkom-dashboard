@@ -16,12 +16,13 @@ export async function sendTableToTelegram({
   selector,
   API_URL,
   target = "group",
-  chatId, // allow override
+  chatId, // override destination (string or number)
   setTeleStatus,
   title,
   subtext,
   link,
   dateStr,
+  parseMode = "Markdown", // default parse mode for caption
 }) {
   if (setTeleStatus) setTeleStatus("Please wait...");
 
@@ -29,39 +30,61 @@ export async function sendTableToTelegram({
   if (!table) {
     if (setTeleStatus) setTeleStatus("Table not found.");
     console.error(`Table with selector "${selector}" not found.`);
-    return;
+    return { ok: false, error: "Table not found" };
   }
 
   try {
-    const canvas = await html2canvas(table);
+    const canvas = await html2canvas(table); // capture
     const blob = await new Promise((resolve) =>
       canvas.toBlob(resolve, "image/png")
     );
 
+    if (!blob) {
+      if (setTeleStatus) setTeleStatus("Failed to capture table.");
+      console.error("html2canvas returned null blob");
+      return { ok: false, error: "Failed to capture table" };
+    }
+
     const formData = new FormData();
-    formData.append("photo", blob);
+    formData.append("photo", blob, "table.png");
     formData.append("target", target);
-    if (chatId) formData.append("chatId", chatId);
 
-    // Format message
-    const caption = `📊 *${title}*\n${dateStr}\n\n${subtext}\n\n🔗 ${link}`;
-    formData.append("caption", caption);
+    // include chatId override to force private message
+    if (chatId) {
+      formData.append("chatId", String(chatId)); // ensure it's a string
+    }
 
-    const res = await fetch(`${API_URL}/telegram/photo`, {
+    // build caption
+    const captionLines = [];
+    if (title) captionLines.push(`*${title}*`);
+    if (dateStr) captionLines.push(`${dateStr}`);
+    if (subtext) captionLines.push(`\n${subtext}`);
+    if (link) captionLines.push(`\n${link}`);
+    const caption = captionLines.join("\n");
+
+    if (caption) {
+      formData.append("caption", caption);
+      formData.append("parse_mode", parseMode);
+    }
+
+    const res = await fetch(`${API_URL.replace(/\/$/, "")}/telegram/photo`, {
       method: "POST",
       body: formData,
     });
 
     const json = await res.json();
 
-    if (res.ok) {
-      if (setTeleStatus) setTeleStatus("Sent!");
-    } else {
+    if (!res.ok) {
       if (setTeleStatus) setTeleStatus("Failed to send.");
       console.error("Telegram image error:", json);
+      return { ok: false, error: json };
     }
+
+    if (setTeleStatus) setTeleStatus("Sent!");
+    return { ok: true, result: json };
   } catch (err) {
     console.error("Telegram send error:", err);
     if (setTeleStatus) setTeleStatus("Error while sending.");
+    return { ok: false, error: err };
   }
 }

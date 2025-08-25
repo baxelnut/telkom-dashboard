@@ -1,12 +1,4 @@
-import { sendTableToTelegram } from "../../../../src/features/bot/sendTableToTelegram.js";
-import { formatDate } from "../../../../src/helpers/formattingUtils.js";
-
-export default async function handleAlert({
-  axios,
-  chatId,
-  TELEGRAM_API,
-  API_URL,
-}) {
+export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
   try {
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
@@ -14,12 +6,11 @@ export default async function handleAlert({
       parse_mode: "HTML",
     });
 
-    // Existing text alert logic
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
     );
 
-    const rows = resp.data || [];
+    const rows = resp?.data || [];
     if (!Array.isArray(rows) || rows.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,
@@ -30,10 +21,31 @@ export default async function handleAlert({
     }
 
     const parts = rows.map((g) => {
-      const statusSummary = Object.entries(g.statuses)
-        .map(([status, count]) => `${status}: ${count}`)
+      const statuses = g.statuses || {};
+      const orderedStatusKeys = Object.keys(statuses).sort((a, b) => {
+        const priority = (k) => {
+          if (!k) return 2;
+          const up = k.toString().toUpperCase();
+          if (up.includes("LANJUT")) return 0;
+          if (up.includes("NO STATUS") || up.includes("NOS")) return 1;
+          return 2;
+        };
+        return priority(a) - priority(b);
+      });
+
+      const statusSummary = orderedStatusKeys
+        .map((status) => `${status}: ${statuses[status]}`)
         .join(" ");
-      return `🙎 ${g.pic} – ${g.witel}\n${statusSummary} | Total: ${g.total}`;
+
+      // fallback values
+      const pic = g.pic || "UNKNOWN";
+      const witel = g.witel || "-";
+      const total =
+        typeof g.total === "number"
+          ? g.total
+          : Object.values(statuses).reduce((s, v) => s + Number(v || 0), 0);
+
+      return `🙎 ${pic} – ${witel}\n${statusSummary} | Total: ${total}`;
     });
 
     const now = new Date().toISOString().slice(0, 10);
@@ -51,37 +63,19 @@ export default async function handleAlert({
       text: textMsg,
       parse_mode: "HTML",
     });
-
-    // Send Aosodomoro table to the same chat
-    await sendTableToTelegram({
-      selector: ".aosodomoro-table table",
-      API_URL,
-      chatId, // force direct message to this user
-      target: "private",
-      title: "Weekly Report AOSODOMORO Non Connectivity",
-      subtext:
-        "Source: Database NCX\n\nUntuk detail data dapat diakses melalui link berikut:",
-      link: "https://rso2telkomdashboard.web.app/reports/aosodomoro",
-      dateStr: formatDate(),
-    });
-
-    // Send Galaksi table to the same chat
-    await sendTableToTelegram({
-      selector: ".galaksi-table table",
-      API_URL,
-      chatId,
-      target: "private",
-      title: "GALAKSI PO AOSODOMORO Non Conn",
-      subtext: "Zero AOSODOMORO > 3 BLN",
-      link: "https://rso2telkomdashboard.web.app/reports/galaksi",
-      dateStr: formatDate(),
-    });
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: "Failed to fetch alerts. Please try again later.",
-      parse_mode: "HTML",
-    });
+    try {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: "❌ Failed to fetch alerts. Please try again later.",
+        parse_mode: "HTML",
+      });
+    } catch (sendErr) {
+      console.error(
+        "ALERT -> fallback send error",
+        sendErr?.message || sendErr
+      );
+    }
   }
 }
