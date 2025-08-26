@@ -1,9 +1,10 @@
 FROM node:20-slim
 
+# Don’t auto-download Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV CHROMIUM_PATH=/usr/bin/chromium
 
-# Install Chromium and required libs
+# Install Chromium + dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-sandbox \
@@ -32,18 +33,16 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# quick verification in build logs
-RUN ${CHROMIUM_PATH} --version || echo "Chromium not found"
-
-# Use backend folder for install & runtime
+# Set backend as working directory
 WORKDIR /app/backend
 
-# copy backend package files and install only backend deps
+# Copy only backend package files first for caching
 COPY backend/package*.json ./
+
 RUN npm ci --omit=dev
 
-# copy backend code
+# Copy backend source
 COPY backend ./
 
 EXPOSE 8000
-CMD ["node", "api/index.js"]
+CMD ["node", "index.js"]
