@@ -32,12 +32,13 @@ async function sendPhotoToTelegram({
 
 async function captureTable({ url, selector, filename }) {
   const browser = await puppeteer.launch({
+    headless: "new",
+    executablePath: "/usr/bin/chromium",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
     ],
-    headless: true,
     defaultViewport: { width: 1200, height: 800 },
   });
 
