@@ -261,7 +261,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
     try {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId || process.env.TELEGRAM_CHAT_ID,
-        text: "❌ Failed to capture tables. Please try again later.",
+        text: "❌ Failed to capture tables. Please try again.",
         parse_mode: "HTML",
       });
     } catch (_) {}
