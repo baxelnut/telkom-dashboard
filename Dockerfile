@@ -45,4 +45,4 @@ RUN npm ci --omit=dev
 COPY backend ./
 
 EXPOSE 8000
-CMD ["node", "index.js"]
+CMD ["node", "api/index.js"]
