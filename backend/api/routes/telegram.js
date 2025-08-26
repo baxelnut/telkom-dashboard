@@ -6,6 +6,8 @@ import axios from "axios";
 import multer from "multer";
 import FormData from "form-data";
 
+import captureTables from "../telegram/captureTables.js";
+
 const upload = multer();
 const router = express.Router();
 
@@ -53,6 +55,20 @@ router.post("/photo", upload.single("photo"), async (req, res) => {
   } catch (err) {
     console.error("Telegram photo error:", err.response?.data || err.message);
     res.status(500).json({ error: "Failed to send photo to Telegram" });
+  }
+});
+
+router.post("/capture-now", async (req, res) => {
+  const chatId = req.body?.chatId || process.env.TELEGRAM_CHAT_ID;
+  try {
+    await captureTables({
+      chatId,
+      TELEGRAM_API: `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("capture-now error:", err);
+    res.status(500).json({ ok: false, error: err?.message || err });
   }
 });
 

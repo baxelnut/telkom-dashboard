@@ -53,22 +53,20 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
       if (!p) continue;
       try {
         if (fs.existsSync(p)) {
-          console.log(`[DEBUG] Found possible chromium at: ${p}`);
+          console.log(`[DEBUG] Found chromium at: ${p}`);
           try {
             const version = execSync(`${p} --version`).toString();
             console.log(`[DEBUG] Chromium version: ${version}`);
-          } catch (err) {
+          } catch (vErr) {
             console.warn(
-              `[DEBUG] Failed to get version from ${p}:`,
-              err.message
+              `[DEBUG] version check failed for ${p}:`,
+              vErr?.message || vErr
             );
           }
 
-          console.log(
-            `[CAPTURE] Found system chromium at ${p} — launching puppeteer-core`
-          );
-          const browser = await puppeteerCore.launch({
-            executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
+          const launchOpts = {
+            executablePath: p,
+            headless: true,
             args: [
               "--no-sandbox",
               "--disable-setuid-sandbox",
@@ -76,8 +74,20 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
               "--disable-gpu",
               "--no-zygote",
               "--single-process",
+              "--disable-extensions",
+              "--disable-software-rasterizer",
+              "--hide-scrollbars",
+              "--disable-accelerated-2d-canvas",
             ],
-          });
+            defaultViewport: { width: 1200, height: 800 },
+            timeout: 120000,
+            dumpio: true, // print Chromium stdout/stderr to container logs for debugging
+          };
+
+          console.log(
+            "[CAPTURE] launching puppeteer-core with system chromium"
+          );
+          const browser = await puppeteerCore.launch(launchOpts);
           return browser;
         }
       } catch (err) {
@@ -98,30 +108,27 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
   }
 }
 
-/* Fallback to bundled puppeteer (only if you kept it) */
+/* Fallback to bundled puppeteer */
 async function tryLaunchBundledPuppeteer() {
   try {
-    console.log(
-      "[CAPTURE] launching bundled puppeteer (may download or use cached chromium)"
-    );
     const puppeteer = (await import("puppeteer")).default;
+    console.log("[CAPTURE] launching bundled puppeteer (bundled chromium)");
     const browser = await puppeteer.launch({
+      headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
-        "--disable-software-rasterizer",
+        "--no-zygote",
         "--single-process",
         "--disable-extensions",
         "--hide-scrollbars",
-        "--remote-debugging-port=9222",
       ],
-      headless: true,
       defaultViewport: { width: 1200, height: 800 },
-      timeout: 60000,
+      timeout: 120000,
+      dumpio: true,
     });
-
     return browser;
   } catch (err) {
     console.log(
@@ -133,11 +140,9 @@ async function tryLaunchBundledPuppeteer() {
 }
 
 async function getBrowserInstance() {
-  // 1) try puppeteer-core + system chromium
   let browser = await tryLaunchPuppeteerCoreWithSystemChromium();
   if (browser) return browser;
 
-  // 2) fallback to bundled puppeteer
   browser = await tryLaunchBundledPuppeteer();
   if (browser) return browser;
 
