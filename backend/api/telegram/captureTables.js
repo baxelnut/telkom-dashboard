@@ -69,7 +69,7 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
           );
           const browser = await puppeteerCore.launch({
             executablePath: p,
-            headless: true,
+            headless: "new", // modern headless mode
             args: [
               "--no-sandbox",
               "--disable-setuid-sandbox",
@@ -77,6 +77,11 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
               "--disable-accelerated-2d-canvas",
               "--disable-gpu",
               "--disable-software-rasterizer",
+              "--disable-background-timer-throttling",
+              "--disable-backgrounding-occluded-windows",
+              "--disable-renderer-backgrounding",
+              "--single-process",
+              "--remote-debugging-port=9222",
             ],
           });
           return browser;

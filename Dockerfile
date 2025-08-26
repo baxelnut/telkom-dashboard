@@ -7,6 +7,7 @@ ENV CHROMIUM_PATH=/usr/bin/chromium
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-sandbox \
+    chromium-common \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
