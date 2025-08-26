@@ -1,8 +1,12 @@
 FROM node:20-slim
 
+# prevent puppeteer from attempting to download chromium at npm install
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV CHROMIUM_PATH=/usr/bin/chromium
+
+# Install Chromium + deps
 RUN apt-get update && apt-get install -y \
     chromium \
-    chromium-driver \
     fonts-liberation \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -23,13 +27,17 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CHROMIUM_PATH=/usr/bin/chromium
+# Work from inside backend
+WORKDIR /app
 
-WORKDIR /app/backend
+# Copy only backend package.json
+COPY package*.json ./
 
-COPY backend/package*.json ./
-RUN npm install --omit=dev
-COPY backend ./
+# install backend deps only (no dev)
+RUN npm ci --omit=dev
+
+# Copy backend code
+COPY . .
 
 EXPOSE 8000
 CMD ["node", "index.js"]

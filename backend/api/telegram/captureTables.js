@@ -6,7 +6,7 @@ import FormData from "form-data";
 const TEMP_DIR = process.env.TEMP_DIR || "/tmp";
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
-// Common paths to look for system chrome/chromium
+// Common paths to check for system chromium
 const COMMON_CHROMIUM_PATHS = [
   process.env.CHROMIUM_PATH,
   "/usr/bin/chromium",
@@ -15,9 +15,6 @@ const COMMON_CHROMIUM_PATHS = [
   "/snap/bin/chromium",
 ].filter(Boolean);
 
-/**
- * send screenshot to telegram using bot API url (TELEGRAM_API = https://api.telegram.org/bot<token>)
- */
 async function sendPhotoToTelegram({
   TELEGRAM_API,
   chatId,
@@ -32,35 +29,31 @@ async function sendPhotoToTelegram({
     form.append("parse_mode", "HTML");
   }
 
-  const resp = await axios.post(`${TELEGRAM_API}/sendPhoto`, form, {
+  await axios.post(`${TELEGRAM_API}/sendPhoto`, form, {
     headers: form.getHeaders(),
     maxContentLength: Infinity,
     maxBodyLength: Infinity,
   });
 
-  // delete local file after sending (best-effort)
   try {
     fs.unlinkSync(filePath);
     console.log(`[CAPTURE] Deleted temp file ${filePath}`);
   } catch (e) {
     console.warn(`[CAPTURE] Failed to delete ${filePath}:`, e?.message || e);
   }
-
-  return resp.data;
 }
 
-/**
- * Try to launch puppeteer-core with a system chromium executable path
- */
+/* Try puppeteer-core with system chromium */
 async function tryLaunchPuppeteerCoreWithSystemChromium() {
   try {
     const puppeteerCore = (await import("puppeteer-core")).default;
+
     for (const p of COMMON_CHROMIUM_PATHS) {
       if (!p) continue;
       try {
         if (fs.existsSync(p)) {
           console.log(
-            `[CAPTURE] Found system chromium at ${p} — launching via puppeteer-core`
+            `[CAPTURE] Found system chromium at ${p} — launching puppeteer-core`
           );
           const browser = await puppeteerCore.launch({
             executablePath: p,
@@ -82,6 +75,7 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
         );
       }
     }
+
     console.log(
       "[CAPTURE] puppeteer-core available but no system chromium found in common paths"
     );
@@ -92,28 +86,14 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
   }
 }
 
-/**
- * Try to launch bundled puppeteer. If a system chromium path exists, pass it as executablePath (avoids redownloading).
- */
+/* Fallback to bundled puppeteer (only if you kept it) */
 async function tryLaunchBundledPuppeteer() {
   try {
     const puppeteer = (await import("puppeteer")).default;
-
-    // prefer system path if present to avoid puppeteer-provided chromium mismatch / download issues
-    let execPath = null;
-    for (const p of COMMON_CHROMIUM_PATHS) {
-      if (p && fs.existsSync(p)) {
-        execPath = p;
-        break;
-      }
-    }
-
     console.log(
-      `[CAPTURE] launching bundled puppeteer (executablePath=${
-        execPath || "default"
-      })`
+      "[CAPTURE] launching bundled puppeteer (may download or use cached chromium)"
     );
-    const launchOpts = {
+    const browser = await puppeteer.launch({
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -122,10 +102,7 @@ async function tryLaunchBundledPuppeteer() {
       ],
       headless: true,
       defaultViewport: { width: 1200, height: 800 },
-    };
-    if (execPath) launchOpts.executablePath = execPath;
-
-    const browser = await puppeteer.launch(launchOpts);
+    });
     return browser;
   } catch (err) {
     console.log(
@@ -136,15 +113,12 @@ async function tryLaunchBundledPuppeteer() {
   }
 }
 
-/**
- * Return a browser instance, trying options in order:
- * 1) puppeteer-core with system chromium executable
- * 2) bundled puppeteer (optionally using system chromium path)
- */
 async function getBrowserInstance() {
+  // 1) try puppeteer-core + system chromium
   let browser = await tryLaunchPuppeteerCoreWithSystemChromium();
   if (browser) return browser;
 
+  // 2) fallback to bundled puppeteer
   browser = await tryLaunchBundledPuppeteer();
   if (browser) return browser;
 
@@ -153,20 +127,14 @@ async function getBrowserInstance() {
   );
 }
 
-/**
- * Capture the element (selector) screenshot on given url.
- * Returns path string or null if not captured.
- */
 async function captureTable({ url, selector, filename }) {
   console.log(`[CAPTURE] Opening ${url} to capture "${selector}"`);
   const browser = await getBrowserInstance();
   const page = await browser.newPage();
 
   try {
-    // generous timeout so dashboard has time to load
     await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
-    // wait for selector
     try {
       await page.waitForSelector(selector, { timeout: 15000 });
     } catch (waitErr) {
@@ -204,11 +172,6 @@ async function captureTable({ url, selector, filename }) {
   }
 }
 
-/**
- * Main entry called from alert handler.
- * - chatId: telegram chat id
- * - TELEGRAM_API: full telegram api url, e.g. https://api.telegram.org/bot<token>
- */
 export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
   try {
     console.log("[CAPTURE] start: sending 'capturing' message to user");
@@ -218,8 +181,6 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
       parse_mode: "HTML",
     });
 
-    // Per-table configuration (easily extensible)
-    // NOTE: these URLs/selectors can be moved to env if you prefer not to hardcode
     const tables = [
       {
         name: "Aosodomoro",
