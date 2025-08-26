@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import FormData from "form-data";
+import { execSync } from "child_process";
 
 const TEMP_DIR = process.env.TEMP_DIR || "/tmp";
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -52,6 +53,17 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
       if (!p) continue;
       try {
         if (fs.existsSync(p)) {
+          console.log(`[DEBUG] Found possible chromium at: ${p}`);
+          try {
+            const version = execSync(`${p} --version`).toString();
+            console.log(`[DEBUG] Chromium version: ${version}`);
+          } catch (err) {
+            console.warn(
+              `[DEBUG] Failed to get version from ${p}:`,
+              err.message
+            );
+          }
+
           console.log(
             `[CAPTURE] Found system chromium at ${p} — launching puppeteer-core`
           );
@@ -61,11 +73,18 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
               "--no-sandbox",
               "--disable-setuid-sandbox",
               "--disable-dev-shm-usage",
+              "--disable-gpu",
+              "--disable-software-rasterizer",
+              "--single-process",
+              "--disable-extensions",
               "--hide-scrollbars",
+              "--remote-debugging-port=9222",
             ],
             headless: true,
             defaultViewport: { width: 1200, height: 800 },
+            timeout: 60000, // increase launch timeout
           });
+
           return browser;
         }
       } catch (err) {
@@ -89,20 +108,27 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
 /* Fallback to bundled puppeteer (only if you kept it) */
 async function tryLaunchBundledPuppeteer() {
   try {
-    const puppeteer = (await import("puppeteer")).default;
     console.log(
       "[CAPTURE] launching bundled puppeteer (may download or use cached chromium)"
     );
+    const puppeteer = (await import("puppeteer")).default;
     const browser = await puppeteer.launch({
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-software-rasterizer",
+        "--single-process",
+        "--disable-extensions",
         "--hide-scrollbars",
+        "--remote-debugging-port=9222",
       ],
       headless: true,
       defaultViewport: { width: 1200, height: 800 },
+      timeout: 60000,
     });
+
     return browser;
   } catch (err) {
     console.log(
