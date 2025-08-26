@@ -10,8 +10,8 @@ if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 // Common paths to check for system chromium
 const COMMON_CHROMIUM_PATHS = [
   process.env.CHROMIUM_PATH,
-  "/usr/bin/chromium",
   "/usr/bin/chromium-browser",
+  "/usr/bin/chromium",
   "/usr/bin/google-chrome-stable",
   "/snap/bin/chromium",
 ].filter(Boolean);
@@ -69,22 +69,16 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
           );
           const browser = await puppeteerCore.launch({
             executablePath: p,
+            headless: true,
             args: [
               "--no-sandbox",
               "--disable-setuid-sandbox",
               "--disable-dev-shm-usage",
+              "--disable-accelerated-2d-canvas",
               "--disable-gpu",
               "--disable-software-rasterizer",
-              "--single-process",
-              "--disable-extensions",
-              "--hide-scrollbars",
-              "--remote-debugging-port=9222",
             ],
-            headless: true,
-            defaultViewport: { width: 1200, height: 800 },
-            timeout: 60000, // increase launch timeout
           });
-
           return browser;
         }
       } catch (err) {
