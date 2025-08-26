@@ -32,8 +32,13 @@ async function sendPhotoToTelegram({
 
 async function captureTable({ url, selector, filename }) {
   const browser = await puppeteer.launch({
-    executablePath: process.env.CHROMIUM_PATH || puppeteer.executablePath(),
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+    ],
   });
 
   const page = await browser.newPage();
