@@ -1,9 +1,8 @@
-FROM node:18-slim
+FROM node:20-slim
 
-# Install Chromium + dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
-    chromium-sandbox \
+    chromium-driver \
     fonts-liberation \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -11,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libdrm2 \
     libgbm1 \
     libgtk-3-0 \
+    libnspr4 \
     libnss3 \
     libx11-xcb1 \
     libxcomposite1 \
@@ -19,16 +19,17 @@ RUN apt-get update && apt-get install -y \
     libxfixes3 \
     libxrandr2 \
     wget \
+    ca-certificates \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CHROMIUM_PATH=/usr/bin/chromium
 
 WORKDIR /app/backend
+
 COPY backend/package*.json ./
 RUN npm install --omit=dev
-COPY backend .
+COPY backend ./
 
-EXPOSE 5000
-
-CMD ["node", "server.js"]
+EXPOSE 8000
+CMD ["node", "index.js"]

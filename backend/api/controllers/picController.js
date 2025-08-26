@@ -176,19 +176,31 @@ export async function getAlertReport(req, res) {
     const allRows = await fetchFormattedReportData();
     console.log(`[ALERT-API] total rows from sheet: ${allRows.length}`);
 
+    // Normalizers/helpers
     const _norm = (v) =>
       v === null || v === undefined ? "" : String(v).toString().trim();
+
+    const parseUmur = (raw) => {
+      if (raw === null || raw === undefined) return 0;
+      const s = String(raw);
+      const m = s.match(/-?\d+/);
+      if (!m) return 0;
+      const n = Number(m[0]);
+      return Number.isNaN(n) ? 0 : n;
+    };
+
     const isNoStatus = (raw) => {
       const s = _norm(raw).toUpperCase();
       return s === "" || /^NO\s*STATUS$/i.test(s) || /^NOS$/i.test(s);
     };
 
+    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS", STATUS empty/No Status
     const filtered = allRows.filter((r) => {
-      const umur = Number(r["UMUR_ORDER"] ?? 0);
+      const umur = parseUmur(r["UMUR_ORDER"]);
       const kategori = _norm(r["KATEGORI"]).toUpperCase();
       const statusRaw = _norm(r["STATUS"]);
 
-      const validUmur = !Number.isNaN(umur) && umur > 60;
+      const validUmur = umur > 60;
       const validKategori = kategori === "IN PROCESS";
 
       let validStatus = true;
@@ -200,13 +212,14 @@ export async function getAlertReport(req, res) {
 
     console.log(`[ALERT-API] filtered count: ${filtered.length}`);
 
-    // grouping (same as before)
+    // Group by PIC + NEW_WITEL
     const grouped = {};
     filtered.forEach((r) => {
       const pic = _norm(r["PIC"]) || "UNKNOWN";
       const witel = _norm(r["NEW_WITEL"]) || "-";
       const key = `${pic}|||${witel}`;
       if (!grouped[key]) grouped[key] = { pic, witel, statuses: {}, total: 0 };
+
       const statusLabel = _norm(r["STATUS"]) || "No Status";
       grouped[key].statuses[statusLabel] =
         (grouped[key].statuses[statusLabel] || 0) + 1;
