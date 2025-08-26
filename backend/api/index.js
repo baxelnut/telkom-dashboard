@@ -17,6 +17,10 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 // Routes
 app.use("/api/aosodomoro", aosodomoroRoutes);
 app.use("/api/regional-3", regional3Routes);
