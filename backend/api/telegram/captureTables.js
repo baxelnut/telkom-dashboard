@@ -68,20 +68,14 @@ async function tryLaunchPuppeteerCoreWithSystemChromium() {
             `[CAPTURE] Found system chromium at ${p} — launching puppeteer-core`
           );
           const browser = await puppeteerCore.launch({
-            executablePath: p,
-            headless: "new", // modern headless mode
+            executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
             args: [
               "--no-sandbox",
               "--disable-setuid-sandbox",
               "--disable-dev-shm-usage",
-              "--disable-accelerated-2d-canvas",
               "--disable-gpu",
-              "--disable-software-rasterizer",
-              "--disable-background-timer-throttling",
-              "--disable-backgrounding-occluded-windows",
-              "--disable-renderer-backgrounding",
+              "--no-zygote",
               "--single-process",
-              "--remote-debugging-port=9222",
             ],
           });
           return browser;
