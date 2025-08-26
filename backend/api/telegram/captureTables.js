@@ -27,35 +27,32 @@ async function sendPhotoToTelegram({
   });
   try {
     fs.unlinkSync(filePath);
-  } catch (e) {}
+  } catch {}
 }
 
 async function captureTable({ url, selector, filename }) {
   const browser = await puppeteer.launch({
-    headless: "new",
-    executablePath: "/usr/bin/chromium",
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-    ],
-    defaultViewport: { width: 1200, height: 800 },
+    executablePath: process.env.CHROMIUM_PATH || puppeteer.executablePath(),
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(60000);
   await page.goto(url, { waitUntil: "networkidle2" });
+
   try {
     await page.waitForSelector(selector, { timeout: 15000 });
-  } catch (e) {
+  } catch {
     await browser.close();
     return null;
   }
+
   const el = await page.$(selector);
   if (!el) {
     await browser.close();
     return null;
   }
+
   const filePath = path.join(TEMP_DIR, filename);
   await el.screenshot({ path: filePath });
   await browser.close();
@@ -71,11 +68,13 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
     });
 
     const url = "https://rso2telkomdashboard.web.app/action-based";
+
     const aosPath = await captureTable({
       url,
       selector: ".aosodomoro-table",
       filename: `aosodomoro-${Date.now()}.png`,
     });
+
     const galaksiPath = await captureTable({
       url,
       selector: ".galaksi-table",
@@ -89,6 +88,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
         filePath: aosPath,
         caption: "📊 Aosodomoro Table",
       });
+
     if (galaksiPath)
       await sendPhotoToTelegram({
         TELEGRAM_API,

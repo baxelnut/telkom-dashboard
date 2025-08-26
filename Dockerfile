@@ -1,32 +1,34 @@
-FROM node:20-slim
+FROM node:18-slim
 
-# Install Chromium + deps
+# Install Chromium + dependencies
 RUN apt-get update && apt-get install -y \
-  chromium \
-  ca-certificates \
-  fonts-liberation \
-  libatk-bridge2.0-0 \
-  libatk1.0-0 \
-  libatspi2.0-0 \
-  libdrm2 \
-  libgbm1 \
-  libgtk-3-0 \
-  libnspr4 \
-  libnss3 \
-  libx11-xcb1 \
-  libxcomposite1 \
-  libxdamage1 \
-  libxfixes3 \
-  libxkbcommon0 \
-  libxrandr2 \
-  xdg-utils \
-  && rm -rf /var/lib/apt/lists/*
+    chromium \
+    chromium-sandbox \
+    fonts-liberation \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxrandr2 \
+    wget \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+ENV CHROMIUM_PATH=/usr/bin/chromium
 
-# Copy only backend code
+WORKDIR /app/backend
 COPY backend/package*.json ./
-RUN npm install
-COPY backend ./
+RUN npm install --omit=dev
+COPY backend .
 
-CMD ["node", "index.js"]
+EXPOSE 5000
+
+CMD ["node", "server.js"]
