@@ -124,14 +124,12 @@ export async function getReportByTelegramId(req, res) {
       email = "dwiekasap21@gmail.com";
     // ==========================
 
+    // Filter by PIC
     const poMap = await buildPoMap();
     const poName = poMap.get((email || "").toLowerCase()) || fullName;
-
     const allRows = await fetchFormattedReportData();
-
-    // Filter by PIC
-    const matched = allRows.filter(
-      (r) => normalize(r["PIC"]) === normalize(poName)
+    const matched = allRows.filter((r) =>
+      normalize(r["PIC"]).includes(normalize(poName))
     );
 
     // Filter by UMUR_ORDER > 60, KATEGORI === "IN PROCESS", and STATUS empty/No Status
