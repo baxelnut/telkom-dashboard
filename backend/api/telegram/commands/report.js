@@ -44,7 +44,10 @@ export default async function handleReport({
     }
 
     const firstItem = items[0] || {};
-    const displayName = body.poName || body.fallbackName || "Unknown";
+    const displayName =
+      items.length > 0
+        ? items[0]["PO_NAME"] || items[0]["PIC"] || body.poName || "Unknown"
+        : body.poName || "Unknown";
     const witel = firstItem["NEW_WITEL"] ?? firstItem["New Witel"] ?? "-";
 
     const filtered = items.filter((r) => {

@@ -93,7 +93,11 @@ export async function getReportByPic(req, res) {
       pic: picQuery,
       matchCount: matched.length,
       summary,
-      items: summary.sampleItems,
+      items: summary.sampleItems.map((r) => ({
+        ...r,
+        PIC: r["PIC"], // raw PIC value
+        PO_NAME: r["PO_NAME"], // raw PO_NAME for display
+      })),
     });
   } catch (err) {
     console.error("getReportByPic error:", err);
