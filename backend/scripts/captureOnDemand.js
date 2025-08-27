@@ -4,10 +4,10 @@ import axios from "axios";
 import FormData from "form-data";
 import puppeteer from "puppeteer";
 
-const BASE_URL = process.env.BASE_URL || "https://rso2telkomdashboard.web.app";
+const BASE_URL = process.env.API_BASE_URL || "https://rso2telkomdashboard.web.app";
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
-const CHAT_ID = process.env.CHAT_ID;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
 
 if (!process.env.TELEGRAM_BOT_TOKEN) {
