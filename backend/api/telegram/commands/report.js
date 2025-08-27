@@ -50,6 +50,7 @@ export default async function handleReport({
         : body.poName || "Unknown";
     const witel = firstItem["NEW_WITEL"] ?? firstItem["New Witel"] ?? "-";
 
+    // Filtered items
     const filtered = items.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = String(r["KATEGORI"] ?? "")
@@ -66,7 +67,13 @@ export default async function handleReport({
       );
     });
 
-    const formattedRows = filtered
+    const top10 = filtered
+      .sort(
+        (a, b) => Number(b["UMUR_ORDER"] ?? 0) - Number(a["UMUR_ORDER"] ?? 0)
+      )
+      .slice(0, 10);
+
+    const formattedRows = top10
       .map((r) => {
         const orderId = String(r["ORDERID"] ?? r["ORDER_ID"] ?? "").trim();
         const subtype = String(
