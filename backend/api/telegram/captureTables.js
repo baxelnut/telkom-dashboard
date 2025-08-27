@@ -2,9 +2,54 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import FormData from "form-data";
+import { execSync } from "child_process";
 
 const TEMP_DIR = process.env.TEMP_DIR || "/tmp";
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
+
+// Common candidate paths (will be checked at runtime)
+const CANDIDATE_PATHS = [
+  process.env.CHROMIUM_PATH,
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
+  "/usr/bin/google-chrome-stable",
+  "/usr/bin/google-chrome",
+  "/snap/bin/chromium",
+  "/bin/chromium",
+  "/opt/google/chrome/chrome",
+].filter(Boolean);
+
+/* helper to find an existing binary */
+function findChromiumBinary() {
+  // 1) check env override
+  if (process.env.CHROMIUM_PATH && fs.existsSync(process.env.CHROMIUM_PATH)) {
+    return process.env.CHROMIUM_PATH;
+  }
+
+  // 2) check PATH via which
+  try {
+    const whichOut = execSync(
+      "which chromium-browser || which chromium || which google-chrome-stable || which google-chrome",
+      { stdio: ["ignore", "pipe", "ignore"] }
+    )
+      .toString()
+      .trim();
+    if (whichOut) {
+      if (fs.existsSync(whichOut)) return whichOut;
+    }
+  } catch (_) {
+    // ignore
+  }
+
+  // 3) fall back to common candidate list
+  for (const p of CANDIDATE_PATHS) {
+    try {
+      if (p && fs.existsSync(p)) return p;
+    } catch (_) {}
+  }
+
+  return null;
+}
 
 async function sendPhotoToTelegram({
   TELEGRAM_API,
@@ -34,31 +79,14 @@ async function sendPhotoToTelegram({
   }
 }
 
-async function humanType(page, selector, text) {
-  await page.$eval(selector, (el) => el.scrollIntoView({ block: "center" }));
-  await page.focus(selector);
-  try {
-    await page.keyboard.down("Control");
-    await page.keyboard.press("KeyA");
-    await page.keyboard.up("Control");
-  } catch (e) {
-    await page.$eval(selector, (el) => (el.value = ""));
-  }
-  await page.keyboard.press("Backspace");
-  await page.keyboard.type(text, { delay: 60 });
-  await page.$eval(selector, (el) => el.blur());
-}
+/* Create robust launcher with multiple fallbacks */
+async function createBrowser() {
+  const headless = process.env.HEADLESS === "false" ? false : true;
 
-/**
- * Launch puppeteer (bundled). We prefer bundled puppeteer because:
- * - It's what your scheduled-report script uses successfully.
- * - The puppeteer base image already contains Chromium and Puppeteer.
- */
-async function getBrowser() {
+  // Primary: try bundled puppeteer (most likely in ghcr puppeteer image)
   try {
     const puppeteer = (await import("puppeteer")).default;
-    const headless = process.env.HEADLESS === "false" ? false : true;
-
+    console.log("[CAPTURE] attempting puppeteer.launch() (bundled)");
     const launchOpts = {
       headless,
       args: [
@@ -73,17 +101,62 @@ async function getBrowser() {
       ],
       defaultViewport: { width: 1200, height: 900 },
       timeout: 120000,
-      dumpio: true, // very helpful for debugging in logs
+      dumpio: true,
     };
 
-    // If you set CHROMIUM_PATH explicitly, pass it along
-    if (process.env.CHROMIUM_PATH)
+    // If CHROMIUM_PATH provided explicitly, pass it
+    if (process.env.CHROMIUM_PATH) {
       launchOpts.executablePath = process.env.CHROMIUM_PATH;
+      console.log(
+        `[CAPTURE] using CHROMIUM_PATH env: ${process.env.CHROMIUM_PATH}`
+      );
+    }
 
-    console.log(`[CAPTURE] launching bundled puppeteer (headless=${headless})`);
     return await puppeteer.launch(launchOpts);
   } catch (err) {
-    console.error("[CAPTURE] puppeteer launch failed:", err?.message || err);
+    console.warn("[CAPTURE] puppeteer.launch() failed:", err?.message || err);
+    // continue to try to detect binary & use puppeteer-core
+  }
+
+  // Find chromium binary on the system
+  const bin = findChromiumBinary();
+  if (!bin) {
+    const msg =
+      "No Chromium/Chrome binary found in container (tried env and common paths)";
+    console.error(`[CAPTURE] ${msg}`);
+    throw new Error(msg);
+  }
+
+  console.log(
+    `[CAPTURE] found chromium executable at: ${bin} — attempting puppeteer-core launch`
+  );
+
+  // Try puppeteer-core with discovered executable path
+  try {
+    const puppeteerCore = (await import("puppeteer-core")).default;
+    const launchOpts = {
+      executablePath: bin,
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-zygote",
+        "--single-process",
+        "--disable-extensions",
+        "--hide-scrollbars",
+      ],
+      defaultViewport: { width: 1200, height: 900 },
+      timeout: 120000,
+      dumpio: true,
+    };
+    return await puppeteerCore.launch(launchOpts);
+  } catch (err) {
+    console.error(
+      "[CAPTURE] puppeteer-core launch failed:",
+      err?.message || err
+    );
     throw err;
   }
 }
@@ -97,30 +170,45 @@ async function captureTable({
   password,
 }) {
   console.log(`[CAPTURE] Opening ${url} to capture "${selector}"`);
-  const browser = await getBrowser();
+  const browser = await createBrowser();
   const page = await browser.newPage();
 
   try {
-    // Increase navigation timeout
     await page.setDefaultNavigationTimeout(120000);
     await page.goto(url, { waitUntil: "networkidle2", timeout: 120000 });
 
-    // Optional login flow (if credentials provided and the page requires auth)
+    // Optional login (same technique as your scheduled script)
     if (needsAuth && email && password) {
       try {
-        console.log("[CAPTURE] Attempting login (auth required)...");
-        // This assumes same login form structure as your scheduled script
         await page.waitForSelector('input[type="email"]', { timeout: 20000 });
         await page.waitForSelector('input[type="password"]', {
           timeout: 20000,
         });
 
-        await humanType(page, 'input[type="email"]', email);
+        // fill like human (small helper)
+        const humanType = async (selector, text) => {
+          await page.$eval(selector, (el) =>
+            el.scrollIntoView({ block: "center" })
+          );
+          await page.focus(selector);
+          try {
+            await page.keyboard.down("Control");
+            await page.keyboard.press("KeyA");
+            await page.keyboard.up("Control");
+          } catch (_) {
+            await page.$eval(selector, (el) => (el.value = ""));
+          }
+          await page.keyboard.press("Backspace");
+          await page.keyboard.type(text, { delay: 60 });
+          await page.$eval(selector, (el) => el.blur());
+        };
+
+        await humanType('input[type="email"]', email);
         await new Promise((r) => setTimeout(r, 800));
-        await humanType(page, 'input[type="password"]', password);
+        await humanType('input[type="password"]', password);
         await new Promise((r) => setTimeout(r, 1200));
 
-        // click login - try several strategies
+        // click login
         const clicked = await page
           .$eval("#login-btn", (el) => {
             try {
@@ -133,7 +221,6 @@ async function captureTable({
           .catch(() => false);
 
         if (!clicked) {
-          // fallback - try to click any button with login/sign-in text
           await page
             .$$eval("button, a[role='button']", (els) => {
               const found = els.find((el) =>
@@ -147,7 +234,7 @@ async function captureTable({
             .catch(() => {});
         }
 
-        // wait for successful navigation or an element that indicates logged in
+        // wait for some sign of login success (best-effort)
         await Promise.race([
           page
             .waitForSelector("div.page.overview", { timeout: 45000 })
@@ -155,29 +242,26 @@ async function captureTable({
           page
             .waitForFunction(
               () => window.location.pathname.includes("/overview"),
-              {
-                timeout: 45000,
-              }
+              { timeout: 45000 }
             )
             .catch(() => {}),
           page
             .waitForFunction(
-              () =>
-                (function () {
-                  try {
-                    return Object.keys(localStorage).some((k) =>
-                      /auth|token|idToken|firebase|session/i.test(k)
-                    );
-                  } catch (e) {
-                    return false;
-                  }
-                })(),
+              () => {
+                try {
+                  return Object.keys(localStorage).some((k) =>
+                    /auth|token|idToken|firebase|session/i.test(k)
+                  );
+                } catch {
+                  return false;
+                }
+              },
               { timeout: 45000 }
             )
             .catch(() => {}),
         ]).catch(() => {
           console.warn(
-            "[CAPTURE] Login detection timed out — continuing anyway (maybe page is public)."
+            "[CAPTURE] Login detection timed out — continuing (maybe page is public)"
           );
         });
       } catch (loginErr) {
@@ -188,25 +272,17 @@ async function captureTable({
       }
     }
 
-    // Wait for table selector — increase to 30s for slow UIs
     await page.waitForSelector(selector, { timeout: 30000 });
-
-    // Ensure table is visible & scrolled into view and allow any JS to render
     await page.$eval(selector, (el) => {
       el.scrollIntoView({ block: "center" });
-      // remove potential sticky headers/footers that overlap (best-effort)
-      const st = window.getComputedStyle(el);
-      el.style.background = st.background || "white";
     });
 
-    // small delay for SPA to render
+    // allow any SPA animation/rendering
     await new Promise((r) => setTimeout(r, 800));
 
     const element = await page.$(selector);
     if (!element) {
-      console.warn(
-        `[CAPTURE] Element not found after wait: ${selector} on ${url}`
-      );
+      console.warn(`[CAPTURE] Element not found: ${selector} on ${url}`);
       await page.close();
       await browser.close();
       return null;
@@ -242,8 +318,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
       parse_mode: "HTML",
     });
 
-    // If the dashboard is behind auth, set these env vars:
-    // TELKOM_DASHBOARD_EMAIL, TELKOM_DASHBOARD_PASSWORD
+    // if the dashboard is protected, set TELKOM_DASHBOARD_EMAIL & TELKOM_DASHBOARD_PASSWORD env vars
     const needsAuth = !!(
       process.env.TELKOM_DASHBOARD_EMAIL &&
       process.env.TELKOM_DASHBOARD_PASSWORD
