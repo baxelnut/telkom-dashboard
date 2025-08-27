@@ -109,8 +109,7 @@ async function screenshotElement(page, selector, filepath) {
     await page.addScriptTag({
       url: "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
     });
-    // give it a tiny moment to initialize
-    await page.waitForTimeout(200);
+    await new Promise((r) => setTimeout(r, 500));
   }
 
   // Wait for fonts to be ready (avoid fallback fonts)
