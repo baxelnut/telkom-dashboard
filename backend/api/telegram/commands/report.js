@@ -56,14 +56,9 @@ export default async function handleReport({
       const kategori = String(r["KATEGORI"] ?? "")
         .trim()
         .toUpperCase();
-      const status = String(r["STATUS"] ?? "")
-        .trim()
-        .toUpperCase();
+
       return (
-        !isNaN(umur) &&
-        umur > 60 &&
-        kategori === "IN PROCESS" &&
-        (!status || status === "NO STATUS")
+        !isNaN(umur) && umur > 60 && umur <= 90 && kategori === "IN PROCESS"
       );
     });
 
