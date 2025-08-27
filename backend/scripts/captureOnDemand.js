@@ -87,23 +87,40 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
-// ✅ SAFE capture: use el.screenshot instead of clip math
+// expands element + retina scaling
 async function screenshotElement(page, selector, filepath) {
   const el = await page.$(selector);
   if (!el) throw new Error(`Selector not found: ${selector}`);
 
+  // Expand element styles
   await page.evaluate((sel) => {
     const el = document.querySelector(sel);
     if (el) {
       el.style.overflow = "visible";
-      el.style.height = "auto";
-      el.style.width = "auto";
+      el.style.height = el.scrollHeight + "px";
+      el.style.width = el.scrollWidth + "px";
       el.style.maxHeight = "none";
       el.style.maxWidth = "none";
+      el.style.transform = "scale(1)";
     }
   }, selector);
 
-  await el.screenshot({ path: filepath });
+  // Grab bounding box
+  const box = await el.boundingBox();
+  if (!box) throw new Error("Failed to get boundingBox");
+
+  // Set viewport to fit element
+  await page.setViewport({
+    width: Math.ceil(box.width),
+    height: Math.ceil(box.height),
+    deviceScaleFactor: 2, // retina-like sharpness
+  });
+
+  // Screenshot only element
+  await el.screenshot({
+    path: filepath,
+    type: "png",
+  });
 }
 
 (async () => {
@@ -118,6 +135,7 @@ async function screenshotElement(page, selector, filepath) {
     ],
   });
   const page = await browser.newPage();
+  await page.setViewport({ width: 1600, height: 1200, deviceScaleFactor: 2 });
   page.setDefaultNavigationTimeout(120000);
 
   try {
