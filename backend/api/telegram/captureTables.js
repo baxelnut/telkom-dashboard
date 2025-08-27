@@ -2,19 +2,9 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import FormData from "form-data";
-import { execSync } from "child_process";
 
 const TEMP_DIR = process.env.TEMP_DIR || "/tmp";
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
-
-// Common paths to check for system chromium
-const COMMON_CHROMIUM_PATHS = [
-  process.env.CHROMIUM_PATH,
-  "/usr/bin/chromium-browser",
-  "/usr/bin/chromium",
-  "/usr/bin/google-chrome-stable",
-  "/snap/bin/chromium",
-].filter(Boolean);
 
 async function sendPhotoToTelegram({
   TELEGRAM_API,
@@ -44,77 +34,33 @@ async function sendPhotoToTelegram({
   }
 }
 
-/* Try puppeteer-core with system chromium */
-async function tryLaunchPuppeteerCoreWithSystemChromium() {
+async function humanType(page, selector, text) {
+  await page.$eval(selector, (el) => el.scrollIntoView({ block: "center" }));
+  await page.focus(selector);
   try {
-    const puppeteerCore = (await import("puppeteer-core")).default;
-
-    for (const p of COMMON_CHROMIUM_PATHS) {
-      if (!p) continue;
-      try {
-        if (fs.existsSync(p)) {
-          console.log(`[DEBUG] Found chromium at: ${p}`);
-          try {
-            const version = execSync(`${p} --version`).toString();
-            console.log(`[DEBUG] Chromium version: ${version}`);
-          } catch (vErr) {
-            console.warn(
-              `[DEBUG] version check failed for ${p}:`,
-              vErr?.message || vErr
-            );
-          }
-
-          const launchOpts = {
-            executablePath: p,
-            headless: true,
-            args: [
-              "--no-sandbox",
-              "--disable-setuid-sandbox",
-              "--disable-dev-shm-usage",
-              "--disable-gpu",
-              "--no-zygote",
-              "--single-process",
-              "--disable-extensions",
-              "--disable-software-rasterizer",
-              "--hide-scrollbars",
-              "--disable-accelerated-2d-canvas",
-            ],
-            defaultViewport: { width: 1200, height: 800 },
-            timeout: 120000,
-            dumpio: true, // print Chromium stdout/stderr to container logs for debugging
-          };
-
-          console.log(
-            "[CAPTURE] launching puppeteer-core with system chromium"
-          );
-          const browser = await puppeteerCore.launch(launchOpts);
-          return browser;
-        }
-      } catch (err) {
-        console.warn(
-          `[CAPTURE] puppeteer-core failed to launch with ${p}:`,
-          err?.message || err
-        );
-      }
-    }
-
-    console.log(
-      "[CAPTURE] puppeteer-core available but no system chromium found in common paths"
-    );
-    return null;
-  } catch (err) {
-    console.log("[CAPTURE] puppeteer-core not available:", err?.message || err);
-    return null;
+    await page.keyboard.down("Control");
+    await page.keyboard.press("KeyA");
+    await page.keyboard.up("Control");
+  } catch (e) {
+    await page.$eval(selector, (el) => (el.value = ""));
   }
+  await page.keyboard.press("Backspace");
+  await page.keyboard.type(text, { delay: 60 });
+  await page.$eval(selector, (el) => el.blur());
 }
 
-/* Fallback to bundled puppeteer */
-async function tryLaunchBundledPuppeteer() {
+/**
+ * Launch puppeteer (bundled). We prefer bundled puppeteer because:
+ * - It's what your scheduled-report script uses successfully.
+ * - The puppeteer base image already contains Chromium and Puppeteer.
+ */
+async function getBrowser() {
   try {
     const puppeteer = (await import("puppeteer")).default;
-    console.log("[CAPTURE] launching bundled puppeteer (bundled chromium)");
-    const browser = await puppeteer.launch({
-      headless: true,
+    const headless = process.env.HEADLESS === "false" ? false : true;
+
+    const launchOpts = {
+      headless,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -125,60 +71,151 @@ async function tryLaunchBundledPuppeteer() {
         "--disable-extensions",
         "--hide-scrollbars",
       ],
-      defaultViewport: { width: 1200, height: 800 },
+      defaultViewport: { width: 1200, height: 900 },
       timeout: 120000,
-      dumpio: true,
-    });
-    return browser;
+      dumpio: true, // very helpful for debugging in logs
+    };
+
+    // If you set CHROMIUM_PATH explicitly, pass it along
+    if (process.env.CHROMIUM_PATH)
+      launchOpts.executablePath = process.env.CHROMIUM_PATH;
+
+    console.log(`[CAPTURE] launching bundled puppeteer (headless=${headless})`);
+    return await puppeteer.launch(launchOpts);
   } catch (err) {
-    console.log(
-      "[CAPTURE] bundled puppeteer launch failed:",
-      err?.message || err
-    );
-    return null;
+    console.error("[CAPTURE] puppeteer launch failed:", err?.message || err);
+    throw err;
   }
 }
 
-async function getBrowserInstance() {
-  let browser = await tryLaunchPuppeteerCoreWithSystemChromium();
-  if (browser) return browser;
-
-  browser = await tryLaunchBundledPuppeteer();
-  if (browser) return browser;
-
-  throw new Error(
-    "No available Chromium launcher (puppeteer-core with system chromium or puppeteer)."
-  );
-}
-
-async function captureTable({ url, selector, filename }) {
+async function captureTable({
+  url,
+  selector,
+  filename,
+  needsAuth = false,
+  email,
+  password,
+}) {
   console.log(`[CAPTURE] Opening ${url} to capture "${selector}"`);
-  const browser = await getBrowserInstance();
+  const browser = await getBrowser();
   const page = await browser.newPage();
 
   try {
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+    // Increase navigation timeout
+    await page.setDefaultNavigationTimeout(120000);
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 120000 });
 
-    try {
-      await page.waitForSelector(selector, { timeout: 15000 });
-    } catch (waitErr) {
+    // Optional login flow (if credentials provided and the page requires auth)
+    if (needsAuth && email && password) {
+      try {
+        console.log("[CAPTURE] Attempting login (auth required)...");
+        // This assumes same login form structure as your scheduled script
+        await page.waitForSelector('input[type="email"]', { timeout: 20000 });
+        await page.waitForSelector('input[type="password"]', {
+          timeout: 20000,
+        });
+
+        await humanType(page, 'input[type="email"]', email);
+        await new Promise((r) => setTimeout(r, 800));
+        await humanType(page, 'input[type="password"]', password);
+        await new Promise((r) => setTimeout(r, 1200));
+
+        // click login - try several strategies
+        const clicked = await page
+          .$eval("#login-btn", (el) => {
+            try {
+              el.click();
+              return true;
+            } catch (e) {
+              return false;
+            }
+          })
+          .catch(() => false);
+
+        if (!clicked) {
+          // fallback - try to click any button with login/sign-in text
+          await page
+            .$$eval("button, a[role='button']", (els) => {
+              const found = els.find((el) =>
+                /login|sign ?in|sign ?up/i.test(el.innerText || "")
+              );
+              if (found)
+                try {
+                  found.click();
+                } catch (e) {}
+            })
+            .catch(() => {});
+        }
+
+        // wait for successful navigation or an element that indicates logged in
+        await Promise.race([
+          page
+            .waitForSelector("div.page.overview", { timeout: 45000 })
+            .catch(() => {}),
+          page
+            .waitForFunction(
+              () => window.location.pathname.includes("/overview"),
+              {
+                timeout: 45000,
+              }
+            )
+            .catch(() => {}),
+          page
+            .waitForFunction(
+              () =>
+                (function () {
+                  try {
+                    return Object.keys(localStorage).some((k) =>
+                      /auth|token|idToken|firebase|session/i.test(k)
+                    );
+                  } catch (e) {
+                    return false;
+                  }
+                })(),
+              { timeout: 45000 }
+            )
+            .catch(() => {}),
+        ]).catch(() => {
+          console.warn(
+            "[CAPTURE] Login detection timed out — continuing anyway (maybe page is public)."
+          );
+        });
+      } catch (loginErr) {
+        console.warn(
+          "[CAPTURE] Login attempt failed:",
+          loginErr?.message || loginErr
+        );
+      }
+    }
+
+    // Wait for table selector — increase to 30s for slow UIs
+    await page.waitForSelector(selector, { timeout: 30000 });
+
+    // Ensure table is visible & scrolled into view and allow any JS to render
+    await page.$eval(selector, (el) => {
+      el.scrollIntoView({ block: "center" });
+      // remove potential sticky headers/footers that overlap (best-effort)
+      const st = window.getComputedStyle(el);
+      el.style.background = st.background || "white";
+    });
+
+    // small delay for SPA to render
+    await new Promise((r) => setTimeout(r, 800));
+
+    const element = await page.$(selector);
+    if (!element) {
       console.warn(
-        `[CAPTURE] waitForSelector timed out for ${selector} on ${url}`
+        `[CAPTURE] Element not found after wait: ${selector} on ${url}`
       );
       await page.close();
       await browser.close();
       return null;
     }
 
-    const element = await page.$(selector);
-    if (!element) {
-      console.warn(`[CAPTURE] Element not found: ${selector} on ${url}`);
-      await page.close();
-      await browser.close();
-      return null;
-    }
-
-    const filePath = path.join(TEMP_DIR, filename);
+    const filePath = path.join(
+      TEMP_DIR,
+      filename || `capture-${Date.now()}.png`
+    );
     await element.screenshot({ path: filePath });
     console.log(`[CAPTURE] Screenshot saved: ${filePath}`);
 
@@ -205,6 +242,15 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
       parse_mode: "HTML",
     });
 
+    // If the dashboard is behind auth, set these env vars:
+    // TELKOM_DASHBOARD_EMAIL, TELKOM_DASHBOARD_PASSWORD
+    const needsAuth = !!(
+      process.env.TELKOM_DASHBOARD_EMAIL &&
+      process.env.TELKOM_DASHBOARD_PASSWORD
+    );
+    const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
+    const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
+
     const tables = [
       {
         name: "Aosodomoro",
@@ -228,6 +274,9 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
           url: t.url,
           selector: t.selector,
           filename: `${t.name.toLowerCase()}-${Date.now()}.png`,
+          needsAuth,
+          email: EMAIL,
+          password: PASSWORD,
         });
 
         if (filePath) {
