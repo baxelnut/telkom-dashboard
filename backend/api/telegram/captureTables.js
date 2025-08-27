@@ -82,76 +82,88 @@ async function sendPhotoToTelegram({
 /* Create robust launcher with multiple fallbacks */
 async function createBrowser() {
   const headless = process.env.HEADLESS === "false" ? false : true;
+  const commonArgs = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--no-zygote",
+    "--single-process",
+    "--disable-extensions",
+    "--hide-scrollbars",
+    "--disable-software-rasterizer",
+    "--disable-features=VizDisplayCompositor,NetworkService", // sometimes helps in container
+  ];
 
-  // Primary: try bundled puppeteer (most likely in ghcr puppeteer image)
+  // Try bundled puppeteer first (works if your package.json includes "puppeteer")
   try {
     const puppeteer = (await import("puppeteer")).default;
-    console.log("[CAPTURE] attempting puppeteer.launch() (bundled)");
-    const launchOpts = {
+    console.log("[CAPTURE] launching puppeteer (bundled)");
+    return await puppeteer.launch({
       headless,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--no-zygote",
-        "--single-process",
-        "--disable-extensions",
-        "--hide-scrollbars",
-      ],
+      args: commonArgs,
       defaultViewport: { width: 1200, height: 900 },
       timeout: 120000,
-      dumpio: true,
-    };
-
-    // If CHROMIUM_PATH provided explicitly, pass it
-    if (process.env.CHROMIUM_PATH) {
-      launchOpts.executablePath = process.env.CHROMIUM_PATH;
-      console.log(
-        `[CAPTURE] using CHROMIUM_PATH env: ${process.env.CHROMIUM_PATH}`
-      );
-    }
-
-    return await puppeteer.launch(launchOpts);
+      dumpio: true, // important for container logs
+    });
   } catch (err) {
-    console.warn("[CAPTURE] puppeteer.launch() failed:", err?.message || err);
-    // continue to try to detect binary & use puppeteer-core
+    console.warn(
+      "[CAPTURE] bundled puppeteer not available:",
+      err?.message || err
+    );
   }
 
-  // Find chromium binary on the system
-  const bin = findChromiumBinary();
+  // Fallback -> try to find system chromium / google-chrome
+  const { execSync } = await import("child_process");
+  const candidates = [
+    process.env.CHROMIUM_PATH,
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome-stable",
+    "/usr/bin/google-chrome",
+    "/snap/bin/chromium",
+  ].filter(Boolean);
+
+  // try `which` as well
+  try {
+    const whichOut = execSync(
+      "which chromium-browser || which chromium || which google-chrome-stable || which google-chrome",
+      { stdio: ["ignore", "pipe", "ignore"] }
+    )
+      .toString()
+      .trim();
+    if (whichOut) candidates.unshift(whichOut);
+  } catch (_) {}
+
+  let bin = null;
+  for (const p of candidates) {
+    try {
+      if (p && fs.existsSync(p)) {
+        bin = p;
+        break;
+      }
+    } catch (_) {}
+  }
+
   if (!bin) {
-    const msg =
-      "No Chromium/Chrome binary found in container (tried env and common paths)";
-    console.error(`[CAPTURE] ${msg}`);
-    throw new Error(msg);
+    throw new Error(
+      "No system Chromium/Chrome binary found in container. Tried: " +
+        candidates.join(", ")
+    );
   }
 
-  console.log(
-    `[CAPTURE] found chromium executable at: ${bin} — attempting puppeteer-core launch`
-  );
+  console.log(`[CAPTURE] using system chromium at: ${bin} (puppeteer-core)`);
 
-  // Try puppeteer-core with discovered executable path
   try {
     const puppeteerCore = (await import("puppeteer-core")).default;
-    const launchOpts = {
+    return await puppeteerCore.launch({
       executablePath: bin,
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--no-zygote",
-        "--single-process",
-        "--disable-extensions",
-        "--hide-scrollbars",
-      ],
+      headless,
+      args: commonArgs,
       defaultViewport: { width: 1200, height: 900 },
       timeout: 120000,
       dumpio: true,
-    };
-    return await puppeteerCore.launch(launchOpts);
+    });
   } catch (err) {
     console.error(
       "[CAPTURE] puppeteer-core launch failed:",
