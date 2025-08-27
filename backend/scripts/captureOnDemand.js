@@ -87,56 +87,99 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
-// full table-only screenshot (handles tall tables)
+// html2canvas-based screenshot (isolates table, no header/other UI)
 async function screenshotElement(page, selector, filepath) {
-  const el = await page.$(selector);
-  if (!el) throw new Error(`Selector not found: ${selector}`);
+  const elHandle = await page.$(selector);
+  if (!elHandle) throw new Error(`Selector not found: ${selector}`);
 
-  // Expand styles (remove scroll/clip)
+  // Ensure table is fully expanded (in-page)
   await page.evaluate((sel) => {
     const el = document.querySelector(sel);
-    if (el) {
-      el.style.overflow = "visible";
-      el.style.maxHeight = "none";
-      el.style.maxWidth = "none";
-    }
+    if (!el) return;
+    el.style.overflow = "visible";
+    el.style.maxHeight = "none";
+    el.style.maxWidth = "none";
+    // ensure no transforms that could affect capture
+    el.style.transform = el.style.transform || "none";
   }, selector);
 
-  // Wait for fonts to load
+  // Inject html2canvas if not present
+  const hasHtml2 = await page.evaluate(() => !!window.html2canvas);
+  if (!hasHtml2) {
+    await page.addScriptTag({
+      url: "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
+    });
+    // give it a tiny moment to initialize
+    await page.waitForTimeout(200);
+  }
+
+  // Wait for fonts to be ready (avoid fallback fonts)
   await page.evaluateHandle("document.fonts.ready");
 
-  // Measure the element's full bounding box in DOM coordinates
-  const rect = await page.evaluate((sel) => {
-    const el = document.querySelector(sel);
-    const { x, y, width, height } = el.getBoundingClientRect();
-    return {
-      x: Math.floor(x + window.scrollX),
-      y: Math.floor(y + window.scrollY),
-      width: Math.ceil(width),
-      height: Math.ceil(height),
-    };
+  // Run html2canvas in page context while hiding everything except the table ancestors
+  const dataUrl = await page.evaluate(async (sel) => {
+    const table = document.querySelector(sel);
+    if (!table) throw new Error("Table not found in page.evaluate");
+
+    // Collect ancestors up to body
+    const ancestors = new Set();
+    let n = table;
+    while (n && n !== document.documentElement) {
+      ancestors.add(n);
+      n = n.parentNode;
+    }
+    ancestors.add(document.body);
+
+    // Hide everything in body that is NOT an ancestor of the table (preserve ancestor chain)
+    const originalDisplays = [];
+    for (const child of Array.from(document.body.children)) {
+      if (!ancestors.has(child)) {
+        originalDisplays.push({ el: child, prev: child.style.display || "" });
+        child.style.display = "none";
+      }
+    }
+
+    // Make sure table's ancestors don't clip the table
+    for (const anc of ancestors) {
+      if (anc && anc.style) {
+        anc.style.overflow = "visible";
+        anc.style.maxHeight = "none";
+        anc.style.maxWidth = "none";
+      }
+    }
+
+    // Small layout tick
+    await new Promise((r) => setTimeout(r, 120));
+
+    // Scroll table to top-left of viewport to avoid weird offsets
+    table.scrollIntoView({ block: "start", inline: "start" });
+
+    // Render using html2canvas — use devicePixelRatio for sharpness, enable useCORS
+    const scale = window.devicePixelRatio || 2;
+    const canvas = await window.html2canvas(table, {
+      scale,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+    });
+
+    const url = canvas.toDataURL("image/png");
+
+    // Restore hidden elements' display
+    for (const item of originalDisplays) {
+      try {
+        item.el.style.display = item.prev || "";
+      } catch {}
+    }
+
+    // Return the dataURL
+    return url;
   }, selector);
 
-  // Resize viewport to fit the full table (so nothing gets cut)
-  await page.setViewport({
-    width: Math.max(1600, rect.width),
-    height: rect.height,
-    deviceScaleFactor: 2,
-  });
-
-  // Scroll to top so header + full table are included
-  await page.evaluate((sel) => {
-    const el = document.querySelector(sel);
-    el.scrollIntoView({ block: "start" });
-  }, selector);
-
-  // Capture exactly the table area
-  await page.screenshot({
-    path: filepath,
-    type: "png",
-    clip: rect,
-    captureBeyondViewport: true,
-  });
+  // Write the returned base64 dataURL to file
+  const base64 = dataUrl.split(",")[1];
+  if (!base64) throw new Error("Invalid data url from html2canvas");
+  fs.writeFileSync(filepath, Buffer.from(base64, "base64"));
 }
 
 (async () => {
