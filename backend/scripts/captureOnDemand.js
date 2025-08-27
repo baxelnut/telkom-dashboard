@@ -9,7 +9,9 @@ const BASE_URL =
 const EMAIL = process.env.TELKOM_DASHBOARD_EMAIL;
 const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const CHAT_ID = process.env.CHAT_ID || process.env.TELEGRAM_CHAT_ID;
-const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+const TELEGRAM_API = `https://api.telegram.org/bot${(
+  process.env.TELEGRAM_BOT_TOKEN || ""
+).trim()}`; // safety for blank space " "
 
 if (!process.env.TELEGRAM_BOT_TOKEN) {
   console.error("Missing TELEGRAM_BOT_TOKEN");
@@ -87,7 +89,7 @@ async function humanType(page, selector, text) {
 
 (async () => {
   console.log("🔥 Capture run at:", new Date().toISOString());
-  await sendTelegramText("🚨 Capturing tables on GitHub Actions…");
+  await sendTelegramText("🚨 Capturing tables. Wait a sec…");
 
   const browser = await puppeteer.launch({
     headless: "new",

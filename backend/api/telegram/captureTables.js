@@ -18,7 +18,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
-      text: "📸 Capture workflow triggered. Check GitHub Actions…",
+      text: "📸 Capturing tables. Wait a sec…",
       parse_mode: "HTML",
     });
 

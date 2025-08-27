@@ -1,8 +1,5 @@
 import axios from "axios";
 
-/**
- * Trigger a GitHub Actions workflow_dispatch in repo.
- */
 export default async function triggerGithubWorkflow({
   owner,
   repo,
