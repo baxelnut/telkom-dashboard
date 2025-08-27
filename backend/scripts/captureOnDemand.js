@@ -11,7 +11,7 @@ const PASSWORD = process.env.TELKOM_DASHBOARD_PASSWORD;
 const CHAT_ID = process.env.CHAT_ID || process.env.TELEGRAM_CHAT_ID;
 const TELEGRAM_API = `https://api.telegram.org/bot${(
   process.env.TELEGRAM_BOT_TOKEN || ""
-).trim()}`; // safety for blank space " "
+).trim()}`;
 
 if (!process.env.TELEGRAM_BOT_TOKEN) {
   console.error("Missing TELEGRAM_BOT_TOKEN");
@@ -87,6 +87,38 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
+// helper to capture full element cleanly
+async function screenshotElement(page, selector, filepath) {
+  const el = await page.$(selector);
+  if (!el) throw new Error(`Selector not found: ${selector}`);
+
+  // Expand constraints
+  await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (el) {
+      el.style.overflow = "visible";
+      el.style.height = "auto";
+      el.style.maxHeight = "none";
+      el.style.width = "auto";
+      el.style.maxWidth = "none";
+    }
+  }, selector);
+
+  // Bounding box
+  const box = await el.boundingBox();
+  if (!box) throw new Error(`No boundingBox for: ${selector}`);
+
+  await page.screenshot({
+    path: filepath,
+    clip: {
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
+    },
+  });
+}
+
 (async () => {
   console.log("🔥 Capture run at:", new Date().toISOString());
 
@@ -114,7 +146,6 @@ async function humanType(page, selector, text) {
     await humanType(page, 'input[type="password"]', PASSWORD);
     await new Promise((r) => setTimeout(r, 800));
 
-    // click login
     await page.$eval("#login-btn", (el) => el.click());
     await Promise.race([
       page.waitForFunction(() => location.pathname.includes("/overview"), {
@@ -124,7 +155,7 @@ async function humanType(page, selector, text) {
     ]).catch(() => {});
     console.log("✅ logged in");
 
-    // Capture each requested table
+    // Capture each table
     for (const key of TABLES) {
       const t = TABLE_CONF[key];
       if (!t) continue;
@@ -137,9 +168,8 @@ async function humanType(page, selector, text) {
       await page.$eval(t.sel, (el) => el.scrollIntoView({ block: "center" }));
       await new Promise((r) => setTimeout(r, 800));
 
-      const el = await page.$(t.sel);
       const file = path.join(process.cwd(), `capture-${key}-${Date.now()}.png`);
-      await el.screenshot({ path: file });
+      await screenshotElement(page, t.sel, file);
       console.log(`💾 saved ${file}`);
 
       await sendTelegramPhoto(file, `📊 ${t.name} Table`);
