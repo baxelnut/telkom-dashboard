@@ -87,12 +87,12 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
-// clean table-only screenshot
+// full table-only screenshot (handles tall tables)
 async function screenshotElement(page, selector, filepath) {
   const el = await page.$(selector);
   if (!el) throw new Error(`Selector not found: ${selector}`);
 
-  // Ensure table is fully expanded
+  // Expand styles (remove scroll/clip)
   await page.evaluate((sel) => {
     const el = document.querySelector(sel);
     if (el) {
@@ -102,24 +102,40 @@ async function screenshotElement(page, selector, filepath) {
     }
   }, selector);
 
-  // Wait for fonts (prevents Times New Roman fallback)
+  // Wait for fonts to load
   await page.evaluateHandle("document.fonts.ready");
 
-  // Get bounding box of table
-  const box = await el.boundingBox();
-  if (!box) throw new Error("Failed to get boundingBox");
+  // Measure the element's full bounding box in DOM coordinates
+  const rect = await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    const { x, y, width, height } = el.getBoundingClientRect();
+    return {
+      x: Math.floor(x + window.scrollX),
+      y: Math.floor(y + window.scrollY),
+      width: Math.ceil(width),
+      height: Math.ceil(height),
+    };
+  }, selector);
 
-  // Screenshot clipped exactly to table bounds
+  // Resize viewport to fit the full table (so nothing gets cut)
+  await page.setViewport({
+    width: Math.max(1600, rect.width),
+    height: rect.height,
+    deviceScaleFactor: 2,
+  });
+
+  // Scroll to top so header + full table are included
+  await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    el.scrollIntoView({ block: "start" });
+  }, selector);
+
+  // Capture exactly the table area
   await page.screenshot({
     path: filepath,
     type: "png",
-    clip: {
-      x: Math.floor(box.x),
-      y: Math.floor(box.y),
-      width: Math.ceil(box.width),
-      height: Math.ceil(box.height),
-    },
-    captureBeyondViewport: true, // allow full capture even if bigger than viewport
+    clip: rect,
+    captureBeyondViewport: true,
   });
 }
 
