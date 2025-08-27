@@ -6,7 +6,14 @@ export default async function handleReport({
   args,
 }) {
   try {
-    const [witelCode] = args;
+    let picQuery = args.join(" ").trim();
+    let endpoint = "/report/by-telegram";
+    const params = { telegramId: String(telegramId) };
+
+    if (picQuery) {
+      endpoint = "/report/pic"; // User provided a name, switch to PIC endpoint
+      params.pic = picQuery.toUpperCase(); // normalize for partial matching in controller
+    }
 
     // Let user know it's processing
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
@@ -15,28 +22,31 @@ export default async function handleReport({
       parse_mode: "HTML",
     });
 
-    // Call backend API
     const resp = await axios.get(
-      `${process.env.API_BASE_URL}/api/regional-3/report/by-telegram`,
+      `${process.env.API_BASE_URL}/api/regional-3${endpoint}`,
       {
-        params: {
-          telegramId: String(telegramId),
-          witel: witelCode || undefined,
-        },
+        params,
       }
     );
 
     const body = resp.data;
     const items = body.items || [];
+
+    if (!body || body.matchCount === 0 || items.length === 0) {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: picQuery
+          ? `❌ No report found for <b>${picQuery}</b>. Make sure you typed the full name correctly.`
+          : `✅ You don't have any unmarked <b>In Process</b> orders with <b>Umur Order > 60</b>.`,
+        parse_mode: "HTML",
+      });
+      return;
+    }
+
     const firstItem = items[0] || {};
     const displayName = body.poName || body.fallbackName || "Unknown";
-    const witel =
-      firstItem["NEW_WITEL"] ?? firstItem["New Witel"] ?? witelCode ?? "-";
+    const witel = firstItem["NEW_WITEL"] ?? firstItem["New Witel"] ?? "-";
 
-    // Filter logic:
-    // UMUR_ORDER > 60
-    // KATEGORI === "IN PROCESS"
-    // STATUS is empty / null / undefined / "No Status"
     const filtered = items.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = String(r["KATEGORI"] ?? "")
@@ -45,7 +55,6 @@ export default async function handleReport({
       const status = String(r["STATUS"] ?? "")
         .trim()
         .toUpperCase();
-
       return (
         !isNaN(umur) &&
         umur > 60 &&
@@ -54,16 +63,6 @@ export default async function handleReport({
       );
     });
 
-    if (!body || body.matchCount === 0 || filtered.length === 0) {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: `✅ You don't have any unmarked <b>In Process</b> orders with <b>Umur Order &gt; 60</b>.`,
-        parse_mode: "HTML",
-      });
-      return;
-    }
-
-    // Format filtered rows
     const formattedRows = filtered
       .map((r) => {
         const orderId = String(r["ORDERID"] ?? r["ORDER_ID"] ?? "").trim();
@@ -75,13 +74,13 @@ export default async function handleReport({
       .join("\n");
 
     const now = new Date();
-    const dateStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const dateStr = now.toISOString().slice(0, 10);
 
     const textMsg =
-      `📢 <b>Alert Order Mendekati &gt; 3 BLN</b>\n\n` +
+      `📢 <b>Alert Order Mendekati > 3 BLN</b>\n\n` +
       `<i>Witel: ${witel}</i>\n` +
       `<i>PO: ${displayName}</i>\n\n` +
-      `⚠️ <b>ORDER &gt; 60 hari (A1 : Prioritas)</b>\n` +
+      `⚠️ <b>ORDER > 60 hari (A1 : Prioritas)</b>\n` +
       `<pre>ORDERID     | ORDERSUBTYPE\n--------------------------------\n${formattedRows}</pre>\n\n` +
       `Waktu Update: ${dateStr}\n\n` +
       `🔗 https://rso2telkomdashboard.web.app/action-based`;

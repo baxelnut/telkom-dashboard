@@ -85,7 +85,7 @@ export async function getReportByPic(req, res) {
     const target = normalize(picQuery);
 
     const allRows = await fetchFormattedReportData();
-    const matched = allRows.filter((r) => normalize(r["PIC"]) === target);
+    const matched = allRows.filter((r) => normalize(r["PIC"]).includes(target));
 
     const summary = summarizeRows(matched);
 
