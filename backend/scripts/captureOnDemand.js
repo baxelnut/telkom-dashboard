@@ -87,36 +87,23 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
-// helper to capture full element cleanly
+// ✅ SAFE capture: use el.screenshot instead of clip math
 async function screenshotElement(page, selector, filepath) {
   const el = await page.$(selector);
   if (!el) throw new Error(`Selector not found: ${selector}`);
 
-  // Expand constraints
   await page.evaluate((sel) => {
     const el = document.querySelector(sel);
     if (el) {
       el.style.overflow = "visible";
       el.style.height = "auto";
-      el.style.maxHeight = "none";
       el.style.width = "auto";
+      el.style.maxHeight = "none";
       el.style.maxWidth = "none";
     }
   }, selector);
 
-  // Bounding box
-  const box = await el.boundingBox();
-  if (!box) throw new Error(`No boundingBox for: ${selector}`);
-
-  await page.screenshot({
-    path: filepath,
-    clip: {
-      x: box.x,
-      y: box.y,
-      width: box.width,
-      height: box.height,
-    },
-  });
+  await el.screenshot({ path: filepath });
 }
 
 (async () => {
