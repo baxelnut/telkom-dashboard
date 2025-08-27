@@ -6,7 +6,7 @@ export default async function handleCaptureTables({ chatId, TELEGRAM_API }) {
       `https://api.github.com/repos/${process.env.GITHUB_REPO_OWNER}/${process.env.GITHUB_REPO_NAME}/actions/workflows/${process.env.GITHUB_WORKFLOW_FILE}/dispatches`,
       {
         ref: process.env.GITHUB_REF, // branch
-        inputs: { chatId }, // optional, pass Telegram ID to workflow
+        inputs: { chatId: String(chatId) }, // force string
       },
       {
         headers: {
