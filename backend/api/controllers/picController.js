@@ -136,17 +136,15 @@ export async function getReportByTelegramId(req, res) {
       normalize(r["PIC"]).includes(normalize(poName))
     );
 
-    // Filter by UMUR_ORDER > 60, KATEGORI === "IN PROCESS", and STATUS empty/No Status
+    // Filter by UMUR_ORDER > 60, KATEGORI === "IN PROCESS"
     const filtered = matched.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
-      const status = normalize(r["STATUS"]);
-      const validUmur = !isNaN(umur) && umur > 60;
-      const validKategori = kategori === "IN PROCESS";
-      const validStatus =
-        !status || status === "No Status" || status === "NO STATUS"; // covers null, undefined, "", "No Status"
 
-      return validUmur && validKategori && validStatus;
+      const validUmur = !isNaN(umur) && umur > 60 && umur <= 90;
+      const validKategori = kategori === "IN PROCESS";
+
+      return validUmur && validKategori;
     });
 
     const summary = summarizeRows(filtered);
@@ -170,11 +168,6 @@ export async function getReportByTelegramId(req, res) {
 export async function getAlertReport(req, res) {
   try {
     const debug = req.query?.debug === "true";
-    const statusMode = (req.query?.status || "nostatus")
-      .toString()
-      .toLowerCase();
-    // statusMode: "nostatus" (default) | "all"
-
     const allRows = await fetchFormattedReportData();
 
     // Normalizers/helpers
@@ -190,25 +183,15 @@ export async function getAlertReport(req, res) {
       return Number.isNaN(n) ? 0 : n;
     };
 
-    const isNoStatus = (raw) => {
-      const s = _norm(raw).toUpperCase();
-      return s === "" || /^NO\s*STATUS$/i.test(s) || /^NOS$/i.test(s);
-    };
-
-    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS", STATUS empty/No Status
+    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS"
     const filtered = allRows.filter((r) => {
       const umur = parseUmur(r["UMUR_ORDER"]);
       const kategori = _norm(r["KATEGORI"]).toUpperCase();
-      const statusRaw = _norm(r["STATUS"]);
 
       const validUmur = umur > 60;
       const validKategori = kategori === "IN PROCESS";
 
-      let validStatus = true;
-      if (statusMode === "nostatus") validStatus = isNoStatus(statusRaw);
-      // if statusMode === "all" keep validStatus === true
-
-      return validUmur && validKategori && validStatus;
+      return validUmur && validKategori;
     });
 
     // Group by PIC + NEW_WITEL
