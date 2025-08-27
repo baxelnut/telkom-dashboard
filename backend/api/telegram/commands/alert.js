@@ -13,16 +13,6 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
     );
-    console.log("[ALERT] fetch status:", resp?.status);
-    // debug small chunk of payload
-    try {
-      console.log(
-        "[ALERT] fetch sample:",
-        JSON.stringify(resp.data).slice(0, 1000)
-      );
-    } catch (e) {
-      console.log("[ALERT] fetch sample print failed");
-    }
 
     // support multiple shapes
     let rows = resp.data;
@@ -31,8 +21,6 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       else if (Array.isArray(resp.data?.rows)) rows = resp.data.rows;
       else rows = [];
     }
-
-    console.log("[ALERT] rows length:", rows.length);
 
     if (!Array.isArray(rows) || rows.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
@@ -46,7 +34,6 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         const statusSummary = Object.entries(statuses)
           .map(([status, count]) => `${status}: ${count}`)
           .join(" | ");
-
         const pic = g.pic || "UNKNOWN";
         const witel = g.witel || "-";
         const total =
@@ -56,9 +43,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
 
         return `🙎 ${pic} – ${witel}\n${statusSummary} | Total: ${total}`;
       });
-
       const now = new Date().toISOString().slice(0, 10);
-
       const textMsg =
         `📢 <b>Pemberitahuan Potensi Order &gt; 3 Bulan</b>\n\n` +
         `Berikut daftar order yang hampir melewati 3 bulan:\n\n` +

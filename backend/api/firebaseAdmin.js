@@ -15,20 +15,17 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
   }
 
   serviceAccount = parsed;
-  console.log("✅ Service account from ENV");
 } else {
   // Fallback for local dev with file
   const keyPath = path.resolve("./keys/serviceAccountKey.json");
   const fileContent = fs.readFileSync(keyPath, "utf8");
   serviceAccount = JSON.parse(fileContent);
-  console.log("✅ Service account from file");
 }
 
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
-  console.log("🔥 Firebase Admin initialized");
 }
 
 export const db = admin.firestore();

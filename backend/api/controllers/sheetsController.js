@@ -45,8 +45,6 @@ export const updateSheet = async (req, res) => {
 
     const updates = [];
 
-    console.log("UUID to find:", id);
-
     if (STATUS !== undefined) {
       updates.push({
         range: `${FORMATTED_SHEET_NAME}!${getColumnLetter(statusIndex)}${
@@ -54,7 +52,6 @@ export const updateSheet = async (req, res) => {
         }`,
         values: [[STATUS]],
       });
-      console.log("Updating STATUS:", STATUS);
     }
 
     if (NOTES !== undefined) {
@@ -64,7 +61,6 @@ export const updateSheet = async (req, res) => {
         }`,
         values: [[NOTES]],
       });
-      console.log("Updating sheet:", FORMATTED_SHEET_NAME);
     }
 
     if (LOG !== undefined) {
@@ -74,7 +70,6 @@ export const updateSheet = async (req, res) => {
         }`,
         values: [[LOG]],
       });
-      console.log("Updating sheet:", FORMATTED_SHEET_NAME);
     }
 
     await Promise.all(

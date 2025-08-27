@@ -93,8 +93,6 @@ export function useEmailAuth({ setUser, setRole, isApprovedUser }) {
           json = { raw: text };
         }
 
-        console.log("[useEmailAuth] register response:", res.status, json);
-
         if (!res.ok) {
           // backend failed: delete the newly created auth user to avoid orphaned accounts
           try {

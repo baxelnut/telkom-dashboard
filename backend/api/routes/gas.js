@@ -6,7 +6,6 @@ const GAS_URL = process.env.GAS_WEBAPP_URL;
 const GAS_SECRET = process.env.GAS_SECRET;
 
 router.post("/push", async (req, res) => {
-  console.log("[GAS] incoming /api/gas/push body:", req.body);
   if (!GAS_URL || !GAS_SECRET) {
     return res
       .status(500)

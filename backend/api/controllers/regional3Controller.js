@@ -70,7 +70,6 @@ const processKategoriData = (witelData, kategori) => {
     const kategoriUmur = item["KATEGORI_UMUR"];
 
     let rawRevenue = item["REVENUE"];
-    // console.log("Revenue Field:", item["REVENUE"]);
 
     // Set revenue to 0 if it's null, NaN, or empty
     let revenue = rawRevenue;
@@ -79,15 +78,10 @@ const processKategoriData = (witelData, kategori) => {
       rawRevenue === "" ||
       isNaN(parseFloat(rawRevenue))
     ) {
-      // console.log("Invalid revenue detected. Setting to 0.");
       revenue = 0;
     } else {
       revenue = parseFloat(rawRevenue);
     }
-
-    // Debugging logs
-    // console.log("Raw Revenue:", rawRevenue);
-    // console.log("Parsed Revenue:", revenue);
 
     if (currentKategori === kategori) {
       if (kategoriUmur === "< 3 BLN") {

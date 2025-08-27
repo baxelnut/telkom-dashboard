@@ -11,7 +11,7 @@ export default async function handleReport({
     const params = { telegramId: String(telegramId) };
 
     if (picQuery) {
-      endpoint = "/report/pic"; // User provided a name, switch to PIC endpoint
+      endpoint = "/report/pic";
       params.pic = picQuery.toUpperCase(); // normalize for partial matching in controller
     }
 
@@ -85,7 +85,12 @@ export default async function handleReport({
 
     const now = new Date();
     const dateStr = now.toISOString().slice(0, 10);
-
+    let extraNote = "";
+    if (filtered.length > 10) {
+      extraNote =
+        "\n<i>Data yang ditampilkan Top 10 Umur Order, selebihnya dapat dicek melalui link:</i>\n" +
+        "🔗 https://rso2telkomdashboard.web.app\n\n";
+    }
     const textMsg =
       `📢 <b>Alert Order Mendekati > 3 BLN</b>\n\n` +
       `<i>Witel: ${witel}</i>\n` +
@@ -93,6 +98,7 @@ export default async function handleReport({
       `⚠️ <b>ORDER > 60 hari (A1 : Prioritas)</b>\n` +
       `<pre>ORDERID     | ORDERSUBTYPE\n--------------------------------\n${formattedRows}</pre>\n\n` +
       `Waktu Update: ${dateStr}\n\n` +
+      extraNote +
       `🔗 https://rso2telkomdashboard.web.app/action-based`;
 
     await axios.post(`${TELEGRAM_API}/sendMessage`, {

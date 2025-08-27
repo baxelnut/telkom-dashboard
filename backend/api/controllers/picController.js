@@ -176,7 +176,6 @@ export async function getAlertReport(req, res) {
     // statusMode: "nostatus" (default) | "all"
 
     const allRows = await fetchFormattedReportData();
-    console.log(`[ALERT-API] total rows from sheet: ${allRows.length}`);
 
     // Normalizers/helpers
     const _norm = (v) =>
@@ -211,8 +210,6 @@ export async function getAlertReport(req, res) {
 
       return validUmur && validKategori && validStatus;
     });
-
-    console.log(`[ALERT-API] filtered count: ${filtered.length}`);
 
     // Group by PIC + NEW_WITEL
     const grouped = {};
