@@ -87,39 +87,39 @@ async function humanType(page, selector, text) {
   await page.$eval(selector, (el) => el.blur());
 }
 
-// expands element + retina scaling
+// clean table-only screenshot
 async function screenshotElement(page, selector, filepath) {
   const el = await page.$(selector);
   if (!el) throw new Error(`Selector not found: ${selector}`);
 
-  // Expand element styles
+  // Ensure table is fully expanded
   await page.evaluate((sel) => {
     const el = document.querySelector(sel);
     if (el) {
       el.style.overflow = "visible";
-      el.style.height = el.scrollHeight + "px";
-      el.style.width = el.scrollWidth + "px";
       el.style.maxHeight = "none";
       el.style.maxWidth = "none";
-      el.style.transform = "scale(1)";
     }
   }, selector);
 
-  // Grab bounding box
+  // Wait for fonts (prevents Times New Roman fallback)
+  await page.evaluateHandle("document.fonts.ready");
+
+  // Get bounding box of table
   const box = await el.boundingBox();
   if (!box) throw new Error("Failed to get boundingBox");
 
-  // Set viewport to fit element
-  await page.setViewport({
-    width: Math.ceil(box.width),
-    height: Math.ceil(box.height),
-    deviceScaleFactor: 2, // retina-like sharpness
-  });
-
-  // Screenshot only element
-  await el.screenshot({
+  // Screenshot clipped exactly to table bounds
+  await page.screenshot({
     path: filepath,
     type: "png",
+    clip: {
+      x: Math.floor(box.x),
+      y: Math.floor(box.y),
+      width: Math.ceil(box.width),
+      height: Math.ceil(box.height),
+    },
+    captureBeyondViewport: true, // allow full capture even if bigger than viewport
   });
 }
 
