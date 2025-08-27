@@ -34,12 +34,12 @@ const TABLES = (process.env.TABLES || "aosodomoro,galaksi")
 const TABLE_CONF = {
   aosodomoro: {
     path: "/reports/aosodomoro",
-    sel: ".aosodomoro-table",
+    sel: ".aosodomoro-table table",
     name: "Aosodomoro",
   },
   galaksi: {
     path: "/reports/galaksi",
-    sel: ".galaksi-table",
+    sel: ".galaksi-table table",
     name: "Galaksi",
   },
 };
@@ -89,7 +89,6 @@ async function humanType(page, selector, text) {
 
 (async () => {
   console.log("🔥 Capture run at:", new Date().toISOString());
-  await sendTelegramText("🚨 Capturing tables. Wait a sec…");
 
   const browser = await puppeteer.launch({
     headless: "new",
@@ -146,11 +145,10 @@ async function humanType(page, selector, text) {
       await sendTelegramPhoto(file, `📊 ${t.name} Table`);
     }
 
-    await sendTelegramText("✅ Capture complete.");
-    console.log("✅ All done");
+    await sendTelegramText("✅ All done");
   } catch (e) {
     console.error("❌ Capture failed:", e);
-    await sendTelegramText(`❌ Capture failed: ${e.message || e}`);
+    await sendTelegramText(`❌ Failed: ${e.message || e}`);
     process.exit(1);
   } finally {
     await browser.close();
