@@ -15,7 +15,6 @@ const SEEN_LIMIT = 500;
 const commandList =
   "<b>Available Commands:</b>\n\n" +
   "/report - Summary report\n" +
-  "/alert - Manage alerts\n" +
   "/feedback - Give feedback (bug or feature)\n" +
   "\nUse /help to show commands";
 
@@ -73,16 +72,6 @@ export default async function handler(req, res) {
           chatId,
           TELEGRAM_API,
           args,
-        });
-        break;
-      case "/alert":
-        await handleAlert({
-          db,
-          axios,
-          telegramId,
-          chatId,
-          TELEGRAM_API,
-          commandText,
         });
         break;
       case "/feedback":
