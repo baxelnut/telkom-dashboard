@@ -9,8 +9,9 @@ const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOK
 const SEEN_LIMIT = 500;
 const seen = new Set();
 const commandList =
-  "<b>Available Commands:</b>\n\n" +
-  "/report - Summary report\n" +
+  "<b>Available Commands:</b>\n" +
+  "/report - Show all PIC reports\n" +
+  "/report [name] - Summary report for specific PIC (e.g. /report jeremy)\n" +
   "/feedback - Give feedback (bug or feature)\n" +
   "\nUse /help to show commands";
 
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
     const telegramId = msg?.from?.id;
 
     if (!chatId || !text) return;
-    
+
     if (updateId != null) {
       if (seen.has(updateId)) return;
       seen.add(updateId);
