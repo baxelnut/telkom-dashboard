@@ -31,8 +31,8 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
     sendTableToTelegram({
       selector: ".galaksi-table table",
       API_URL: API_URL,
-      target: "group", // for debugging
-      // target: "channel", // CHANGE LATER
+      // target: "group", // for debugging
+      target: "channel",
       setTeleStatus,
       title: "GALAKSI PO AOSODOMORO Non Conn",
       subtext: "Zero AOSODOMORO > 3 BLN",

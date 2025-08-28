@@ -30,7 +30,7 @@ import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
     try {
       await handleAlert({
         axios,
-        chatId: config.TELEGRAM_GROUP_CHAT_ID, // CHANGE LATER
+        chatId: config.TELEGRAM_CHANNEL_CHAT_ID,
         TELEGRAM_API: `https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}`,
       });
     } catch (err) {
