@@ -1,5 +1,8 @@
 export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
   try {
+    console.log("🔍 TELEGRAM API:", TELEGRAM_API);
+    console.log("🔍 CHAT ID:", chatId, typeof chatId);
+
     // fetch alert data
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
