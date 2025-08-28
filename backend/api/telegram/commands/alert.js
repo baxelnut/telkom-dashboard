@@ -1,9 +1,30 @@
 export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
   try {
-    console.log("🔍 TELEGRAM API:", TELEGRAM_API);
-    console.log("🔍 CHAT ID:", chatId, typeof chatId);
+    // trim inputs to avoid stray whitespace/newline issues
+    TELEGRAM_API = (TELEGRAM_API || "").toString().trim();
+    chatId = (chatId || "").toString().trim();
 
-    // fetch alert data
+    console.log("🔍 TELEGRAM_API (raw):", TELEGRAM_API);
+    console.log("🔍 CHAT ID (raw):", chatId, typeof chatId);
+
+    // call getChat from same env
+    try {
+      const getChatUrl = `${TELEGRAM_API}/getChat`;
+      console.log("🔎 testing getChat:", getChatUrl, "params:", {
+        chat_id: chatId,
+      });
+      const getChatResp = await axios.get(getChatUrl, {
+        params: { chat_id: chatId },
+      });
+      console.log("✅ getChat OK:", getChatResp.data);
+    } catch (gErr) {
+      console.error(
+        "⛔ getChat failed:",
+        gErr?.response?.data || gErr.message || gErr
+      );
+    }
+
+    // fetch alert data from your API
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
     );
@@ -16,12 +37,14 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       else rows = [];
     }
 
+    // build message
+    let messageBody, sendUrl;
     if (!Array.isArray(rows) || rows.length === 0) {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: String(chatId),
+      messageBody = {
+        chat_id: chatId,
         text: "✅ Tidak ada order yang perlu diingatkan saat ini.",
         parse_mode: "HTML",
-      });
+      };
     } else {
       const parts = rows.map((g) => {
         const statuses = g.statuses || {};
@@ -46,25 +69,48 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         `Waktu Update: ${now}\n\n` +
         `🔗 https://rso2telkomdashboard.web.app/action-based`;
 
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: String(chatId),
+      messageBody = {
+        chat_id: chatId,
         text: textMsg,
         parse_mode: "HTML",
-      });
+      };
     }
+
+    // Send message (explicit Content-Type)
+    sendUrl = `${TELEGRAM_API}/sendMessage`;
+    console.log("➡️ will POST to:", sendUrl);
+    console.log("➡️ payload preview (trimmed):", {
+      chat_id: messageBody.chat_id,
+      text_length: (messageBody.text || "").length,
+      parse_mode: messageBody.parse_mode,
+    });
+
+    const postResp = await axios.post(sendUrl, messageBody, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 15000,
+    });
+
+    console.log("📨 Telegram sendMessage response:", postResp.data);
+    return postResp.data;
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
+    // fallback: try send simple text message about failure
     try {
-      await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: String(chatId),
-        text: "Failed to fetch alerts. Please try again later.",
-        parse_mode: "HTML",
-      });
+      await axios.post(
+        `${TELEGRAM_API}/sendMessage`,
+        {
+          chat_id: String(chatId),
+          text: "Failed to fetch alerts. Please try again later.",
+          parse_mode: "HTML",
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
     } catch (sendErr) {
       console.error(
         "ALERT -> fallback send error",
-        sendErr?.message || sendErr
+        sendErr?.response?.data || sendErr?.message || sendErr
       );
     }
+    throw err;
   }
 }
