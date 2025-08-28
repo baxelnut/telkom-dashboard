@@ -15,7 +15,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
 
     if (!Array.isArray(rows) || rows.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
+        chat_id: String(chatId),
         text: "✅ Tidak ada order yang perlu diingatkan saat ini.",
         parse_mode: "HTML",
       });
@@ -44,7 +44,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         `🔗 https://rso2telkomdashboard.web.app/action-based`;
 
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
+        chat_id: String(chatId),
         text: textMsg,
         parse_mode: "HTML",
       });
@@ -53,7 +53,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
     try {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
+        chat_id: String(chatId),
         text: "Failed to fetch alerts. Please try again later.",
         parse_mode: "HTML",
       });
