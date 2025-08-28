@@ -1,14 +1,5 @@
-import handleCaptureTables from "../captureTables.js";
-
 export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
   try {
-    //  notify user
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: "🚨 Preparing alert list. Please wait...",
-      parse_mode: "HTML",
-    });
-
     // fetch alert data
     const resp = await axios.get(
       `${process.env.API_BASE_URL}/api/regional-3/report/alert`
@@ -57,13 +48,6 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         text: textMsg,
         parse_mode: "HTML",
       });
-    }
-
-    // try to capture and send tables, but do not let errors break everything
-    try {
-      await handleCaptureTables({ chatId, TELEGRAM_API });
-    } catch (capErr) {
-      console.error("[ALERT] captureTables failed:", capErr?.message || capErr);
     }
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);

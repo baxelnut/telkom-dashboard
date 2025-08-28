@@ -22,11 +22,12 @@ jobs:
           node-version: 20
 
       - name: 📦 Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: 🚀 Run report
         run: node scripts/sendReport.js
         env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
           TELKOM_DASHBOARD_EMAIL: ${{ secrets.TELKOM_DASHBOARD_EMAIL }}
           TELKOM_DASHBOARD_PASSWORD: ${{ secrets.TELKOM_DASHBOARD_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

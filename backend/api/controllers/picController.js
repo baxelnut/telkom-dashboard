@@ -136,7 +136,7 @@ export async function getReportByTelegramId(req, res) {
       normalize(r["PIC"]).includes(normalize(poName))
     );
 
-    // Filter by UMUR_ORDER > 60, KATEGORI === "IN PROCESS"
+    // Filter by UMUR_ORDER > 60 && <=90, KATEGORI === "IN PROCESS"
     const filtered = matched.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
@@ -183,12 +183,12 @@ export async function getAlertReport(req, res) {
       return Number.isNaN(n) ? 0 : n;
     };
 
-    // Filter: UMUR_ORDER > 60, KATEGORI === "IN PROCESS"
+    // Filter: UMUR_ORDER > 60 && <=90, KATEGORI === "IN PROCESS"
     const filtered = allRows.filter((r) => {
       const umur = parseUmur(r["UMUR_ORDER"]);
       const kategori = _norm(r["KATEGORI"]).toUpperCase();
 
-      const validUmur = umur > 60;
+      const validUmur = umur > 60 && umur <= 90;
       const validKategori = kategori === "IN PROCESS";
 
       return validUmur && validKategori;

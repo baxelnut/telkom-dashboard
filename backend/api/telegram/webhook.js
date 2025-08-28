@@ -2,16 +2,12 @@ import { db } from "../firebaseAdmin.js";
 import axios from "axios";
 import handleStart from "./commands/start.js";
 import handleReport from "./commands/report.js";
-import handleAlert from "./commands/alert.js";
 import handleFeedback from "./commands/feedback.js";
 import handleHelp from "./commands/help.js";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
-
-// In-memory dedupe
-const seen = new Set();
 const SEEN_LIMIT = 500;
-
+const seen = new Set();
 const commandList =
   "<b>Available Commands:</b>\n\n" +
   "/report - Summary report\n" +
@@ -20,9 +16,7 @@ const commandList =
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(200).send("OK");
-
   const update = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-
   res.status(200).send("OK");
 
   try {
@@ -33,7 +27,7 @@ export default async function handler(req, res) {
     const telegramId = msg?.from?.id;
 
     if (!chatId || !text) return;
-
+    
     if (updateId != null) {
       if (seen.has(updateId)) return;
       seen.add(updateId);
