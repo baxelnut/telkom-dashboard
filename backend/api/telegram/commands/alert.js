@@ -4,19 +4,12 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
     TELEGRAM_API = (TELEGRAM_API || "").toString().trim();
     chatId = (chatId || "").toString().trim();
 
-    console.log("🔍 TELEGRAM_API (raw):", TELEGRAM_API);
-    console.log("🔍 CHAT ID (raw):", chatId, typeof chatId);
-
     // call getChat from same env
     try {
       const getChatUrl = `${TELEGRAM_API}/getChat`;
-      console.log("🔎 testing getChat:", getChatUrl, "params:", {
-        chat_id: chatId,
-      });
       const getChatResp = await axios.get(getChatUrl, {
         params: { chat_id: chatId },
       });
-      console.log("✅ getChat OK:", getChatResp.data);
     } catch (gErr) {
       console.error(
         "⛔ getChat failed:",
@@ -68,7 +61,7 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
         `\n\n⚠️ <i>Mohon segera dilakukan follow-up sebelum melewati batas waktu</i> ⚠️\n\n` +
         `Waktu Update: ${now}\n\n` +
         `🔗 https://rso2telkomdashboard.web.app/action-based`;
-
+        
       messageBody = {
         chat_id: chatId,
         text: textMsg,
@@ -78,19 +71,11 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
 
     // Send message (explicit Content-Type)
     sendUrl = `${TELEGRAM_API}/sendMessage`;
-    console.log("➡️ will POST to:", sendUrl);
-    console.log("➡️ payload preview (trimmed):", {
-      chat_id: messageBody.chat_id,
-      text_length: (messageBody.text || "").length,
-      parse_mode: messageBody.parse_mode,
-    });
-
     const postResp = await axios.post(sendUrl, messageBody, {
       headers: { "Content-Type": "application/json" },
       timeout: 15000,
     });
 
-    console.log("📨 Telegram sendMessage response:", postResp.data);
     return postResp.data;
   } catch (err) {
     console.error("ALERT -> error", err?.response?.data || err?.message || err);
