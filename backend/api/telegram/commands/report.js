@@ -32,6 +32,18 @@ export default async function handleReport({
     const body = resp.data;
     const items = body.items || [];
 
+    // collect unique PIC names
+    const uniquePics = [...new Set(items.map((r) => r.PIC))];
+    if (uniquePics.length > 1) {
+      const list = uniquePics.map((n) => `- ${n}`).join("\n");
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: `⚠️ Ditemukan ${uniquePics.length} PIC yang cocok dengan "<b>${picQuery}</b>":\n\n${list}\n\n👉 Mohon ketik nama yang lebih spesifik.`,
+        parse_mode: "HTML",
+      });
+      return;
+    }
+
     if (!body || body.matchCount === 0 || items.length === 0) {
       await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: chatId,

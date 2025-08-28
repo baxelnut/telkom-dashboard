@@ -122,11 +122,11 @@ export async function getReportByTelegramId(req, res) {
     const userDoc = snap.empty ? null : snap.docs[0].data();
     let fullName = userDoc?.fullName || "";
 
-    // ===== DEBUG OVERRIDE =====
-    if (fullName === "DEVELOPER") fullName = "Dwieka Septian";
-    if (email === "basilius.tengang.dev@gmail.com")
-      email = "dwiekasap21@gmail.com";
-    // ==========================
+    // // ===== DEBUG OVERRIDE =====
+    // if (fullName === "DEVELOPER") fullName = "Dwieka Septian";
+    // if (email === "basilius.tengang.dev@gmail.com")
+    //   email = "dwiekasap21@gmail.com";
+    // // ==========================
 
     // Filter by PIC
     const poMap = await buildPoMap();
