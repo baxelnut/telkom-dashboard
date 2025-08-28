@@ -17,12 +17,12 @@ const utcDay = now.getUTCDay();
 
 const isScheduledDay = utcDay === 1 || utcDay === 5; // Monday (1), Friday (5)
 const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC (13:00-18:00 WIB)
-if (!(isScheduledDay && isInTimeWindow)) {
-  console.log(
-    `⏰ Skipping run. Outside schedule. UTC Day=${utcDay}, Hour=${utcHour}`
-  );
-  process.exit(0);
-}
+// if (!(isScheduledDay && isInTimeWindow)) {
+//   console.log(
+//     `⏰ Skipping run. Outside schedule. UTC Day=${utcDay}, Hour=${utcHour}`
+//   );
+//   process.exit(0);
+// } // CHANGE LATER
 
 export const sendScheduledReports = async (config) => {
   const EMAIL = config.TELKOM_DASHBOARD_EMAIL;
