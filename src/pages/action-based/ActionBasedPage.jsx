@@ -47,7 +47,11 @@ export default function ActionBasedPage({ API_URL }) {
   const debounceTimer = useRef(null);
 
   const handleViewFull = async () => {
-    setSelected((prev) => ({ ...prev, detailed: [null, null, null, null] }));
+    setSelected((prev) => ({
+      ...prev,
+      detailed: [null, null, null, null],
+      alertFilter: "ALL",
+    }));
     await refetch();
   };
 

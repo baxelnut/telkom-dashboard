@@ -141,7 +141,7 @@ export async function getReportByTelegramId(req, res) {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
 
-      const validUmur = !isNaN(umur) && umur > 60 && umur <= 90;
+      const validUmur = umur > 60 && umur <= 90;
       const validKategori = kategori === "IN PROCESS";
 
       return validUmur && validKategori;
