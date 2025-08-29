@@ -93,10 +93,10 @@ export async function getReportByPic(req, res) {
       pic: picQuery,
       matchCount: matched.length,
       summary,
-      items: summary.sampleItems.map((r) => ({
+      items: matched.map((r) => ({
         ...r,
-        PIC: r["PIC"], // raw PIC value
-        PO_NAME: r["PO_NAME"], // raw PO_NAME for display
+        PIC: r["PIC"],
+        PO_NAME: r["PO_NAME"],
       })),
     });
   } catch (err) {
