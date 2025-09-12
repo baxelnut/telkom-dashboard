@@ -15,7 +15,7 @@ const now = new Date();
 const utcHour = now.getUTCHours();
 const utcDay = now.getUTCDay();
 
-const isScheduledDay = utcDay === 1 || utcDay === 5; // Monday (1), Friday (5)
+const isScheduledDay = utcDay === 1; // Monday (1)
 const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC (13:00-18:00 WIB)
 if (!(isScheduledDay && isInTimeWindow)) {
   console.log(
