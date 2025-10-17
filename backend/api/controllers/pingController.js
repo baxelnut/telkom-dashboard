@@ -8,7 +8,6 @@ const execPromise = util.promisify(exec);
 
 /**
  * Simple HTTP check to a fast URL (returns { ok, time }).
- * Uses https.get and resolves quickly or false on error/timeout.
  */
 function httpCheck(
   url = "https://www.google.com/generate_204",
@@ -21,22 +20,19 @@ function httpCheck(
       const duration = Date.now() - start;
       resolve({ ok: true, time: duration });
     });
-    req.on("error", () => resolve({ ok: false }));
+    req.on("error", () => resolve({ ok: false, time: null }));
     req.setTimeout(timeout, () => {
       req.destroy();
-      resolve({ ok: false });
+      resolve({ ok: false, time: null });
     });
   });
 }
 
 /**
- * Call HackerTarget MTR endpoint and parse top 5 hops into JSON.
- * Returns array: [{ hop: 1, ip: "x.x.x.x", time: "12 ms" }, ...]
- * If anything goes wrong, returns [].
+ * Run traceroute using native binary.
  */
 async function runTraceroute(host, maxHops = 30) {
   try {
-    // Run traceroute command (limit hops and timeout)
     const { stdout } = await execPromise(
       `traceroute -m ${maxHops} -q 1 ${host}`,
       {
@@ -44,12 +40,11 @@ async function runTraceroute(host, maxHops = 30) {
       }
     );
 
-    // Split and map lines to hops
     const lines = stdout
       .split("\n")
       .filter((l) => l.trim() && /^\s*\d+/.test(l));
 
-    const hops = lines.map((line) => {
+    return lines.map((line) => {
       const hopNum = line.match(/^\s*(\d+)/)?.[1];
       const ipMatch = line.match(/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/);
       const timeMatch = line.match(/([0-9.]+)\s*ms/);
@@ -59,10 +54,7 @@ async function runTraceroute(host, maxHops = 30) {
         time: timeMatch ? `${timeMatch[1]} ms` : "*",
       };
     });
-
-    return hops;
-  } catch (err) {
-    console.error("Traceroute failed:", err.message);
+  } catch {
     return [];
   }
 }
@@ -75,7 +67,7 @@ export async function pingHost(req, res) {
   const extraArgs = isWindows ? ["-n", "5"] : ["-c", "5"];
 
   try {
-    // 1) Try ICMP ping first
+    // --- Try ICMP first ---
     try {
       const icmp = await ping.promise.probe(host, {
         timeout: 5,
@@ -85,59 +77,59 @@ export async function pingHost(req, res) {
 
       const rawPL = parseFloat(icmp.packetLoss);
       const packetLoss = Number.isFinite(rawPL) ? rawPL : icmp.alive ? 0 : 100;
-
-      // Always attempt traceroute via HackerTarget API (fast, works on Vercel)
-      // but keep it short (msTimeout) to prevent long waits.
       const tracerouteData = await runTraceroute(host);
 
       return res.json({
         host: icmp.host,
         alive: !!icmp.alive,
-        time:
-          icmp.time && icmp.time !== "unknown"
-            ? icmp.time
-            : icmp.alive
-            ? 0
-            : "timeout",
         transmitted: 5,
         received: icmp.alive ? 5 : 0,
         packetLoss,
+        time:
+          icmp.time && icmp.time !== "unknown"
+            ? parseFloat(icmp.time)
+            : icmp.alive
+            ? 0
+            : "timeout",
         traceroute: tracerouteData,
         mode: "ICMP",
-        output: icmp.output || "",
       });
     } catch (icmpErr) {
-      // ICMP failed — fall through to HTTP fallback
-      console.log("ICMP failed, falling back:", icmpErr?.message || icmpErr);
+      console.log(
+        "ICMP blocked, falling back to HTTP:",
+        icmpErr?.message || icmpErr
+      );
     }
 
-    // 2) HTTP fallback (works on Vercel)
-    const httpResult = await httpCheck();
+    // --- HTTP fallback (simulate 5 packets) ---
+    const attempts = 5;
+    let times = [];
+    for (let i = 0; i < attempts; i++) {
+      const r = await httpCheck();
+      if (r.ok && r.time) times.push(r.time);
+      else times.push(null);
+    }
+
+    const validTimes = times.filter((t) => t !== null);
+    const received = validTimes.length;
+    const packetLoss = ((attempts - received) / attempts) * 100;
+    const avgTime =
+      validTimes.length > 0
+        ? Math.round(validTimes.reduce((a, b) => a + b, 0) / validTimes.length)
+        : "timeout";
+
     const tracerouteData = await runTraceroute(host);
 
-    if (httpResult.ok) {
-      return res.json({
-        host,
-        alive: true,
-        time: httpResult.time,
-        transmitted: 1,
-        received: 1,
-        packetLoss: 0,
-        traceroute: tracerouteData,
-        mode: "HTTP-fallback",
-      });
-    } else {
-      return res.json({
-        host,
-        alive: false,
-        time: "timeout",
-        transmitted: 1,
-        received: 0,
-        packetLoss: 100,
-        traceroute: tracerouteData,
-        mode: "HTTP-fallback",
-      });
-    }
+    return res.json({
+      host,
+      alive: received > 0,
+      transmitted: attempts,
+      received,
+      packetLoss,
+      time: avgTime,
+      traceroute: tracerouteData,
+      mode: "HTTP-fallback",
+    });
   } catch (err) {
     return res.status(500).json({ error: "Ping failed", details: err.message });
   }
