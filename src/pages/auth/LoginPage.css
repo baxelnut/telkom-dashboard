@@ -24,6 +24,10 @@
   transform: none;
 }
 
+.card.login .ping-container {
+  padding-block: 1rem;
+}
+
 /* Tablet */
 @media (min-width: 768px) {
   .card.login {

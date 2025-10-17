@@ -2,8 +2,9 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 // Style
 import "./LoginPage.css";
-// UI
+// Components
 import AuthForm from "../../features/auth/AuthForm";
+import PingTool from "../../components/utils/PingTool";
 
 export default function LoginPage() {
   useEffect(() => {
@@ -40,6 +41,10 @@ export default function LoginPage() {
       <img className="logo" src="/logos/telkom-big.svg" alt="Logo" />
       <div className="card login">
         <AuthForm />
+
+        <div className="ping-container">
+          <PingTool />
+        </div>
       </div>
     </div>
   );

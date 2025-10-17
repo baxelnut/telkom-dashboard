@@ -4,6 +4,7 @@ import "./PingTool.css";
 // APIs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;
+const KOYEB_API_URL = import.meta.env.VITE_KOYEB_API;
 
 export default function PingTool() {
   const [ip, setIp] = useState("");
@@ -20,7 +21,7 @@ export default function PingTool() {
         setIp(ipData.ip);
 
         // Ping that IP
-        const res = await fetch(`${API_URL}/ping?host=8.8.8.8`);
+        const res = await fetch(`${KOYEB_API_URL}/ping?host=8.8.8.8`);
         const data = await res.json();
         setResult(data);
       } catch (err) {
@@ -42,17 +43,14 @@ export default function PingTool() {
           <p>
             <b>Your IP:</b> {ip}
           </p>
+
           {result && (
             <div className="result">
-              {/* <p>
-                <b>Ping Target:</b> 8.8.8.8 (Google DNS)
-              </p> */}
               <p>
                 <b>Alive:</b> {result.alive ? "Yes" : "No"}
               </p>
               <p>
-                <b>Packets Transmitted: </b>
-                {result.transmitted ?? 0}
+                <b>Packets Transmitted:</b> {result.transmitted ?? 0}
               </p>
               <p>
                 <b>Received:</b> {result.received ?? 0}
@@ -66,6 +64,24 @@ export default function PingTool() {
               <p>
                 <b>Time:</b> {result.time} ms
               </p>
+
+              {/* Traceroute section */}
+              <div>
+                <b>Traceroute:</b>
+                {Array.isArray(result.traceroute) &&
+                result.traceroute.length > 0 ? (
+                  <ul>
+                    {result.traceroute.map((hop, i) => (
+                      <li key={i}>
+                        <b>Hop {hop.hop}:</b> {hop.ip} ({hop.time})
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ margin: 0 }}>No traceroute data</p>
+                )}
+              </div>
+
               {/* <pre>{result.output}</pre> */}
             </div>
           )}
