@@ -5,6 +5,7 @@ import "./Sidebar.css";
 // Components
 import ChevronIcon from "../ui/icons/ChevronIcon";
 import Icon from "../ui/icons/Icon";
+import PingTool from "../utils/PingTool";
 // Custom hook & context
 import useLogoSrc from "../../hooks/useLogoSrc";
 import { useAuth } from "../../context/AuthContext";
@@ -197,6 +198,8 @@ export default function Sidebar({
             </li>
           );
         })}
+
+        {!isCollapsed && <PingTool />}
       </ul>
 
       {/* Collapse button (desktop only) */}
