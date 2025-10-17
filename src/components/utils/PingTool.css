@@ -12,6 +12,12 @@
   font-size: var(--small-h);
 }
 
+.hop-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 /* Tablet and up */
 @media (min-width: 768px) {
   .ping-card {

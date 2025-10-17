@@ -66,23 +66,33 @@ export default function PingTool() {
               </p>
 
               {/* Traceroute section */}
-              <div>
+              <div className="traceroute-section">
                 <b>Traceroute:</b>
                 {Array.isArray(result.traceroute) &&
                 result.traceroute.length > 0 ? (
-                  <ul>
-                    {result.traceroute.map((hop, i) => (
-                      <li key={i}>
-                        <b>Hop {hop.hop}:</b> {hop.ip} ({hop.time})
-                      </li>
+                  <div className="traceroute-items">
+                    {result.traceroute.map((hop) => (
+                      <div key={hop.hop} className="hop-items">
+                        <b>{hop.hop}.</b>
+                        {hop.probes.map((p, i) => (
+                          <div key={i}>
+                            {p.ip === "*" ? (
+                              <span>*</span>
+                            ) : (
+                              <span>
+                                {p.ip}
+                                {p.host ? ` (${p.host})` : ""} - {p.time}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 ) : (
                   <p>No traceroute data</p>
                 )}
               </div>
-
-              {/* <pre>{result.output}</pre> */}
             </div>
           )}
         </>
