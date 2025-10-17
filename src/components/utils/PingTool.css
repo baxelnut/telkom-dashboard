@@ -2,11 +2,23 @@
   width: 100%;
   height: 100%;
   padding-inline: 0.75rem;
+  padding-block: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: end;
 }
 
 .ping-card * {
-  font-size: var(--small-p);
+  font-size: var(--small-h);
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .ping-card {
+    padding-block: 0;
+  }
+
+  .ping-card * {
+    font-size: var(--small-p);
+  }
 }
