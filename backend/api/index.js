@@ -8,6 +8,7 @@ import galaksi from "./routes/galaksi.js";
 import admin from "./routes/admin.js";
 import telegramRoutes from "./routes/telegram.js";
 import gasRoutes from "./routes/gas.js";
+import pingRoutes from "./routes/ping.js";
 // Telegram webhook
 import webhookHandler from "./telegram/webhook.js";
 
@@ -29,6 +30,7 @@ app.use("/api/galaksi", galaksi);
 app.use("/api/admin", admin);
 app.use("/api/telegram", telegramRoutes);
 app.use("/api/gas", gasRoutes);
+app.use("/api/ping", pingRoutes);
 
 // Telegram webhook
 app.post("/api/telegram/webhook", webhookHandler);
