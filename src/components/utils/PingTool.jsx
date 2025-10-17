@@ -20,7 +20,7 @@ export default function PingTool() {
         setIp(ipData.ip);
 
         // Ping that IP
-        const res = await fetch(`${API_URL}/ping?host=${ipData.ip}`);
+        const res = await fetch(`${API_URL}/ping?host=8.8.8.8`);
         const data = await res.json();
         setResult(data);
       } catch (err) {
@@ -59,8 +59,8 @@ export default function PingTool() {
               </p>
               <p>
                 <b>Packet Loss:</b>{" "}
-                {result.packetLoss
-                  ? `${parseFloat(result.packetLoss).toFixed(2)}%`
+                {Number.isFinite(result.packetLoss)
+                  ? `${result.packetLoss.toFixed(2)}%`
                   : "unknown"}
               </p>
               <p>
