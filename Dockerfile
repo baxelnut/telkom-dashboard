@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dbus \
     dbus-user-session \
     chromium \
+    inetutils-traceroute \
     gnupg \
     && dbus-uuidgen --ensure=/etc/machine-id \
     && rm -rf /var/lib/apt/lists/*
