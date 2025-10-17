@@ -78,7 +78,7 @@ export default function PingTool() {
                     ))}
                   </ul>
                 ) : (
-                  <p style={{ margin: 0 }}>No traceroute data</p>
+                  <p>No traceroute data</p>
                 )}
               </div>
 

@@ -1,6 +1,10 @@
 import os from "os";
 import ping from "ping";
 import https from "https";
+import util from "util";
+import { exec } from "child_process";
+
+const execPromise = util.promisify(exec);
 
 /**
  * Simple HTTP check to a fast URL (returns { ok, time }).
@@ -30,89 +34,37 @@ function httpCheck(
  * Returns array: [{ hop: 1, ip: "x.x.x.x", time: "12 ms" }, ...]
  * If anything goes wrong, returns [].
  */
-function runTraceroute(host, msTimeout = 2000) {
-  return new Promise((resolve) => {
-    try {
-      const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(
-        host
-      )}`;
-      const t = setTimeout(() => resolve([]), msTimeout);
+async function runTraceroute(host, maxHops = 30) {
+  try {
+    // Run traceroute command (limit hops and timeout)
+    const { stdout } = await execPromise(
+      `traceroute -m ${maxHops} -q 1 ${host}`,
+      {
+        timeout: 8000,
+      }
+    );
 
-      https
-        .get(url, (res) => {
-          const chunks = [];
-          res.on("data", (c) => chunks.push(c));
-          res.on("end", () => {
-            clearTimeout(t);
-            try {
-              const text = Buffer.concat(chunks).toString("utf8").trim();
-              if (
-                !text ||
-                text.toLowerCase().includes("error") ||
-                text.includes("no output")
-              ) {
-                return resolve([]);
-              }
+    // Split and map lines to hops
+    const lines = stdout
+      .split("\n")
+      .filter((l) => l.trim() && /^\s*\d+/.test(l));
 
-              // Break into lines and parse hop entries (limit 5).
-              const lines = text.split("\n").map((l) => l.trim());
-              const hops = [];
+    const hops = lines.map((line) => {
+      const hopNum = line.match(/^\s*(\d+)/)?.[1];
+      const ipMatch = line.match(/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/);
+      const timeMatch = line.match(/([0-9.]+)\s*ms/);
+      return {
+        hop: Number(hopNum) || null,
+        ip: ipMatch ? ipMatch[1] : "*",
+        time: timeMatch ? `${timeMatch[1]} ms` : "*",
+      };
+    });
 
-              for (const line of lines) {
-                // Common MTR/traceroute formats we try to parse:
-                // "1. 192.168.1.1  0.5 ms  0.5 ms  0.6 ms"
-                // " 1  192.168.1.1  0.5 ms  0.5 ms  0.6 ms"
-                // " 1  example.com (93.184.216.34)  1.23 ms"
-                // Try main match: hop number + ip/host + rest
-                const hopMatch = line.match(
-                  /^\s*([0-9]+)[\.\)]?\s+([0-9a-zA-Z\.\-_:()]+)\s+(.*)$/
-                );
-                if (hopMatch) {
-                  const hopNum = Number(hopMatch[1]);
-                  const ipOrHost = hopMatch[2];
-                  const rest = hopMatch[3] || "";
-
-                  // extract first rtt (ms)
-                  const rttMatch = rest.match(/([0-9]+\.?[0-9]*)\s*ms/);
-                  const time = rttMatch ? `${rttMatch[1]} ms` : "unknown";
-
-                  // normalize ip: if ipOrHost contains '(' and ')' get ip inside
-                  let ip = ipOrHost;
-                  const inParens = ipOrHost.match(/\(([\d\.]+)\)/);
-                  if (inParens) ip = inParens[1];
-
-                  hops.push({ hop: hopNum, ip, time });
-                } else {
-                  // fallback: try extract ip inside parentheses later in the string
-                  const alt = line.match(
-                    /^\s*([0-9]+).*?\((\d+\.\d+\.\d+\.\d+)\).*?([0-9]+\.?[0-9]*)\s*ms/
-                  );
-                  if (alt) {
-                    hops.push({
-                      hop: Number(alt[1]),
-                      ip: alt[2],
-                      time: `${alt[3]} ms`,
-                    });
-                  }
-                }
-
-                if (hops.length >= 5) break;
-              }
-
-              resolve(hops);
-            } catch (e) {
-              resolve([]);
-            }
-          });
-        })
-        .on("error", () => {
-          clearTimeout(t);
-          resolve([]);
-        });
-    } catch {
-      resolve([]);
-    }
-  });
+    return hops;
+  } catch (err) {
+    console.error("Traceroute failed:", err.message);
+    return [];
+  }
 }
 
 export async function pingHost(req, res) {
@@ -136,7 +88,7 @@ export async function pingHost(req, res) {
 
       // Always attempt traceroute via HackerTarget API (fast, works on Vercel)
       // but keep it short (msTimeout) to prevent long waits.
-      const tracerouteData = await runTraceroute(host, 1500);
+      const tracerouteData = await runTraceroute(host);
 
       return res.json({
         host: icmp.host,
@@ -161,7 +113,7 @@ export async function pingHost(req, res) {
 
     // 2) HTTP fallback (works on Vercel)
     const httpResult = await httpCheck();
-    const tracerouteData = await runTraceroute(host, 1500);
+    const tracerouteData = await runTraceroute(host);
 
     if (httpResult.ok) {
       return res.json({
