@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 // Prevent duplicate runs in same process
 if (globalThis.__SEND_SCHEDULED_REPORTS_LOCK__) {
   console.log(
-    `[${new Date().toISOString()}] Duplicate run detected — exiting.`
+    `[${new Date().toISOString()}] Duplicate run detected — exiting.`,
   );
   process.exit(0);
 }
@@ -16,10 +16,11 @@ const utcHour = now.getUTCHours();
 const utcDay = now.getUTCDay();
 
 const isScheduledDay = utcDay === 1; // Monday (1)
-const isInTimeWindow = utcHour >= 6 && utcHour < 11; // 06:00-11:00 UTC (13:00-18:00 WIB)
+const isInTimeWindow = utcHour >= 5 && utcHour < 11; // 05:00-11:00 UTC (12:00-18:00 WIB)
+
 if (!(isScheduledDay && isInTimeWindow)) {
   console.log(
-    `⏰ Skipping run. Outside schedule. UTC Day=${utcDay}, Hour=${utcHour}`
+    `⏰ Skipping run. Outside schedule. UTC Day=${utcDay}, Hour=${utcHour}`,
   );
   process.exit(0);
 }
@@ -54,7 +55,7 @@ export const sendScheduledReports = async (config) => {
     // helper that types like a human
     async function humanType(selector, text) {
       await page.$eval(selector, (el) =>
-        el.scrollIntoView({ block: "center" })
+        el.scrollIntoView({ block: "center" }),
       );
       await page.focus(selector);
 
@@ -119,7 +120,7 @@ export const sendScheduledReports = async (config) => {
         page.waitForSelector("div.page.overview", { timeout: 45000 }),
         page.waitForFunction(
           () => window.location.pathname.includes("/overview"),
-          { timeout: 45000 }
+          { timeout: 45000 },
         ),
       ]);
     } catch {
