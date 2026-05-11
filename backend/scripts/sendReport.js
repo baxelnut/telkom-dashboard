@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import axios from "axios";
+// import axios from "axios";
 // import handleAlert from "../api/telegram/commands/alert.js";
 import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
 
