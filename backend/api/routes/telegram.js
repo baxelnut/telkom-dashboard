@@ -6,8 +6,22 @@ import axios from "axios";
 import multer from "multer";
 import FormData from "form-data";
 
+import handleAlert from "../telegram/commands/alert.js";
+
 const upload = multer();
 const router = express.Router();
+
+router.post("/alert", async (req, res) => {
+  try {
+    const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+    const chatId = process.env.TELEGRAM_CHANNEL_CHAT_ID;
+    await handleAlert({ axios, chatId, TELEGRAM_API });
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("Alert route error:", err.message);
+    res.status(500).json({ error: "Failed to send alert" });
+  }
+});
 
 router.post("/photo", upload.single("photo"), async (req, res) => {
   const { target, caption } = req.body; // include caption
@@ -17,8 +31,8 @@ router.post("/photo", upload.single("photo"), async (req, res) => {
     target === "group"
       ? process.env.TELEGRAM_GROUP_CHAT_ID
       : target === "channel"
-      ? process.env.TELEGRAM_CHANNEL_CHAT_ID
-      : process.env.TELEGRAM_CHAT_ID;
+        ? process.env.TELEGRAM_CHANNEL_CHAT_ID
+        : process.env.TELEGRAM_CHAT_ID;
 
   if (!file || !file.buffer) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -46,7 +60,7 @@ router.post("/photo", upload.single("photo"), async (req, res) => {
         },
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
-      }
+      },
     );
 
     res.status(200).json({ success: true, result: response.data });

@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import axios from "axios";
-import handleAlert from "../api/telegram/commands/alert.js";
+// import handleAlert from "../api/telegram/commands/alert.js";
 import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
 
 (async () => {
@@ -27,15 +27,15 @@ import { sendScheduledReports } from "../api/utils/sendScheduledReports.js";
       console.error("❌ Scheduled reports failed:", e.message);
     }
 
-    try {
-      await handleAlert({
-        axios,
-        chatId: config.TELEGRAM_CHANNEL_CHAT_ID,
-        TELEGRAM_API: `https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}`,
-      });
-    } catch (err) {
-      console.error("❌ handleAlert failed:", err.message);
-    }
+    // try {
+    //   await handleAlert({
+    //     axios,
+    //     chatId: config.TELEGRAM_CHANNEL_CHAT_ID,
+    //     TELEGRAM_API: `https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}`,
+    //   });
+    // } catch (err) {
+    //   console.error("❌ handleAlert failed:", err.message);
+    // }
 
     console.log("✅ Report finished.");
     process.exit(0);

@@ -18,17 +18,19 @@ import {
   calculateAchievement,
   calculateGrandTotal,
 } from "../../kpis/galaksiUtils";
+import { sendAlertToTelegram } from "../../bot/sendAlertToTelegram";
 
 export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   const { isAdmin } = useAuth();
   const [teleStatus, setTeleStatus] = useState(null);
+  const [alertStatus, setAlertStatus] = useState(null);
 
   const achMap = mapAchievementData(achData, CUSTOM_ORDER);
   const tableRows = buildTableRows(poData, achMap, CUSTOM_ORDER);
   const grandTotal = calculateGrandTotal(tableRows, CUSTOM_ORDER);
 
-  const handleSendToTelegram = () => {
-    sendTableToTelegram({
+  const handleSendToTelegram = async () => {
+    await sendTableToTelegram({
       selector: ".galaksi-table table",
       API_URL: API_URL,
       // target: "group", // for debugging
@@ -39,6 +41,8 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
       link: "https://rso2telkomdashboard.web.app/reports/galaksi",
       dateStr: formatDate(),
     });
+
+    await sendAlertToTelegram({ API_URL, setStatus: setAlertStatus });
   };
 
   return (
