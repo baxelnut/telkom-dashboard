@@ -42,6 +42,9 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
       link: "https://rso2telkomdashboard.web.app/reports/galaksi",
       dateStr: formatDate(),
     });
+  };
+
+  const handleSendAlert = async () => {
     console.log("firing sendAlertToTelegram");
     await sendAlertToTelegram({ API_URL, setStatus: setAlertStatus });
   };
@@ -52,10 +55,19 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
         <div className="filter-container announce">
           <Button
             id="announce-galaksi"
-            text={teleStatus ?? "Send Telegram"}
+            text={teleStatus ?? "Send Table"}
             iconPath={SVG_PATHS.telegram}
             onClick={handleSendToTelegram}
             backgroundColor="#0088cc"
+            iconAfter
+            short
+          />
+          <Button
+            id="pic-alert"
+            text={alertStatus ?? "Send PIC Alert"}
+            iconPath={SVG_PATHS.telegram}
+            onClick={handleSendAlert}
+            backgroundColor="orange"
             iconAfter
             short
           />
