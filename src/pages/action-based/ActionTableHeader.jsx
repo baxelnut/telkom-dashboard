@@ -71,7 +71,7 @@ export default function ActionTableHeader({
             {period === "ALL PERIOD" ? period : `${period} bulan`}
           </h6>
 
-          {period == "<3" && (
+          {period == "<2" && (
             <h6 className="small-h">
               (Aman = {alertCounts.aman}; Segera Diproses = {alertCounts.segera}
               )
@@ -80,7 +80,7 @@ export default function ActionTableHeader({
         </div>
       )}
 
-      {period == "<3" && (
+      {period == "<2" && (
         <div className="filter-items sat">
           <p>See Filter:</p>
           <Dropdown

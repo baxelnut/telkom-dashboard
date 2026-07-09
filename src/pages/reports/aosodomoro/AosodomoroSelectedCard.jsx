@@ -27,7 +27,7 @@ export default function AosodomoroSelectedCard({
     {
       label: "All Kategori Umur",
       value: cell.kategoriUmur,
-      fallbackCheck: (val) => !val || val === "both3bln",
+      fallbackCheck: (val) => !val || val === "both2bln",
     },
     {
       label: "All Subtype",
