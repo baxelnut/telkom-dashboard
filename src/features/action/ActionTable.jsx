@@ -20,7 +20,7 @@ export default function ActionTable({ data, onRowClick, bucket = "<" }) {
   const cellClass = (count, base) => (count === 0 ? "unresponsive" : base);
 
   // map bucket symbol to the period string your app expects when navigating
-  const periodForBucket = bucket === "<" ? "<3" : ">3";
+  const periodForBucket = bucket === "<" ? "<2" : ">2";
 
   const handleCellClick = (witel, po, period, status) => () =>
     onRowClick(witel, po, period, status);
@@ -75,7 +75,7 @@ export default function ActionTable({ data, onRowClick, bucket = "<" }) {
                     WITEL,
                     PO_NAME,
                     periodForBucket,
-                    "ALL STATUS"
+                    "ALL STATUS",
                   )}
                 >
                   <strong>{PO_NAME}</strong>
@@ -88,7 +88,7 @@ export default function ActionTable({ data, onRowClick, bucket = "<" }) {
                     WITEL,
                     "ALL PO",
                     periodForBucket,
-                    "ALL STATUS"
+                    "ALL STATUS",
                   )}
                 >
                   {WITEL}
@@ -99,7 +99,7 @@ export default function ActionTable({ data, onRowClick, bucket = "<" }) {
                   counts,
                   bucket === "<" ? "u" : "o",
                   WITEL,
-                  PO_NAME
+                  PO_NAME,
                 )}
 
                 {/* Total for this bucket */}
@@ -109,7 +109,7 @@ export default function ActionTable({ data, onRowClick, bucket = "<" }) {
                     WITEL,
                     PO_NAME,
                     periodForBucket,
-                    "ALL STATUS"
+                    "ALL STATUS",
                   )}
                 >
                   <strong>{counts.TOTAL}</strong>
