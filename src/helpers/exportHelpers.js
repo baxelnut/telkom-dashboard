@@ -98,9 +98,8 @@ export function filterRows(enrichedData, filters, activeFilters) {
 }
 
 export function filterItems(rows, filters, activeFilters) {
-  const { spNorm, spdNorm, ssNorm } = filters;
-  const { poFilterActive, periodFilterActive, statusFilterActive } =
-    activeFilters;
+  const { spdNorm, ssNorm } = filters;
+  const { periodFilterActive, statusFilterActive } = activeFilters;
 
   return rows
     .map((r) => {
@@ -133,14 +132,14 @@ export function filterItems(rows, filters, activeFilters) {
       });
 
       if (periodFilterActive) {
-        if (spdNorm === "<3") items = items.filter((i) => i._bucket === "<");
-        else if (spdNorm === ">3")
+        if (spdNorm === "<2") items = items.filter((i) => i._bucket === "<");
+        else if (spdNorm === ">2")
           items = items.filter((i) => i._bucket === ">");
       }
 
       if (statusFilterActive) {
         items = items.filter(
-          (i) => (i.STATUS ?? "").toString().trim().toUpperCase() === ssNorm
+          (i) => (i.STATUS ?? "").toString().trim().toUpperCase() === ssNorm,
         );
       }
 
@@ -162,10 +161,10 @@ export function flattenForExport(rows) {
       PO_EMAIL: r.PO_EMAIL,
       PO_NAME: r.PO_NAME,
       WITEL: r.WITEL,
-      bucket: i._bucket === "<" ? "lt3" : "gt3",
+      bucket: i._bucket === "<" ? "lt2" : "gt2",
       STATUS: i.STATUS,
       ...i,
-    }))
+    })),
   );
 }
 
@@ -180,8 +179,8 @@ export function makeFilename(filters, activeFilters) {
   });
 
   let periodLabel = "all";
-  if (spdNorm === "<3") periodLabel = "lt3";
-  else if (spdNorm === ">3") periodLabel = "gt3";
+  if (spdNorm === "<2") periodLabel = "lt2";
+  else if (spdNorm === ">2") periodLabel = "gt2";
 
   const filenamePO = poFilterActive
     ? (sp || "PO").replace(/[<>:"/\\|?*]/g, "_")
@@ -198,7 +197,7 @@ export function makeFilename(filters, activeFilters) {
 
 export function dedupeByKey(
   arr,
-  keyCandidates = ["UUID", "ORDER_ID", "LI_SID"]
+  keyCandidates = ["UUID", "ORDER_ID", "LI_SID"],
 ) {
   const seen = new Map();
   for (const item of arr) {
