@@ -8,7 +8,7 @@ import Sidebar from "./Sidebar";
 // Context
 import { useAuth } from "../../context/AuthContext";
 
-export default function Layout({ pageTitle, children, API_URL }) {
+export default function Layout({ pageTitle, children }) {
   const { userData } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
