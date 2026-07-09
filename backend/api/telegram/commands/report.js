@@ -26,7 +26,7 @@ export default async function handleReport({
       `${process.env.API_BASE_URL}/api/regional-3${endpoint}`,
       {
         params,
-      }
+      },
     );
 
     const body = resp.data;
@@ -76,7 +76,7 @@ export default async function handleReport({
 
     const top10 = filtered
       .sort(
-        (a, b) => Number(b["UMUR_ORDER"] ?? 0) - Number(a["UMUR_ORDER"] ?? 0)
+        (a, b) => Number(b["UMUR_ORDER"] ?? 0) - Number(a["UMUR_ORDER"] ?? 0),
       )
       .slice(0, 10);
 
@@ -84,7 +84,7 @@ export default async function handleReport({
       .map((r) => {
         const orderId = String(r["ORDERID"] ?? r["ORDER_ID"] ?? "").trim();
         const subtype = String(
-          r["ORDERSUBTYPE"] ?? r["ORDER_SUBTYPE"] ?? ""
+          r["ORDERSUBTYPE"] ?? r["ORDER_SUBTYPE"] ?? "",
         ).trim();
         return `${orderId || "-"}  | ${subtype || "-"}`;
       })
@@ -99,7 +99,7 @@ export default async function handleReport({
         "🔗 https://rso2telkomdashboard.web.app\n\n";
     }
     const textMsg =
-      `📢 <b>Alert Order Mendekati > 3 BLN</b>\n\n` +
+      `📢 <b>Alert Order Mendekati > 2 BLN</b>\n\n` +
       `<i>Witel: ${witel}</i>\n` +
       `<i>PO: ${displayName}</i>\n\n` +
       `⚠️ <b>ORDER > 60 hari (A1 : Prioritas)</b>\n` +
@@ -116,7 +116,7 @@ export default async function handleReport({
   } catch (err) {
     console.error(
       "REPORT -> error",
-      err?.response?.data || err?.message || err
+      err?.response?.data || err?.message || err,
     );
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,
