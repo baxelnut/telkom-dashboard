@@ -7,8 +7,8 @@ export default function useEnrichedData(data) {
       const report = data.report.find((r) => r.witelName === po.WITEL);
       const inProc = report?.["IN PROCESS"] || {};
       const items = [
-        ...(inProc["<3blnItems"] || []).map((i) => ({ ...i, _bucket: "<" })),
-        ...(inProc[">3blnItems"] || []).map((i) => ({ ...i, _bucket: ">" })),
+        ...(inProc["<2blnItems"] || []).map((i) => ({ ...i, _bucket: "<" })),
+        ...(inProc[">2blnItems"] || []).map((i) => ({ ...i, _bucket: ">" })),
       ];
       const count = { Lanjut: 0, Cancel: 0, "Bukan Order Reg": 0 };
       items.forEach(({ STATUS, KATEGORI }) => {
