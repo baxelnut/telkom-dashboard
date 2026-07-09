@@ -7,28 +7,30 @@ export const renderRowCells = (
   orderSubtype2,
   selectedSubtypes,
   selectedSegmen,
-  handleCellClick
+  handleCellClick,
 ) =>
   selectedSubtypes.map((subtype) => {
-    const bucket = `${umurKey}3blnItems`;
+    const bucket = `${umurKey}2blnItems`;
     const allItems = entry[subtype]?.[bucket] || [];
+
+    // console.log("bucket adalah: ", bucket);
 
     const filtered = allItems.filter(
       (i) =>
         (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
-        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
+        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2),
     );
 
     const count = filtered.length;
     const revenue = filtered.reduce(
       (sum, i) => sum + normalizeRevenue(i || 0),
-      0
+      0,
     );
 
     const celltableData = {
       witelName: entry.witelName,
       subType: subtype,
-      kategoriUmur: `${umurKey}3bln`,
+      kategoriUmur: `${umurKey}2bln`,
       isTotal: false,
       extractedIds: filtered.map((i) => i.UUID),
     };
@@ -51,36 +53,36 @@ export const renderWitelTotalCells = (
   orderSubtype2,
   selectedSubtypes,
   selectedSegmen,
-  handleCellClick
+  handleCellClick,
 ) => {
   const bucketNames =
-    umurKey === "both" ? ["<3blnItems", ">3blnItems"] : [`${umurKey}3blnItems`];
+    umurKey === "both" ? ["<2blnItems", ">2blnItems"] : [`${umurKey}2blnItems`];
 
   let allItems = [];
   selectedSubtypes.forEach((st) =>
     bucketNames.forEach((bk) => {
       const tableData = entry[st]?.[bk];
       if (tableData) allItems.push(...tableData);
-    })
+    }),
   );
 
   const filtered = allItems.filter(
     (i) =>
       (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
-      (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
+      (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2),
   );
 
   const count = filtered.length;
   const revenue = filtered.reduce(
     (sum, i) => sum + normalizeRevenue(i || 0),
-    0
+    0,
   );
 
   const celltableData = {
     witelName: entry.witelName,
     subType: null,
     subTypes: selectedSubtypes,
-    kategoriUmur: umurKey === "both" ? "both3bln" : `${umurKey}3bln`,
+    kategoriUmur: umurKey === "both" ? "both2bln" : `${umurKey}2bln`,
     isTotal: true,
     extractedIds: filtered.map((i) => i.UUID),
   };
@@ -103,28 +105,28 @@ export const renderReportCells = (
   tableData,
   selectedSubtypes,
   selectedSegmen,
-  handleCellClick
+  handleCellClick,
 ) =>
   selectedSubtypes.map((subtype) => {
-    const bucket = `${umurKey}3blnItems`;
+    const bucket = `${umurKey}2blnItems`;
     const raw = tableData.flatMap((entry) => entry[subtype]?.[bucket] || []);
 
     const filtered = raw.filter(
       (i) =>
         (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
-        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
+        (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2),
     );
 
     const count = filtered.length;
     const revenue = filtered.reduce(
       (sum, i) => sum + normalizeRevenue(i || 0),
-      0
+      0,
     );
 
     const celltableData = {
       witelName: "ALL",
       subType: subtype,
-      kategoriUmur: `${umurKey}3bln`,
+      kategoriUmur: `${umurKey}2bln`,
       isTotal: true,
       extractedIds: filtered.map((i) => i.UUID),
     };
@@ -147,34 +149,34 @@ export const renderGrandTotals = (
   tableData,
   selectedSubtypes,
   selectedSegmen,
-  handleCellClick
+  handleCellClick,
 ) => {
   const bucketNames =
-    umurKey === "both" ? ["<3blnItems", ">3blnItems"] : [`${umurKey}3blnItems`];
+    umurKey === "both" ? ["<2blnItems", ">2blnItems"] : [`${umurKey}2blnItems`];
 
   const raw = tableData.flatMap((entry) =>
     selectedSubtypes.flatMap((st) =>
-      bucketNames.flatMap((bk) => entry[st]?.[bk] || [])
-    )
+      bucketNames.flatMap((bk) => entry[st]?.[bk] || []),
+    ),
   );
 
   const filtered = raw.filter(
     (i) =>
       (selectedSegmen === "ALL" || i.SEGMEN === selectedSegmen) &&
-      (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2)
+      (orderSubtype2 === "ALL" || i.ORDER_SUBTYPE2 === orderSubtype2),
   );
 
   const count = filtered.length;
   const revenue = filtered.reduce(
     (sum, i) => sum + normalizeRevenue(i || 0),
-    0
+    0,
   );
 
   const celltableData = {
     witelName: "ALL",
     subType: null,
     subTypes: selectedSubtypes,
-    kategoriUmur: `${umurKey}3bln`,
+    kategoriUmur: `${umurKey}2bln`,
     isTotal: true,
     extractedIds: filtered.map((i) => i.UUID),
   };

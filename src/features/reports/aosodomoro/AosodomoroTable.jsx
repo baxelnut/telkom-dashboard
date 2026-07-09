@@ -1,4 +1,3 @@
-import { useState } from "react";
 // Style
 import "./AosodomoroTable.css";
 // Components
@@ -22,10 +21,8 @@ export default function AosodomoroTable({
   setGsheetsStatus, // Received from parent
 }) {
   const { isAdmin } = useAuth();
-  const [selectedCell, setSelectedCell] = useState(null);
 
   const handleCellClick = (celltableData) => {
-    setSelectedCell(celltableData);
     onCellSelect(celltableData);
   };
 
@@ -78,10 +75,10 @@ export default function AosodomoroTable({
           <thead>
             <tr>
               <th rowSpan="2">WITEL</th>
-              <th colSpan={selectedSubtypes.length}>&lt;3 BLN</th>
-              <th rowSpan="2">&lt;3 BLN Total</th>
-              <th colSpan={selectedSubtypes.length}>&gt;3 BLN</th>
-              <th rowSpan="2">&gt;3 BLN Total</th>
+              <th colSpan={selectedSubtypes.length}>&lt;2 BLN</th>
+              <th rowSpan="2">&lt;2 BLN Total</th>
+              <th colSpan={selectedSubtypes.length}>&gt;2 BLN</th>
+              <th rowSpan="2">&gt;2 BLN Total</th>
               <th rowSpan="2"> GRAND TOTAL</th>
             </tr>
             <tr>

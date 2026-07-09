@@ -52,7 +52,7 @@ export const renderSelectedTable = ({ filtered, hasInProgress, isAdmin }) => {
                       <p>
                         {c === "REVENUE"
                           ? formatSelectedCurrency(itm[c])
-                          : itm[c] ?? "-"}
+                          : (itm[c] ?? "-")}
                       </p>
                     </td>
                   ))}
