@@ -11,11 +11,12 @@ export const splitByPeriod = (items) => {
       return;
     }
 
-    if (days > 90) {
+    if (days > 60) {
       gt3.push({ ...it, isWarning: false, isOver90: true });
     } else {
-      const isWarn = days >= 60;
+      const isWarn = days >= 20;
       lt3.push({ ...it, isWarning: isWarn, isOver90: false });
+
       if (isWarn) {
         warning.push({ ...it, isWarning: true, isOver90: false });
       }
