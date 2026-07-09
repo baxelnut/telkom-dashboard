@@ -1,31 +1,31 @@
 import "dotenv/config";
 
-import admin from "firebase-admin";
 import fs from "fs";
 import path from "path";
 
+import { initializeApp, cert, getApps } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
 let serviceAccount;
 
-// Prefer env var (works in Vercel)
 if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-  const parsed = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 
-  if (parsed.private_key) {
-    parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
+  if (serviceAccount.private_key) {
+    serviceAccount.private_key = serviceAccount.private_key.replace(
+      /\\n/g,
+      "\n",
+    );
   }
-
-  serviceAccount = parsed;
 } else {
-  // Fallback for local dev with file
   const keyPath = path.resolve("./keys/serviceAccountKey.json");
-  const fileContent = fs.readFileSync(keyPath, "utf8");
-  serviceAccount = JSON.parse(fileContent);
+  serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
 }
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(serviceAccount),
   });
 }
 
-export const db = admin.firestore();
+export const db = getFirestore();
