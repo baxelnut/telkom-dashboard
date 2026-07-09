@@ -17,7 +17,7 @@ import { ORDER_SUBTYPE } from "../../../helpers/aosodomoroUtils";
 export default function AosodomoroReportPage({ API_URL }) {
   const { isAdmin } = useAuth();
   const { data, loading, error, raw } = useFetchData(
-    `${API_URL}/regional-3/report`
+    `${API_URL}/regional-3/report`,
   );
   const [selectedSegmen, setSelectedSegmen] = useState("ALL");
   const [selectedExport, setSelectedExport] = useState("Excel");
@@ -27,7 +27,7 @@ export default function AosodomoroReportPage({ API_URL }) {
     return saved
       ? JSON.parse(saved)
       : ORDER_SUBTYPE.filter((subtype) =>
-          ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype)
+          ["PROVIDE ORDER", "IN PROCESS", "READY TO BILL"].includes(subtype),
         );
   });
   const [teleStatus, setTeleStatus] = useState(null);
@@ -49,7 +49,7 @@ export default function AosodomoroReportPage({ API_URL }) {
   const handleExport = async (
     type,
     customSheetName = "AOSODOMORO Report",
-    customData = null
+    customData = null,
   ) => {
     setSelectedExport(type);
     const flatData = customData
@@ -67,7 +67,7 @@ export default function AosodomoroReportPage({ API_URL }) {
                   ageCategory,
                   ...item,
                 }));
-              }
+              },
             );
           });
         });

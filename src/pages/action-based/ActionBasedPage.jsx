@@ -112,7 +112,7 @@ export default function ActionBasedPage({ API_URL }) {
               po={po}
               status={status}
               period={period}
-              bucketLabel={bucketKey === "<" ? "<3 BLN" : ">3 BLN"}
+              bucketLabel={bucketKey === "<" ? "<2 BLN" : ">2 BLN"}
               alertCounts={alertCounts}
             />
             <CardsContent loading={loading} error={error}>
@@ -124,7 +124,7 @@ export default function ActionBasedPage({ API_URL }) {
                       selected.witel === "ALL"
                         ? enrichedData
                         : enrichedData.filter(
-                            (r) => r.WITEL === selected.witel
+                            (r) => r.WITEL === selected.witel,
                           ),
                   }}
                   onRowClick={handleRowClick}
