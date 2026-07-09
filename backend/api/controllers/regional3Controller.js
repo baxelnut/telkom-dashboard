@@ -36,7 +36,7 @@ const processData = (data) => {
       categories.forEach((kategori) => {
         if (kategori === "IN PROCESS") {
           const inProcItems = witelData.filter(
-            (i) => i["KATEGORI"] === "IN PROCESS"
+            (i) => i["KATEGORI"] === "IN PROCESS",
           );
           kategoriData[kategori] = splitByPeriod(inProcItems);
         } else {
@@ -61,9 +61,9 @@ const groupBy = (data, field) => {
 };
 
 const processKategoriData = (witelData, kategori) => {
-  const kategoriCounts = { "<3bln": 0, ">3bln": 0 };
-  const revenueCounts = { "<3bln": 0, ">3bln": 0 };
-  const items = { "<3bln": [], ">3bln": [] };
+  const kategoriCounts = { "<2bln": 0, ">2bln": 0 };
+  const revenueCounts = { "<2bln": 0, ">2bln": 0 };
+  const items = { "<2bln": [], ">2bln": [] };
 
   witelData.forEach((item) => {
     const currentKategori = item["KATEGORI"];
@@ -84,16 +84,16 @@ const processKategoriData = (witelData, kategori) => {
     }
 
     if (currentKategori === kategori) {
-      if (kategoriUmur === "< 3 BLN") {
-        kategoriCounts["<3bln"] += 1;
-        revenueCounts["<3bln"] += revenue;
-        items["<3bln"].push({
+      if (kategoriUmur === "< 2 BLN") {
+        kategoriCounts["<2bln"] += 1;
+        revenueCounts["<2bln"] += revenue;
+        items["<2bln"].push({
           ...item,
         });
-      } else if (kategoriUmur === "> 3 BLN") {
-        kategoriCounts[">3bln"] += 1;
-        revenueCounts[">3bln"] += revenue;
-        items[">3bln"].push({
+      } else if (kategoriUmur === "> 2 BLN") {
+        kategoriCounts[">2bln"] += 1;
+        revenueCounts[">2bln"] += revenue;
+        items[">2bln"].push({
           ...item,
         });
       }
@@ -101,12 +101,12 @@ const processKategoriData = (witelData, kategori) => {
   });
 
   return {
-    [`kategori_umur_<3bln`]: kategoriCounts["<3bln"],
-    [`kategori_umur_>3bln`]: kategoriCounts[">3bln"],
-    [`revenue_<3bln`]: revenueCounts["<3bln"],
-    [`revenue_>3bln`]: revenueCounts[">3bln"],
-    [`<3blnItems`]: items["<3bln"],
-    [`>3blnItems`]: items[">3bln"],
+    [`kategori_umur_<2bln`]: kategoriCounts["<2bln"],
+    [`kategori_umur_>2bln`]: kategoriCounts[">2bln"],
+    [`revenue_<2bln`]: revenueCounts["<2bln"],
+    [`revenue_>2bln`]: revenueCounts[">2bln"],
+    [`<2blnItems`]: items["<2bln"],
+    [`>2blnItems`]: items[">2bln"],
   };
 };
 
@@ -166,7 +166,7 @@ export const fetchInProcessData = async () => {
 
   const normalize = (str) => str?.replace(/\s+/g, " ").trim().toUpperCase();
   const inProcessRows = rows.filter(
-    (row) => normalize(row["KATEGORI"]) === "IN PROCESS"
+    (row) => normalize(row["KATEGORI"]) === "IN PROCESS",
   );
 
   return inProcessRows;

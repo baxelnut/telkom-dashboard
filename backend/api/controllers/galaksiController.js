@@ -31,7 +31,7 @@ export const getGalaksiData = async (req, res) => {
 
     // 🎯 Apply filter
     const filteredData = formattedData.filter(
-      (row) => row.KATEGORI_UMUR === "> 3 BLN" && row.KATEGORI === "IN PROCESS"
+      (row) => row.KATEGORI_UMUR === "> 2 BLN" && row.KATEGORI === "IN PROCESS",
     );
 
     const total = filteredData.length;

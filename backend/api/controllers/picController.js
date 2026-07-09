@@ -35,8 +35,8 @@ function summarizeRows(rows) {
     totalRevenue: 0,
     byKategori: {},
     byAge: {
-      "<3bln": { count: 0, revenue: 0 },
-      ">3bln": { count: 0, revenue: 0 },
+      "<2bln": { count: 0, revenue: 0 },
+      ">2bln": { count: 0, revenue: 0 },
     },
     sampleItems: rows.slice(0, 30), // include up to 30 items for quick inspection
   };
@@ -56,21 +56,21 @@ function summarizeRows(rows) {
     summary.totalRevenue += revenue;
 
     const umur = (r["KATEGORI_UMUR"] || "").toString().toUpperCase();
-    if (umur.includes("3 BLN")) {
+    if (umur.includes("2 BLN")) {
       if (umur.includes("<")) {
-        summary.byAge["<3bln"].count += 1;
-        summary.byAge["<3bln"].revenue += revenue;
+        summary.byAge["<2bln"].count += 1;
+        summary.byAge["<2bln"].revenue += revenue;
       } else {
-        summary.byAge[">3bln"].count += 1;
-        summary.byAge[">3bln"].revenue += revenue;
+        summary.byAge[">2bln"].count += 1;
+        summary.byAge[">2bln"].revenue += revenue;
       }
     }
   });
 
   // round revenue to integers
   summary.totalRevenue = Math.round(summary.totalRevenue);
-  summary.byAge["<3bln"].revenue = Math.round(summary.byAge["<3bln"].revenue);
-  summary.byAge[">3bln"].revenue = Math.round(summary.byAge[">3bln"].revenue);
+  summary.byAge["<2bln"].revenue = Math.round(summary.byAge["<2bln"].revenue);
+  summary.byAge[">2bln"].revenue = Math.round(summary.byAge[">2bln"].revenue);
 
   return summary;
 }
@@ -133,7 +133,7 @@ export async function getReportByTelegramId(req, res) {
     const poName = poMap.get((email || "").toLowerCase()) || fullName;
     const allRows = await fetchFormattedReportData();
     const matched = allRows.filter((r) =>
-      normalize(r["PIC"]).includes(normalize(poName))
+      normalize(r["PIC"]).includes(normalize(poName)),
     );
 
     // Filter by UMUR_ORDER > 60 && <=90, KATEGORI === "IN PROCESS"
@@ -141,7 +141,7 @@ export async function getReportByTelegramId(req, res) {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
 
-      const validUmur = umur > 60 && umur <= 90;
+      const validUmur = umur > 20 && umur <= 60;
       const validKategori = kategori === "IN PROCESS";
 
       return validUmur && validKategori;
@@ -188,7 +188,7 @@ export async function getAlertReport(req, res) {
       const umur = parseUmur(r["UMUR_ORDER"]);
       const kategori = _norm(r["KATEGORI"]).toUpperCase();
 
-      const validUmur = umur > 60 && umur <= 90;
+      const validUmur = umur > 20 && umur <= 60;
       const validKategori = kategori === "IN PROCESS";
 
       return validUmur && validKategori;
