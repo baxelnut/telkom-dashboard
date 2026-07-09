@@ -1,4 +1,43 @@
-# 🔥 Logs
+# DEPENDENCIES
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# BUILD OUTPUTS
+dist
+dist-ssr
+build
+out
+.next
+.nuxt
+.svelte-kit
+.vercel
+.netlify
+
+# ENVIRONMENT & SECRETS
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.staging
+.env.staging.local
+_key
+key
+_keys
+keys
+_secret
+secret
+_secrets
+secrets
+_dev/notes
+_playground/
+
+# LOGS
 logs
 *.log
 npm-debug.log*
@@ -7,42 +46,76 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# 🔥 Dependencies
-node_modules/
-dist/
-dist-ssr/
+# CACHE & TEMP
+.cache
+.parcel-cache
+.turbo
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+.temp
+.tmp
 
-# 🔥 Build & Deployment
-.vercel/  
-# Common frontend build folder
-build/ 
+# TESTING
+coverage
+*.lcov
+.nyc_output
+playwright-report
+test-results
 
-# 🔥 Config & Secrets
-.env
-.env.*
-firestore.rules
-.firebase
-
-# 🔥 Lockfiles (Optional) 
-yarn.lock
-pnpm-lock.yaml
-
-# 🔥 Editor & OS Junk
-.vscode/
+# EDITOR & OS
+.vscode/*
 !.vscode/extensions.json
-.idea/
-.DS_Store
+!.vscode/settings.json
+.idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.local
 
-# 🔥 Ignore API Data (Sensitive files)
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# MISC
+*.pem
+*.key
+*.cert
+.clinic
+
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# Build & Deployment
+.vercel/  
+# Common frontend build folder
+build/ 
+
+# Config & Secrets
+.env
+.env.*
+firestore.rules
+.firebase
+
+# Lockfiles (Optional) 
+yarn.lock
+pnpm-lock.yaml 
+
+# Ignore API Data (Sensitive files)
 public/data/*
 
 # Testing junk
 safe-json-env.cjs
 
-# ===== FOR TESTING ONLY =====
+# Testing
 ExamplePage.jsx
