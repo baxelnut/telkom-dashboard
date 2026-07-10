@@ -3,3 +3,4 @@ keys/
 .env
 deploy.log
 logs/
+.env*
