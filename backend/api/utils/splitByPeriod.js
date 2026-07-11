@@ -23,7 +23,7 @@ export const splitByPeriod = (items) => {
     }
   });
 
-  console.log("lt2:", lt2);
+  // console.log("lt2:", lt2);
 
   return {
     "<2blnItems": lt2,

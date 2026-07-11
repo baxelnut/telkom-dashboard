@@ -30,7 +30,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   const grandTotal = calculateGrandTotal(tableRows, CUSTOM_ORDER);
 
   const handleSendToTelegram = async () => {
-    console.log("firing sendTableToTelegram");
+    // console.log("firing sendTableToTelegram");
     await sendTableToTelegram({
       selector: ".galaksi-table table",
       API_URL: API_URL,
@@ -45,7 +45,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
   };
 
   const handleSendAlert = async () => {
-    console.log("firing sendAlertToTelegram");
+    // console.log("firing sendAlertToTelegram");
     await sendAlertToTelegram({ API_URL, setStatus: setAlertStatus });
   };
 

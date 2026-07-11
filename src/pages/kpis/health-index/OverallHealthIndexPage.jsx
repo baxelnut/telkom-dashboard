@@ -10,7 +10,7 @@ const REGIONS = [
 ];
 const HOURS = Array.from({ length: 16 }, (_, i) => `${i * 3}:00`);
 
-export default function OverallHealthIndexPage({ API_URL }) {
+export default function OverallHealthIndexPage() {
   const handleHeatCellClick = (region, hour) => {
     console.log(`Clicked cell: ${region} at ${hour}`);
   };
@@ -33,7 +33,7 @@ export default function OverallHealthIndexPage({ API_URL }) {
                   {level * 20}%
                 </div>
               );
-            })
+            }),
           )}
         </div>
         <div className="heatmap-legend">

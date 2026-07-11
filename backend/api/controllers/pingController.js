@@ -9,7 +9,7 @@ const execPromise = util.promisify(exec);
 /** Simple HTTP check fallback */
 function httpCheck(
   url = "https://www.google.com/generate_204",
-  timeout = 3000
+  timeout = 3000,
 ) {
   return new Promise((resolve) => {
     const start = Date.now();
@@ -56,7 +56,7 @@ function parseTracerouteOutput(stdout, isWindows = false) {
       const timeRegex = /<\s*1\s*ms|[0-9]+\.?[0-9]*\s*ms/g;
       const ipRegex = /((?:\d{1,3}\.){3}\d{1,3})/g;
       const timeMatches = [...rest.matchAll(timeRegex)].map((m) =>
-        m[0].replace(/\s+/g, "")
+        m[0].replace(/\s+/g, ""),
       );
       const ipMatches = [...rest.matchAll(ipRegex)].map((m) => m[1]);
 
@@ -76,7 +76,7 @@ function parseTracerouteOutput(stdout, isWindows = false) {
       // 2  core21.fsn1.hetzner.com (213.239.254.169)  0.214 ms  core24.fsn1.hetzner.com (213.239.245.241)  0.190 ms 0.172 ms
       // We'll extract groups of (host?) (ip?) time ms
       const groupRegex =
-        /([^\s\(\)]+)?\s*(?:\(?((?:\d{1,3}\.){3}\d{1,3})\)?)?\s*([0-9]+\.?[0-9]*)\s*ms/g;
+        /([^\s()]+)?\s*(?:\(?((?:\d{1,3}\.){3}\d{1,3})\)?)?\s*([0-9]+\.?[0-9]*)\s*ms/g;
       let m;
       const extracted = [];
       while ((m = groupRegex.exec(rest)) !== null) {
@@ -98,10 +98,10 @@ function parseTracerouteOutput(stdout, isWindows = false) {
       } else {
         // fallback: look for IPs and times separately
         const ipList = [...rest.matchAll(/((?:\d{1,3}\.){3}\d{1,3})/g)].map(
-          (r) => r[1]
+          (r) => r[1],
         );
         const timeList = [...rest.matchAll(/([0-9]+\.?[0-9]*)\s*ms/g)].map(
-          (r) => r[1]
+          (r) => r[1],
         );
         const maxLen = Math.max(ipList.length, timeList.length, 1);
         for (let i = 0; i < maxLen; i++) {
@@ -128,7 +128,7 @@ function parseTracerouteOutput(stdout, isWindows = false) {
  */
 async function runTraceroute(
   host,
-  { maxHops = 30, probesPerHop = 3, timeoutMs = 8000 } = {}
+  { maxHops = 30, probesPerHop = 3, timeoutMs = 8000 } = {},
 ) {
   const isWindows = os.platform() === "win32";
 
@@ -173,7 +173,7 @@ async function runTraceroute(
       console.warn(
         `runTraceroute: command failed (${cmd}). err.message=${
           err?.message?.split("\n")[0]
-        }`
+        }`,
       );
     }
   }
@@ -183,7 +183,7 @@ async function runTraceroute(
 }
 
 /**
- * pingHost controller — does ICMP or HTTP fallback, + traceroute
+ * pingHost controller: does ICMP or HTTP fallback, + traceroute
  */
 export async function pingHost(req, res) {
   let { host } = req.query;
@@ -221,8 +221,8 @@ export async function pingHost(req, res) {
           icmp.time && icmp.time !== "unknown"
             ? parseFloat(icmp.time)
             : icmp.alive
-            ? 0
-            : "timeout",
+              ? 0
+              : "timeout",
         traceroute: tracerouteData,
         mode: "ICMP",
         output: icmp.output || "",
@@ -230,7 +230,7 @@ export async function pingHost(req, res) {
     } catch (icmpErr) {
       console.log(
         "ICMP blocked or failed, falling back:",
-        icmpErr?.message || icmpErr
+        icmpErr?.message || icmpErr,
       );
     }
 

@@ -10,11 +10,11 @@ export const sendTelegramMessage = async (text, target = "private") => {
   const chatId =
     target === "private" ? TELEGRAM_CHAT_ID : TELEGRAM_GROUP_CHAT_ID;
 
-  console.log("========== TELEGRAM DEBUG ==========");
-  console.log("💬 Sending to:", target);
-  console.log("📨 Chat ID:", chatId);
-  console.log("🔑 Bot Token:", TELEGRAM_BOT_TOKEN ? "✅ Loaded" : "❌ Missing");
-  console.log("=====================================");
+  // console.log("========== TELEGRAM DEBUG ==========");
+  // console.log("💬 Sending to:", target);
+  // console.log("📨 Chat ID:", chatId);
+  // console.log("🔑 Bot Token:", TELEGRAM_BOT_TOKEN ? "✅ Loaded" : "❌ Missing");
+  // console.log("=====================================");
 
   if (!chatId) throw new Error("chat_id is empty or undefined");
 

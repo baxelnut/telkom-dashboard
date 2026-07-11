@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 // Prevent duplicate runs in same process
 if (globalThis.__SEND_SCHEDULED_REPORTS_LOCK__) {
   console.log(
-    `[${new Date().toISOString()}] Duplicate run detected — exiting.`,
+    `[${new Date().toISOString()}] Duplicate run detected exiting.`,
   );
   process.exit(0);
 }
