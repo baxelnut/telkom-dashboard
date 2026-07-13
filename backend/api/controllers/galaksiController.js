@@ -29,9 +29,14 @@ export const getGalaksiData = async (req, res) => {
       };
     });
 
-    // 🎯 Apply filter
+    // Apply filter
+    const normalize = (str) =>
+      (str ?? "").toString().replace(/\s+/g, "").toUpperCase();
+
     const filteredData = formattedData.filter(
-      (row) => row.KATEGORI_UMUR === "> 2 BLN" && row.KATEGORI === "IN PROCESS",
+      (row) =>
+        normalize(row.KATEGORI_UMUR) === normalize("> 2 BLN") &&
+        normalize(row.KATEGORI) === normalize("IN PROCESS"),
     );
 
     const total = filteredData.length;
