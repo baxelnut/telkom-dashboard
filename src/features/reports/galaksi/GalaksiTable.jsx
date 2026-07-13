@@ -38,7 +38,7 @@ export default function GalaksiTable({ achData = [], poData = [], API_URL }) {
       target: "channel",
       setTeleStatus,
       title: "GALAKSI PO AOSODOMORO Non Conn",
-      subtext: "Zero AOSODOMORO > 2 BLN",
+      subtext: "Zero AOSODOMORO >2 BLN",
       link: "https://rso2telkomdashboard.web.app/reports/galaksi",
       dateStr: formatDate(),
     });

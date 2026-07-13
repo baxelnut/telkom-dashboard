@@ -35,7 +35,7 @@ export const getGalaksiData = async (req, res) => {
 
     const filteredData = formattedData.filter(
       (row) =>
-        normalize(row.KATEGORI_UMUR) === normalize("> 2 BLN") &&
+        normalize(row.KATEGORI_UMUR) === normalize(">2 BLN") &&
         normalize(row.KATEGORI) === normalize("IN PROCESS"),
     );
 

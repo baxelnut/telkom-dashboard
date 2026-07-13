@@ -13,6 +13,10 @@ const BIG_5_REGIONS = [
   "SURAMADU",
 ];
 
+// Shared normalizer: collapses all whitespace variants + casing
+const normalize = (str) =>
+  (str ?? "").toString().replace(/\s+/g, "").toUpperCase();
+
 const isBig5Region = (region) => {
   if (typeof region !== "string" || region.trim() === "") {
     return "N/A";
@@ -34,9 +38,9 @@ const processData = (data) => {
       const categories = [...new Set(witelData.map((i) => i["KATEGORI"]))];
 
       categories.forEach((kategori) => {
-        if (kategori === "IN PROCESS") {
+        if (normalize(kategori) === normalize("IN PROCESS")) {
           const inProcItems = witelData.filter(
-            (i) => i["KATEGORI"] === "IN PROCESS",
+            (i) => normalize(i["KATEGORI"]) === normalize("IN PROCESS"),
           );
           kategoriData[kategori] = splitByPeriod(inProcItems);
         } else {
@@ -70,8 +74,6 @@ const processKategoriData = (witelData, kategori) => {
     const kategoriUmur = item["KATEGORI_UMUR"];
 
     let rawRevenue = item["REVENUE"];
-
-    // Set revenue to 0 if it's null, NaN, or empty
     let revenue = rawRevenue;
     if (
       rawRevenue === null ||
@@ -83,19 +85,17 @@ const processKategoriData = (witelData, kategori) => {
       revenue = parseFloat(rawRevenue);
     }
 
-    if (currentKategori === kategori) {
-      if (kategoriUmur === "< 2 BLN") {
+    if (normalize(currentKategori) === normalize(kategori)) {
+      const normUmur = normalize(kategoriUmur);
+
+      if (normUmur === normalize("<2 BLN")) {
         kategoriCounts["<2bln"] += 1;
         revenueCounts["<2bln"] += revenue;
-        items["<2bln"].push({
-          ...item,
-        });
-      } else if (kategoriUmur === "> 2 BLN") {
+        items["<2bln"].push({ ...item });
+      } else if (normUmur === normalize(">2 BLN")) {
         kategoriCounts[">2bln"] += 1;
         revenueCounts[">2bln"] += revenue;
-        items[">2bln"].push({
-          ...item,
-        });
+        items[">2bln"].push({ ...item });
       }
     }
   });
@@ -127,9 +127,7 @@ export const fetchFormattedReportData = async () => {
     return obj;
   });
 
-  const filteredRows = rows.filter((row) => isBig5Region(row["NEW_WITEL"]));
-
-  return filteredRows;
+  return rows.filter((row) => isBig5Region(row["NEW_WITEL"]));
 };
 
 export const getReg3ReportData = async (req, res) => {
@@ -164,12 +162,9 @@ export const fetchInProcessData = async () => {
     return obj;
   });
 
-  const normalize = (str) => str?.replace(/\s+/g, " ").trim().toUpperCase();
-  const inProcessRows = rows.filter(
-    (row) => normalize(row["KATEGORI"]) === "IN PROCESS",
+  return rows.filter(
+    (row) => normalize(row["KATEGORI"]) === normalize("IN PROCESS"),
   );
-
-  return inProcessRows;
 };
 
 export const getReg3InProcessData = async (req, res) => {
