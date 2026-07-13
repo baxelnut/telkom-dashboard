@@ -4,22 +4,9 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
     TELEGRAM_API = (TELEGRAM_API || "").toString().trim();
     chatId = (chatId || "").toString().trim();
 
-    // call getChat from same env
-    try {
-      const getChatUrl = `${TELEGRAM_API}/getChat`;
-      const getChatResp = await axios.get(getChatUrl, {
-        params: { chat_id: chatId },
-      });
-    } catch (gErr) {
-      console.error(
-        "⛔ getChat failed:",
-        gErr?.response?.data || gErr.message || gErr
-      );
-    }
-
     // fetch alert data from your API
     const resp = await axios.get(
-      `${process.env.API_BASE_URL}/api/regional-3/report/alert`
+      `${process.env.API_BASE_URL}/api/regional-3/report/alert`,
     );
 
     // support multiple shapes
@@ -55,13 +42,13 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
       });
       const now = new Date().toISOString().slice(0, 10);
       const textMsg =
-        `📢 <b>Pemberitahuan Potensi Order &gt; 3 Bulan</b>\n\n` +
-        `Berikut daftar order yang hampir melewati 3 bulan:\n\n` +
+        `📢 <b>Pemberitahuan Potensi Order &gt; 2 Bulan</b>\n\n` +
+        `Berikut daftar order yang hampir melewati 2 bulan:\n\n` +
         parts.join("\n\n") +
         `\n\n⚠️ <i>Mohon segera dilakukan follow-up sebelum melewati batas waktu</i> ⚠️\n\n` +
         `Waktu Update: ${now}\n\n` +
         `🔗 https://rso2telkomdashboard.web.app/action-based`;
-        
+
       messageBody = {
         chat_id: chatId,
         text: textMsg,
@@ -88,12 +75,12 @@ export default async function handleAlert({ axios, chatId, TELEGRAM_API }) {
           text: "Failed to fetch alerts. Please try again later.",
           parse_mode: "HTML",
         },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
     } catch (sendErr) {
       console.error(
         "ALERT -> fallback send error",
-        sendErr?.response?.data || sendErr?.message || sendErr
+        sendErr?.response?.data || sendErr?.message || sendErr,
       );
     }
     throw err;

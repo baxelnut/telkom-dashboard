@@ -5,7 +5,7 @@ const { SPREADSHEET_ID, FORMATTED_GID, PO_GID } = process.env;
 
 export const getGalaksiData = async (req, res) => {
   try {
-    const { page = 1, limit = 100 } = req.query;
+    const { page = 1, limit = 500 } = req.query;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + parseInt(limit);
 
@@ -26,18 +26,20 @@ export const getGalaksiData = async (req, res) => {
         PIC: rowData.PIC,
         KATEGORI_UMUR: rowData.KATEGORI_UMUR,
         KATEGORI: rowData.KATEGORI,
+        UMUR_ORDER: rowData.UMUR_ORDER,
       };
     });
 
-    // Apply filter
     const normalize = (str) =>
       (str ?? "").toString().replace(/\s+/g, "").toUpperCase();
 
-    const filteredData = formattedData.filter(
-      (row) =>
-        normalize(row.KATEGORI_UMUR) === normalize(">2 BLN") &&
-        normalize(row.KATEGORI) === normalize("IN PROCESS"),
-    );
+    // Match splitByPeriod's logic: >2bln = UMUR_ORDER > 60 days, not the text label
+    const filteredData = formattedData.filter((row) => {
+      const days = Number(row.UMUR_ORDER ?? 0);
+      const validUmur = Number.isFinite(days) ? days > 60 : true; // mirror splitByPeriod's fallback
+      const validKategori = normalize(row.KATEGORI) === normalize("IN PROCESS");
+      return validUmur && validKategori;
+    });
 
     const total = filteredData.length;
     const paginatedData = filteredData.slice(startIndex, endIndex);

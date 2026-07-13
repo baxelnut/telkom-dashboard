@@ -116,9 +116,7 @@ export const fetchFormattedReportData = async () => {
   const response = await fetch(sheetURL);
   const text = await response.text();
   const json = JSON.parse(text.substring(47).slice(0, -2));
-
   const cols = json.table.cols.map((col) => col.label || `col_${col.id}`);
-
   const rows = json.table.rows.map((row) => {
     const obj = {};
     row.c.forEach((cell, index) => {

@@ -136,7 +136,7 @@ export async function getReportByTelegramId(req, res) {
       normalize(r["PIC"]).includes(normalize(poName)),
     );
 
-    // Filter by UMUR_ORDER > 60 && <=90, KATEGORI === "IN PROCESS"
+    // Filter by UMUR_ORDER > 20 && <=60, KATEGORI === "IN PROCESS"
     const filtered = matched.filter((r) => {
       const umur = Number(r["UMUR_ORDER"] ?? 0);
       const kategori = normalize(r["KATEGORI"]);
