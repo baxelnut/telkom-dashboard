@@ -20,7 +20,7 @@ export const getAllUsers = async (req, res) => {
             userRecord.metadata.creationTime ||
             null;
         } catch (e) {
-          console.warn(`Auth record missing for uid: ${data.uid}`);
+          console.warn(`Auth record missing for uid: ${data.uid}`, e.message);
         }
 
         return {
@@ -33,14 +33,14 @@ export const getAllUsers = async (req, res) => {
           telegramId: data.telegramId,
           lastLogin,
         };
-      })
+      }),
     );
 
     // Sort alphabetically by fullName (case-insensitive)
     users.sort((a, b) =>
       (a.fullName || "").localeCompare(b.fullName || "", undefined, {
         sensitivity: "base",
-      })
+      }),
     );
 
     res.status(200).json({ data: users });
