@@ -5,7 +5,7 @@ import "./Header.css";
 import Icon from "../ui/icons/Icon";
 import UserProfile from "../../features/auth/UserProfile";
 // Context
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../context/useTheme";
 // Data
 import { SVG_PATHS } from "../../data/utilsData";
 
