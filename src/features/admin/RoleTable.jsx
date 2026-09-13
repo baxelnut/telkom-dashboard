@@ -45,7 +45,7 @@ export default function RoleTable({
       let data;
       try {
         data = JSON.parse(text);
-      } catch (e) {
+      } catch {
         console.warn("Response is not valid JSON.");
       }
       if (!res.ok) throw new Error(data?.error || "Failed to delete user");

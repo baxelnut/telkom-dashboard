@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+import { getAuth } from "firebase-admin/auth";
 import { db } from "../firebaseAdmin.js";
 
 export const getAllUsers = async (req, res) => {
@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res) => {
 
         let lastLogin = null;
         try {
-          const userRecord = await admin.auth().getUser(data.uid);
+          const userRecord = await getAuth().getUser(data.uid);
           lastLogin =
             userRecord.metadata.lastSignInTime ||
             userRecord.metadata.creationTime ||
@@ -81,13 +81,13 @@ export const getUserByEmail = async (req, res) => {
 };
 
 export const getUserByUid = async (req, res) => {
-  const uid = req.query.uid || req.params.uid;
+  const uid = (req.query.uid || req.params.uid || "").replace(/^\/+|\/+$/g, "");
 
   if (!uid) return res.status(400).json({ error: "UID is required" });
 
   try {
     // Grab user record from Firebase Auth
-    const userRecord = await admin.auth().getUser(uid);
+    const userRecord = await getAuth().getUser(uid);
 
     // Grab Firestore user document
     const snapshot = await db
@@ -178,7 +178,7 @@ export const deleteUserByUid = async (req, res) => {
 
     await snapshot.docs[0].ref.delete();
 
-    await admin.auth().deleteUser(uid); // Delete Firebase Auth user
+    await getAuth().deleteUser(uid); // Delete Firebase Auth user
 
     res.status(200).json({
       message: `User with UID ${uid} deleted from Firestore & Auth successfully`,
