@@ -1,18 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-/**
- * Custom hook to fetch data from an API endpoint
- * @param {string} url - Full API URL to fetch
- * @param {boolean} [skip=false] - Skip fetching on mount
- * @returns {object} { data, loading, error, refetch, raw }
- */
 export default function useFetchData(url, skip = false) {
   const [data, setData] = useState([]);
   const [raw, setRaw] = useState(null);
   const [loading, setLoading] = useState(!skip);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -25,13 +19,11 @@ export default function useFetchData(url, skip = false) {
       }
 
       const result = await response.json();
-
-      // Set raw result to access meta fields
       setRaw(result);
 
       if (!Array.isArray(result.data)) {
         throw new Error(
-          "Invalid response: expected result.data to be an array"
+          "Invalid response: expected result.data to be an array",
         );
       }
 
@@ -42,19 +34,13 @@ export default function useFetchData(url, skip = false) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url]);
 
   useEffect(() => {
     if (!skip && url) {
       fetchData();
     }
-  }, [url]);
+  }, [fetchData, skip, url]);
 
-  return {
-    data, // Array only (still safe for old components)
-    raw, // Full response object (new)
-    loading,
-    error,
-    refetch: fetchData,
-  };
+  return { data, raw, loading, error, refetch: fetchData };
 }
