@@ -20,8 +20,8 @@
     "googleapis": "^173.0.0",
     "multer": "^2.0.1",
     "ping": "^1.0.0",
-    "puppeteer": "^24.17.0",
-    "puppeteer-core": "^24.17.0",
+    "puppeteer": "^25.10.0",
+    "puppeteer-core": "^25.10.0",
     "traceroute": "^1.0.0"
   },
   "main": "index.js",
