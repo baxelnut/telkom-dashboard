@@ -1,10 +1,9 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getItem } from "../services/firebase/firestoreService";
+import { AuthContext } from "./authContextObject";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -28,8 +27,8 @@ export function AuthProvider({ children }) {
         // Get role from backend
         const res = await fetch(
           `${API_URL}/admin/user-info/by-email?email=${encodeURIComponent(
-            fbUser.email
-          )}`
+            fbUser.email,
+          )}`,
         );
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed to fetch role");
@@ -83,5 +82,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthContext);

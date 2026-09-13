@@ -9,7 +9,7 @@ import CustomPagination from "../../components/ui/tables/CustomPagination";
 import TableScroll from "../../components/ui/tables/TableScroll";
 // Custom hook & context
 import useFetchData from "../../hooks/useFetchData";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 // Helpers
 import { exportData, getExportOptions } from "../../helpers/exportHelpers";
 import { rowPerPageOptions } from "../../helpers/overviewUtils";
@@ -22,7 +22,7 @@ export default function DataPreview({ API_URL }) {
   const [selectedExport, setSelectedExport] = useState("Excel");
 
   const { data, loading, error, raw } = useFetchData(
-    `${API_URL}/aosodomoro/sheets?page=${currentPage + 1}&limit=${rowsPerPage}`
+    `${API_URL}/aosodomoro/sheets?page=${currentPage + 1}&limit=${rowsPerPage}`,
   );
 
   const totalRows = raw?.totalProcessedData || 0;
@@ -32,8 +32,8 @@ export default function DataPreview({ API_URL }) {
   const visibleData = !isAdmin
     ? data?.map((row) =>
         Object.fromEntries(
-          Object.entries(row).filter(([key]) => !hiddenCols.includes(key))
-        )
+          Object.entries(row).filter(([key]) => !hiddenCols.includes(key)),
+        ),
       )
     : data;
 

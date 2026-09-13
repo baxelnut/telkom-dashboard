@@ -14,14 +14,13 @@ import { SVG_PATHS } from "../../data/utilsData";
 export default function UserProfile({ userData, showProfile }) {
   const navigate = useNavigate();
 
+  const [showTelegramReminder, setShowTelegramReminder] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editedUser, setEditedUser] = useState({
     fullName: userData?.fullName || "",
     telegramId: userData?.telegramId || "",
   });
-
-  const [showTelegramReminder, setShowTelegramReminder] = useState(false);
 
   useEffect(() => {
     if (
@@ -121,6 +120,13 @@ export default function UserProfile({ userData, showProfile }) {
           </div>
 
           {/* TELEGRAM */}
+          {showTelegramReminder && (
+            <div className="telegram-reminder-banner">
+              <p className="small-p">
+                Don't forget to add your Telegram ID so we can reach you.
+              </p>
+            </div>
+          )}
           <div className="user-section">
             <p className="small-p">Telegram ID</p>
             {isEditing ? (
@@ -174,10 +180,10 @@ export default function UserProfile({ userData, showProfile }) {
               isSaving
                 ? "Saving..."
                 : isEditing
-                ? "Save"
-                : userData?.telegramId
-                ? "Edit profile"
-                : "Add Telegram ID"
+                  ? "Save"
+                  : userData?.telegramId
+                    ? "Edit profile"
+                    : "Add Telegram ID"
             }
             backgroundColor={
               userData?.telegramId ? "var(--primary-variant)" : "#0088cc"

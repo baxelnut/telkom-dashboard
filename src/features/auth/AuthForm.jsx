@@ -10,7 +10,7 @@ import Greetings from "./Greetings";
 import InputField from "../../components/ui/input/InputField";
 import Loading from "../../components/ui/states/Loading";
 // Context + service
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 // Custom hook
 import { useEmailAuth } from "../../hooks/useEmailAuth";
 
@@ -138,7 +138,7 @@ export default function AuthForm() {
         text={isSignup ? "Sign Up" : "Login"}
         onClick={() => {
           loginOrSignup({ ...form, rememberMe, isSignup }).then(
-            (ok) => ok && navigate("/overview", { replace: true })
+            (ok) => ok && navigate("/overview", { replace: true }),
           );
         }}
         fullWidth

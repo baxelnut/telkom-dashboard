@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 // Context
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 export default function Layout({ pageTitle, children }) {
   const { userData } = useAuth();

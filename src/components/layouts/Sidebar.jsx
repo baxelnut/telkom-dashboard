@@ -8,7 +8,7 @@ import Icon from "../ui/icons/Icon";
 import PingTool from "../utils/PingTool";
 // Custom hook & context
 import useLogoSrc from "../../hooks/useLogoSrc";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 // Data
 import { SIDEBAR_MENUS } from "../../data/navData";
 
@@ -74,7 +74,7 @@ export default function Sidebar({
   // Sync active menu on route change
   useEffect(() => {
     const active = links.find(({ children }) =>
-      children?.some(({ path }) => location.pathname.startsWith(path))
+      children?.some(({ path }) => location.pathname.startsWith(path)),
     );
     if (active) setOpenLabel(active.label);
   }, [location.pathname, links]);
@@ -94,7 +94,7 @@ export default function Sidebar({
       onMobileMenuToggle?.(true);
       setTimeout(
         () => setOpenLabel((prev) => (prev === label ? null : label)),
-        60 // small delay so mobile menu has space to render
+        60, // small delay so mobile menu has space to render
       );
       return;
     }

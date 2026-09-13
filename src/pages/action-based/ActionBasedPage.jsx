@@ -9,7 +9,7 @@ import ActionSelectedTable from "../../features/action/ActionSelectedTable";
 import CardsContent from "../../components/ui/cards/CardContent";
 import OverviewByWitel from "../../features/overview/OverviewByWitel";
 // Context
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 // Custom Hooks
 import useMultiFetchData from "../../hooks/useMultiFetchData";
 import useWitelOptions from "../../hooks/useWitelOptions";

@@ -8,7 +8,7 @@ import Button from "../../components/ui/buttons/Button";
 import CardContent from "../../components/ui/cards/CardContent";
 import RoleTable from "../../features/admin/RoleTable";
 // Context
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 // Custom hook
 import useFetchData from "../../hooks/useFetchData";
 // Data
@@ -44,7 +44,7 @@ export default function AdminPanelPage({ API_URL }) {
       });
       if (!res.ok) throw new Error("Failed to update user role");
       setUsers((prev) =>
-        prev.map((u) => (u.email === userEmail ? { ...u, role: newRole } : u))
+        prev.map((u) => (u.email === userEmail ? { ...u, role: newRole } : u)),
       );
       if (user?.email === userEmail && newRole !== "admin") {
         setIsAdmin(false);
@@ -58,10 +58,10 @@ export default function AdminPanelPage({ API_URL }) {
   };
 
   const approvedUsers = users.filter(
-    (u) => u.role === "admin" || u.role === "user"
+    (u) => u.role === "admin" || u.role === "user",
   );
   const pendingUsers = users.filter(
-    (u) => !["admin", "user", "declined"].includes(u.role)
+    (u) => !["admin", "user", "declined"].includes(u.role),
   );
   const declinedUsers = users.filter((u) => u.role === "declined");
 
