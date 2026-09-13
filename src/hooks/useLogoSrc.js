@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 // Context
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../context/useTheme";
 
 // Custom hook to get logo source based on theme & screen size
 export default function useLogoSrc() {

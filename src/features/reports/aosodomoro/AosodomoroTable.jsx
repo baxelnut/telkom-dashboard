@@ -4,7 +4,7 @@ import "./AosodomoroTable.css";
 import { AosodomoroTableBody } from "./AosodomoroTableBody";
 import Button from "../../../components/ui/buttons/Button";
 // Context & Data
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/useAuth";
 import { SVG_PATHS } from "../../../data/utilsData";
 // Helpers
 import { formatDate } from "../../../helpers/formattingUtils";

@@ -18,7 +18,7 @@ import Layout from "./components/layouts/Layout";
 import { appRoutes } from "./routes/AppRoutes";
 import { ProtectedRoute, RedirectIfLoggedIn } from "./routes/ProtectedRoute";
 // Context
-import { useTheme } from "./context/ThemeContext";
+import { useTheme } from "./context/useTheme";
 // API URLs
 const API_URL = import.meta.env.VITE_API_URL;
 const DEV_API_URL = import.meta.env.VITE_DEV_API;

@@ -5,7 +5,7 @@ import "./GalaksiTable.css";
 import AchExplanation from "../../../features/reports/galaksi/AchExplaination";
 import Button from "../../../components/ui/buttons/Button";
 // Context
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/useAuth";
 // Data
 import { SVG_PATHS } from "../../../data/utilsData";
 // Helpers

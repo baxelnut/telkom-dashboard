@@ -9,7 +9,7 @@ import Checkbox from "../../../components/ui/input/Checkbox";
 import Loading from "../../../components/ui/states/Loading";
 // Custom hook & Context
 import useFetchData from "../../../hooks/useFetchData";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/useAuth";
 // Helpers
 import { exportData } from "../../../helpers/exportHelpers";
 import { ORDER_SUBTYPE } from "../../../helpers/aosodomoroUtils";
