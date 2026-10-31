@@ -6,16 +6,28 @@ import "./index.css";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext";
+
 import MaintenancePage from "./pages/MaintenancePage.jsx";
+import PermanentRedirectPage from "./pages/PermanentRedirectPage.jsx";
 
 // Toggle: set VITE_MAINTENANCE_MODE=true in .env (then rebuild/redeploy),
 // or flip the fallback below to true.
 const MAINTENANCE_MODE =
   (import.meta.env.VITE_MAINTENANCE_MODE ?? "false") === "true";
 
+// Permanently redirect to new URL
+const PERMANENT_REDIRECT =
+  (import.meta.env.VITE_PERMANENT_REDIRECT ?? "true") === "true";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-if (MAINTENANCE_MODE) {
+if (PERMANENT_REDIRECT) {
+  root.render(
+    <React.StrictMode>
+      <PermanentRedirectPage />
+    </React.StrictMode>,
+  );
+} else if (MAINTENANCE_MODE) {
   root.render(
     <React.StrictMode>
       <MaintenancePage />

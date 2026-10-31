@@ -1,0 +1,67 @@
+.redirect-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f8f9fb;
+  color: #1a1a1a;
+}
+
+.redirect-content {
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+}
+
+.redirect-eyebrow {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.redirect-content h1 {
+  margin: 0 0 20px;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+}
+
+.redirect-content p {
+  max-width: 440px;
+  margin: 0 auto 32px;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.redirect-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: 6px;
+  background: #312a68;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.redirect-button:hover {
+  background: #25204f;
+}
+
+.redirect-url {
+  display: block;
+  margin-top: 20px;
+  color: #888;
+  font-size: 0.8rem;
+}
